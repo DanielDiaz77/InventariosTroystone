@@ -131,7 +131,7 @@
                             <label for="">Artículo (*) <span style="color:red;" v-show="idarticulo==0">(*Seleccione)</span> </label>
                             <div class="form-inline">
                                 <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()"  placeholder="Ingrese el artículo" >
-                                <button class="btn btn-primary">...</button>
+                                <button @click="abrirModal()" class="btn btn-primary">...</button>
                                 <input type="text" readonly class="form-control" v-model="articulo">
                             </div>
                         </div>
@@ -174,8 +174,12 @@
                                         </button>
                                     </td>
                                     <td v-text="detalle.articulo"></td>
-                                    <td v-text="detalle.cantidad"></td>
-                                    <td v-text="detalle.precio_compra"></td>
+                                    <td>
+                                        <input v-model="detalle.cantidad" min="0" type="number" value="2" class="form-control">
+                                    </td>
+                                    <td>
+                                        <input v-model="detalle.precio_compra" min="0" type="number" value="3" class="form-control">
+                                    </td>
                                     <td>
                                        {{ detalle.precio_compra * detalle.cantidad }}
                                     </td>
@@ -217,25 +221,80 @@
     </div>
     <!--Inicio del modal agregar/actualizar-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-primary modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal"></h4>
-            <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-            <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
-            <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
-          </div>
-        </div>
+        <div class="modal-dialog modal-primary modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md">
+                            <div class="input-group">
+                                <select class="form-control col-md-3" v-model="criterioA">
+                                    <option value="nombre">Nombre</option>
+                                    <option value="descripcion">Descripción</option>
+                                    <option value="codigo">Código</option>
+                                </select>
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
+                                <button type="submit" @click="listarArticulo(buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-sm text-center">
+                            <thead>
+                            <tr class="text-center">
+                                <th>Opciones</th>
+                                <th>SKU</th>
+                                <th>Nombre</th>
+                                <th>Material</th>
+                                <th>Largo</th>
+                                <th>Ancho</th>
+                                <th>Metros<sup>2</sup></th>
+                                <th>Stock</th>
+                                <th>Ubicacion</th>
+                                <th>Estado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="articulo in arrayArticulo" :key="articulo.id">
+                                <td>
+                                    <button type="button" @click="agregarDetalleModal(articulo)" class="btn btn-success btn-sm">
+                                        <i class="icon-check"></i>
+                                    </button>
+                                </td>
+                                <td v-text="articulo.sku"></td>
+                                <td v-text="articulo.nombre"></td>
+                                <td v-text="articulo.nombre_categoria"></td>
+                                <td v-text="articulo.largo"></td>
+                                <td v-text="articulo.ancho"></td>
+                                <td v-text="articulo.metros_cuadrados"></td>
+                                <td v-text="articulo.stock"></td>
+                                <td v-text="articulo.ubicacion"></td>
+                                <td>
+                                <div v-if="articulo.condicion">
+                                    <span class="badge badge-success">Activo</span>
+                                </div>
+                                <div v-else>
+                                    <span class="badge badge-danger">Desactivado</span>
+                                </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                    <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
+                <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
+                </div>
+            </div>
         <!-- /.modal-content -->
-      </div>
+        </div>
       <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
@@ -283,7 +342,9 @@ export default {
             },
             offset : 3,
             criterio : 'num_comprobante',
-            buscar : ''
+            buscar : '',
+            buscarA : '',
+            criterioA : 'nombre'
         };
     },
     components: {
@@ -463,33 +524,6 @@ export default {
                 console.log(error);
             });
         },
-        actualizarPersona() {
-            if (this.validarPersona()) {
-                return;
-            }
-            let me = this;
-            axios.put("/user/actualizar", {
-                'nombre': this.nombre,
-                'tipo_documento': this.tipo_documento,
-                'num_documento': this.num_documento,
-                'ciudad': this.ciudad,
-                'domicilio': this.domicilio,
-                'telefono': this.telefono,
-                'email': this.email,
-                'rfc': this.rfc,
-                'usuario' : this.usuario,
-                'password' : this.password,
-                'idrol' : this.idrol,
-                'id': this.persona_id
-            })
-            .then(function(response) {
-                me.cerrarModal();
-                me.listarPersona(1,'','nombre');
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
-        },
         desactivarUsuario(id) {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
@@ -583,63 +617,45 @@ export default {
         },
         cerrarModal() {
             this.modal = 0;
-            this.tituloModal = "";
-            this.nombre = "";
-            this.tipo_documento = "";
-            this.num_documento = "";
-            this.ciudad = "";
-            this.domicilio = "";
-            this.telefono = "";
-            this.email = "";
-            this.rfc = "";
-            this.usuario ="";
-            this.password ="";
-            this.idrol =0;
-            this.errorPersona = 0;
         },
-        abrirModal(modelo, accion, data = []) {
-            this.selectRol();
-            switch (modelo) {
-                case "persona": {
-                    switch (accion) {
-                        case "registrar": {
-                            this.modal = 1;
-                            this.tituloModal = "Registrar Usuario";
-                            this.nombre = "";
-                            this.tipo_documento = "";
-                            this.num_documento = "";
-                            this.ciudad = "";
-                            this.domicilio = "";
-                            this.telefono = "";
-                            this.email = "";
-                            this.rfc = "";
-                            this.usuario ="";
-                            this.password ="";
-                            this.idrol =0;
-                            this.tipoAccion = 1;
-                            break;
-                        }
-                        case "actualizar": {
-                            //console.log(data);
-                            this.modal = 1;
-                            this.tituloModal = "Actualizar Usuario";
-                            this.tipoAccion = 2;
-                            this.persona_id = data["id"];
-                            this.nombre = data["nombre"];
-                            this.tipo_documento = data["tipo_documento"];
-                            this.num_documento = data["num_documento"];
-                            this.ciudad = data["ciudad"];
-                            this.domicilio = data["domicilio"];
-                            this.telefono = data["telefono"];"";
-                            this.email = data["email"];
-                            this.rfc = data["rfc"];
-                            this.usuario = data["usuario"];
-                            this.password = data["password"];
-                            this.idrol = data["idrol"];
-                            break;
-                        }
-                    }
-                }
+        abrirModal() {
+            this.arrayArticulo=[];
+            this.modal = 1;
+            this.tituloModal = "Seleccionar Artículos";
+        },
+        listarArticulo (buscar,criterio){
+            let me=this;
+            var url= '/articulo/listarArticulo?buscar=' + buscar + '&criterio='+ criterio;
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.arrayArticulo = respuesta.articulos.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        agregarDetalleModal(data = []){
+
+            let me = this;
+
+            if(me.encuentra(data['id'])){
+                Swal.fire({
+                    type: 'error',
+                    title: 'Error...',
+                    text: 'Este artículo ya se encuentra agregado!',
+                });
+                me.codigo = "";
+                me.idarticulo = 0;
+                me.articulo = "";
+                me.precio_compra = 0;
+                me.cantidad = 0;
+            }else{
+                me.arrayDetalle.push({
+                    idarticulo : data['id'],
+                    articulo : data['nombre'],
+                    cantidad : 1,
+                    precio_compra : 1
+                });
             }
         }
     },

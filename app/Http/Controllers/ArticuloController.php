@@ -139,8 +139,7 @@ class ArticuloController extends Controller
         $articulo->save();
     }
 
-    public function update(Request $request)
-    {
+    public function update(Request $request){
         if(!$request->ajax()) return redirect('/');
 
         if($request->file != ''){
@@ -200,5 +199,68 @@ class ArticuloController extends Controller
         $articulo = Articulo::findOrFail($request->id);
         $articulo->condicion = '1';
         $articulo->save();
+    }
+
+    public function listarArticulo(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $buscar = $request->buscar;
+        $criterio = $request->criterio;
+
+        if($buscar==''){
+            $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+            ->select(
+                'articulos.id',
+                'articulos.idcategoria',
+                'articulos.codigo',
+                'articulos.sku',
+                'articulos.nombre',
+                'categorias.nombre as nombre_categoria',
+                'articulos.terminado',
+                'articulos.largo',
+                'articulos.ancho',
+                'articulos.metros_cuadrados',
+                'articulos.espesor',
+                'articulos.ubicacion',
+                'articulos.stock',
+                'articulos.descripcion',
+                'articulos.observacion',
+                'articulos.origen',
+                'articulos.fecha_llegada',
+                'articulos.file',
+                'articulos.condicion')
+                ->where('articulos.condicion',1)
+                ->orderBy('articulos.id', 'desc')->paginate(10);
+        }else{
+
+            $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+            ->select(
+                'articulos.id',
+                'articulos.idcategoria',
+                'articulos.codigo',
+                'articulos.sku',
+                'articulos.nombre',
+                'categorias.nombre as nombre_categoria',
+                'articulos.terminado',
+                'articulos.largo',
+                'articulos.ancho',
+                'articulos.metros_cuadrados',
+                'articulos.espesor',
+                'articulos.ubicacion',
+                'articulos.stock',
+                'articulos.descripcion',
+                'articulos.observacion',
+                'articulos.origen',
+                'articulos.fecha_llegada',
+                'articulos.file',
+                'articulos.condicion')
+            ->where([
+                ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                ['articulos.condicion',1]
+            ])
+            ->orderBy('articulos.id', 'desc')->paginate(10);
+        }
+        return ['articulos' => $articulos];
     }
 }
