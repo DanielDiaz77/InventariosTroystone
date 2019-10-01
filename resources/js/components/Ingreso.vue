@@ -219,7 +219,7 @@
       </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
-    <!--Inicio del modal agregar/actualizar-->
+    <!--Inicio del modal listar articulos-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-primary modal-lg" role="document">
             <div class="modal-content">
@@ -239,7 +239,10 @@
                                     <option value="codigo">Código</option>
                                 </select>
                                 <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
-                                <button type="submit" @click="listarArticulo(buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                                <button type="submit" @click="listarArticulo(buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                                <button type="button" @click="abrirModal2('articulo','registrar')" class="btn btn-secondary">
+                                    <i class="icon-plus"></i>&nbsp;Nuevo
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -298,6 +301,139 @@
       <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
+
+    <!--Inicio del modal agregar/actualizar-->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal2}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-primary modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Material</label>
+                            <div class="col-md-9">
+                            <select class="form-control" v-model="idcategoria_r">
+                                <option value="0" disabled>Seleccione un material</option>
+                                <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Código</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="codigo_r" class="form-control" placeholder="Código de barras"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">SKU</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="sku_r" class="form-control" placeholder="SKU"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="nombre_art" class="form-control" placeholder="Nombre del artículo"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Terminado</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="terminado" class="form-control" placeholder="Terminado"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Largo</label>
+                            <div class="col-md-9">
+                                <input type="number" v-model="largo" min="1" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Ancho</label>
+                            <div class="col-md-9">
+                                <input type="number" min="1" v-model="ancho" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Metros<sup>2</sup></label>
+                            <div class="col-md-9">
+                            <input type="number" min="1" v-model="metros_cuadrados" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Espesor</label>
+                            <div class="col-md-9">
+                                <input type="number" min="1" v-model="espesor" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Ubicación</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="ubicacion" class="form-control" placeholder="Ubicación"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Stock</label>
+                            <div class="col-md-9">
+                                <input type="number" min="1" v-model="stock" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
+                            <div class="col-md-9">
+                                <input type="email" v-model="descripcion_r" class="form-control" placeholder="Ingrese descripción"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="email-input">observacion</label>
+                            <div class="col-md-9">
+                                <input type="email" v-model="observacion_r" class="form-control" placeholder="Ingrese las observaciones"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Origen</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="origen" class="form-control" placeholder="Origen"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Fecha de llegada</label>
+                            <div class="col-md-9">
+                                <input type="date" v-model="fecha_llegada" class="form-control" placeholder="Fecha de llegada"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Imagen</label>
+                            <div class="col-md-9">
+                                <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
+
+                            </div>
+                        </div>
+                        <figure>
+                            <img width="300" height="200" class="img-responsive imgcenter" :src="imagen" alt="Foto del artículo">
+                        </figure>
+                        <div v-show="errorArticulo" class="form-group row div-error">
+                            <div class="text-center text-error">
+                            <div v-for="error in errorMostrarMsjArticulo" :key="error" v-text="error"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="(cerrarModal2(),listarArticulo(buscarA,criterioA))">Cerrar</button>
+                    <button type="button" class="btn btn-primary" @click="registrarArticulo()">Guardar</button>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!--Fin del modal-->
   </main>
 </template>
 
@@ -328,6 +464,7 @@ export default {
 
             listado : 1,
             modal: 0,
+            modal2: 0,
             tituloModal: "",
             tipoAccion: 0,
             errorIngreso: 0,
@@ -344,7 +481,33 @@ export default {
             criterio : 'num_comprobante',
             buscar : '',
             buscarA : '',
-            criterioA : 'nombre'
+            criterioA : 'nombre',
+
+            //Registrar artículo
+            articulo_idr: 0,
+            idcategoria_r :0,
+            nombre_categoria_r : '',
+            codigo_r : '',
+            sku_r : '',
+            nombre_art: '',
+            terminado : '',
+            largo : 0,
+            ancho : 0,
+            metros_cuadrados : 0,
+            espesor : 0,
+            ubicacion : '',
+            stock : 0,
+            descripcion_r: '',
+            observacion_r : '',
+            origen : '',
+            fecha_llegada : '',
+            file : '',
+            imagenMinatura : '',
+            arrayArticulo_r: [],
+            errorArticulo: 0,
+            errorMostrarMsjArticulo: [],
+            arrayCategoria : []
+
         };
     },
     components: {
@@ -385,6 +548,9 @@ export default {
                     resultado = resultado + (me.arrayDetalle[i].precio_compra * me.arrayDetalle[i].cantidad)
                 }
                 return resultado;
+            },
+            imagen(){
+                return this.imagenMinatura;
             }
         },
     methods: {
@@ -657,7 +823,133 @@ export default {
                     precio_compra : 1
                 });
             }
-        }
+        },
+        abrirModal2(modelo,accion){
+            switch (modelo) {
+                case "articulo": {
+                    switch (accion) {
+                        case "registrar": {
+                            this.modal = 0;
+                            this.modal2 = 1;
+                            this.tituloModal = "Registrar Artículo";
+                            this.idcategoria_r = 0;
+                            this.codigo_r = '';
+                            this.sku_r = '';
+                            this.nombre_art = '';
+                            this.terminado = '';
+                            this.largo = 0;
+                            this.ancho = 0;
+                            this.metros_cuadrados = 0;
+                            this.espesor = 0;
+                            this.ubicacion = '';
+                            this.stock = 0;
+                            this.descripcion= '';
+                            this.observacion = '';
+                            this.origen = '';
+                            this.fecha_llegada = '';
+                            this.file = '';
+                            this.imagenMinatura = '';
+                            break;
+                        }
+                    }
+                }
+            }
+            this.selectCategoria();
+        },
+        cerrarModal2() {
+            this.modal2 = 0;
+            this.modal = 1;
+            this.tituloModal = "Seleccionar Artículos";
+            this.arrayArticulo_r=[];
+            this.idcategoria_r = 0;
+            this.codigo_r = '';
+            this.sku_r = '';
+            this.nombre_art = '';
+            this.terminado = '';
+            this.largo = 0;
+            this.ancho = 0;
+            this.metros_cuadrados = 0;
+            this.espesor = 0;
+            this.ubicacion = '';
+            this.stock = 0;
+            this.descripcion= '';
+            this.observacion = '';
+            this.origen = '';
+            this.fecha_llegada = '';
+            this.file = '';
+            this.errorArticulo = 0;
+            this.imagenMinatura = '';
+        },
+        selectCategoria(){
+            let me=this;
+            var url= '/categoria/selectCategoria';
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.arrayCategoria = respuesta.categorias;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        obtenerImagen(e){
+            let img = e.target.files[0];
+            this.file = img;
+            this.cargarImagen(img);
+        },
+        cargarImagen(img){
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.imagenMinatura = e.target.result;
+                this.file =  e.target.result;
+            }
+            reader.readAsDataURL(img);
+        },
+        validarArticulo() {
+            this.errorArticulo = 0;
+            this.errorMostrarMsjArticulo = [];
+            if (this.idcategoria_r==0) this.errorMostrarMsjArticulo.push("Selecciona una categoría.");
+            if (!this.nombre_art) this.errorMostrarMsjArticulo.push("El nombre del artículo no puede estar vacío.");
+            if (!this.sku_r) this.errorMostrarMsjArticulo.push("El sku del artículo no puede estar vacío.");
+            if (!this.terminado) this.errorMostrarMsjArticulo.push("El terminado del artículo no puede estar vacío.");
+            if (!this.largo) this.errorMostrarMsjArticulo.push("El largo del artículo no puede estar vacío.");
+            if (!this.ancho) this.errorMostrarMsjArticulo.push("El ancho del artículo no puede estar vacío.");
+            if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
+            if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
+            if (!this.ubicacion) this.errorMostrarMsjArticulo.push("La ubicacion del artículo no puede estar vacío.");
+            if (!this.stock) this.errorMostrarMsjArticulo.push("El stock del artículo debe ser un número y no puede estar vacío.");
+            if (!this.origen) this.errorMostrarMsjArticulo.push("El origen del artículo no puede estar vacío.");
+            if (this.errorMostrarMsjArticulo.length) this.errorArticulo = 1;
+            return this.errorArticulo;
+        },
+        registrarArticulo(){
+            if (this.validarArticulo()){
+                return;
+            }
+            let me = this;
+            axios.post("/articulo/registrar",{
+                'idcategoria': this.idcategoria_r,
+                'codigo': this.codigo_r,
+                'sku' : this.sku_r,
+                'nombre': this.nombre_art,
+                'terminado' : this.terminado,
+                'largo' : this.largo,
+                'ancho' : this.ancho,
+                'metros_cuadrados' : this.metros_cuadrados,
+                'espesor' : this.espesor,
+                'ubicacion' : this.ubicacion,
+                'stock': this.stock,
+                'descripcion': this.descripcion,
+                'observacion' : this.observacion,
+                'origen' : this.origen,
+                'fecha_llegada' : this.fecha_llegada,
+                'file' : this.file
+            }).then(function (response) {
+                me.cerrarModal2();
+                listarArticulo(buscarA,criterioA);
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
     },
     mounted() {
         this.listarIngreso(1,this.buscar, this.criterio);

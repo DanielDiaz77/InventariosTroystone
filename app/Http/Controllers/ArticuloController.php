@@ -254,7 +254,7 @@ class ArticuloController extends Controller
                 'articulos.fecha_llegada',
                 'articulos.file',
                 'articulos.condicion')
-                ->where('articulos.condicion',1)
+               /*  ->where('articulos.condicion',1) */
                 ->orderBy('articulos.id', 'desc')->paginate(10);
         }else{
 
@@ -281,7 +281,7 @@ class ArticuloController extends Controller
                 'articulos.condicion')
             ->where([
                 ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                ['articulos.condicion',1]
+                /* ['articulos.condicion',1] */
             ])
             ->orderBy('articulos.id', 'desc')->paginate(10);
         }
