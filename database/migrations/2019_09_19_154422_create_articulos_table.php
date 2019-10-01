@@ -17,14 +17,16 @@ class CreateArticulosTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('idcategoria');
             $table->string('codigo',50)->unique();
-            $table->string('sku',50)->unique();
+            $table->string('sku',50);
             $table->string('nombre',100);
             $table->string('terminado',50);
             $table->decimal('largo',4,2);
             $table->decimal('ancho',4,2);
             $table->decimal('metros_cuadrados',4,2);
             $table->decimal('espesor',4,2);
+            $table->decimal('precio_venta',11,2)->nullable();
             $table->string('ubicacion',50);
+            $table->string('contenedor',50)->nullable();
             $table->integer('stock');
             $table->string('descripcion',256)->nullable();
             $table->string('observacion',256)->nullable();
