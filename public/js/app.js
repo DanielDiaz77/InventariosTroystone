@@ -2527,7 +2527,7 @@ Vue.use(VueSilentbox); */
                   this.observacion = data['observacion'];
                   this.origen = data['origen'];
                   this.fecha_llegada = data['fecha_llegada'];
-                  this.file = data['file'];
+                  this.imagenMinatura = data['file'];
                   break;
                 }
             }

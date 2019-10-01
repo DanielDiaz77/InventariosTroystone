@@ -140,14 +140,15 @@ class ArticuloController extends Controller
     }
 
     public function update(Request $request){
+
         if(!$request->ajax()) return redirect('/');
 
-        if($request->file != ''){
+        if($request->file != ""){
 
             $art= Articulo::findOrFail($request->id);
             $img = $art->file;
 
-            if($img != null){
+            if(file_exists($img)){
                 $image_path = public_path().'/'.$img;
                 unlink($image_path);
             }
@@ -163,27 +164,50 @@ class ArticuloController extends Controller
             $fileName = str_random().'.'.$extension;
             $path = public_path().'/'.$fileName;
             file_put_contents($path,$decoded);
+
+            $articulo = Articulo::findOrFail($request->id);
+            $articulo->idcategoria      =   $request->idcategoria;
+            $articulo->codigo           =   $request->codigo;
+            $articulo->sku              =   $request->sku;
+            $articulo->nombre           =   $request->nombre;
+            $articulo->terminado        =   $request->terminado;
+            $articulo->largo            =   $request->largo;
+            $articulo->ancho            =   $request->ancho;
+            $articulo->metros_cuadrados =   $request->metros_cuadrados;
+            $articulo->espesor          =   $request->espesor;
+            $articulo->ubicacion        =   $request->ubicacion;
+            $articulo->stock            =   $request->stock;
+            $articulo->descripcion      =   $request->descripcion;
+            $articulo->observacion      =   $request->observacion;
+            $articulo->origen           =   $request->origen;
+            $articulo->fecha_llegada    =   $request->fecha_llegada;
+            $articulo->file             =   $fileName;
+            $articulo->condicion        =   '1';
+            $articulo->save();
+
+        }else{
+
+            $articulo = Articulo::findOrFail($request->id);
+            $articulo->idcategoria      =   $request->idcategoria;
+            $articulo->codigo           =   $request->codigo;
+            $articulo->sku              =   $request->sku;
+            $articulo->nombre           =   $request->nombre;
+            $articulo->terminado        =   $request->terminado;
+            $articulo->largo            =   $request->largo;
+            $articulo->ancho            =   $request->ancho;
+            $articulo->metros_cuadrados =   $request->metros_cuadrados;
+            $articulo->espesor          =   $request->espesor;
+            $articulo->ubicacion        =   $request->ubicacion;
+            $articulo->stock            =   $request->stock;
+            $articulo->descripcion      =   $request->descripcion;
+            $articulo->observacion      =   $request->observacion;
+            $articulo->origen           =   $request->origen;
+            $articulo->fecha_llegada    =   $request->fecha_llegada;
+            $articulo->condicion        =   '1';
+            $articulo->save();
         }
 
-        $articulo = Articulo::findOrFail($request->id);
-        $articulo->idcategoria      =   $request->idcategoria;
-        $articulo->codigo           =   $request->codigo;
-        $articulo->sku              =   $request->sku;
-        $articulo->nombre           =   $request->nombre;
-        $articulo->terminado        =   $request->terminado;
-        $articulo->largo            =   $request->largo;
-        $articulo->ancho            =   $request->ancho;
-        $articulo->metros_cuadrados =   $request->metros_cuadrados;
-        $articulo->espesor          =   $request->espesor;
-        $articulo->ubicacion        =   $request->ubicacion;
-        $articulo->stock            =   $request->stock;
-        $articulo->descripcion      =   $request->descripcion;
-        $articulo->observacion      =   $request->observacion;
-        $articulo->origen           =   $request->origen;
-        $articulo->fecha_llegada    =   $request->fecha_llegada;
-        $articulo->file             =   $fileName;
-        $articulo->condicion        =   '1';
-        $articulo->save();
+
     }
 
     public function desactivar(Request $request){
