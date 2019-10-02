@@ -39,7 +39,7 @@
                     <th>Material</th>
                     <th>Descripción</th>
                     <th>Largo</th>
-                    <th>Ancho</th>
+                    <th>Alto</th>
                     <th>Metros<sup>2</sup></th>
                     <th>Precio</th>
                     <th>Stock</th>
@@ -73,7 +73,7 @@
                     <td v-text="articulo.nombre_categoria"></td>
                     <td v-text="articulo.descripcion"></td>
                     <td v-text="articulo.largo"></td>
-                    <td v-text="articulo.ancho"></td>
+                    <td v-text="articulo.alto"></td>
                     <td v-text="articulo.metros_cuadrados"></td>
                     <td v-text="articulo.precio_venta"></td>
                     <td v-text="articulo.stock"></td>
@@ -162,9 +162,9 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Ancho</label>
+                    <label class="col-md-3 form-control-label" for="text-input">Alto</label>
                     <div class="col-md-9">
-                        <input type="number" min="1" v-model="ancho" class="form-control" placeholder=""/>
+                        <input type="number" min="1" v-model="alto" class="form-control" placeholder=""/>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -302,8 +302,8 @@
                         <td v-text="largo"></td>
                     </tr>
                     <tr >
-                        <td><strong>ANCHO</strong></td>
-                        <td v-text="ancho"></td>
+                        <td><strong>ALTO</strong></td>
+                        <td v-text="alto"></td>
                     </tr>
                     <tr >
                         <td><strong>METROS<sup>2</sup> </strong></td>
@@ -383,7 +383,7 @@ export default {
             nombre: '',
             terminado : '',
             largo : 0,
-            ancho : 0,
+            alto : 0,
             metros_cuadrados : 0,
             espesor : 0,
             precio_venta : 0,
@@ -514,7 +514,7 @@ export default {
                     'nombre': this.nombre,
                     'terminado' : this.terminado,
                     'largo' : this.largo,
-                    'ancho' : this.ancho,
+                    'alto' : this.alto,
                     'metros_cuadrados' : this.metros_cuadrados,
                     'espesor' : this.espesor,
                     'precio_venta' : this.precio_venta,
@@ -546,7 +546,7 @@ export default {
                 'nombre': this.nombre,
                 'terminado' : this.terminado,
                 'largo' : this.largo,
-                'ancho' : this.ancho,
+                'alto' : this.alto,
                 'metros_cuadrados' : this.metros_cuadrados,
                 'espesor' : this.espesor,
                 'precio_venta' : this.precio_venta,
@@ -649,7 +649,7 @@ export default {
             if (!this.sku) this.errorMostrarMsjArticulo.push("El código del material no puede estar vacío.");
             if (!this.terminado) this.errorMostrarMsjArticulo.push("El terminado del artículo no puede estar vacío.");
             if (!this.largo) this.errorMostrarMsjArticulo.push("El largo del artículo no puede estar vacío.");
-            if (!this.ancho) this.errorMostrarMsjArticulo.push("El ancho del artículo no puede estar vacío.");
+            if (!this.alto) this.errorMostrarMsjArticulo.push("El alto del artículo no puede estar vacío.");
             if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
             if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
             if (!this.ubicacion) this.errorMostrarMsjArticulo.push("Seleccione una bodega de descarga");
@@ -669,7 +669,7 @@ export default {
             this.nombre = '';
             this.terminado = '';
             this.largo = 0;
-            this.ancho = 0;
+            this.alto = 0;
             this.metros_cuadrados = 0;
             this.espesor = 0;
             this.precio_venta  = 0;
@@ -698,7 +698,7 @@ export default {
                             this.nombre = '';
                             this.terminado = '';
                             this.largo = 0;
-                            this.ancho = 0;
+                            this.alto = 0;
                             this.metros_cuadrados = 0;
                             this.espesor = 0;
                             this.precio_venta = 0;
@@ -726,7 +726,7 @@ export default {
                             this.nombre = data['nombre'];
                             this.terminado = data['terminado'];
                             this.largo = data['largo'];
-                            this.ancho = data['ancho'];
+                            this.alto = data['alto'];
                             this.metros_cuadrados = data['metros_cuadrados'];
                             this.espesor = data['espesor'];
                             this.precio_venta = data['precio_venta'];
@@ -761,7 +761,7 @@ export default {
                             this.nombre = data['nombre'];
                             this.terminado = data['terminado'];
                             this.largo = data['largo'];
-                            this.ancho = data['ancho'];
+                            this.alto = data['alto'];
                             this.metros_cuadrados = data['metros_cuadrados'];
                             this.espesor = data['espesor'];
                             this.precio_venta = data['precio_venta'];
@@ -789,7 +789,7 @@ export default {
             this.nombre = '';
             this.terminado = '';
             this.largo = 0;
-            this.ancho = 0;
+            this.alto = 0;
             this.metros_cuadrados = 0;
             this.espesor = 0;
             this.ubicacion = '';

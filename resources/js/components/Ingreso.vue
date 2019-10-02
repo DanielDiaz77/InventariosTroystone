@@ -255,7 +255,7 @@
                                 <th>Nombre</th>
                                 <th>Material</th>
                                 <th>Largo</th>
-                                <th>Ancho</th>
+                                <th>Alto</th>
                                 <th>Metros<sup>2</sup></th>
                                 <th>Stock</th>
                                 <th>Ubicacion</th>
@@ -273,7 +273,7 @@
                                 <td v-text="articulo.nombre"></td>
                                 <td v-text="articulo.nombre_categoria"></td>
                                 <td v-text="articulo.largo"></td>
-                                <td v-text="articulo.ancho"></td>
+                                <td v-text="articulo.alto"></td>
                                 <td v-text="articulo.metros_cuadrados"></td>
                                 <td v-text="articulo.stock"></td>
                                 <td v-text="articulo.ubicacion"></td>
@@ -354,9 +354,9 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Ancho</label>
+                            <label class="col-md-3 form-control-label" for="text-input">Alto</label>
                             <div class="col-md-9">
-                                <input type="number" min="1" v-model="ancho" class="form-control" placeholder=""/>
+                                <input type="number" min="1" v-model="alto" class="form-control" placeholder=""/>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -492,7 +492,7 @@ export default {
             nombre_art: '',
             terminado : '',
             largo : 0,
-            ancho : 0,
+            alto : 0,
             metros_cuadrados : 0,
             espesor : 0,
             ubicacion : '',
@@ -838,7 +838,7 @@ export default {
                             this.nombre_art = '';
                             this.terminado = '';
                             this.largo = 0;
-                            this.ancho = 0;
+                            this.alto= 0;
                             this.metros_cuadrados = 0;
                             this.espesor = 0;
                             this.ubicacion = '';
@@ -867,7 +867,7 @@ export default {
             this.nombre_art = '';
             this.terminado = '';
             this.largo = 0;
-            this.ancho = 0;
+            this.alto = 0;
             this.metros_cuadrados = 0;
             this.espesor = 0;
             this.ubicacion = '';
@@ -912,7 +912,7 @@ export default {
             if (!this.sku_r) this.errorMostrarMsjArticulo.push("El sku del artículo no puede estar vacío.");
             if (!this.terminado) this.errorMostrarMsjArticulo.push("El terminado del artículo no puede estar vacío.");
             if (!this.largo) this.errorMostrarMsjArticulo.push("El largo del artículo no puede estar vacío.");
-            if (!this.ancho) this.errorMostrarMsjArticulo.push("El ancho del artículo no puede estar vacío.");
+            if (!this.alto) this.errorMostrarMsjArticulo.push("El alto del artículo no puede estar vacío.");
             if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
             if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
             if (!this.ubicacion) this.errorMostrarMsjArticulo.push("La ubicacion del artículo no puede estar vacío.");
@@ -933,7 +933,7 @@ export default {
                 'nombre': this.nombre_art,
                 'terminado' : this.terminado,
                 'largo' : this.largo,
-                'ancho' : this.ancho,
+                'alto' : this.alto,
                 'metros_cuadrados' : this.metros_cuadrados,
                 'espesor' : this.espesor,
                 'ubicacion' : this.ubicacion,

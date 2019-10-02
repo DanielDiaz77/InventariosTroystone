@@ -2226,7 +2226,7 @@ Vue.use(VueSilentbox); */
       nombre: '',
       terminado: '',
       largo: 0,
-      ancho: 0,
+      alto: 0,
       metros_cuadrados: 0,
       espesor: 0,
       precio_venta: 0,
@@ -2359,7 +2359,7 @@ Vue.use(VueSilentbox); */
         'nombre': this.nombre,
         'terminado': this.terminado,
         'largo': this.largo,
-        'ancho': this.ancho,
+        'alto': this.alto,
         'metros_cuadrados': this.metros_cuadrados,
         'espesor': this.espesor,
         'precio_venta': this.precio_venta,
@@ -2392,7 +2392,7 @@ Vue.use(VueSilentbox); */
         'nombre': this.nombre,
         'terminado': this.terminado,
         'largo': this.largo,
-        'ancho': this.ancho,
+        'alto': this.alto,
         'metros_cuadrados': this.metros_cuadrados,
         'espesor': this.espesor,
         'precio_venta': this.precio_venta,
@@ -2482,7 +2482,7 @@ Vue.use(VueSilentbox); */
       if (!this.sku) this.errorMostrarMsjArticulo.push("El código del material no puede estar vacío.");
       if (!this.terminado) this.errorMostrarMsjArticulo.push("El terminado del artículo no puede estar vacío.");
       if (!this.largo) this.errorMostrarMsjArticulo.push("El largo del artículo no puede estar vacío.");
-      if (!this.ancho) this.errorMostrarMsjArticulo.push("El ancho del artículo no puede estar vacío.");
+      if (!this.alto) this.errorMostrarMsjArticulo.push("El alto del artículo no puede estar vacío.");
       if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
       if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
       if (!this.ubicacion) this.errorMostrarMsjArticulo.push("Seleccione una bodega de descarga");
@@ -2500,7 +2500,7 @@ Vue.use(VueSilentbox); */
       this.nombre = '';
       this.terminado = '';
       this.largo = 0;
-      this.ancho = 0;
+      this.alto = 0;
       this.metros_cuadrados = 0;
       this.espesor = 0;
       this.precio_venta = 0;
@@ -2532,7 +2532,7 @@ Vue.use(VueSilentbox); */
                   this.nombre = '';
                   this.terminado = '';
                   this.largo = 0;
-                  this.ancho = 0;
+                  this.alto = 0;
                   this.metros_cuadrados = 0;
                   this.espesor = 0;
                   this.precio_venta = 0;
@@ -2562,7 +2562,7 @@ Vue.use(VueSilentbox); */
                   this.nombre = data['nombre'];
                   this.terminado = data['terminado'];
                   this.largo = data['largo'];
-                  this.ancho = data['ancho'];
+                  this.alto = data['alto'];
                   this.metros_cuadrados = data['metros_cuadrados'];
                   this.espesor = data['espesor'];
                   this.precio_venta = data['precio_venta'];
@@ -2604,7 +2604,7 @@ Vue.use(VueSilentbox); */
                   this.nombre = data['nombre'];
                   this.terminado = data['terminado'];
                   this.largo = data['largo'];
-                  this.ancho = data['ancho'];
+                  this.alto = data['alto'];
                   this.metros_cuadrados = data['metros_cuadrados'];
                   this.espesor = data['espesor'];
                   this.precio_venta = data['precio_venta'];
@@ -2633,7 +2633,7 @@ Vue.use(VueSilentbox); */
       this.nombre = '';
       this.terminado = '';
       this.largo = 0;
-      this.ancho = 0;
+      this.alto = 0;
       this.metros_cuadrados = 0;
       this.espesor = 0;
       this.ubicacion = '';
@@ -3931,7 +3931,7 @@ __webpack_require__.r(__webpack_exports__);
       nombre_art: '',
       terminado: '',
       largo: 0,
-      ancho: 0,
+      alto: 0,
       metros_cuadrados: 0,
       espesor: 0,
       ubicacion: '',
@@ -4259,7 +4259,7 @@ __webpack_require__.r(__webpack_exports__);
                   this.nombre_art = '';
                   this.terminado = '';
                   this.largo = 0;
-                  this.ancho = 0;
+                  this.alto = 0;
                   this.metros_cuadrados = 0;
                   this.espesor = 0;
                   this.ubicacion = '';
@@ -4289,7 +4289,7 @@ __webpack_require__.r(__webpack_exports__);
       this.nombre_art = '';
       this.terminado = '';
       this.largo = 0;
-      this.ancho = 0;
+      this.alto = 0;
       this.metros_cuadrados = 0;
       this.espesor = 0;
       this.ubicacion = '';
@@ -4337,7 +4337,7 @@ __webpack_require__.r(__webpack_exports__);
       if (!this.sku_r) this.errorMostrarMsjArticulo.push("El sku del artículo no puede estar vacío.");
       if (!this.terminado) this.errorMostrarMsjArticulo.push("El terminado del artículo no puede estar vacío.");
       if (!this.largo) this.errorMostrarMsjArticulo.push("El largo del artículo no puede estar vacío.");
-      if (!this.ancho) this.errorMostrarMsjArticulo.push("El ancho del artículo no puede estar vacío.");
+      if (!this.alto) this.errorMostrarMsjArticulo.push("El alto del artículo no puede estar vacío.");
       if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
       if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
       if (!this.ubicacion) this.errorMostrarMsjArticulo.push("La ubicacion del artículo no puede estar vacío.");
@@ -4359,7 +4359,7 @@ __webpack_require__.r(__webpack_exports__);
         'nombre': this.nombre_art,
         'terminado': this.terminado,
         'largo': this.largo,
-        'ancho': this.ancho,
+        'alto': this.alto,
         'metros_cuadrados': this.metros_cuadrados,
         'espesor': this.espesor,
         'ubicacion': this.ubicacion,
@@ -31006,7 +31006,7 @@ var render = function() {
                       }),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: { textContent: _vm._s(articulo.ancho) }
+                        domProps: { textContent: _vm._s(articulo.alto) }
                       }),
                       _vm._v(" "),
                       _c("td", {
@@ -31470,7 +31470,7 @@ var render = function() {
                           staticClass: "col-md-3 form-control-label",
                           attrs: { for: "text-input" }
                         },
-                        [_vm._v("Ancho")]
+                        [_vm._v("Alto")]
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
@@ -31479,19 +31479,19 @@ var render = function() {
                             {
                               name: "model",
                               rawName: "v-model",
-                              value: _vm.ancho,
-                              expression: "ancho"
+                              value: _vm.alto,
+                              expression: "alto"
                             }
                           ],
                           staticClass: "form-control",
                           attrs: { type: "number", min: "1", placeholder: "" },
-                          domProps: { value: _vm.ancho },
+                          domProps: { value: _vm.alto },
                           on: {
                             input: function($event) {
                               if ($event.target.composing) {
                                 return
                               }
-                              _vm.ancho = $event.target.value
+                              _vm.alto = $event.target.value
                             }
                           }
                         })
@@ -32128,7 +32128,7 @@ var render = function() {
                           _vm._m(7),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.ancho) }
+                            domProps: { textContent: _vm._s(_vm.alto) }
                           })
                         ]),
                         _vm._v(" "),
@@ -32295,7 +32295,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Largo")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Ancho")]),
+        _c("th", [_vm._v("Alto")]),
         _vm._v(" "),
         _c("th", [_vm._v("Metros"), _c("sup", [_vm._v("2")])]),
         _vm._v(" "),
@@ -32356,7 +32356,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", [_c("strong", [_vm._v("ANCHO")])])
+    return _c("td", [_c("strong", [_vm._v("ALTO")])])
   },
   function() {
     var _vm = this
@@ -34973,7 +34973,7 @@ var render = function() {
                             }),
                             _vm._v(" "),
                             _c("td", {
-                              domProps: { textContent: _vm._s(articulo.ancho) }
+                              domProps: { textContent: _vm._s(articulo.alto) }
                             }),
                             _vm._v(" "),
                             _c("td", {
@@ -35379,7 +35379,7 @@ var render = function() {
                           staticClass: "col-md-3 form-control-label",
                           attrs: { for: "text-input" }
                         },
-                        [_vm._v("Ancho")]
+                        [_vm._v("Alto")]
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
@@ -35388,19 +35388,19 @@ var render = function() {
                             {
                               name: "model",
                               rawName: "v-model",
-                              value: _vm.ancho,
-                              expression: "ancho"
+                              value: _vm.alto,
+                              expression: "alto"
                             }
                           ],
                           staticClass: "form-control",
                           attrs: { type: "number", min: "1", placeholder: "" },
-                          domProps: { value: _vm.ancho },
+                          domProps: { value: _vm.alto },
                           on: {
                             input: function($event) {
                               if ($event.target.composing) {
                                 return
                               }
-                              _vm.ancho = $event.target.value
+                              _vm.alto = $event.target.value
                             }
                           }
                         })
@@ -35903,7 +35903,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Largo")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Ancho")]),
+        _c("th", [_vm._v("Alto")]),
         _vm._v(" "),
         _c("th", [_vm._v("Metros"), _c("sup", [_vm._v("2")])]),
         _vm._v(" "),

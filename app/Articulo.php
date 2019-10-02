@@ -8,7 +8,7 @@ class Articulo extends Model
 {
     //
     protected $fillable = [
-        'idcategoria', 'codigo', 'sku','nombre','terminado','largo','ancho','metros_cuadrados','espesor','precio_venta','ubicacion',
+        'idcategoria', 'codigo', 'sku','nombre','terminado','largo','alto','metros_cuadrados','espesor','precio_venta','ubicacion',
         'contenedor','stock','descripcion', 'observacion','origen','fecha_llegada','file','condicion'
     ];
 

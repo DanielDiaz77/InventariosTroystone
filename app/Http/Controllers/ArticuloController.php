@@ -27,7 +27,7 @@ class ArticuloController extends Controller
                 'categorias.nombre as nombre_categoria',
                 'articulos.terminado',
                 'articulos.largo',
-                'articulos.ancho',
+                'articulos.alto',
                 'articulos.metros_cuadrados',
                 'articulos.espesor',
                 'articulos.precio_venta',
@@ -53,7 +53,7 @@ class ArticuloController extends Controller
                 'categorias.nombre as nombre_categoria',
                 'articulos.terminado',
                 'articulos.largo',
-                'articulos.ancho',
+                'articulos.alto',
                 'articulos.metros_cuadrados',
                 'articulos.espesor',
                 'articulos.precio_venta',
@@ -129,7 +129,7 @@ class ArticuloController extends Controller
         $articulo->nombre           =   $request->nombre;
         $articulo->terminado        =   $request->terminado;
         $articulo->largo            =   $request->largo;
-        $articulo->ancho            =   $request->ancho;
+        $articulo->alto            =   $request->alto;
         $articulo->metros_cuadrados =   $request->metros_cuadrados;
         $articulo->espesor          =   $request->espesor;
         $articulo->precio_venta     =   $request->precio_venta;
@@ -178,7 +178,7 @@ class ArticuloController extends Controller
             $articulo->nombre           =   $request->nombre;
             $articulo->terminado        =   $request->terminado;
             $articulo->largo            =   $request->largo;
-            $articulo->ancho            =   $request->ancho;
+            $articulo->alto            =   $request->alto;
             $articulo->metros_cuadrados =   $request->metros_cuadrados;
             $articulo->espesor          =   $request->espesor;
             $articulo->precio_venta     =   $request->precio_venta;
@@ -202,7 +202,7 @@ class ArticuloController extends Controller
             $articulo->nombre           =   $request->nombre;
             $articulo->terminado        =   $request->terminado;
             $articulo->largo            =   $request->largo;
-            $articulo->ancho            =   $request->ancho;
+            $articulo->alto            =   $request->alto;
             $articulo->metros_cuadrados =   $request->metros_cuadrados;
             $articulo->espesor          =   $request->espesor;
             $articulo->precio_venta     =   $request->precio_venta;
@@ -253,7 +253,7 @@ class ArticuloController extends Controller
                 'categorias.nombre as nombre_categoria',
                 'articulos.terminado',
                 'articulos.largo',
-                'articulos.ancho',
+                'articulos.alto',
                 'articulos.metros_cuadrados',
                 'articulos.espesor',
                 'articulos.precio_venta',
@@ -280,7 +280,7 @@ class ArticuloController extends Controller
                 'categorias.nombre as nombre_categoria',
                 'articulos.terminado',
                 'articulos.largo',
-                'articulos.ancho',
+                'articulos.alto',
                 'articulos.metros_cuadrados',
                 'articulos.espesor',
                 'articulos.precio_venta',
