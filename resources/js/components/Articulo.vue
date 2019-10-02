@@ -18,7 +18,7 @@
             <div class="col-md-6">
               <div class="input-group">
                 <select class="form-control col-md-3" v-model="criterio">
-                  <option value="nombre">Nombre</option>
+                  <!-- <option value="nombre">Nombre</option> -->
                   <option value="descripcion">Descripción</option>
                   <option value="sku">Código de material</option>
                   <option value="codigo">No° de placa</option>
@@ -35,7 +35,7 @@
                     <th>Opciones</th>
                     <th>No. Placa</th>
                     <th>Código de Material</th>
-                    <th>Nombre</th>
+                    <!-- <th>Nombre</th> -->
                     <th>Material</th>
                     <th>Descripción</th>
                     <th>Largo</th>
@@ -69,7 +69,7 @@
                     </td>
                     <td v-text="articulo.codigo"></td>
                     <td v-text="articulo.sku"></td>
-                    <td v-text="articulo.nombre"></td>
+                    <!-- <td v-text="articulo.nombre"></td> -->
                     <td v-text="articulo.nombre_categoria"></td>
                     <td v-text="articulo.descripcion"></td>
                     <td v-text="articulo.largo"></td>
@@ -143,12 +143,12 @@
                         <input type="text" v-model="sku" class="form-control" placeholder="Código de material"/>
                     </div>
                 </div>
-                <div class="form-group row">
+                <!-- <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
                     <div class="col-md-9">
                         <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del artículo"/>
                     </div>
-                </div>
+                </div> -->
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Terminado</label>
                     <div class="col-md-9">
@@ -170,7 +170,7 @@
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Metros<sup>2</sup></label>
                     <div class="col-md-9">
-                    <input type="number" min="1" v-model="metros_cuadrados" class="form-control" placeholder=""/>
+                        <input type="number" readonly :value="calcularMts" class="form-control"/>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -269,13 +269,13 @@
       <div class="modal-dialog modal-info modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal + nombre"></h4>
+            <h4 class="modal-title" v-text="tituloModal + sku"></h4>
             <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
           <div class="modal-body">
-              <h1 class="text-center" v-text="nombre"></h1>
+              <h1 class="text-center" v-text="sku"></h1>
                 <lightbox class="m-0" album="" :src="'http://localhost:8000/'+file">
                     <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/'+file">
                 </lightbox>&nbsp;
@@ -380,7 +380,7 @@ export default {
             nombre_categoria : '',
             codigo : '',
             sku : '',
-            nombre: '',
+           /*  nombre: '', */
             terminado : '',
             largo : 0,
             alto : 0,
@@ -412,7 +412,7 @@ export default {
                 'to'           : 0,
             },
             offset : 3,
-            criterio : 'nombre',
+            criterio : 'codigo',
             buscar : '',
             arrayCategoria : [],
 
@@ -448,6 +448,14 @@ export default {
                     from++;
                 }
                 return pagesArray;
+
+            },
+            calcularMts : function(){
+                let me=this;
+                let resultado = 0;
+                resultado = resultado + (me.alto * me.largo);
+                me.metros_cuadrados = resultado;
+                return resultado;
 
             },
             imagen(){
@@ -511,7 +519,7 @@ export default {
                     'idcategoria': this.idcategoria,
                     'codigo': this.codigo,
                     'sku' : this.sku,
-                    'nombre': this.nombre,
+                    /* 'nombre': this.nombre, */
                     'terminado' : this.terminado,
                     'largo' : this.largo,
                     'alto' : this.alto,
@@ -529,7 +537,7 @@ export default {
                 }).then(function (response) {
                     /* console.log(response.data); */
                     me.cerrarModal();
-                    me.listarArticulo(1,'','nombre');
+                    me.listarArticulo(1,'','sku');
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -543,7 +551,7 @@ export default {
                 'idcategoria': this.idcategoria,
                 'codigo': this.codigo,
                 'sku' : this.sku,
-                'nombre': this.nombre,
+                /* 'nombre': this.nombre, */
                 'terminado' : this.terminado,
                 'largo' : this.largo,
                 'alto' : this.alto,
@@ -562,7 +570,7 @@ export default {
             })
             .then(function(response) {
                 me.cerrarModal();
-                me.listarArticulo(1,'','nombre');
+                me.listarArticulo(1,'','sku');
             })
             .catch(function(error) {
                 console.log(error);
@@ -591,7 +599,7 @@ export default {
                     axios.put('/articulo/desactivar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarArticulo(1,'','nombre');
+                        me.listarArticulo(1,'','sku');
                         swalWithBootstrapButtons.fire(
                             "Desactivado!",
                             "La categoría ha sido desactivada con éxito.",
@@ -627,7 +635,7 @@ export default {
                     axios.put('/articulo/activar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarArticulo(1,'','nombre');
+                        me.listarArticulo(1,'','sku');
                         swalWithBootstrapButtons.fire(
                             "Activado!",
                             "Artículo activado con éxito.",
@@ -645,7 +653,7 @@ export default {
             this.errorMostrarMsjArticulo = [];
 
             if (this.idcategoria==0) this.errorMostrarMsjArticulo.push("Selecciona una categoría.");
-            if (!this.nombre) this.errorMostrarMsjArticulo.push("El nombre del artículo no puede estar vacío.");
+            /* if (!this.nombre) this.errorMostrarMsjArticulo.push("El nombre del artículo no puede estar vacío."); */
             if (!this.sku) this.errorMostrarMsjArticulo.push("El código del material no puede estar vacío.");
             if (!this.terminado) this.errorMostrarMsjArticulo.push("El terminado del artículo no puede estar vacío.");
             if (!this.largo) this.errorMostrarMsjArticulo.push("El largo del artículo no puede estar vacío.");
@@ -653,8 +661,9 @@ export default {
             if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
             if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
             if (!this.ubicacion) this.errorMostrarMsjArticulo.push("Seleccione una bodega de descarga");
+            if (!this.contenedor) this.errorMostrarMsjArticulo.push("Ingrese el contenedor de origen de la placa");
             if (!this.stock) this.errorMostrarMsjArticulo.push("El stock del artículo debe ser un número y no puede estar vacío.");
-            if (!this.origen) this.errorMostrarMsjArticulo.push("El origen del artículo no puede estar vacío.");
+            if (!this.origen) this.errorMostrarMsjArticulo.push("El origen  del artículo no puede estar vacío.");
 
             if (this.errorMostrarMsjArticulo.length) this.errorArticulo = 1;
 
@@ -666,7 +675,7 @@ export default {
             this.idcategoria = 0;
             this.codigo = '';
             this.sku = '';
-            this.nombre = '';
+            /* this.nombre = ''; */
             this.terminado = '';
             this.largo = 0;
             this.alto = 0;
@@ -695,7 +704,7 @@ export default {
                             this.idcategoria = 0;
                             this.codigo = '';
                             this.sku = '';
-                            this.nombre = '';
+                            /* this.nombre = ''; */
                             this.terminado = '';
                             this.largo = 0;
                             this.alto = 0;
@@ -723,7 +732,7 @@ export default {
                             this.idcategoria = data['idcategoria'];
                             this.codigo = data['codigo'];
                             this.sku = data['sku'];
-                            this.nombre = data['nombre'];
+                            /* this.nombre = data['nombre']; */
                             this.terminado = data['terminado'];
                             this.largo = data['largo'];
                             this.alto = data['alto'];
@@ -758,7 +767,7 @@ export default {
                             this.idcategoria = data['idcategoria'];
                             this.codigo = data['codigo'];
                             this.sku = data['sku'];
-                            this.nombre = data['nombre'];
+                            /* this.nombre = data['nombre']; */
                             this.terminado = data['terminado'];
                             this.largo = data['largo'];
                             this.alto = data['alto'];
@@ -786,7 +795,7 @@ export default {
             this.idcategoria = 0;
             this.codigo = '';
             this.sku = '';
-            this.nombre = '';
+            /* this.nombre = ''; */
             this.terminado = '';
             this.largo = 0;
             this.alto = 0;

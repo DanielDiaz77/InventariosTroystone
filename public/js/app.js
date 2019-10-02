@@ -2223,7 +2223,8 @@ Vue.use(VueSilentbox); */
       nombre_categoria: '',
       codigo: '',
       sku: '',
-      nombre: '',
+
+      /*  nombre: '', */
       terminado: '',
       largo: 0,
       alto: 0,
@@ -2255,7 +2256,7 @@ Vue.use(VueSilentbox); */
         'to': 0
       },
       offset: 3,
-      criterio: 'nombre',
+      criterio: 'codigo',
       buscar: '',
       arrayCategoria: []
     };
@@ -2293,6 +2294,13 @@ Vue.use(VueSilentbox); */
       }
 
       return pagesArray;
+    },
+    calcularMts: function calcularMts() {
+      var me = this;
+      var resultado = 0;
+      resultado = resultado + me.alto * me.largo;
+      me.metros_cuadrados = resultado;
+      return resultado;
     },
     imagen: function imagen() {
       return this.imagenMinatura;
@@ -2356,7 +2364,8 @@ Vue.use(VueSilentbox); */
         'idcategoria': this.idcategoria,
         'codigo': this.codigo,
         'sku': this.sku,
-        'nombre': this.nombre,
+
+        /* 'nombre': this.nombre, */
         'terminado': this.terminado,
         'largo': this.largo,
         'alto': this.alto,
@@ -2374,7 +2383,7 @@ Vue.use(VueSilentbox); */
       }).then(function (response) {
         /* console.log(response.data); */
         me.cerrarModal();
-        me.listarArticulo(1, '', 'nombre');
+        me.listarArticulo(1, '', 'sku');
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2389,7 +2398,8 @@ Vue.use(VueSilentbox); */
         'idcategoria': this.idcategoria,
         'codigo': this.codigo,
         'sku': this.sku,
-        'nombre': this.nombre,
+
+        /* 'nombre': this.nombre, */
         'terminado': this.terminado,
         'largo': this.largo,
         'alto': this.alto,
@@ -2407,7 +2417,7 @@ Vue.use(VueSilentbox); */
         'id': this.articulo_id
       }).then(function (response) {
         me.cerrarModal();
-        me.listarArticulo(1, '', 'nombre');
+        me.listarArticulo(1, '', 'sku');
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2435,7 +2445,7 @@ Vue.use(VueSilentbox); */
           axios.put('/articulo/desactivar', {
             'id': id
           }).then(function (response) {
-            me.listarArticulo(1, '', 'nombre');
+            me.listarArticulo(1, '', 'sku');
             swalWithBootstrapButtons.fire("Desactivado!", "La categoría ha sido desactivada con éxito.", "success");
           })["catch"](function (error) {
             console.log(error);
@@ -2466,7 +2476,7 @@ Vue.use(VueSilentbox); */
           axios.put('/articulo/activar', {
             'id': id
           }).then(function (response) {
-            me.listarArticulo(1, '', 'nombre');
+            me.listarArticulo(1, '', 'sku');
             swalWithBootstrapButtons.fire("Activado!", "Artículo activado con éxito.", "success");
           })["catch"](function (error) {
             console.log(error);
@@ -2478,7 +2488,8 @@ Vue.use(VueSilentbox); */
       this.errorArticulo = 0;
       this.errorMostrarMsjArticulo = [];
       if (this.idcategoria == 0) this.errorMostrarMsjArticulo.push("Selecciona una categoría.");
-      if (!this.nombre) this.errorMostrarMsjArticulo.push("El nombre del artículo no puede estar vacío.");
+      /* if (!this.nombre) this.errorMostrarMsjArticulo.push("El nombre del artículo no puede estar vacío."); */
+
       if (!this.sku) this.errorMostrarMsjArticulo.push("El código del material no puede estar vacío.");
       if (!this.terminado) this.errorMostrarMsjArticulo.push("El terminado del artículo no puede estar vacío.");
       if (!this.largo) this.errorMostrarMsjArticulo.push("El largo del artículo no puede estar vacío.");
@@ -2486,8 +2497,9 @@ Vue.use(VueSilentbox); */
       if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
       if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
       if (!this.ubicacion) this.errorMostrarMsjArticulo.push("Seleccione una bodega de descarga");
+      if (!this.contenedor) this.errorMostrarMsjArticulo.push("Ingrese el contenedor de origen de la placa");
       if (!this.stock) this.errorMostrarMsjArticulo.push("El stock del artículo debe ser un número y no puede estar vacío.");
-      if (!this.origen) this.errorMostrarMsjArticulo.push("El origen del artículo no puede estar vacío.");
+      if (!this.origen) this.errorMostrarMsjArticulo.push("El origen  del artículo no puede estar vacío.");
       if (this.errorMostrarMsjArticulo.length) this.errorArticulo = 1;
       return this.errorArticulo;
     },
@@ -2497,7 +2509,8 @@ Vue.use(VueSilentbox); */
       this.idcategoria = 0;
       this.codigo = '';
       this.sku = '';
-      this.nombre = '';
+      /* this.nombre = ''; */
+
       this.terminado = '';
       this.largo = 0;
       this.alto = 0;
@@ -2529,7 +2542,8 @@ Vue.use(VueSilentbox); */
                   this.idcategoria = 0;
                   this.codigo = '';
                   this.sku = '';
-                  this.nombre = '';
+                  /* this.nombre = ''; */
+
                   this.terminado = '';
                   this.largo = 0;
                   this.alto = 0;
@@ -2559,7 +2573,8 @@ Vue.use(VueSilentbox); */
                   this.idcategoria = data['idcategoria'];
                   this.codigo = data['codigo'];
                   this.sku = data['sku'];
-                  this.nombre = data['nombre'];
+                  /* this.nombre = data['nombre']; */
+
                   this.terminado = data['terminado'];
                   this.largo = data['largo'];
                   this.alto = data['alto'];
@@ -2601,7 +2616,8 @@ Vue.use(VueSilentbox); */
                   this.idcategoria = data['idcategoria'];
                   this.codigo = data['codigo'];
                   this.sku = data['sku'];
-                  this.nombre = data['nombre'];
+                  /* this.nombre = data['nombre']; */
+
                   this.terminado = data['terminado'];
                   this.largo = data['largo'];
                   this.alto = data['alto'];
@@ -2630,7 +2646,8 @@ Vue.use(VueSilentbox); */
       this.idcategoria = 0;
       this.codigo = '';
       this.sku = '';
-      this.nombre = '';
+      /* this.nombre = ''; */
+
       this.terminado = '';
       this.largo = 0;
       this.alto = 0;
@@ -30822,10 +30839,6 @@ var render = function() {
                     }
                   },
                   [
-                    _c("option", { attrs: { value: "nombre" } }, [
-                      _vm._v("Nombre")
-                    ]),
-                    _vm._v(" "),
                     _c("option", { attrs: { value: "descripcion" } }, [
                       _vm._v("Descripción")
                     ]),
@@ -30985,10 +30998,6 @@ var render = function() {
                       _vm._v(" "),
                       _c("td", {
                         domProps: { textContent: _vm._s(articulo.sku) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(articulo.nombre) }
                       }),
                       _vm._v(" "),
                       _c("td", {
@@ -31362,44 +31371,6 @@ var render = function() {
                           staticClass: "col-md-3 form-control-label",
                           attrs: { for: "text-input" }
                         },
-                        [_vm._v("Nombre")]
-                      ),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-md-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.nombre,
-                              expression: "nombre"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "text",
-                            placeholder: "Nombre del artículo"
-                          },
-                          domProps: { value: _vm.nombre },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.nombre = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-md-3 form-control-label",
-                          attrs: { for: "text-input" }
-                        },
                         [_vm._v("Terminado")]
                       ),
                       _vm._v(" "),
@@ -31503,25 +31474,9 @@ var render = function() {
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
                         _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.metros_cuadrados,
-                              expression: "metros_cuadrados"
-                            }
-                          ],
                           staticClass: "form-control",
-                          attrs: { type: "number", min: "1", placeholder: "" },
-                          domProps: { value: _vm.metros_cuadrados },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.metros_cuadrados = $event.target.value
-                            }
-                          }
+                          attrs: { type: "number", readonly: "" },
+                          domProps: { value: _vm.calcularMts }
                         })
                       ])
                     ]),
@@ -32036,9 +31991,7 @@ var render = function() {
               _c("div", { staticClass: "modal-header" }, [
                 _c("h4", {
                   staticClass: "modal-title",
-                  domProps: {
-                    textContent: _vm._s(_vm.tituloModal + _vm.nombre)
-                  }
+                  domProps: { textContent: _vm._s(_vm.tituloModal + _vm.sku) }
                 }),
                 _vm._v(" "),
                 _c(
@@ -32066,7 +32019,7 @@ var render = function() {
                 [
                   _c("h1", {
                     staticClass: "text-center",
-                    domProps: { textContent: _vm._s(_vm.nombre) }
+                    domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
                   _c(
@@ -32286,8 +32239,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("No. Placa")]),
         _vm._v(" "),
         _c("th", [_vm._v("Código de Material")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Nombre")]),
         _vm._v(" "),
         _c("th", [_vm._v("Material")]),
         _vm._v(" "),
