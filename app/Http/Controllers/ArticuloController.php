@@ -30,7 +30,9 @@ class ArticuloController extends Controller
                 'articulos.ancho',
                 'articulos.metros_cuadrados',
                 'articulos.espesor',
+                'articulos.precio_venta',
                 'articulos.ubicacion',
+                'articulos.contenedor',
                 'articulos.stock',
                 'articulos.descripcion',
                 'articulos.observacion',
@@ -54,7 +56,9 @@ class ArticuloController extends Controller
                 'articulos.ancho',
                 'articulos.metros_cuadrados',
                 'articulos.espesor',
+                'articulos.precio_venta',
                 'articulos.ubicacion',
+                'articulos.contenedor',
                 'articulos.stock',
                 'articulos.descripcion',
                 'articulos.observacion',
@@ -128,7 +132,9 @@ class ArticuloController extends Controller
         $articulo->ancho            =   $request->ancho;
         $articulo->metros_cuadrados =   $request->metros_cuadrados;
         $articulo->espesor          =   $request->espesor;
+        $articulo->precio_venta     =   $request->precio_venta;
         $articulo->ubicacion        =   $request->ubicacion;
+        $articulo->contenedor       =   $request->contenedor;
         $articulo->stock            =   $request->stock;
         $articulo->descripcion      =   $request->descripcion;
         $articulo->observacion      =   $request->observacion;
@@ -175,7 +181,9 @@ class ArticuloController extends Controller
             $articulo->ancho            =   $request->ancho;
             $articulo->metros_cuadrados =   $request->metros_cuadrados;
             $articulo->espesor          =   $request->espesor;
+            $articulo->precio_venta     =   $request->precio_venta;
             $articulo->ubicacion        =   $request->ubicacion;
+            $articulo->contenedor       =   $request->contenedor;
             $articulo->stock            =   $request->stock;
             $articulo->descripcion      =   $request->descripcion;
             $articulo->observacion      =   $request->observacion;
@@ -197,7 +205,9 @@ class ArticuloController extends Controller
             $articulo->ancho            =   $request->ancho;
             $articulo->metros_cuadrados =   $request->metros_cuadrados;
             $articulo->espesor          =   $request->espesor;
+            $articulo->precio_venta     =   $request->precio_venta;
             $articulo->ubicacion        =   $request->ubicacion;
+            $articulo->contenedor       =   $request->contenedor;
             $articulo->stock            =   $request->stock;
             $articulo->descripcion      =   $request->descripcion;
             $articulo->observacion      =   $request->observacion;
@@ -246,7 +256,9 @@ class ArticuloController extends Controller
                 'articulos.ancho',
                 'articulos.metros_cuadrados',
                 'articulos.espesor',
+                'articulos.precio_venta',
                 'articulos.ubicacion',
+                'articulos.contenedor',
                 'articulos.stock',
                 'articulos.descripcion',
                 'articulos.observacion',
@@ -271,7 +283,9 @@ class ArticuloController extends Controller
                 'articulos.ancho',
                 'articulos.metros_cuadrados',
                 'articulos.espesor',
+                'articulos.precio_venta',
                 'articulos.ubicacion',
+                'articulos.contenedor',
                 'articulos.stock',
                 'articulos.descripcion',
                 'articulos.observacion',

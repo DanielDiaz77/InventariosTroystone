@@ -2175,6 +2175,40 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_1___default.a);
@@ -2195,11 +2229,13 @@ Vue.use(VueSilentbox); */
       ancho: 0,
       metros_cuadrados: 0,
       espesor: 0,
+      precio_venta: 0,
       ubicacion: '',
       stock: 0,
       descripcion: '',
       observacion: '',
       origen: '',
+      contenedor: '',
       fecha_llegada: '',
       file: '',
       imagenMinatura: '',
@@ -2326,11 +2362,13 @@ Vue.use(VueSilentbox); */
         'ancho': this.ancho,
         'metros_cuadrados': this.metros_cuadrados,
         'espesor': this.espesor,
+        'precio_venta': this.precio_venta,
         'ubicacion': this.ubicacion,
         'stock': this.stock,
         'descripcion': this.descripcion,
         'observacion': this.observacion,
         'origen': this.origen,
+        'contenedor': this.contenedor,
         'fecha_llegada': this.fecha_llegada,
         'file': this.file
       }).then(function (response) {
@@ -2357,11 +2395,13 @@ Vue.use(VueSilentbox); */
         'ancho': this.ancho,
         'metros_cuadrados': this.metros_cuadrados,
         'espesor': this.espesor,
+        'precio_venta': this.precio_venta,
         'ubicacion': this.ubicacion,
         'stock': this.stock,
         'descripcion': this.descripcion,
         'observacion': this.observacion,
         'origen': this.origen,
+        'contenedor': this.contenedor,
         'fecha_llegada': this.fecha_llegada,
         'file': this.file,
         'id': this.articulo_id
@@ -2439,13 +2479,13 @@ Vue.use(VueSilentbox); */
       this.errorMostrarMsjArticulo = [];
       if (this.idcategoria == 0) this.errorMostrarMsjArticulo.push("Selecciona una categoría.");
       if (!this.nombre) this.errorMostrarMsjArticulo.push("El nombre del artículo no puede estar vacío.");
-      if (!this.sku) this.errorMostrarMsjArticulo.push("El sku del artículo no puede estar vacío.");
+      if (!this.sku) this.errorMostrarMsjArticulo.push("El código del material no puede estar vacío.");
       if (!this.terminado) this.errorMostrarMsjArticulo.push("El terminado del artículo no puede estar vacío.");
       if (!this.largo) this.errorMostrarMsjArticulo.push("El largo del artículo no puede estar vacío.");
       if (!this.ancho) this.errorMostrarMsjArticulo.push("El ancho del artículo no puede estar vacío.");
       if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
       if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
-      if (!this.ubicacion) this.errorMostrarMsjArticulo.push("La ubicacion del artículo no puede estar vacío.");
+      if (!this.ubicacion) this.errorMostrarMsjArticulo.push("Seleccione una bodega de descarga");
       if (!this.stock) this.errorMostrarMsjArticulo.push("El stock del artículo debe ser un número y no puede estar vacío.");
       if (!this.origen) this.errorMostrarMsjArticulo.push("El origen del artículo no puede estar vacío.");
       if (this.errorMostrarMsjArticulo.length) this.errorArticulo = 1;
@@ -2463,11 +2503,13 @@ Vue.use(VueSilentbox); */
       this.ancho = 0;
       this.metros_cuadrados = 0;
       this.espesor = 0;
+      this.precio_venta = 0;
       this.ubicacion = '';
       this.stock = 0;
       this.descripcion = '';
       this.observacion = '';
       this.origen = '';
+      this.contenedor = '';
       this.fecha_llegada = '';
       this.file = '';
       this.errorArticulo = 0;
@@ -2493,11 +2535,13 @@ Vue.use(VueSilentbox); */
                   this.ancho = 0;
                   this.metros_cuadrados = 0;
                   this.espesor = 0;
+                  this.precio_venta = 0;
                   this.ubicacion = '';
                   this.stock = 0;
                   this.descripcion = '';
                   this.observacion = '';
                   this.origen = '';
+                  this.contenedor = '';
                   this.fecha_llegada = '';
                   this.file = '';
                   this.tipoAccion = 1;
@@ -2521,11 +2565,13 @@ Vue.use(VueSilentbox); */
                   this.ancho = data['ancho'];
                   this.metros_cuadrados = data['metros_cuadrados'];
                   this.espesor = data['espesor'];
+                  this.precio_venta = data['precio_venta'];
                   this.ubicacion = data['ubicacion'];
                   this.stock = data['stock'];
                   this.descripcion = data['descripcion'];
                   this.observacion = data['observacion'];
                   this.origen = data['origen'];
+                  this.contenedor = data['contenedor'];
                   this.fecha_llegada = data['fecha_llegada'];
                   this.imagenMinatura = data['file'];
                   break;
@@ -2561,11 +2607,13 @@ Vue.use(VueSilentbox); */
                   this.ancho = data['ancho'];
                   this.metros_cuadrados = data['metros_cuadrados'];
                   this.espesor = data['espesor'];
+                  this.precio_venta = data['precio_venta'];
                   this.ubicacion = data['ubicacion'];
                   this.stock = data['stock'];
                   this.descripcion = data['descripcion'];
                   this.observacion = data['observacion'];
                   this.origen = data['origen'];
+                  this.contenedor = data['contenedor'];
                   this.fecha_llegada = data['fecha_llegada'];
                   this.file = data['file'];
                   break;
@@ -30780,6 +30828,14 @@ var render = function() {
                     _vm._v(" "),
                     _c("option", { attrs: { value: "descripcion" } }, [
                       _vm._v("Descripción")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "sku" } }, [
+                      _vm._v("Código de material")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "codigo" } }, [
+                      _vm._v("No° de placa")
                     ])
                   ]
                 ),
@@ -30924,6 +30980,10 @@ var render = function() {
                       ),
                       _vm._v(" "),
                       _c("td", {
+                        domProps: { textContent: _vm._s(articulo.codigo) }
+                      }),
+                      _vm._v(" "),
+                      _c("td", {
                         domProps: { textContent: _vm._s(articulo.sku) }
                       }),
                       _vm._v(" "),
@@ -30953,6 +31013,10 @@ var render = function() {
                         domProps: {
                           textContent: _vm._s(articulo.metros_cuadrados)
                         }
+                      }),
+                      _vm._v(" "),
+                      _c("td", {
+                        domProps: { textContent: _vm._s(articulo.precio_venta) }
                       }),
                       _vm._v(" "),
                       _c("td", {
@@ -31260,7 +31324,7 @@ var render = function() {
                           staticClass: "col-md-3 form-control-label",
                           attrs: { for: "text-input" }
                         },
-                        [_vm._v("SKU")]
+                        [_vm._v("Código de material")]
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
@@ -31274,7 +31338,10 @@ var render = function() {
                             }
                           ],
                           staticClass: "form-control",
-                          attrs: { type: "text", placeholder: "SKU" },
+                          attrs: {
+                            type: "text",
+                            placeholder: "Código de material"
+                          },
                           domProps: { value: _vm.sku },
                           on: {
                             input: function($event) {
@@ -31501,7 +31568,7 @@ var render = function() {
                           staticClass: "col-md-3 form-control-label",
                           attrs: { for: "text-input" }
                         },
-                        [_vm._v("Ubicación")]
+                        [_vm._v("Precio")]
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
@@ -31510,22 +31577,102 @@ var render = function() {
                             {
                               name: "model",
                               rawName: "v-model",
-                              value: _vm.ubicacion,
-                              expression: "ubicacion"
+                              value: _vm.precio_venta,
+                              expression: "precio_venta"
                             }
                           ],
                           staticClass: "form-control",
-                          attrs: { type: "text", placeholder: "Ubicación" },
-                          domProps: { value: _vm.ubicacion },
+                          attrs: {
+                            type: "number",
+                            min: "1",
+                            value: "0",
+                            step: "any",
+                            placeholder: ""
+                          },
+                          domProps: { value: _vm.precio_venta },
                           on: {
                             input: function($event) {
                               if ($event.target.composing) {
                                 return
                               }
-                              _vm.ubicacion = $event.target.value
+                              _vm.precio_venta = $event.target.value
                             }
                           }
                         })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-md-3 form-control-label",
+                          attrs: { for: "text-input" }
+                        },
+                        [_vm._v("Bodega de descarga")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-9" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.ubicacion,
+                                expression: "ubicacion"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.ubicacion = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { value: "", disabled: "" } },
+                              [_vm._v("Seleccione una bodega de descarga")]
+                            ),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Del Musico" } }, [
+                              _vm._v("Del Músico")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Del Escultor" } }, [
+                              _vm._v("Escultor")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Del Sastre" } }, [
+                              _vm._v("Sastre")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Mecanicos" } }, [
+                              _vm._v("Mecánicos")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Tractorista" } }, [
+                              _vm._v("Tractorista")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "San Luis" } }, [
+                              _vm._v("San Luis")
+                            ])
+                          ]
+                        )
                       ])
                     ]),
                     _vm._v(" "),
@@ -31669,6 +31816,41 @@ var render = function() {
                                 return
                               }
                               _vm.origen = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-md-3 form-control-label",
+                          attrs: { for: "text-input" }
+                        },
+                        [_vm._v("Contenedor")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-9" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.contenedor,
+                              expression: "contenedor"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "text", placeholder: "Contenedor" },
+                          domProps: { value: _vm.contenedor },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.contenedor = $event.target.value
                             }
                           }
                         })
@@ -31972,7 +32154,7 @@ var render = function() {
                           _vm._m(10),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.ubicacion) }
+                            domProps: { textContent: _vm._s(_vm.precio_venta) }
                           })
                         ]),
                         _vm._v(" "),
@@ -31980,7 +32162,7 @@ var render = function() {
                           _vm._m(11),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.stock) }
+                            domProps: { textContent: _vm._s(_vm.ubicacion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -31988,7 +32170,7 @@ var render = function() {
                           _vm._m(12),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.descripcion) }
+                            domProps: { textContent: _vm._s(_vm.stock) }
                           })
                         ]),
                         _vm._v(" "),
@@ -31996,7 +32178,7 @@ var render = function() {
                           _vm._m(13),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.observacion) }
+                            domProps: { textContent: _vm._s(_vm.descripcion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -32004,12 +32186,28 @@ var render = function() {
                           _vm._m(14),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.origen) }
+                            domProps: { textContent: _vm._s(_vm.observacion) }
                           })
                         ]),
                         _vm._v(" "),
                         _c("tr", [
                           _vm._m(15),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.contenedor) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(16),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.espesor) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(17),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.fecha_llegada) }
@@ -32085,7 +32283,9 @@ var staticRenderFns = [
       _c("tr", { staticClass: "text-center" }, [
         _c("th", [_vm._v("Opciones")]),
         _vm._v(" "),
-        _c("th", [_vm._v("SKU")]),
+        _c("th", [_vm._v("No. Placa")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Código de Material")]),
         _vm._v(" "),
         _c("th", [_vm._v("Nombre")]),
         _vm._v(" "),
@@ -32099,9 +32299,11 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Metros"), _c("sup", [_vm._v("2")])]),
         _vm._v(" "),
+        _c("th", [_vm._v("Precio")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Stock")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Ubicacion")]),
+        _c("th", [_vm._v("Bodega de descarga")]),
         _vm._v(" "),
         _c("th", [_vm._v("Estado")])
       ])
@@ -32136,7 +32338,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", [_c("strong", [_vm._v("SKU")])])
+    return _c("td", [_c("strong", [_vm._v("CODIGO DE MATERIAL")])])
   },
   function() {
     var _vm = this
@@ -32174,7 +32376,13 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", [_c("strong", [_vm._v("UBICACION")])])
+    return _c("td", [_c("strong", [_vm._v("PRECIO")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", [_c("strong", [_vm._v("BODEGA DE DESCARGA")])])
   },
   function() {
     var _vm = this
@@ -32198,7 +32406,13 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", [_c("strong", [_vm._v("ORIGEN")])])
+    return _c("td", [_c("strong", [_vm._v("CONTENEDOR")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", [_c("strong", [_vm._v("ESPESOR")])])
   },
   function() {
     var _vm = this
