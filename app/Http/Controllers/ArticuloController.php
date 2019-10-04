@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Articulo;
+use Illuminate\Support\Facades\DB;
 
 class ArticuloController extends Controller
 {
@@ -143,6 +144,66 @@ class ArticuloController extends Controller
         $articulo->file             =   $fileName;
         $articulo->condicion        =   '1';
         $articulo->save();
+    }
+
+    public function storeDetalle(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        try{
+            DB::beginTransaction();
+
+            $detalles = $request->data; //Array detalles
+
+            //Recorrido de todos los elementos
+            foreach($detalles as $ep=>$art){
+
+                $exploded = explode(',', $art['imagen']);
+
+                $decoded = base64_decode($exploded[1]);
+
+                if(str_contains($exploded[0],'jpeg'))
+                    $extension = 'jpg';
+                else
+                    $extension = 'png';
+
+                $fileName = str_random().'.'.$extension;
+
+                $path = public_path().'/'.$fileName;
+
+                file_put_contents($path,$decoded);
+
+                $articulo = new Articulo();
+                $articulo->idcategoria      =   $art['idcategoria'];
+                $articulo->codigo           =   $art['codigo'];
+                $articulo->sku              =   $art['sku'];
+                $articulo->terminado        =   $art['terminado'];
+                $articulo->largo            =   $art['largo'];
+                $articulo->alto             =   $art['alto'];
+                $articulo->metros_cuadrados =   $art['metros_cuadrados'];
+                $articulo->espesor          =   $art['espesor'];
+                $articulo->precio_venta     =   $art['precio_venta'];
+                $articulo->ubicacion        =   $art['ubicacion'];
+                $articulo->contenedor       =   $art['contenedor'];
+                $articulo->stock            =   $art['stock'];
+                $articulo->descripcion      =   $art['descripcion'];
+                $articulo->observacion      =   $art['observacion'];
+                $articulo->origen           =   $art['origen'];
+                $articulo->fecha_llegada    =   $art['fecha_llegada'];
+                $articulo->file             =   $fileName;
+                $articulo->condicion        =   '1';
+
+                $articulo->save();
+
+            }
+
+            DB::commit();
+
+        }catch(Exception $e){
+
+            DB::rollBack();
+
+        }
     }
 
     public function update(Request $request){

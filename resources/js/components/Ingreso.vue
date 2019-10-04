@@ -47,14 +47,14 @@
                         <tbody>
                             <tr v-for="ingreso in arrayIngreso" :key="ingreso.id">
                                 <td>
-                                        <button type="button" class="btn btn-success btn-sm">
-                                            <i class="icon-eye"></i>
-                                        </button>&nbsp;
-                                        <template v-if="ingreso.estado=='Registrado'">
-                                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarIngreso(ingreso.id)">
-                                                <i class="icon-trash"></i>
-                                            </button>
-                                        </template>
+                                    <button type="button" class="btn btn-success btn-sm">
+                                        <i class="icon-eye"></i>
+                                    </button>&nbsp;
+                                    <template v-if="ingreso.estado=='Registrado'">
+                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarIngreso(ingreso.id)">
+                                            <i class="icon-trash"></i>
+                                        </button>
+                                    </template>
                                 </td>
                                 <td v-text="ingreso.usuario"></td>
                                 <td v-text="ingreso.nombre"></td>
@@ -124,9 +124,16 @@
                             <input type="text" class="form-control" v-model="num_comprobante" placeholder="000xx">
                         </div>
                     </div>
+                    <div class="col-md-12">
+                        <div v-show="errorIngreso" class="form-group row div-error">
+                            <div class="text-center text-error">
+                                <div v-for="error in errorMostrarMsjIngreso" :key="error" v-text="error"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group row border">
-                    <div class="col-sm-2">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             <label for="">Consultar Artículos</label>
                             <div class="form-inline">
@@ -319,7 +326,7 @@
                 <div class="form-group row">
                     <div class="col-md-12">
                         <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
-                        <button type="button" class="btn btn-primary" @click="registrarIngreso()">Registrar Compra</button>
+                        <button type="button" class="btn btn-primary" @click="registrarArticulos()">Registrar Compra</button>
                     </div>
                 </div>
             </div>
@@ -879,29 +886,18 @@ export default {
 
             }
         },
-        registrarPersona() {
-            if (this.validarPersona()) {
+        registrarArticulos() {
+            if (this.validarIngreso()) {
                 return;
             }
-
             let me = this;
 
-            axios.post("/user/registrar", {
-                'nombre': this.nombre,
-                'tipo_documento': this.tipo_documento,
-                'num_documento': this.num_documento,
-                'ciudad': this.ciudad,
-                'domicilio': this.domicilio,
-                'telefono': this.telefono,
-                'email': this.email,
-                'rfc': this.rfc,
-                'usuario' : this.usuario,
-                'password' : this.password,
-                'idrol' : this.idrol
+            axios.post("/articulo/registrarDetalle", {
+                'data' : this.arrayDetalle
             })
             .then(function(response) {
-                me.cerrarModal();
-                me.listarPersona(1,'','nombre');
+                me.listarIngreso(1,'','num_comprobante');
+                me.ocultarDetalle();
             })
             .catch(function(error) {
                 console.log(error);
@@ -979,18 +975,19 @@ export default {
                 }
             })
         },
-        validarPersona() {
-            this.errorPersona = 0;
-            this.errorMostrarMsjPersona = [];
+        validarIngreso() {
+            this.errorIngreso = 0;
+            this.errorMostrarMsjIngreso = [];
 
-            if (!this.nombre) this.errorMostrarMsjPersona.push("El nombre de la persona no puede estar vacío.");
-            if (!this.usuario) this.errorMostrarMsjPersona.push("El nombre de usuario no puede estar vacío.");
-            if (!this.password) this.errorMostrarMsjPersona.push("La contraseña del usuario no puede estar vacía.");
-            if (this.idrol == 0 ) this.errorMostrarMsjPersona.push("Debe seleccionar un rol de usuario");
+            /* if (this.idproveedor==0) this.errorMostrarMsjIngreso.push("Seleccione un proveedor");
+            if (this.tipo_comprobante==0) this.errorMostrarMsjIngreso.push("Seleccione un comprobante.");
+            if (!this.num_comprobante) this.errorMostrarMsjIngreso.push("Ingrese el numero de comprobante");
+            if (!this.impuesto) this.errorMostrarMsjIngreso.push("Ingrese el impuesto de la compra"); */
+            if (this.arrayDetalle.length<=0) this.errorMostrarMsjIngreso.push("Introdusca articulos para registrar");
 
-            if (this.errorMostrarMsjPersona.length) this.errorPersona = 1;
+            if (this.errorMostrarMsjIngreso.length) this.errorIngreso = 1;
 
-            return this.errorPersona;
+            return this.errorIngreso;
         },
         mostrarDetalle(){
             this.listado = 0;
@@ -1037,6 +1034,7 @@ export default {
             this.fecha_llegada = '';
             this.ubicacion = '';
             this.arrayDetalle = [];
+            this.errorMostrarMsjIngreso = [];
         },
         cerrarModal() {
             this.modal = 0;

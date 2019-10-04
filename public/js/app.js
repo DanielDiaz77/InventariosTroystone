@@ -4032,6 +4032,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -4337,27 +4344,17 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         me.modal2 = 0;
       }
     },
-    registrarPersona: function registrarPersona() {
-      if (this.validarPersona()) {
+    registrarArticulos: function registrarArticulos() {
+      if (this.validarIngreso()) {
         return;
       }
 
       var me = this;
-      axios.post("/user/registrar", {
-        'nombre': this.nombre,
-        'tipo_documento': this.tipo_documento,
-        'num_documento': this.num_documento,
-        'ciudad': this.ciudad,
-        'domicilio': this.domicilio,
-        'telefono': this.telefono,
-        'email': this.email,
-        'rfc': this.rfc,
-        'usuario': this.usuario,
-        'password': this.password,
-        'idrol': this.idrol
+      axios.post("/articulo/registrarDetalle", {
+        'data': this.arrayDetalle
       }).then(function (response) {
-        me.cerrarModal();
-        me.listarPersona(1, '', 'nombre');
+        me.listarIngreso(1, '', 'num_comprobante');
+        me.ocultarDetalle();
       })["catch"](function (error) {
         console.log(error);
       });
@@ -4424,15 +4421,17 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         } else if (result.dismiss === swal.DismissReason.cancel) {}
       });
     },
-    validarPersona: function validarPersona() {
-      this.errorPersona = 0;
-      this.errorMostrarMsjPersona = [];
-      if (!this.nombre) this.errorMostrarMsjPersona.push("El nombre de la persona no puede estar vacío.");
-      if (!this.usuario) this.errorMostrarMsjPersona.push("El nombre de usuario no puede estar vacío.");
-      if (!this.password) this.errorMostrarMsjPersona.push("La contraseña del usuario no puede estar vacía.");
-      if (this.idrol == 0) this.errorMostrarMsjPersona.push("Debe seleccionar un rol de usuario");
-      if (this.errorMostrarMsjPersona.length) this.errorPersona = 1;
-      return this.errorPersona;
+    validarIngreso: function validarIngreso() {
+      this.errorIngreso = 0;
+      this.errorMostrarMsjIngreso = [];
+      /* if (this.idproveedor==0) this.errorMostrarMsjIngreso.push("Seleccione un proveedor");
+      if (this.tipo_comprobante==0) this.errorMostrarMsjIngreso.push("Seleccione un comprobante.");
+      if (!this.num_comprobante) this.errorMostrarMsjIngreso.push("Ingrese el numero de comprobante");
+      if (!this.impuesto) this.errorMostrarMsjIngreso.push("Ingrese el impuesto de la compra"); */
+
+      if (this.arrayDetalle.length <= 0) this.errorMostrarMsjIngreso.push("Introdusca articulos para registrar");
+      if (this.errorMostrarMsjIngreso.length) this.errorIngreso = 1;
+      return this.errorIngreso;
     },
     mostrarDetalle: function mostrarDetalle() {
       this.listado = 0;
@@ -4478,6 +4477,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.fecha_llegada = '';
       this.ubicacion = '';
       this.arrayDetalle = [];
+      this.errorMostrarMsjIngreso = [];
     },
     cerrarModal: function cerrarModal() {
       this.modal = 0;
@@ -34160,7 +34160,7 @@ var render = function() {
                                 [
                                   _vm._m(2, true),
                                   _vm._v(
-                                    " \n                                      "
+                                    " \n                                  "
                                   ),
                                   ingreso.estado == "Registrado"
                                     ? [
@@ -34464,11 +34464,41 @@ var render = function() {
                           }
                         })
                       ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-12" }, [
+                      _c(
+                        "div",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.errorIngreso,
+                              expression: "errorIngreso"
+                            }
+                          ],
+                          staticClass: "form-group row div-error"
+                        },
+                        [
+                          _c(
+                            "div",
+                            { staticClass: "text-center text-error" },
+                            _vm._l(_vm.errorMostrarMsjIngreso, function(error) {
+                              return _c("div", {
+                                key: error,
+                                domProps: { textContent: _vm._s(error) }
+                              })
+                            }),
+                            0
+                          )
+                        ]
+                      )
                     ])
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group row border" }, [
-                    _c("div", { staticClass: "col-sm-2" }, [
+                    _c("div", { staticClass: "col-sm-4" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", { attrs: { for: "" } }, [
                           _vm._v("Consultar Artículos")
@@ -35492,7 +35522,7 @@ var render = function() {
                           attrs: { type: "button" },
                           on: {
                             click: function($event) {
-                              return _vm.registrarIngreso()
+                              return _vm.registrarArticulos()
                             }
                           }
                         },
