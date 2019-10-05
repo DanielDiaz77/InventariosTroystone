@@ -100,12 +100,11 @@ class IngresoController extends Controller
         }
     }
 
-    public function desactivar(Request $request){
-
-        if(!$request->ajax()) return redirect('/');
-        $ingreso = Ingresos::findOrFail($request->id);
-        $ingreso->estado = 'Cancelado';
+    public function desactivar(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+        $ingreso = Ingreso::findOrFail($request->id);
+        $ingreso->estado = 'Anulado';
         $ingreso->save();
-
     }
 }

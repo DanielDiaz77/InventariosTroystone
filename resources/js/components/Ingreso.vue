@@ -39,8 +39,8 @@
                                 <th>Tipo Comprobante</th>
                                 <th>No° Comprobante</th>
                                 <th>Fecha Hora</th>
-                                <th>Total</th>
-                                <th>Impuesto</th>
+                                <!-- <th>Total</th> -->
+                                <!-- <th>Impuesto</th> -->
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -61,8 +61,8 @@
                                 <td v-text="ingreso.tipo_comprobante"></td>
                                 <td v-text="ingreso.num_comprobante"></td>
                                 <td v-text="ingreso.fecha_hora"></td>
-                                <td v-text="ingreso.total"></td>
-                                <td v-text="ingreso.impuesto"></td>
+                                <!-- <td v-text="ingreso.total"></td>
+                                <td v-text="ingreso.impuesto"></td> -->
                                 <td v-text="ingreso.estado "></td>
                             </tr>
                         </tbody>
@@ -89,7 +89,7 @@
         <template v-else>
             <div class="card-body">
                 <div class="form-group row border">
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="">Proveedor (*)</label>
                                 <v-select
@@ -103,10 +103,10 @@
                                 </v-select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <!-- <div class="col-md-3">
                         <label for="">Impuesto (*)</label>
                         <input type="text" class="form-control" v-model="impuesto">
-                    </div>
+                    </div> -->
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="">Tipo Comprobante (*) </label>
@@ -893,7 +893,7 @@ export default {
                 console.log(error);
             });
         },
-        desactivarUsuario(id) {
+        desactivarIngreso(id) {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                 confirmButton: "btn btn-success",
@@ -903,7 +903,7 @@ export default {
             });
 
             swalWithBootstrapButtons.fire({
-                title: "¿Esta seguro de desactivar este usuarío?",
+                title: "¿Esta seguro de anular este ingreso?",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Aceptar!",
@@ -913,52 +913,16 @@ export default {
             .then(result => {
                 if (result.value) {
                     let me = this;
-                    axios.put('/user/desactivar', {
-                        'id' : id
-                    }).then(function(response) {
-                        me.listarPersona(1,'','nombre');
-                        swalWithBootstrapButtons.fire(
-                            "Desactivado!",
-                            "El usuarío ha sido desactivado con éxito.",
-                            "success"
+                    axios.put('/ingreso/desactivar',{
+                        'id': id
+                    }).then(function (response) {
+                        me.listarIngreso(1,'','num_comprobante');
+                        swal(
+                        'Anulado!',
+                        'El ingreso ha sido anulado con éxito.',
+                        'success'
                         )
-                    }).catch(function(error) {
-                        console.log(error);
-                    });
-                }else if (result.dismiss === swal.DismissReason.cancel){
-                }
-            })
-        },
-        activarUsuario(id) {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-
-            swalWithBootstrapButtons.fire({
-                title: "¿Esta seguro de activar este usuarío?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Aceptar!",
-                cancelButtonText: "Cancelar!",
-                reverseButtons: true
-            })
-            .then(result => {
-                if (result.value) {
-                    let me = this;
-                    axios.put('/user/activar', {
-                        'id' : id
-                    }).then(function(response) {
-                        me.listarPersona(1,'','nombre');
-                        swalWithBootstrapButtons.fire(
-                            "Activado!",
-                            "El usuarío ha sido activado con éxito.",
-                            "success"
-                        )
-                    }).catch(function(error) {
+                    }).catch(function (error) {
                         console.log(error);
                     });
                 }else if (result.dismiss === swal.DismissReason.cancel){
@@ -1000,7 +964,8 @@ export default {
             this.fecha_llegada = '';
             this.ubicacion = '';
             this.arrayDetalle = [];
-
+            this.idproveedor = 0;
+            this.num_comprobante = 0;
             this.selectCategoria();
         },
         ocultarDetalle(){
@@ -1025,6 +990,8 @@ export default {
             this.ubicacion = '';
             this.arrayDetalle = [];
             this.errorMostrarMsjIngreso = [];
+            this.idproveedor = 0;
+            this.num_comprobante = 0;
         },
         cerrarModal() {
             this.modal = 0;

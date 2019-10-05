@@ -4349,7 +4349,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         console.log(error);
       });
     },
-    desactivarUsuario: function desactivarUsuario(id) {
+    desactivarIngreso: function desactivarIngreso(id) {
       var _this = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
@@ -4360,7 +4360,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         buttonsStyling: false
       });
       swalWithBootstrapButtons.fire({
-        title: "¿Esta seguro de desactivar este usuarío?",
+        title: "¿Esta seguro de anular este ingreso?",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "Aceptar!",
@@ -4369,42 +4369,11 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       }).then(function (result) {
         if (result.value) {
           var me = _this;
-          axios.put('/user/desactivar', {
+          axios.put('/ingreso/desactivar', {
             'id': id
           }).then(function (response) {
-            me.listarPersona(1, '', 'nombre');
-            swalWithBootstrapButtons.fire("Desactivado!", "El usuarío ha sido desactivado con éxito.", "success");
-          })["catch"](function (error) {
-            console.log(error);
-          });
-        } else if (result.dismiss === swal.DismissReason.cancel) {}
-      });
-    },
-    activarUsuario: function activarUsuario(id) {
-      var _this2 = this;
-
-      var swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: "btn btn-success",
-          cancelButton: "btn btn-danger"
-        },
-        buttonsStyling: false
-      });
-      swalWithBootstrapButtons.fire({
-        title: "¿Esta seguro de activar este usuarío?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Aceptar!",
-        cancelButtonText: "Cancelar!",
-        reverseButtons: true
-      }).then(function (result) {
-        if (result.value) {
-          var me = _this2;
-          axios.put('/user/activar', {
-            'id': id
-          }).then(function (response) {
-            me.listarPersona(1, '', 'nombre');
-            swalWithBootstrapButtons.fire("Activado!", "El usuarío ha sido activado con éxito.", "success");
+            me.listarIngreso(1, '', 'num_comprobante');
+            swal('Anulado!', 'El ingreso ha sido anulado con éxito.', 'success');
           })["catch"](function (error) {
             console.log(error);
           });
@@ -4443,6 +4412,8 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.fecha_llegada = '';
       this.ubicacion = '';
       this.arrayDetalle = [];
+      this.idproveedor = 0;
+      this.num_comprobante = 0;
       this.selectCategoria();
     },
     ocultarDetalle: function ocultarDetalle() {
@@ -4467,6 +4438,8 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.ubicacion = '';
       this.arrayDetalle = [];
       this.errorMostrarMsjIngreso = [];
+      this.idproveedor = 0;
+      this.num_comprobante = 0;
     },
     cerrarModal: function cerrarModal() {
       this.modal = 0;
@@ -4541,13 +4514,13 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.cargarImagen(img);
     },
     cargarImagen: function cargarImagen(img) {
-      var _this3 = this;
+      var _this2 = this;
 
       var reader = new FileReader();
 
       reader.onload = function (e) {
-        _this3.imagenMinatura = e.target.result;
-        _this3.file = e.target.result;
+        _this2.imagenMinatura = e.target.result;
+        _this2.file = e.target.result;
       };
 
       reader.readAsDataURL(img);
@@ -34156,16 +34129,6 @@ var render = function() {
                               }),
                               _vm._v(" "),
                               _c("td", {
-                                domProps: { textContent: _vm._s(ingreso.total) }
-                              }),
-                              _vm._v(" "),
-                              _c("td", {
-                                domProps: {
-                                  textContent: _vm._s(ingreso.impuesto)
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("td", {
                                 domProps: {
                                   textContent: _vm._s(ingreso.estado)
                                 }
@@ -34265,7 +34228,7 @@ var render = function() {
             : [
                 _c("div", { staticClass: "card-body" }, [
                   _c("div", { staticClass: "form-group row border" }, [
-                    _c("div", { staticClass: "col-md-9" }, [
+                    _c("div", { staticClass: "col-md-4" }, [
                       _c(
                         "div",
                         { staticClass: "form-group" },
@@ -34286,34 +34249,6 @@ var render = function() {
                         ],
                         1
                       )
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-3" }, [
-                      _c("label", { attrs: { for: "" } }, [
-                        _vm._v("Impuesto (*)")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.impuesto,
-                            expression: "impuesto"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text" },
-                        domProps: { value: _vm.impuesto },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.impuesto = $event.target.value
-                          }
-                        }
-                      })
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-md-4" }, [
@@ -36577,10 +36512,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("No° Comprobante")]),
         _vm._v(" "),
         _c("th", [_vm._v("Fecha Hora")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Total")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Impuesto")]),
         _vm._v(" "),
         _c("th", [_vm._v("Estado")])
       ])

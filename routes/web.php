@@ -109,7 +109,7 @@ Route::group(['middleware'=>['auth']],function(){
         //INGRESOS
         Route::get('/ingreso', 'ingresoController@index');
         Route::post('/ingreso/registrar', 'ingresoController@store');
-        Route::get('/ingreso/desactivar', 'ingresoController@desactivar');
+        Route::put('/ingreso/desactivar', 'ingresoController@desactivar');
     });
 });
 
