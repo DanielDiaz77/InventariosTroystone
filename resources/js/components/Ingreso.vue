@@ -199,13 +199,21 @@
                     <div class="col-sm-2">
                         <div class="form-group">
                             <label for="">Terminado <span style="color:red;" v-show="terminado==''">(*Ingrese el terminado)</span></label>
-                            <input type="text" class="form-control" v-model="terminado">
+                            <select class="form-control" v-model="terminado">
+                                <option value='' disabled>Seleccione un de terminado</option>
+                                <option value="Pulido">Pulido</option>
+                                <option value="Al Corte">Al Corte</option>
+                                <option value="Leather">Leather</option>
+                                <option value="Mate">Mate</option>
+                                <option value="Seda">Seda</option>
+                                <option value="Otro">Otro</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for="">Espesor <span style="color:red;" v-show="espesor==''">(*Ingrese el espesor)</span></label>
-                            <input type="text" class="form-control" v-model="espesor">
+                            <label for="">Espesor <sup>cm</sup> <span style="color:red;" v-show="espesor==0">(*Ingrese el espesor)</span></label>
+                            <input type="number" value="2" min="0" class="form-control" v-model="espesor">
                         </div>
                     </div>
                     <div class="col-sm-2">
@@ -377,11 +385,6 @@
                             </thead>
                             <tbody>
                             <tr v-for="articulo in arrayArticulo" :key="articulo.id">
-                                <!-- <td>
-                                    <button type="button" @click="agregarDetalleModal(articulo)" class="btn btn-success btn-sm">
-                                        <i class="icon-check"></i>
-                                    </button>
-                                </td> -->
                                 <td v-text="articulo.codigo"></td>
                                 <td v-text="articulo.sku"></td>
                                 <td v-text="articulo.nombre_categoria"></td>
@@ -465,7 +468,15 @@
                     <tr >
                         <td><strong>TERMINADO</strong></td>
                         <td>
-                            <input type="text" class="form-control" v-model="terminado">
+                            <select class="form-control" v-model="terminado">
+                                <option value='' disabled>Seleccione un de terminado</option>
+                                <option value="Pulido">Pulido</option>
+                                <option value="Al Corte">Al Corte</option>
+                                <option value="Leather">Leather</option>
+                                <option value="Mate">Mate</option>
+                                <option value="Seda">Seda</option>
+                                <option value="Otro">Otro</option>
+                            </select>
                         </td>
                     </tr>
                     <tr >
@@ -791,19 +802,6 @@ export default {
                         text: 'Este No° de placa ya esta en el listado!',
                     });
                     me.codigo = "";
-                    me.idarticulo = 0;
-                    me.articulo = "";
-                    me.sku = "";
-                    me.idcategoria_r = 0;
-                    me.largo = 0;
-                    me.alto = 0;
-                    me.metros_cuadrados = 0;
-                    me.terminado = '';
-                    me.espesor = 0;
-                    me.precio_venta = 0;
-                    me.precio_venta = 0;
-                    me.cantidad = 0;
-                    me.file = '';
                 }else{
                     me.arrayDetalle.push({
                         contenedor       : me.contenedor,
@@ -827,18 +825,6 @@ export default {
                         observacion      : me.observacion_r
                     });
                     me.codigo = "";
-                    me.idarticulo = 0;
-                    me.articulo = "";
-                    me.sku = "";
-                    me.idcategoria_r = 0;
-                    me.largo = 0;
-                    me.alto = 0;
-                    me.metros_cuadrados = 0;
-                    me.terminado = '';
-                    me.espesor = 0;
-                    me.precio_venta = 0;
-                    me.cantidad = 0;
-                    me.file = '';
                 }
             }
         },
@@ -870,18 +856,6 @@ export default {
                     observacion      : me.observacion_r
                 });
                 me.codigo = "";
-                me.idarticulo = 0;
-                me.articulo = "";
-                me.sku = "";
-                me.idcategoria_r = 0;
-                me.largo = 0;
-                me.alto = 0;
-                me.metros_cuadrados = 0;
-                me.terminado = '';
-                me.espesor = 0;
-                me.precio_venta = 0;
-                me.cantidad = 0;
-                me.file = '';
                 me.modal2 = 0;
 
             }
