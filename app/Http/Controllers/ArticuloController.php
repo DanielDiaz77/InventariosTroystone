@@ -192,11 +192,8 @@ class ArticuloController extends Controller
                 $articulo->fecha_llegada    =   $art['fecha_llegada'];
                 $articulo->file             =   $fileName;
                 $articulo->condicion        =   '1';
-
                 $articulo->save();
-
             }
-
             DB::commit();
 
         }catch(Exception $e){

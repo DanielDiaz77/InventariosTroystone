@@ -602,7 +602,6 @@ export default {
             arrayIngreso : [],
             arrayDetalle : [],
             arrayProveedor : [],
-
             listado : 1,
             modal: 0,
             modal2: 0,
@@ -649,7 +648,8 @@ export default {
             arrayArticulo_r: [],
             errorArticulo: 0,
             errorMostrarMsjArticulo: [],
-            arrayCategoria : []
+            arrayCategoria : [],
+            arryCodigos : []
 
         };
     },
@@ -896,8 +896,24 @@ export default {
                 'data' : this.arrayDetalle
             })
             .then(function(response) {
-                me.listarIngreso(1,'','num_comprobante');
+                me.registrarIngreso();
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        registrarIngreso(){
+            let me = this;
+            axios.post("/ingreso/registrar", {
+                'idproveedor' : this.idproveedor,
+                'tipo_comprobante' : this.tipo_comprobante,
+                'num_comprobante'  : this.num_comprobante,
+                'impuesto'         : this.impuesto,
+                'total'            : this.total
+            })
+            .then(function(response) {
                 me.ocultarDetalle();
+                me.listarIngreso(1,'','num_comprobante');
             })
             .catch(function(error) {
                 console.log(error);
@@ -979,10 +995,10 @@ export default {
             this.errorIngreso = 0;
             this.errorMostrarMsjIngreso = [];
 
-            /* if (this.idproveedor==0) this.errorMostrarMsjIngreso.push("Seleccione un proveedor");
+            if (this.idproveedor==0) this.errorMostrarMsjIngreso.push("Seleccione un proveedor");
             if (this.tipo_comprobante==0) this.errorMostrarMsjIngreso.push("Seleccione un comprobante.");
             if (!this.num_comprobante) this.errorMostrarMsjIngreso.push("Ingrese el numero de comprobante");
-            if (!this.impuesto) this.errorMostrarMsjIngreso.push("Ingrese el impuesto de la compra"); */
+            if (!this.impuesto) this.errorMostrarMsjIngreso.push("Ingrese el impuesto de la compra");
             if (this.arrayDetalle.length<=0) this.errorMostrarMsjIngreso.push("Introdusca articulos para registrar");
 
             if (this.errorMostrarMsjIngreso.length) this.errorIngreso = 1;
@@ -1139,35 +1155,6 @@ export default {
                 this.file =  e.target.result;
             }
             reader.readAsDataURL(img);
-        },
-        registrarArticulo(){
-            if (this.validarArticulo()){
-                return;
-            }
-            let me = this;
-            axios.post("/articulo/registrar",{
-                'idcategoria': this.idcategoria_r,
-                'codigo': this.codigo_r,
-                'sku' : this.sku,
-                'nombre': this.nombre_art,
-                'terminado' : this.terminado,
-                'largo' : this.largo,
-                'alto' : this.alto,
-                'metros_cuadrados' : this.metros_cuadrados,
-                'espesor' : this.espesor,
-                'ubicacion' : this.ubicacion,
-                'stock': this.stock,
-                'descripcion': this.descripcion_r,
-                'observacion' : this.observacion,
-                'origen' : this.origen,
-                'fecha_llegada' : this.fecha_llegada,
-                'file' : this.file
-            }).then(function (response) {
-                me.cerrarModal2();
-                listarArticulo(buscarA,criterioA);
-            }).catch(function (error) {
-                console.log(error);
-            });
         },
     },
     mounted() {

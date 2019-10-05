@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DetalleIngreso;
 use App\Ingreso;
+use App\Articulo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -62,26 +63,29 @@ class IngresoController extends Controller
             $ingreso->idusuario = \Auth::user()->id;
             $ingreso->tipo_comprobante = $request->tipo_comprobante;
             $ingreso->num_comprobante = $request->num_comprobante;
-            $ingreso->fecha_hora = $request->$mytime->toDateString();
+            $ingreso->fecha_hora = $mytime->toDateString();
             $ingreso->impuesto = $request->impuesto;
             $ingreso->total = $request->total;
             $ingreso->estado = 'Registrado';
 
             $ingreso->save();
 
-            $detalles = $request->data; //Array detalles
+           /*  $articulos = Articulo::where('created_at',$mytime)
+            ->select('id','cantidad','precio_venta')->get(); */
+
+           /*  $detalles = $request->data; //Array detalles */
 
             //Recorrido de todos los elementos
 
-            foreach($detalles as $ep=>$det){
+            /* foreach($articulos as $ep=>$art){
 
                 $detalle = new DetalleIngreso();
                 $detalle->idingreso = $ingreso->id;
-                $detalle->idarticulo = $det['idarticulo'];
-                $detalle->cantidad = $det['cantidad'];
-                $detalle->precio_compra = $det['precio_compra'];
+                $detalle->idarticulo = $art->id;
+                $detalle->cantidad = $art->cantidad;
+                $detalle->precio_compra = $art->precio_venta['precio_compra'];
                 $detalle->save();
-            }
+            } */
 
             DB::commit();
 

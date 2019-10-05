@@ -4109,7 +4109,8 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       arrayArticulo_r: [],
       errorArticulo: 0,
       errorMostrarMsjArticulo: [],
-      arrayCategoria: []
+      arrayCategoria: [],
+      arryCodigos: []
     };
   },
   components: {
@@ -4353,8 +4354,22 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       axios.post("/articulo/registrarDetalle", {
         'data': this.arrayDetalle
       }).then(function (response) {
-        me.listarIngreso(1, '', 'num_comprobante');
+        me.registrarIngreso();
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    registrarIngreso: function registrarIngreso() {
+      var me = this;
+      axios.post("/ingreso/registrar", {
+        'idproveedor': this.idproveedor,
+        'tipo_comprobante': this.tipo_comprobante,
+        'num_comprobante': this.num_comprobante,
+        'impuesto': this.impuesto,
+        'total': this.total
+      }).then(function (response) {
         me.ocultarDetalle();
+        me.listarIngreso(1, '', 'num_comprobante');
       })["catch"](function (error) {
         console.log(error);
       });
@@ -4424,11 +4439,10 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
     validarIngreso: function validarIngreso() {
       this.errorIngreso = 0;
       this.errorMostrarMsjIngreso = [];
-      /* if (this.idproveedor==0) this.errorMostrarMsjIngreso.push("Seleccione un proveedor");
-      if (this.tipo_comprobante==0) this.errorMostrarMsjIngreso.push("Seleccione un comprobante.");
+      if (this.idproveedor == 0) this.errorMostrarMsjIngreso.push("Seleccione un proveedor");
+      if (this.tipo_comprobante == 0) this.errorMostrarMsjIngreso.push("Seleccione un comprobante.");
       if (!this.num_comprobante) this.errorMostrarMsjIngreso.push("Ingrese el numero de comprobante");
-      if (!this.impuesto) this.errorMostrarMsjIngreso.push("Ingrese el impuesto de la compra"); */
-
+      if (!this.impuesto) this.errorMostrarMsjIngreso.push("Ingrese el impuesto de la compra");
       if (this.arrayDetalle.length <= 0) this.errorMostrarMsjIngreso.push("Introdusca articulos para registrar");
       if (this.errorMostrarMsjIngreso.length) this.errorIngreso = 1;
       return this.errorIngreso;
@@ -4586,36 +4600,6 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       };
 
       reader.readAsDataURL(img);
-    },
-    registrarArticulo: function registrarArticulo() {
-      if (this.validarArticulo()) {
-        return;
-      }
-
-      var me = this;
-      axios.post("/articulo/registrar", {
-        'idcategoria': this.idcategoria_r,
-        'codigo': this.codigo_r,
-        'sku': this.sku,
-        'nombre': this.nombre_art,
-        'terminado': this.terminado,
-        'largo': this.largo,
-        'alto': this.alto,
-        'metros_cuadrados': this.metros_cuadrados,
-        'espesor': this.espesor,
-        'ubicacion': this.ubicacion,
-        'stock': this.stock,
-        'descripcion': this.descripcion_r,
-        'observacion': this.observacion,
-        'origen': this.origen,
-        'fecha_llegada': this.fecha_llegada,
-        'file': this.file
-      }).then(function (response) {
-        me.cerrarModal2();
-        listarArticulo(buscarA, criterioA);
-      })["catch"](function (error) {
-        console.log(error);
-      });
     }
   },
   mounted: function mounted() {
