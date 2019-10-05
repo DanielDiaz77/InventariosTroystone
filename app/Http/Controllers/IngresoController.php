@@ -73,19 +73,23 @@ class IngresoController extends Controller
            /*  $articulos = Articulo::where('created_at',$mytime)
             ->select('id','cantidad','precio_venta')->get(); */
 
-           /*  $detalles = $request->data; //Array detalles */
+            /* $articulo = Articulo::where('codigo',$det['codigo'])->select('id')->take(1)->get(); */
 
-            //Recorrido de todos los elementos
+            $detalles = $request->data;//Array de detalles
 
-            /* foreach($articulos as $ep=>$art){
+            //Recorro todos los elementos
+            foreach($detalles as $ep=>$det)
+            {
+                $articulos = Articulo::where('codigo','=',$det['codigo'])->select('id')->first();
 
                 $detalle = new DetalleIngreso();
                 $detalle->idingreso = $ingreso->id;
-                $detalle->idarticulo = $art->id;
-                $detalle->cantidad = $art->cantidad;
-                $detalle->precio_compra = $art->precio_venta['precio_compra'];
+                $detalle->idarticulo = $articulos->id;
+                $detalle->cantidad = $det['stock'];
+                $detalle->precio_compra = $det['precio_venta'];
                 $detalle->save();
-            } */
+
+            }
 
             DB::commit();
 

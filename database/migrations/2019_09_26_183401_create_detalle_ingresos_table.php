@@ -15,11 +15,15 @@ class CreateDetalleIngresosTable extends Migration
     {
         Schema::create('detalle_ingresos', function (Blueprint $table) {
             $table->bigIncrements('id');
+
             $table->unsignedBigInteger('idingreso');
+
             $table->foreign('idingreso')->references('id')->on('ingresos')->onDelete('cascade');
             $table->unsignedBigInteger('idarticulo');
+
             $table->foreign('idarticulo')->references('id')->on('articulos');
             $table->integer('cantidad');
+
             $table->decimal('precio_compra', 11, 2);
         });
     }

@@ -4361,12 +4361,13 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
     },
     registrarIngreso: function registrarIngreso() {
       var me = this;
-      axios.post("/ingreso/registrar", {
+      axios.post('/ingreso/registrar', {
         'idproveedor': this.idproveedor,
         'tipo_comprobante': this.tipo_comprobante,
         'num_comprobante': this.num_comprobante,
         'impuesto': this.impuesto,
-        'total': this.total
+        'total': this.total,
+        'data': this.arrayDetalle
       }).then(function (response) {
         me.ocultarDetalle();
         me.listarIngreso(1, '', 'num_comprobante');
@@ -4510,30 +4511,6 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       })["catch"](function (error) {
         console.log(error);
       });
-    },
-    agregarDetalleModal: function agregarDetalleModal() {
-      var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-      var me = this;
-
-      if (me.encuentra(data['codigo'])) {
-        Swal.fire({
-          type: 'error',
-          title: 'Error...',
-          text: 'Este No° de placa ya esta en el listado!'
-        });
-        me.codigo = "";
-        me.idarticulo = 0;
-        me.articulo = "";
-        me.precio_venta = 0;
-        me.cantidad = 0;
-      } else {
-        me.arrayDetalle.push({
-          idarticulo: data['id'],
-          articulo: data['sku'],
-          cantidad: 1,
-          precio_venta: 1
-        });
-      }
     },
     abrirModal2: function abrirModal2(index) {
       var me = this;

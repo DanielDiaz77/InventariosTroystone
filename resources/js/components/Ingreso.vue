@@ -904,16 +904,16 @@ export default {
         },
         registrarIngreso(){
             let me = this;
-            axios.post("/ingreso/registrar", {
-                'idproveedor' : this.idproveedor,
-                'tipo_comprobante' : this.tipo_comprobante,
-                'num_comprobante'  : this.num_comprobante,
-                'impuesto'         : this.impuesto,
-                'total'            : this.total
-            })
-            .then(function(response) {
-                me.ocultarDetalle();
-                me.listarIngreso(1,'','num_comprobante');
+            axios.post('/ingreso/registrar',{
+                'idproveedor': this.idproveedor,
+                'tipo_comprobante': this.tipo_comprobante,
+                'num_comprobante' : this.num_comprobante,
+                'impuesto' : this.impuesto,
+                'total' : this.total,
+                'data': this.arrayDetalle
+            }).then(function(response) {
+            me.ocultarDetalle();
+            me.listarIngreso(1,'','num_comprobante');
             })
             .catch(function(error) {
                 console.log(error);
@@ -1070,28 +1070,6 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
-        },
-        agregarDetalleModal(data = []){
-            let me = this;
-            if(me.encuentra(data['codigo'])){
-                Swal.fire({
-                    type: 'error',
-                    title: 'Error...',
-                    text: 'Este No° de placa ya esta en el listado!',
-                });
-                me.codigo = "";
-                me.idarticulo = 0;
-                me.articulo = "";
-                me.precio_venta = 0;
-                me.cantidad = 0;
-            }else{
-                me.arrayDetalle.push({
-                    idarticulo : data['id'],
-                    articulo : data['sku'],
-                    cantidad : 1,
-                    precio_venta : 1
-                });
-            }
         },
         abrirModal2(index){
             let me = this;
