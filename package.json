@@ -24,6 +24,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "moment": "^2.24.0",
         "vue-barcode": "^1.2.0",
         "vue-lightbox": "^1.1.6",
         "vue-select": "^2.4.0",

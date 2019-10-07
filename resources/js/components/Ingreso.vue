@@ -39,7 +39,6 @@
                                 <th>Tipo Comprobante</th>
                                 <th>No° Comprobante</th>
                                 <th>Fecha Hora</th>
-                                <!-- <th>Total</th> -->
                                 <!-- <th>Impuesto</th> -->
                                 <th>Estado</th>
                             </tr>
@@ -61,6 +60,7 @@
                                 <td v-text="ingreso.tipo_comprobante"></td>
                                 <td v-text="ingreso.num_comprobante"></td>
                                 <td v-text="ingreso.fecha_hora"></td>
+                                <!-- convertirFecha -->
                                 <!-- <td v-text="ingreso.total"></td>
                                 <td v-text="ingreso.impuesto"></td> -->
                                 <td v-text="ingreso.estado "></td>
@@ -421,8 +421,8 @@
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="10" class="text-center">
-                                        <strong>NO hay artículos agregados...</strong>
+                                    <td colspan="11" class="text-center">
+                                        <strong>NO hay artículos en este detalle...</strong>
                                     </td>
                                 </tr>
                             </tbody>
@@ -805,6 +805,7 @@
 import vSelect from 'vue-select';
 import VueBarcode from 'vue-barcode';
 import VueLightbox from 'vue-lightbox';
+import moment from 'moment';
 Vue.component("Lightbox",VueLightbox);
 export default {
     data() {
@@ -879,7 +880,8 @@ export default {
             errorArticulo: 0,
             errorMostrarMsjArticulo: [],
             arrayCategoria : [],
-            arryCodigos : []
+            arryCodigos : [],
+            fecha_conv : ''
 
         };
     },
@@ -1225,11 +1227,14 @@ export default {
                 var respuesta= response.data;
                 arrayIngresoT = respuesta.ingreso;
 
+                var fechaform  = arrayIngresoT[0]['fecha_hora'];
+
                 me.proveedor = arrayIngresoT[0]['nombre'];
                 me.tipo_comprobante=arrayIngresoT[0]['tipo_comprobante'];
                 me.num_comprobante=arrayIngresoT[0]['num_comprobante'];
                 me.user=arrayIngresoT[0]['usuario'];
-                me.fecha_llegada=arrayIngresoT[0]['fecha_hora'];
+                moment.locale('es');
+                me.fecha_llegada=moment(fechaform).format('llll');
             })
             .catch(function (error) {
                 console.log(error);
@@ -1367,7 +1372,7 @@ export default {
             this.file = '';
             this.descripcion_r = '';
             this.ind = '';
-        },
+        }
     },
     mounted() {
         this.listarIngreso(1,this.buscar, this.criterio);
