@@ -63,17 +63,12 @@ class IngresoController extends Controller
             $ingreso->idusuario = \Auth::user()->id;
             $ingreso->tipo_comprobante = $request->tipo_comprobante;
             $ingreso->num_comprobante = $request->num_comprobante;
-            $ingreso->fecha_hora = $mytime->toDateString();
+            $ingreso->fecha_hora = $mytime;
             $ingreso->impuesto = $request->impuesto;
             $ingreso->total = $request->total;
             $ingreso->estado = 'Registrado';
 
             $ingreso->save();
-
-           /*  $articulos = Articulo::where('created_at',$mytime)
-            ->select('id','cantidad','precio_venta')->get(); */
-
-            /* $articulo = Articulo::where('codigo',$det['codigo'])->select('id')->take(1)->get(); */
 
             $detalles = $request->data;//Array de detalles
 
@@ -107,4 +102,35 @@ class IngresoController extends Controller
         $ingreso->estado = 'Anulado';
         $ingreso->save();
     }
+
+     public function obtenerCabecera(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $id = $request->id;
+        $ingreso = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
+        ->join('users','ingresos.idusuario','=','users.id')
+        ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
+        'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
+        'personas.nombre','users.usuario')
+        ->where('ingresos.id','=',$id)
+        ->orderBy('ingresos.id', 'desc')->take(1)->get();
+
+        return ['ingreso' => $ingreso];
+    }
+
+    public function obtenerDetalles(Request $request){
+
+        if (!$request->ajax()) return redirect('/');
+
+        $id =  $request->id;
+
+        $detalles = DetalleIngreso::join('articulos','detalle_ingresos.idarticulo','=','articulos.id')
+        ->select('detalle_ingresos.cantidad','detalle_ingresos.precio_compra','articulos.sku','articulos.codigo',
+            'articulos.espesor','articulos.largo','articulos.alto','articulos.metros_cuadrados','articulos.descripcion',
+            'articulos.idcategoria','articulos.terminado','articulos.ubicacion','articulos.file','articulos.origen',
+            'articulos.contenedor','articulos.fecha_llegada','articulos.observacion','articulos.condicion')
+        ->where('detalle_ingresos.idingreso',$id)->get();
+        return ['detalles' => $detalles];
+    }
+
 }
