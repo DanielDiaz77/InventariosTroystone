@@ -27,7 +27,7 @@ class CreateVentasTable extends Migration
             $table->decimal('total',11,2);
             $table->string('estado',20);
             $table->string('moneda',20);
-            $table->decimal('tipo_cambio',11,4);
+            $table->decimal('tipo_cambio',11,4)->nullable();
             $table->string('observacion',256)->nullable();
             $table->timestamps();
         });

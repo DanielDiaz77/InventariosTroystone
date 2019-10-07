@@ -64,6 +64,13 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/cliente', 'ClienteController@index');
         Route::post('/cliente/registrar', 'ClienteController@store');
         Route::put('/cliente/actualizar', 'ClienteController@update');
+
+        //VENTAS
+        Route::get('/venta', 'ventaController@index');
+        Route::post('/venta/registrar', 'ventaController@store');
+        Route::put('/venta/desactivar', 'ventaController@desactivar');
+        Route::get('/venta/obtenerCabecera', 'ventaController@obtenerCabecera');
+        Route::get('/venta/obtenerDetalles', 'ventaController@obtenerDetalles');
     });
 
     Route::group(['middleware'=>['Administrador']],function(){
@@ -114,6 +121,14 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/ingreso/desactivar', 'ingresoController@desactivar');
         Route::get('/ingreso/obtenerCabecera', 'ingresoController@obtenerCabecera');
         Route::get('/ingreso/obtenerDetalles', 'ingresoController@obtenerDetalles');
+
+        //VENTAS
+        Route::get('/venta', 'ventaController@index');
+        Route::post('/venta/registrar', 'ventaController@store');
+        Route::put('/venta/desactivar', 'ventaController@desactivar');
+        Route::get('/venta/obtenerCabecera', 'ventaController@obtenerCabecera');
+        Route::get('/venta/obtenerDetalles', 'ventaController@obtenerDetalles');
+
     });
 });
 
