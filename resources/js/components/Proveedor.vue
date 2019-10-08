@@ -144,7 +144,7 @@
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">RFC</label>
                     <div class="col-md-9">
-                        <input type="text" v-model="rfc" class="form-control" placeholder="RFC de la persona"/>
+                        <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC de la persona"/>
                     </div>
                 </div>
                 <div class="form-group row">

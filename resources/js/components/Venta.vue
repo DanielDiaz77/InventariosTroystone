@@ -270,6 +270,12 @@
                     </div>
                 </div>
                 <div class="form-group row">
+                    <div class="col-md-4">
+                        <label for="exampleFormControlTextarea2">Observaciones</label>
+                        <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
+                    </div>&nbsp;
+                </div>
+                <div class="form-group row">
                     <div class="col-md-12">
                         <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
                         <button type="button" class="btn btn-primary" @click="registrarVenta()">Registrar Venta</button>
@@ -336,12 +342,6 @@
                             <p v-text="tipo_cambio"></p>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="">Observaciones</label>
-                            <p v-text="observacion"></p>
-                        </div>
-                    </div>
                 </div>
                 <div class="form-group row border">
                     <div class="table-responsive col-md-12">
@@ -404,6 +404,12 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <label for="exampleFormControlTextarea2">Observaciones</label>
+                        <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacion"></textarea>
+                    </div>&nbsp;
                 </div>
                 <div class="form-group row">
                     <div class="col-md-12">
@@ -729,7 +735,7 @@
                     </tr>
                     <tr >
                         <td><strong>PRECIO</strong></td>
-                        <td v-text="precio_venta"></td>
+                        <td v-text="precio"></td>
                     </tr>
                     <tr >
                         <td><strong>BODEGA DE DESCARGA</strong></td>
@@ -1076,6 +1082,7 @@ export default {
                         me.stock = 0;
                         me.ubicacion = "";
                         me.categoria = "";
+                        me.observacion = "";
                     }
                 }
             }
@@ -1139,6 +1146,7 @@ export default {
                 'total' : this.total,
                 'moneda' : this.moneda,
                 'tipo_cambio' : this.tipo_cambio,
+                'observacion' : this.observacion,
                 'data': this.arrayDetalle
             }).then(function(response) {
             me.ocultarDetalle();
@@ -1259,6 +1267,7 @@ export default {
             this.stock = 0;
             this.cliente = 0;
             this.categoria = 0;
+            this.observacion = "";
             this.arrayDetalle = [];
             this.errorMostrarMsjArticulo = [];
             this.num_comprobante = 0;
@@ -1362,7 +1371,7 @@ export default {
             me.tituloModal      = "Editar Artículo ";
             me.sku              = me.arrayDetalle[index]['sku'];
             me.codigo           = me.arrayDetalle[index]['codigo'];
-            me.idcategoria    = me.arrayDetalle[index]['idcategoria'];
+            me.idcategoria      = me.arrayDetalle[index]['idcategoria'];
             me.largo            = me.arrayDetalle[index]['largo'];
             me.alto             = me.arrayDetalle[index]['alto'];
             me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
@@ -1373,9 +1382,9 @@ export default {
             me.contenedor       = me.arrayDetalle[index]['contenedor'];
             me.fecha_llegada    = me.arrayDetalle[index]['fecha_llegada'];
             me.origen           = me.arrayDetalle[index]['origen'];
-            me.cantidad            = me.arrayDetalle[index]['cantidad'];
+            me.cantidad         = me.arrayDetalle[index]['cantidad'];
             me.file             = me.arrayDetalle[index]['imagen'];
-            me.descripcion_r      = "";
+            me.descripcion_r    = "";
             me.selectCategoria();
         },
         cerrarModal2() {
@@ -1425,13 +1434,13 @@ export default {
             me.tituloModal      = "Artículo ";
             me.sku              = me.arrayDetalle[index]['sku'];
             me.codigo           = me.arrayDetalle[index]['codigo'];
-            me.idcategoria    = me.arrayDetalle[index]['idcategoria'];
+            me.idcategoria      = me.arrayDetalle[index]['idcategoria'];
             me.largo            = me.arrayDetalle[index]['largo'];
             me.alto             = me.arrayDetalle[index]['alto'];
             me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
             me.terminado        = me.arrayDetalle[index]['terminado'];
             me.espesor          = me.arrayDetalle[index]['espesor'];
-            me.precio_venta     = me.arrayDetalle[index]['precio_compra'];
+            me.precio           = me.arrayDetalle[index]['precio'];
             me.metros_cuadrados = me.arrayDetalle[index]['metros_cuadrados'];
             me.contenedor       = me.arrayDetalle[index]['contenedor'];
             me.fecha_llegada    = me.arrayDetalle[index]['fecha_llegada'];
