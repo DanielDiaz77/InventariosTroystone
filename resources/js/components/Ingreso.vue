@@ -334,7 +334,7 @@
                 <div class="form-group row">
                     <div class="col-md-12">
                         <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
-                        <button type="button" class="btn btn-primary" @click="registrarArticulos()">Registrar Compra</button>
+                        <button type="button" class="btn btn-primary" @click="registrarArticulos()">Registrar Ingreso</button>
                     </div>
                 </div>
             </div>
@@ -388,7 +388,7 @@
                                     <th>Alto</th>
                                     <th>Metros <sup>2</sup></th>
                                     <th>Cantidad</th>
-                                    <th>Precio</th>
+                                    <th>Precio M<sup>2</sup></th>
                                     <th>Descripción</th>
                                     <th>Estado</th>
                                 </tr>

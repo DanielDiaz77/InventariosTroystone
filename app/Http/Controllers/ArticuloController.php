@@ -97,15 +97,25 @@ class ArticuloController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-       /*  return $request->all(); */
+    public function buscarArticuloVenta(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $filtro = $request->filtro;
+
+        $articulos = Articulo::where('codigo',$filtro)
+        ->select('id','nombre','sku','codigo','origen','contenedor','ubicacion','fecha_llegada',
+        'idcategoria','terminado','espesor','file','largo','alto','metros_cuadrados','precio_venta','stock')
+        ->where([
+            ['articulos.stock','>',0],
+            ['articulos.condicion',1]
+        ])
+        ->orderBy('sku','asc')->take(1)->get();
+        return ['articulos' => $articulos];
+
+    }
+
+    public function store(Request $request){
         if(!$request->ajax()) return redirect('/');
 
         $exploded = explode(',', $request->file);
@@ -354,6 +364,76 @@ class ArticuloController extends Controller
             ->where([
                 ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                 /* ['articulos.condicion',1] */
+            ])
+            ->orderBy('articulos.id', 'desc')->paginate(10);
+        }
+        return ['articulos' => $articulos];
+    }
+    public function listarArticuloVenta(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $buscar = $request->buscar;
+        $criterio = $request->criterio;
+
+        if($buscar==''){
+            $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+            ->select(
+                'articulos.id',
+                'articulos.idcategoria',
+                'articulos.codigo',
+                'articulos.sku',
+                'articulos.nombre',
+                'categorias.nombre as nombre_categoria',
+                'articulos.terminado',
+                'articulos.largo',
+                'articulos.alto',
+                'articulos.metros_cuadrados',
+                'articulos.espesor',
+                'articulos.precio_venta',
+                'articulos.ubicacion',
+                'articulos.contenedor',
+                'articulos.stock',
+                'articulos.descripcion',
+                'articulos.observacion',
+                'articulos.origen',
+                'articulos.fecha_llegada',
+                'articulos.file',
+                'articulos.condicion')
+                ->where([
+                    ['articulos.stock','>',0],
+                    ['articulos.condicion',1]
+                ])
+                ->orderBy('articulos.id', 'desc')->paginate(10);
+        }else{
+
+            $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+            ->select(
+                'articulos.id',
+                'articulos.idcategoria',
+                'articulos.codigo',
+                'articulos.sku',
+                'articulos.nombre',
+                'categorias.nombre as nombre_categoria',
+                'articulos.terminado',
+                'articulos.largo',
+                'articulos.alto',
+                'articulos.metros_cuadrados',
+                'articulos.espesor',
+                'articulos.precio_venta',
+                'articulos.ubicacion',
+                'articulos.contenedor',
+                'articulos.stock',
+                'articulos.descripcion',
+                'articulos.observacion',
+                'articulos.origen',
+                'articulos.fecha_llegada',
+                'articulos.file',
+                'articulos.condicion')
+            ->where([
+                ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                ['articulos.condicion',1],
+                ['articulos.stock','>',0]
             ])
             ->orderBy('articulos.id', 'desc')->paginate(10);
         }

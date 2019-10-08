@@ -6655,74 +6655,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -6740,6 +6672,9 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       impuesto: 0.16,
       totalImpuesto: 0,
       totalParcial: 0,
+      descuento: 0,
+      moneda: 'Peso Mexicano',
+      tipo_cambio: 0,
       idarticulo: 0,
       articulo: "",
       codigo: "",
@@ -6749,6 +6684,8 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       total_impuesto: 0.0,
       total_parcial: 0.0,
       total: 0.0,
+      precio: 0.0,
+      stock: 0,
       arrayArticulo: [],
       arrayVenta: [],
       arrayDetalle: [],
@@ -6788,7 +6725,6 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       metros_cuadrados: 0,
       espesor: 0,
       ubicacion: '',
-      stock: 0,
       descripcion_r: '',
       observacion_r: '',
       origen: '',
@@ -6872,36 +6808,38 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         console.log(error);
       });
     },
-    selectProveedor: function selectProveedor(search, loading) {
+    selectCliente: function selectCliente(search, loading) {
       var me = this;
       loading(true);
-      var url = '/proveedor/selectProveedor?filtro=' + search;
+      var url = '/cliente/selectCliente?filtro=' + search;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
 
         q: search;
 
-        me.arrayProveedor = respuesta.proveedores;
+        me.arrayCliente = respuesta.clientes;
         loading(false);
       })["catch"](function (error) {
         console.log(error);
       });
     },
-    getDatosProveedor: function getDatosProveedor(val1) {
+    getDatosCliente: function getDatosCliente(val1) {
       var me = this;
       me.loading = true;
-      me.idproveedor = val1.id;
+      me.idcliente = val1.id;
     },
     buscarArticulo: function buscarArticulo() {
       var me = this;
-      var url = '/articulo/buscarArticulo?filtro=' + me.codigo;
+      var url = '/articulo/buscarArticuloVenta?filtro=' + me.codigo;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
         me.arrayArticulo = respuesta.articulos;
 
         if (me.arrayArticulo.length > 0) {
-          me.articulo = me.arrayArticulo[0]['nombre'];
+          me.articulo = me.arrayArticulo[0]['sku'];
           me.idarticulo = me.arrayArticulo[0]['id'];
+          me.precio = me.arrayArticulo[0]['precio_venta'];
+          me.stock = me.arrayArticulo[0]['stock'];
         } else {
           me.articulo = 'No existe este artículo';
           me.idarticulo = 0;
@@ -6917,11 +6855,11 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
 
       me.listarVenta(page, buscar, criterio);
     },
-    encuentra: function encuentra(codigo) {
+    encuentra: function encuentra(id) {
       var sw = 0;
 
       for (var i = 0; i < this.arrayDetalle.length; i++) {
-        if (this.arrayDetalle[i].codigo == codigo) {
+        if (this.arrayDetalle[i].idarticulo == id) {
           sw = true;
         }
       }
@@ -7159,13 +7097,32 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
     },
     listarArticulo: function listarArticulo(buscar, criterio) {
       var me = this;
-      var url = '/articulo/listarArticulo?buscar=' + buscar + '&criterio=' + criterio;
+      var url = '/articulo/listarArticuloVenta?buscar=' + buscar + '&criterio=' + criterio;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
         me.arrayArticulo = respuesta.articulos.data;
       })["catch"](function (error) {
         console.log(error);
       });
+    },
+    agregarDetalleModal: function agregarDetalleModal() {
+      var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      var me = this;
+
+      if (me.encuentra(data['id'])) {
+        Swal.fire({
+          type: 'error',
+          title: 'Lo siento...',
+          text: 'Este No° de placa ya esta en el listado!!'
+        });
+      } else {
+        me.arrayDetalle.push({
+          idarticulo: data['id'],
+          articulo: data['nombre'],
+          cantidad: 1,
+          precio: 1
+        });
+      }
     },
     abrirModal2: function abrirModal2(index) {
       var me = this;
@@ -54780,7 +54737,7 @@ var render = function() {
                             }
                           }
                         },
-                        [_vm._v("Registrar Compra")]
+                        [_vm._v("Registrar Ingreso")]
                       )
                     ])
                   ])
@@ -56465,7 +56422,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Cantidad")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Precio")]),
+        _c("th", [_vm._v("Precio M"), _c("sup", [_vm._v("2")])]),
         _vm._v(" "),
         _c("th", [_vm._v("Descripción")]),
         _vm._v(" "),
@@ -59295,21 +59252,49 @@ var render = function() {
                         { staticClass: "form-group" },
                         [
                           _c("label", { attrs: { for: "" } }, [
-                            _vm._v("Proveedor (*)")
+                            _vm._v("Cliente (*)")
                           ]),
                           _vm._v(" "),
                           _c("v-select", {
                             attrs: {
-                              "on-search": _vm.selectProveedor,
+                              "on-search": _vm.selectCliente,
                               label: "nombre",
-                              options: _vm.arrayProveedor,
-                              placeholder: "Buscar Proveedores...",
-                              onChange: _vm.getDatosProveedor
+                              options: _vm.arrayCliente,
+                              placeholder: "Buscar clientes...",
+                              onChange: _vm.getDatosCliente
                             }
                           })
                         ],
                         1
                       )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-3" }, [
+                      _c("label", { attrs: { for: "" } }, [
+                        _vm._v("Impuesto (*)")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.impuesto,
+                            expression: "impuesto"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.impuesto },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.impuesto = $event.target.value
+                          }
+                        }
+                      })
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-md-4" }, [
@@ -59397,6 +59382,110 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
+                    _c("div", { staticClass: "col-md-4" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Moneda"),
+                          _c(
+                            "span",
+                            {
+                              directives: [
+                                {
+                                  name: "show",
+                                  rawName: "v-show",
+                                  value: _vm.moneda == "",
+                                  expression: "moneda==''"
+                                }
+                              ],
+                              staticStyle: { color: "red" }
+                            },
+                            [_vm._v("(*Seleccione)")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.moneda,
+                                expression: "moneda"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.moneda = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { value: "", disabled: "" } },
+                              [_vm._v("Seleccione la moneda del cobro")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "Peso Mexicano" } },
+                              [_vm._v("Peso Mexicano")]
+                            ),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Dolar USA" } }, [
+                              _vm._v("Dolar USA")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "EURO" } }, [
+                              _vm._v("EURO")
+                            ])
+                          ]
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-4" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Tipo cambio")
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.tipo_cambio,
+                              expression: "tipo_cambio"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "text", placeholder: "000xx" },
+                          domProps: { value: _vm.tipo_cambio },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.tipo_cambio = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
                     _c("div", { staticClass: "col-md-12" }, [
                       _c(
                         "div",
@@ -59405,8 +59494,8 @@ var render = function() {
                             {
                               name: "show",
                               rawName: "v-show",
-                              value: _vm.errorIngreso,
-                              expression: "errorIngreso"
+                              value: _vm.errorVenta,
+                              expression: "errorVenta"
                             }
                           ],
                           staticClass: "form-group row div-error"
@@ -59415,7 +59504,7 @@ var render = function() {
                           _c(
                             "div",
                             { staticClass: "text-center text-error" },
-                            _vm._l(_vm.errorMostrarMsjIngreso, function(error) {
+                            _vm._l(_vm.errorMostrarMsjVenta, function(error) {
                               return _c("div", {
                                 key: error,
                                 domProps: { textContent: _vm._s(error) }
@@ -59432,10 +59521,65 @@ var render = function() {
                     _c("div", { staticClass: "col-sm-4" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Consultar Artículos")
+                          _vm._v("Articulo "),
+                          _c(
+                            "span",
+                            {
+                              directives: [
+                                {
+                                  name: "show",
+                                  rawName: "v-show",
+                                  value: _vm.articulo == "",
+                                  expression: "articulo==''"
+                                }
+                              ],
+                              staticStyle: { color: "red" }
+                            },
+                            [_vm._v("(*Seleccione)")]
+                          )
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-inline" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.codigo,
+                                expression: "codigo"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              placeholder: "Ingrese el artículo"
+                            },
+                            domProps: { value: _vm.codigo },
+                            on: {
+                              keyup: function($event) {
+                                if (
+                                  !$event.type.indexOf("key") &&
+                                  _vm._k(
+                                    $event.keyCode,
+                                    "enter",
+                                    13,
+                                    $event.key,
+                                    "Enter"
+                                  )
+                                ) {
+                                  return null
+                                }
+                                return _vm.buscarArticulo()
+                              },
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.codigo = $event.target.value
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
                           _c(
                             "button",
                             {
@@ -59477,663 +59621,6 @@ var render = function() {
                     _c("div", { staticClass: "col-sm-2" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Origen "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.origen == "",
-                                  expression: "origen==''"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese el origen)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.origen,
-                              expression: "origen"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text" },
-                          domProps: { value: _vm.origen },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.origen = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Contenedor"),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.contenedor == "",
-                                  expression: "contenedor==''"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese el contenedor)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.contenedor,
-                              expression: "contenedor"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text" },
-                          domProps: { value: _vm.contenedor },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.contenedor = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Bodega de descarga "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.ubicacion == "",
-                                  expression: "ubicacion==''"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Seleccione)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.ubicacion,
-                                expression: "ubicacion"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.ubicacion = $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              }
-                            }
-                          },
-                          [
-                            _c(
-                              "option",
-                              { attrs: { value: "", disabled: "" } },
-                              [_vm._v("Seleccione una bodega de descarga")]
-                            ),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Del Musico" } }, [
-                              _vm._v("Del Músico")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Del Escultor" } }, [
-                              _vm._v("Escultor")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Del Sastre" } }, [
-                              _vm._v("Sastre")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Mecanicos" } }, [
-                              _vm._v("Mecánicos")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Tractorista" } }, [
-                              _vm._v("Tractorista")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "San Luis" } }, [
-                              _vm._v("San Luis")
-                            ])
-                          ]
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Fecha de arribo "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.fecha_llegada == "",
-                                  expression: "fecha_llegada==''"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese la fecha de llegada)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.fecha_llegada,
-                              expression: "fecha_llegada"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "date",
-                            placeholder: "Fecha de llegada"
-                          },
-                          domProps: { value: _vm.fecha_llegada },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.fecha_llegada = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("No° Placa "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.codigo == 0,
-                                  expression: "codigo==0"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese el no° de placa)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.codigo,
-                              expression: "codigo"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text" },
-                          domProps: { value: _vm.codigo },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.codigo = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Material "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.idcategoria_r == 0,
-                                  expression: "idcategoria_r==0"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Seleccione un material)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.idcategoria_r,
-                                expression: "idcategoria_r"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.idcategoria_r = $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              }
-                            }
-                          },
-                          [
-                            _c(
-                              "option",
-                              { attrs: { value: "0", disabled: "" } },
-                              [_vm._v("Seleccione un material")]
-                            ),
-                            _vm._v(" "),
-                            _vm._l(_vm.arrayCategoria, function(categoria) {
-                              return _c("option", {
-                                key: categoria.id,
-                                domProps: {
-                                  value: categoria.id,
-                                  textContent: _vm._s(categoria.nombre)
-                                }
-                              })
-                            })
-                          ],
-                          2
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Código de material "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.sku == "",
-                                  expression: "sku==''"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.sku,
-                              expression: "sku"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text" },
-                          domProps: { value: _vm.sku },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.sku = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Terminado "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.terminado == "",
-                                  expression: "terminado==''"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese el terminado)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.terminado,
-                                expression: "terminado"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.terminado = $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              }
-                            }
-                          },
-                          [
-                            _c(
-                              "option",
-                              { attrs: { value: "", disabled: "" } },
-                              [_vm._v("Seleccione un de terminado")]
-                            ),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Pulido" } }, [
-                              _vm._v("Pulido")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Al Corte" } }, [
-                              _vm._v("Al Corte")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Leather" } }, [
-                              _vm._v("Leather")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Mate" } }, [
-                              _vm._v("Mate")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Seda" } }, [
-                              _vm._v("Seda")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Otro" } }, [
-                              _vm._v("Otro")
-                            ])
-                          ]
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Espesor "),
-                          _c("sup", [_vm._v("cm")]),
-                          _vm._v(" "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.espesor == 0,
-                                  expression: "espesor==0"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese el espesor)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.espesor,
-                              expression: "espesor"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "number", value: "2", min: "0" },
-                          domProps: { value: _vm.espesor },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.espesor = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group row" }, [
-                        _c("label", { attrs: { for: "" } }, [_vm._v("Imagen")]),
-                        _vm._v(" "),
-                        _c("input", {
-                          staticClass: "form-control-file",
-                          attrs: { type: "file", src: _vm.imagen },
-                          on: { change: _vm.obtenerImagen }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Largo "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.largo == 0,
-                                  expression: "largo==0"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese el largo)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.largo,
-                              expression: "largo"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "number",
-                            min: "0",
-                            value: "0",
-                            step: "any"
-                          },
-                          domProps: { value: _vm.largo },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.largo = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Alto "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.alto == 0,
-                                  expression: "alto==0"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese el alto)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.alto,
-                              expression: "alto"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "number",
-                            min: "0",
-                            value: "0",
-                            step: "any"
-                          },
-                          domProps: { value: _vm.alto },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.alto = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Metros "),
-                          _c("sup", [_vm._v("2")]),
-                          _vm._v(" "),
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.metros_cuadrados == 0,
-                                  expression: "metros_cuadrados==0"
-                                }
-                              ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese los metros)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          staticClass: "form-control",
-                          attrs: { type: "number", readonly: "" },
-                          domProps: { value: _vm.calcularMts }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
                           _vm._v("Cantidad "),
                           _c(
                             "span",
@@ -60162,12 +59649,7 @@ var render = function() {
                             }
                           ],
                           staticClass: "form-control",
-                          attrs: {
-                            type: "number",
-                            min: "0",
-                            value: "0",
-                            step: "any"
-                          },
+                          attrs: { type: "number", min: "0", value: "0" },
                           domProps: { value: _vm.cantidad },
                           on: {
                             input: function($event) {
@@ -60192,8 +59674,8 @@ var render = function() {
                                 {
                                   name: "show",
                                   rawName: "v-show",
-                                  value: _vm.precio_venta == 0,
-                                  expression: "precio_venta==0"
+                                  value: _vm.precio == 0,
+                                  expression: "precio==0"
                                 }
                               ],
                               staticStyle: { color: "red" }
@@ -60207,19 +59689,54 @@ var render = function() {
                             {
                               name: "model",
                               rawName: "v-model",
-                              value: _vm.precio_venta,
-                              expression: "precio_venta"
+                              value: _vm.precio,
+                              expression: "precio"
                             }
                           ],
                           staticClass: "form-control",
-                          attrs: { type: "number", min: "0", value: "0" },
-                          domProps: { value: _vm.precio_venta },
+                          attrs: {
+                            type: "number",
+                            min: "0",
+                            value: "0",
+                            step: "any"
+                          },
+                          domProps: { value: _vm.precio },
                           on: {
                             input: function($event) {
                               if ($event.target.composing) {
                                 return
                               }
-                              _vm.precio_venta = $event.target.value
+                              _vm.precio = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-sm-2" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Descuento (%)")
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.descuento,
+                              expression: "descuento"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "number", min: "0", value: "0" },
+                          domProps: { value: _vm.descuento },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.descuento = $event.target.value
                             }
                           }
                         })
@@ -60259,213 +59776,289 @@ var render = function() {
                           _vm.arrayDetalle.length
                             ? _c(
                                 "tbody",
-                                _vm._l(_vm.arrayDetalle, function(
-                                  detalle,
-                                  index
-                                ) {
-                                  return _c("tr", { key: detalle.id }, [
-                                    _c("td", [
-                                      _c(
-                                        "button",
-                                        {
-                                          staticClass: "btn btn-danger btn-sm",
-                                          attrs: { type: "button" },
-                                          on: {
-                                            click: function($event) {
-                                              return _vm.eliminarDetalle(index)
-                                            }
-                                          }
-                                        },
-                                        [_c("i", { staticClass: "icon-close" })]
-                                      ),
-                                      _vm._v(
-                                        " \n                                      "
-                                      ),
-                                      _c(
-                                        "button",
-                                        {
-                                          staticClass: "btn btn-warning btn-sm",
-                                          attrs: { type: "button" },
-                                          on: {
-                                            click: function($event) {
-                                              return _vm.abrirModal2(index)
-                                            }
-                                          }
-                                        },
-                                        [
-                                          _c("i", {
-                                            staticClass: "icon-pencil"
-                                          })
-                                        ]
-                                      ),
-                                      _vm._v(
-                                        "  \n                                  "
-                                      )
-                                    ]),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.sku)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", [
-                                      _c("input", {
-                                        directives: [
+                                [
+                                  _vm._l(_vm.arrayDetalle, function(
+                                    detalle,
+                                    index
+                                  ) {
+                                    return _c("tr", { key: detalle.id }, [
+                                      _c("td", [
+                                        _c(
+                                          "button",
                                           {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: detalle.codigo,
-                                            expression: "detalle.codigo"
-                                          }
-                                        ],
-                                        staticClass: "form-control",
-                                        attrs: { type: "text" },
-                                        domProps: { value: detalle.codigo },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
+                                            staticClass:
+                                              "btn btn-danger btn-sm",
+                                            attrs: { type: "button" },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.eliminarDetalle(
+                                                  index
+                                                )
+                                              }
                                             }
-                                            _vm.$set(
-                                              detalle,
-                                              "codigo",
-                                              $event.target.value
-                                            )
-                                          }
-                                        }
-                                      })
-                                    ]),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.espesor)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.largo)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.alto)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(
-                                          detalle.metros_cuadrados
+                                          },
+                                          [
+                                            _c("i", {
+                                              staticClass: "icon-close"
+                                            })
+                                          ]
+                                        ),
+                                        _vm._v(
+                                          " \n                                      "
+                                        ),
+                                        _c(
+                                          "button",
+                                          {
+                                            staticClass:
+                                              "btn btn-warning btn-sm",
+                                            attrs: { type: "button" },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.abrirModal2(index)
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c("i", {
+                                              staticClass: "icon-pencil"
+                                            })
+                                          ]
+                                        ),
+                                        _vm._v(
+                                          "  \n                                  "
                                         )
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", [
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: detalle.cantidad,
-                                            expression: "detalle.cantidad"
-                                          }
-                                        ],
-                                        staticClass: "form-control",
-                                        attrs: {
-                                          min: "0",
-                                          type: "number",
-                                          value: "2"
-                                        },
-                                        domProps: { value: detalle.cantidad },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              detalle,
-                                              "cantidad",
-                                              $event.target.value
-                                            )
-                                          }
-                                        }
-                                      })
-                                    ]),
-                                    _vm._v(" "),
-                                    _c("td", [
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: detalle.precio_venta,
-                                            expression: "detalle.precio_venta"
-                                          }
-                                        ],
-                                        staticClass: "form-control",
-                                        attrs: {
-                                          min: "0",
-                                          type: "number",
-                                          value: "3"
-                                        },
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("td", {
                                         domProps: {
-                                          value: detalle.precio_venta
-                                        },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              detalle,
-                                              "precio_venta",
-                                              $event.target.value
-                                            )
-                                          }
+                                          textContent: _vm._s(detalle.sku)
                                         }
-                                      })
-                                    ]),
-                                    _vm._v(" "),
-                                    _c("td", [
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: detalle.descripcion_r,
-                                            expression: "detalle.descripcion_r"
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: detalle.codigo,
+                                              expression: "detalle.codigo"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          attrs: { type: "text" },
+                                          domProps: { value: detalle.codigo },
+                                          on: {
+                                            input: function($event) {
+                                              if ($event.target.composing) {
+                                                return
+                                              }
+                                              _vm.$set(
+                                                detalle,
+                                                "codigo",
+                                                $event.target.value
+                                              )
+                                            }
                                           }
-                                        ],
-                                        staticClass: "form-control",
-                                        attrs: {
-                                          type: "text",
-                                          placeholder: "Descripcion gral"
-                                        },
+                                        })
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("td", {
                                         domProps: {
-                                          value: detalle.descripcion_r
-                                        },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              detalle,
-                                              "descripcion_r",
-                                              $event.target.value
-                                            )
-                                          }
+                                          textContent: _vm._s(detalle.espesor)
                                         }
-                                      })
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.largo)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.alto)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(
+                                            detalle.metros_cuadrados
+                                          )
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: detalle.cantidad,
+                                              expression: "detalle.cantidad"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          attrs: { min: "0", type: "number" },
+                                          domProps: { value: detalle.cantidad },
+                                          on: {
+                                            input: function($event) {
+                                              if ($event.target.composing) {
+                                                return
+                                              }
+                                              _vm.$set(
+                                                detalle,
+                                                "cantidad",
+                                                $event.target.value
+                                              )
+                                            }
+                                          }
+                                        })
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: detalle.precio,
+                                              expression: "detalle.precio"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          attrs: { min: "0", type: "number" },
+                                          domProps: { value: detalle.precio },
+                                          on: {
+                                            input: function($event) {
+                                              if ($event.target.composing) {
+                                                return
+                                              }
+                                              _vm.$set(
+                                                detalle,
+                                                "precio",
+                                                $event.target.value
+                                              )
+                                            }
+                                          }
+                                        })
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: detalle.descuento,
+                                              expression: "detalle.descuento"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          attrs: { min: "0", type: "number" },
+                                          domProps: {
+                                            value: detalle.descuento
+                                          },
+                                          on: {
+                                            input: function($event) {
+                                              if ($event.target.composing) {
+                                                return
+                                              }
+                                              _vm.$set(
+                                                detalle,
+                                                "descuento",
+                                                $event.target.value
+                                              )
+                                            }
+                                          }
+                                        })
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _vm._v(
+                                          "\n                                     " +
+                                            _vm._s(
+                                              detalle.precio_venta *
+                                                detalle.cantidad
+                                            ) +
+                                            "\n                                  "
+                                        )
+                                      ])
                                     ])
-                                  ])
-                                }),
-                                0
+                                  }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "tr",
+                                    {
+                                      staticStyle: {
+                                        "background-color": "#CEECF5"
+                                      }
+                                    },
+                                    [
+                                      _vm._m(3),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _vm._v(
+                                          "$ " +
+                                            _vm._s(
+                                              (_vm.total_parcial = (
+                                                _vm.total - _vm.total_impuesto
+                                              ).toFixed(2))
+                                            )
+                                        )
+                                      ])
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "tr",
+                                    {
+                                      staticStyle: {
+                                        "background-color": "#CEECF5"
+                                      }
+                                    },
+                                    [
+                                      _vm._m(4),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _vm._v(
+                                          "$ " +
+                                            _vm._s(
+                                              (_vm.total_impuesto = (
+                                                (_vm.total * _vm.impuesto) /
+                                                (1 + _vm.impuesto)
+                                              ).toFixed(2))
+                                            )
+                                        )
+                                      ])
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "tr",
+                                    {
+                                      staticStyle: {
+                                        "background-color": "#CEECF5"
+                                      }
+                                    },
+                                    [
+                                      _vm._m(5),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _vm._v(
+                                          "$ " +
+                                            _vm._s(
+                                              (_vm.total = _vm.calcularTotal)
+                                            )
+                                        )
+                                      ])
+                                    ]
+                                  )
+                                ],
+                                2
                               )
-                            : _c("tbody", [_vm._m(3)])
+                            : _c("tbody", [_vm._m(6)])
                         ]
                       )
                     ])
@@ -60494,11 +60087,11 @@ var render = function() {
                           attrs: { type: "button" },
                           on: {
                             click: function($event) {
-                              return _vm.registrarArticulos()
+                              return _vm.registrarVenta()
                             }
                           }
                         },
-                        [_vm._v("Registrar Compra")]
+                        [_vm._v("Registrar Venta")]
                       )
                     ])
                   ])
@@ -60576,7 +60169,7 @@ var render = function() {
                             "table table-bordered table-striped table-sm"
                         },
                         [
-                          _vm._m(4),
+                          _vm._m(7),
                           _vm._v(" "),
                           _vm.arrayDetalle.length
                             ? _c(
@@ -60690,7 +60283,7 @@ var render = function() {
                                 }),
                                 0
                               )
-                            : _c("tbody", [_vm._m(5)])
+                            : _c("tbody", [_vm._m(8)])
                         ]
                       )
                     ])
@@ -60887,12 +60480,28 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center"
                     },
                     [
-                      _vm._m(6),
+                      _vm._m(9),
                       _vm._v(" "),
                       _c(
                         "tbody",
                         _vm._l(_vm.arrayArticulo, function(articulo) {
                           return _c("tr", { key: articulo.id }, [
+                            _c("td", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-success btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.agregarDetalleModal(articulo)
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "icon-check" })]
+                              )
+                            ]),
+                            _vm._v(" "),
                             _c("td", {
                               domProps: { textContent: _vm._s(articulo.codigo) }
                             }),
@@ -61079,7 +60688,7 @@ var render = function() {
                   ),
                   _vm._v(" \n              "),
                   _c("div", { staticClass: "text-center" }, [
-                    _vm._m(7),
+                    _vm._m(10),
                     _vm._v(" "),
                     _c("input", {
                       staticClass: "form-control-file",
@@ -61095,11 +60704,11 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center"
                     },
                     [
-                      _vm._m(8),
+                      _vm._m(11),
                       _vm._v(" "),
                       _c("tbody", [
                         _c("tr", [
-                          _vm._m(9),
+                          _vm._m(12),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61127,7 +60736,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(10),
+                          _vm._m(13),
                           _vm._v(" "),
                           _c("td", [
                             _c(
@@ -61182,7 +60791,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(11),
+                          _vm._m(14),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61210,7 +60819,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(12),
+                          _vm._m(15),
                           _vm._v(" "),
                           _c("td", [
                             _c(
@@ -61278,7 +60887,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(13),
+                          _vm._m(16),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61311,7 +60920,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(14),
+                          _vm._m(17),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61344,7 +60953,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(15),
+                          _vm._m(18),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61356,7 +60965,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(16),
+                          _vm._m(19),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61384,7 +60993,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(17),
+                          _vm._m(20),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61412,7 +61021,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(18),
+                          _vm._m(21),
                           _vm._v(" "),
                           _c("td", [
                             _c(
@@ -61490,7 +61099,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(19),
+                          _vm._m(22),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61523,7 +61132,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(20),
+                          _vm._m(23),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61551,7 +61160,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(21),
+                          _vm._m(24),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61579,7 +61188,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(22),
+                          _vm._m(25),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61607,7 +61216,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(23),
+                          _vm._m(26),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61635,7 +61244,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(24),
+                          _vm._m(27),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61663,7 +61272,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(25),
+                          _vm._m(28),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61852,11 +61461,11 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center"
                     },
                     [
-                      _vm._m(26),
+                      _vm._m(29),
                       _vm._v(" "),
                       _c("tbody", [
                         _c("tr", [
-                          _vm._m(27),
+                          _vm._m(30),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.codigo) }
@@ -61864,7 +61473,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(28),
+                          _vm._m(31),
                           _vm._v(" "),
                           _c(
                             "select",
@@ -61919,7 +61528,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(29),
+                          _vm._m(32),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.sku) }
@@ -61927,7 +61536,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(30),
+                          _vm._m(33),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.terminado) }
@@ -61935,7 +61544,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(31),
+                          _vm._m(34),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.largo) }
@@ -61943,7 +61552,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(32),
+                          _vm._m(35),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.alto) }
@@ -61951,7 +61560,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(33),
+                          _vm._m(36),
                           _vm._v(" "),
                           _c("td", {
                             domProps: {
@@ -61961,34 +61570,10 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(34),
-                          _vm._v(" "),
-                          _c("td", {
-                            domProps: { textContent: _vm._s(_vm.espesor) }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _vm._m(35),
-                          _vm._v(" "),
-                          _c("td", {
-                            domProps: { textContent: _vm._s(_vm.precio_venta) }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _vm._m(36),
-                          _vm._v(" "),
-                          _c("td", {
-                            domProps: { textContent: _vm._s(_vm.ubicacion) }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
                           _vm._m(37),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.cantidad) }
+                            domProps: { textContent: _vm._s(_vm.espesor) }
                           })
                         ]),
                         _vm._v(" "),
@@ -61996,7 +61581,7 @@ var render = function() {
                           _vm._m(38),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.descripcion_r) }
+                            domProps: { textContent: _vm._s(_vm.precio_venta) }
                           })
                         ]),
                         _vm._v(" "),
@@ -62004,7 +61589,7 @@ var render = function() {
                           _vm._m(39),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.observacion_r) }
+                            domProps: { textContent: _vm._s(_vm.ubicacion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -62012,7 +61597,7 @@ var render = function() {
                           _vm._m(40),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.origen) }
+                            domProps: { textContent: _vm._s(_vm.cantidad) }
                           })
                         ]),
                         _vm._v(" "),
@@ -62020,7 +61605,7 @@ var render = function() {
                           _vm._m(41),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.contenedor) }
+                            domProps: { textContent: _vm._s(_vm.descripcion_r) }
                           })
                         ]),
                         _vm._v(" "),
@@ -62028,12 +61613,36 @@ var render = function() {
                           _vm._m(42),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.espesor) }
+                            domProps: { textContent: _vm._s(_vm.observacion_r) }
                           })
                         ]),
                         _vm._v(" "),
                         _c("tr", [
                           _vm._m(43),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.origen) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(44),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.contenedor) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(45),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.espesor) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(46),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.fecha_llegada) }
@@ -62155,7 +61764,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Precio")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Descripción")])
+        _c("th", [_vm._v("Descuento ")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("SubTotal")])
       ])
     ])
   },
@@ -62163,8 +61774,32 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("td", { attrs: { colspan: "10", align: "right" } }, [
+      _c("strong", [_vm._v("Total Parcial:")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", { attrs: { colspan: "10", align: "right" } }, [
+      _c("strong", [_vm._v("Total Impuesto:")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", { attrs: { colspan: "10", align: "right" } }, [
+      _c("strong", [_vm._v("Total Neto:")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("tr", [
-      _c("td", { staticClass: "text-center", attrs: { colspan: "10" } }, [
+      _c("td", { staticClass: "text-center", attrs: { colspan: "11" } }, [
         _c("strong", [_vm._v("NO hay artículos agregados...")])
       ])
     ])
@@ -62215,6 +61850,8 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", { staticClass: "text-center" }, [
+        _c("th", [_vm._v("Opciones")]),
+        _vm._v(" "),
         _c("th", [_vm._v("No° Placa")]),
         _vm._v(" "),
         _c("th", [_vm._v("Código de material")]),
