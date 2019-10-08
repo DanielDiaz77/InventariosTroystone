@@ -6705,6 +6705,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6832,7 +6843,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       var resultado = 0;
 
       for (var i = 0; i < me.arrayDetalle.length; i++) {
-        resultado = resultado + (me.arrayDetalle[i].precio * me.arrayDetalle[i].cantidad - me.arrayDetalle[i].descuento);
+        resultado = resultado + (me.arrayDetalle[i].precio * me.arrayDetalle[i].cantidad * me.arrayDetalle[i].metros_cuadrados - me.arrayDetalle[i].descuento);
       }
 
       return resultado;
@@ -6846,6 +6857,19 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       resultado = resultado + me.alto * me.largo;
       me.metros_cuadrados = resultado;
       return resultado;
+    },
+    cacularPrecioExtranjero: function cacularPrecioExtranjero() {
+      var me = this;
+      var precioExt = 0;
+
+      if (me.moneda != 'Peso Mexicano') {
+        precioExt = precioExt + me.precio / me.tipo_cambio;
+        me.precio = Math.ceil(precioExt);
+      } else {
+        precioExt = me.precio;
+      }
+
+      return Math.ceil(precioExt);
     }
   },
   methods: {
@@ -7065,7 +7089,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         console.log(error);
       });
     },
-    desactivarIngreso: function desactivarIngreso(id) {
+    desactivarVenta: function desactivarVenta(id) {
       var _this = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
@@ -7076,7 +7100,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         buttonsStyling: false
       });
       swalWithBootstrapButtons.fire({
-        title: "¿Esta seguro de anular este ingreso?",
+        title: "¿Esta seguro de anular esta venta?",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "Aceptar!",
@@ -7085,11 +7109,11 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       }).then(function (result) {
         if (result.value) {
           var me = _this;
-          axios.put('/ingreso/desactivar', {
+          axios.put('/venta/desactivar', {
             'id': id
           }).then(function (response) {
-            me.listarIngreso(1, '', 'num_comprobante');
-            swal('Anulado!', 'El ingreso ha sido anulado con éxito.', 'success');
+            me.listarVenta(1, '', 'num_comprobante');
+            swal('Anulado!', 'La venta ha sido anulado con éxito.', 'success');
           })["catch"](function (error) {
             console.log(error);
           });
@@ -7168,7 +7192,8 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.categoria = 0;
       this.observacion = "";
       this.arrayDetalle = [];
-      this.errorMostrarMsjArticulo = [];
+      this.errorVenta = 0;
+      this.errorMostrarMsjVenta = [];
       this.num_comprobante = 0;
     },
     verVenta: function verVenta(id) {
@@ -59605,7 +59630,7 @@ var render = function() {
                               ],
                               staticStyle: { color: "red" }
                             },
-                            [_vm._v("(*Seleccione)")]
+                            [_vm._v("(*Ingrese el tipo de cambio)")]
                           )
                         ]),
                         _vm._v(" "),
@@ -59811,53 +59836,84 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-sm-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Precio "),
-                          _c(
-                            "span",
-                            {
+                      _vm.moneda != "Peso Mexicano"
+                        ? _c("div", { staticClass: "form-group" }, [
+                            _c("label", { attrs: { for: "" } }, [
+                              _vm._v("Precio m"),
+                              _c("sup", [_vm._v("2")]),
+                              _vm._v(" " + _vm._s(_vm.moneda) + " "),
+                              _c(
+                                "span",
+                                {
+                                  directives: [
+                                    {
+                                      name: "show",
+                                      rawName: "v-show",
+                                      value: _vm.precio == 0,
+                                      expression: "precio==0"
+                                    }
+                                  ],
+                                  staticStyle: { color: "red" }
+                                },
+                                [_vm._v("(*Ingrese el precio)")]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("input", {
+                              staticClass: "form-control",
+                              attrs: { type: "number", readonly: "" },
+                              domProps: { value: _vm.cacularPrecioExtranjero }
+                            })
+                          ])
+                        : _c("div", { staticClass: "form-group" }, [
+                            _c("label", { attrs: { for: "" } }, [
+                              _vm._v("Precio m"),
+                              _c("sup", [_vm._v("2")]),
+                              _vm._v(" "),
+                              _c(
+                                "span",
+                                {
+                                  directives: [
+                                    {
+                                      name: "show",
+                                      rawName: "v-show",
+                                      value: _vm.precio == 0,
+                                      expression: "precio==0"
+                                    }
+                                  ],
+                                  staticStyle: { color: "red" }
+                                },
+                                [_vm._v("(*Ingrese el precio)")]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("input", {
                               directives: [
                                 {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: _vm.precio == 0,
-                                  expression: "precio==0"
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.precio,
+                                  expression: "precio"
                                 }
                               ],
-                              staticStyle: { color: "red" }
-                            },
-                            [_vm._v("(*Ingrese el precio)")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.precio,
-                              expression: "precio"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "number",
-                            min: "0",
-                            value: "0",
-                            step: "any"
-                          },
-                          domProps: { value: _vm.precio },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "number",
+                                min: "0",
+                                value: "0",
+                                step: "any"
+                              },
+                              domProps: { value: _vm.precio },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.precio = $event.target.value
+                                }
                               }
-                              _vm.precio = $event.target.value
-                            }
-                          }
-                        })
-                      ])
+                            })
+                          ])
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-sm-2" }, [
@@ -59918,7 +59974,54 @@ var render = function() {
                             "table table-bordered table-striped table-sm"
                         },
                         [
-                          _vm._m(2),
+                          _c("thead", [
+                            _c("tr", [
+                              _c("th", [_vm._v("Opciones")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Material")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Código de material")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("No° Placa")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Terminado")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Espesor")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("largo")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Alto")]),
+                              _vm._v(" "),
+                              _vm._m(2),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Cantidad")]),
+                              _vm._v(" "),
+                              _vm.moneda != "Peso Mexicano"
+                                ? _c("th", [
+                                    _vm._v(
+                                      "\n                                      Precio m"
+                                    ),
+                                    _c("sup", [_vm._v("2")]),
+                                    _vm._v(
+                                      " " +
+                                        _vm._s(_vm.moneda) +
+                                        "\n                                  "
+                                    )
+                                  ])
+                                : _c("th", [
+                                    _vm._v(
+                                      "\n                                      Precio m"
+                                    ),
+                                    _c("sup", [_vm._v("2")])
+                                  ]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Descuento ")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Ubicacion")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("SubTotal")])
+                            ])
+                          ]),
                           _vm._v(" "),
                           _vm.arrayDetalle.length
                             ? _c(
@@ -60154,7 +60257,8 @@ var render = function() {
                                           "\n                                     " +
                                             _vm._s(
                                               detalle.precio *
-                                                detalle.cantidad -
+                                                detalle.cantidad *
+                                                detalle.metros_cuadrados -
                                                 detalle.descuento
                                             ) +
                                             "\n                                  "
@@ -62089,37 +62193,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", [_vm._v("Opciones")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Material")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Código de material")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("No° Placa")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Terminado")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Espesor")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("largo")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Alto")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Metros "), _c("sup", [_vm._v("2")])]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Cantidad")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Precio")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Descuento ")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Ubicacion")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("SubTotal")])
-      ])
-    ])
+    return _c("th", [_vm._v("Metros "), _c("sup", [_vm._v("2")])])
   },
   function() {
     var _vm = this
@@ -62179,7 +62253,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Cantidad")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Precio")]),
+        _c("th", [_vm._v("Precio m"), _c("sup", [_vm._v("2")])]),
         _vm._v(" "),
         _c("th", [_vm._v("Descuento ")]),
         _vm._v(" "),

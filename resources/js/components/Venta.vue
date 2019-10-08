@@ -142,7 +142,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="">Tipo cambio<span style="color:red;" v-show="moneda!='Peso Mexicano'">(*Seleccione)</span> </label>
+                            <label for="">Tipo cambio<span style="color:red;" v-show="moneda!='Peso Mexicano'">(*Ingrese el tipo de cambio)</span> </label>
                             <input type="text" class="form-control" v-model="tipo_cambio" placeholder="000xx">
                         </div>
                     </div>
@@ -172,8 +172,12 @@
                         </div>
                     </div>
                     <div class="col-sm-2">
-                        <div class="form-group">
-                            <label for="">Precio <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
+                        <div class="form-group" v-if="moneda!='Peso Mexicano'">
+                            <label for="">Precio m<sup>2</sup> {{moneda}} <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
+                           <input type="number" readonly :value="cacularPrecioExtranjero" class="form-control"/>
+                        </div>
+                        <div class="form-group" v-else>
+                            <label for="">Precio m<sup>2</sup> <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="precio">
                         </div>
                     </div>
@@ -206,7 +210,12 @@
                                     <th>Alto</th>
                                     <th>Metros <sup>2</sup></th>
                                     <th>Cantidad</th>
-                                    <th>Precio</th>
+                                    <th v-if="moneda!='Peso Mexicano'">
+                                        Precio m<sup>2</sup> {{moneda}}
+                                    </th>
+                                    <th v-else>
+                                        Precio m<sup>2</sup>
+                                    </th>
                                     <th>Descuento </th>
                                     <th>Ubicacion</th>
                                     <th>SubTotal</th>
@@ -234,16 +243,18 @@
                                         <span style="color:red;" v-show="detalle.cantidad>detalle.stock">Solo hay: {{detalle.stock}} disponibles</span>
                                         <input v-model="detalle.cantidad" min="1" type="number" class="form-control">
                                     </td>
-                                    <td v-text="detalle.precio">
-                                        <!-- <input v-model="detalle.precio" min="0" type="number" class="form-control"> -->
-                                    </td>
+                                   <td v-text="detalle.precio">
+                                       <!--  <input v-model="detalle.precio" min="0" step="any" type="number" class="form-control"> -->
+                                   </td>
+                                    <!-- <td v-if="moneda!='Peso Mexicano'">$ {{ precio=cacularPrecioExtranjero }} </td> -->
+                                    <!-- <td v-else>{{detalle.precio}}</td> -->
                                     <td>
                                         <span style="color:red" v-show="detalle.descuento>(detalle.precio * detalle.cantidad)">Descuento superior al subtotal!</span>
                                         <input v-model="detalle.descuento" min="0" step="any" type="number" class="form-control">
                                     </td>
                                     <td v-text="detalle.ubicacion"></td>
                                     <td>
-                                       {{ (detalle.precio * detalle.cantidad) - detalle.descuento }}
+                                       {{ (( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento) }}
                                     </td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
@@ -357,7 +368,7 @@
                                     <th>Alto</th>
                                     <th>Metros <sup>2</sup></th>
                                     <th>Cantidad</th>
-                                    <th>Precio</th>
+                                    <th>Precio m<sup>2</sup></th>
                                     <th>Descuento </th>
                                     <th>SubTotal</th>
 
@@ -915,7 +926,7 @@ export default {
                 let me=this;
                 let resultado = 0;
                 for(var i=0;i<me.arrayDetalle.length;i++){
-                    resultado = resultado + ((me.arrayDetalle[i].precio * me.arrayDetalle[i].cantidad) - me.arrayDetalle[i].descuento)
+                    resultado = resultado + (((me.arrayDetalle[i].precio * me.arrayDetalle[i].cantidad) * me.arrayDetalle[i].metros_cuadrados)- me.arrayDetalle[i].descuento)
                 }
                 return resultado;
             },
@@ -928,6 +939,18 @@ export default {
                 resultado = resultado + (me.alto * me.largo);
                 me.metros_cuadrados = resultado;
                 return resultado;
+            },
+            cacularPrecioExtranjero : function(){
+                let me=this;
+                let precioExt = 0;
+
+                if(me.moneda != 'Peso Mexicano'){
+                    precioExt = (precioExt + (me.precio / me.tipo_cambio));
+                    me.precio = Math.ceil(precioExt);
+                }else{
+                    precioExt = me.precio;
+                }
+                return Math.ceil(precioExt);
             }
         },
     methods: {
@@ -1156,7 +1179,7 @@ export default {
                 console.log(error);
             });
         },
-        desactivarIngreso(id) {
+        desactivarVenta(id) {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                 confirmButton: "btn btn-success",
@@ -1166,7 +1189,7 @@ export default {
             });
 
             swalWithBootstrapButtons.fire({
-                title: "¿Esta seguro de anular este ingreso?",
+                title: "¿Esta seguro de anular esta venta?",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Aceptar!",
@@ -1176,13 +1199,13 @@ export default {
             .then(result => {
                 if (result.value) {
                     let me = this;
-                    axios.put('/ingreso/desactivar',{
+                    axios.put('/venta/desactivar',{
                         'id': id
                     }).then(function (response) {
-                        me.listarIngreso(1,'','num_comprobante');
+                        me.listarVenta(1,'','num_comprobante');
                         swal(
                         'Anulado!',
-                        'El ingreso ha sido anulado con éxito.',
+                        'La venta ha sido anulado con éxito.',
                         'success'
                         )
                     }).catch(function (error) {
@@ -1269,7 +1292,8 @@ export default {
             this.categoria = 0;
             this.observacion = "";
             this.arrayDetalle = [];
-            this.errorMostrarMsjArticulo = [];
+            this.errorVenta =0;
+            this.errorMostrarMsjVenta = [];
             this.num_comprobante = 0;
         },
         verVenta(id){
