@@ -6655,6 +6655,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6675,6 +6681,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       descuento: 0,
       moneda: 'Peso Mexicano',
       tipo_cambio: 0,
+      categoria: '',
       idarticulo: 0,
       articulo: "",
       codigo: "",
@@ -6714,7 +6721,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       criterioA: 'sku',
       //Registrar artículo
       articulo_idr: 0,
-      idcategoria_r: 0,
+      idcategoria: 0,
       nombre_categoria_r: '',
       codigo_r: '',
       sku: '',
@@ -6780,7 +6787,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       var resultado = 0;
 
       for (var i = 0; i < me.arrayDetalle.length; i++) {
-        resultado = resultado + me.arrayDetalle[i].precio_venta * me.arrayDetalle[i].cantidad;
+        resultado = resultado + (me.arrayDetalle[i].precio * me.arrayDetalle[i].cantidad - me.arrayDetalle[i].descuento);
       }
 
       return resultado;
@@ -6840,6 +6847,13 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
           me.idarticulo = me.arrayArticulo[0]['id'];
           me.precio = me.arrayArticulo[0]['precio_venta'];
           me.stock = me.arrayArticulo[0]['stock'];
+          me.espesor = me.arrayArticulo[0]['espesor'];
+          me.largo = me.arrayArticulo[0]['largo'];
+          me.alto = me.arrayArticulo[0]['alto'];
+          me.metros_cuadrados = me.arrayArticulo[0]['metros_cuadrados'];
+          me.terminado = me.arrayArticulo[0]['terminado'];
+          me.ubicacion = me.arrayArticulo[0]['ubicacion'];
+          me.categoria = me.arrayArticulo[0]['nombre_categoria'];
         } else {
           me.articulo = 'No existe este artículo';
           me.idarticulo = 0;
@@ -6873,44 +6887,79 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
     agregarDetalle: function agregarDetalle() {
       var me = this;
 
-      if (me.codigo == 0 || me.precio_venta == 0 || me.cantidad == 0 || me.idcategoria_r == 0 || me.alto == 0 || me.largo == 0) {} else {
-        if (me.encuentra(me.codigo)) {
+      if (me.idarticulo == 0 || me.precio == 0 || me.cantidad == 0) {} else {
+        if (me.encuentra(me.idarticulo)) {
           Swal.fire({
             type: 'error',
             title: 'Error...',
             text: 'Este No° de placa ya esta en el listado!'
           });
           me.codigo = "";
+          me.sku = "";
+          me.idarticulo = "";
+          me.articulo = "";
+          me.cantidad = 0;
+          me.precio = 0;
+          me.descuento = 0;
+          me.idcategoria = 0;
+          me.largo = 0;
+          me.alto = 0;
+          me.metros_cuadrados = 0;
+          me.terminado = 0;
+          me.espesor = 0;
+          me.stock = 0;
+          me.ubicacion = "";
+          me.categoria = "";
         } else {
-          me.arrayDetalle.push({
-            contenedor: me.contenedor,
-            fecha_llegada: me.fecha_llegada,
-            origen: me.origen,
-            ubicacion: me.ubicacion,
-            articulo: me.articulo,
-            sku: me.sku,
-            codigo: me.codigo,
-            idcategoria: me.idcategoria_r,
-            largo: me.largo,
-            alto: me.alto,
-            metros_cuadrados: me.metros_cuadrados,
-            terminado: me.terminado,
-            espesor: me.espesor,
-            precio_venta: me.precio_venta,
-            cantidad: me.cantidad,
-            stock: me.cantidad,
-            imagen: me.file,
-            descripcion: me.descripcion_r,
-            observacion: me.observacion_r
-          });
-          me.codigo = "";
+          if (me.cantidad > me.stock) {
+            Swal.fire({
+              type: 'error',
+              title: 'Error...',
+              text: 'La cantidad excede las placas disponibles de este material!'
+            });
+          } else {
+            me.arrayDetalle.push({
+              idarticulo: me.idarticulo,
+              articulo: me.articulo,
+              sku: me.sku,
+              codigo: me.codigo,
+              idcategoria: me.idcategoria,
+              largo: me.largo,
+              alto: me.alto,
+              metros_cuadrados: me.metros_cuadrados,
+              terminado: me.terminado,
+              espesor: me.espesor,
+              precio: me.precio,
+              cantidad: me.cantidad,
+              stock: me.stock,
+              ubicacion: me.ubicacion,
+              descuento: me.descuento,
+              categoria: me.categoria
+            });
+            me.codigo = "";
+            me.sku = "";
+            me.idarticulo = "";
+            me.articulo = "";
+            me.cantidad = 0;
+            me.precio = 0;
+            me.descuento = 0;
+            me.idcategoria = 0;
+            me.largo = 0;
+            me.alto = 0;
+            me.metros_cuadrados = 0;
+            me.terminado = 0;
+            me.espesor = 0;
+            me.stock = 0;
+            me.ubicacion = "";
+            me.categoria = "";
+          }
         }
       }
     },
     actualizarDetalle: function actualizarDetalle() {
       var me = this;
 
-      if (me.codigo == 0 || me.precio_venta == 0 || me.cantidad == 0 || me.idcategoria_r == 0 || me.alto == 0 || me.largo == 0) {} else {
+      if (me.codigo == 0 || me.precio_venta == 0 || me.cantidad == 0 || me.idcategoria == 0 || me.alto == 0 || me.largo == 0) {} else {
         me.eliminarDetalle(me.ind);
         me.arrayDetalle.push({
           contenedor: me.contenedor,
@@ -6920,7 +6969,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
           articulo: me.articulo,
           sku: me.sku,
           codigo: me.codigo,
-          idcategoria: me.idcategoria_r,
+          idcategoria: me.idcategoria,
           largo: me.largo,
           alto: me.alto,
           metros_cuadrados: me.metros_cuadrados,
@@ -7015,7 +7064,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.idarticulo = 0;
       this.articulo = "";
       this.sku = "";
-      this.idcategoria_r = 0;
+      this.idcategoria = 0;
       this.largo = 0;
       this.alto = 0;
       this.metros_cuadrados = 0;
@@ -7040,7 +7089,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.idarticulo = 0;
       this.articulo = "";
       this.sku = "";
-      this.idcategoria_r = 0;
+      this.idcategoria = 0;
       this.largo = 0;
       this.alto = 0;
       this.metros_cuadrados = 0;
@@ -7118,9 +7167,21 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       } else {
         me.arrayDetalle.push({
           idarticulo: data['id'],
-          articulo: data['nombre'],
+          articulo: data['sku'],
+          sku: data['sku'],
+          codigo: data['codigo'],
+          idcategoria: data['idcategoria'],
+          largo: data['largo'],
+          alto: data['alto'],
+          metros_cuadrados: data['metros_cuadrados'],
+          terminado: data['terminado'],
+          espesor: data['espesor'],
+          precio: data['precio_venta'],
+          stock: data['stock'],
+          ubicacion: data['ubicacion'],
+          categoria: data['nombre_categoria'],
           cantidad: 1,
-          precio: 1
+          descuento: 0
         });
       }
     },
@@ -7131,7 +7192,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       me.tituloModal = "Editar Artículo ";
       me.sku = me.arrayDetalle[index]['sku'];
       me.codigo = me.arrayDetalle[index]['codigo'];
-      me.idcategoria_r = me.arrayDetalle[index]['idcategoria'];
+      me.idcategoria = me.arrayDetalle[index]['idcategoria'];
       me.largo = me.arrayDetalle[index]['largo'];
       me.alto = me.arrayDetalle[index]['alto'];
       me.ubicacion = me.arrayDetalle[index]['ubicacion'];
@@ -7151,7 +7212,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.modal2 = 0;
       this.sku = '';
       this.codigo = '';
-      this.idcategoria_r = 0;
+      this.idcategoria = 0;
       this.largo = 0;
       this.alto = 0;
       this.terminado = '';
@@ -7197,7 +7258,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       me.tituloModal = "Artículo ";
       me.sku = me.arrayDetalle[index]['sku'];
       me.codigo = me.arrayDetalle[index]['codigo'];
-      me.idcategoria_r = me.arrayDetalle[index]['idcategoria'];
+      me.idcategoria = me.arrayDetalle[index]['idcategoria'];
       me.largo = me.arrayDetalle[index]['largo'];
       me.alto = me.arrayDetalle[index]['alto'];
       me.ubicacion = me.arrayDetalle[index]['ubicacion'];
@@ -7219,7 +7280,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.modal3 = 0;
       this.sku = '';
       this.codigo = '';
-      this.idcategoria_r = 0;
+      this.idcategoria = 0;
       this.largo = 0;
       this.alto = 0;
       this.terminado = '';
@@ -59831,37 +59892,27 @@ var render = function() {
                                       _vm._v(" "),
                                       _c("td", {
                                         domProps: {
-                                          textContent: _vm._s(detalle.sku)
+                                          textContent: _vm._s(detalle.categoria)
                                         }
                                       }),
                                       _vm._v(" "),
-                                      _c("td", [
-                                        _c("input", {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model",
-                                              value: detalle.codigo,
-                                              expression: "detalle.codigo"
-                                            }
-                                          ],
-                                          staticClass: "form-control",
-                                          attrs: { type: "text" },
-                                          domProps: { value: detalle.codigo },
-                                          on: {
-                                            input: function($event) {
-                                              if ($event.target.composing) {
-                                                return
-                                              }
-                                              _vm.$set(
-                                                detalle,
-                                                "codigo",
-                                                $event.target.value
-                                              )
-                                            }
-                                          }
-                                        })
-                                      ]),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.articulo)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.codigo)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.terminado)
+                                        }
+                                      }),
                                       _vm._v(" "),
                                       _c("td", {
                                         domProps: {
@@ -59890,6 +59941,31 @@ var render = function() {
                                       }),
                                       _vm._v(" "),
                                       _c("td", [
+                                        _c(
+                                          "span",
+                                          {
+                                            directives: [
+                                              {
+                                                name: "show",
+                                                rawName: "v-show",
+                                                value:
+                                                  detalle.cantidad >
+                                                  detalle.stock,
+                                                expression:
+                                                  "detalle.cantidad>detalle.stock"
+                                              }
+                                            ],
+                                            staticStyle: { color: "red" }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "Solo hay: " +
+                                                _vm._s(detalle.stock) +
+                                                " disponibles"
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
                                         _c("input", {
                                           directives: [
                                             {
@@ -59900,7 +59976,7 @@ var render = function() {
                                             }
                                           ],
                                           staticClass: "form-control",
-                                          attrs: { min: "0", type: "number" },
+                                          attrs: { min: "1", type: "number" },
                                           domProps: { value: detalle.cantidad },
                                           on: {
                                             input: function($event) {
@@ -59917,35 +59993,37 @@ var render = function() {
                                         })
                                       ]),
                                       _vm._v(" "),
-                                      _c("td", [
-                                        _c("input", {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model",
-                                              value: detalle.precio,
-                                              expression: "detalle.precio"
-                                            }
-                                          ],
-                                          staticClass: "form-control",
-                                          attrs: { min: "0", type: "number" },
-                                          domProps: { value: detalle.precio },
-                                          on: {
-                                            input: function($event) {
-                                              if ($event.target.composing) {
-                                                return
-                                              }
-                                              _vm.$set(
-                                                detalle,
-                                                "precio",
-                                                $event.target.value
-                                              )
-                                            }
-                                          }
-                                        })
-                                      ]),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.precio)
+                                        }
+                                      }),
                                       _vm._v(" "),
                                       _c("td", [
+                                        _c(
+                                          "span",
+                                          {
+                                            directives: [
+                                              {
+                                                name: "show",
+                                                rawName: "v-show",
+                                                value:
+                                                  detalle.descuento >
+                                                  detalle.precio *
+                                                    detalle.cantidad,
+                                                expression:
+                                                  "detalle.descuento>(detalle.precio * detalle.cantidad)"
+                                              }
+                                            ],
+                                            staticStyle: { color: "red" }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "Descuento superior al subtotal!"
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
                                         _c("input", {
                                           directives: [
                                             {
@@ -59956,7 +60034,11 @@ var render = function() {
                                             }
                                           ],
                                           staticClass: "form-control",
-                                          attrs: { min: "0", type: "number" },
+                                          attrs: {
+                                            min: "0",
+                                            step: "any",
+                                            type: "number"
+                                          },
                                           domProps: {
                                             value: detalle.descuento
                                           },
@@ -59975,12 +60057,19 @@ var render = function() {
                                         })
                                       ]),
                                       _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.ubicacion)
+                                        }
+                                      }),
+                                      _vm._v(" "),
                                       _c("td", [
                                         _vm._v(
                                           "\n                                     " +
                                             _vm._s(
-                                              detalle.precio_venta *
-                                                detalle.cantidad
+                                              detalle.precio *
+                                                detalle.cantidad -
+                                                detalle.descuento
                                             ) +
                                             "\n                                  "
                                         )
@@ -60746,8 +60835,8 @@ var render = function() {
                                   {
                                     name: "model",
                                     rawName: "v-model",
-                                    value: _vm.idcategoria_r,
-                                    expression: "idcategoria_r"
+                                    value: _vm.idcategoria,
+                                    expression: "idcategoria"
                                   }
                                 ],
                                 staticClass: "form-control",
@@ -60762,7 +60851,7 @@ var render = function() {
                                           "_value" in o ? o._value : o.value
                                         return val
                                       })
-                                    _vm.idcategoria_r = $event.target.multiple
+                                    _vm.idcategoria = $event.target.multiple
                                       ? $$selectedVal
                                       : $$selectedVal[0]
                                   }
@@ -61482,8 +61571,8 @@ var render = function() {
                                 {
                                   name: "model",
                                   rawName: "v-model",
-                                  value: _vm.idcategoria_r,
-                                  expression: "idcategoria_r"
+                                  value: _vm.idcategoria,
+                                  expression: "idcategoria"
                                 }
                               ],
                               staticClass: "form-control selectDetalle",
@@ -61499,7 +61588,7 @@ var render = function() {
                                         "_value" in o ? o._value : o.value
                                       return val
                                     })
-                                  _vm.idcategoria_r = $event.target.multiple
+                                  _vm.idcategoria = $event.target.multiple
                                     ? $$selectedVal
                                     : $$selectedVal[0]
                                 }
@@ -61748,9 +61837,13 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", [_vm._v("Opciones")]),
         _vm._v(" "),
+        _c("th", [_vm._v("Material")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Código de material")]),
         _vm._v(" "),
         _c("th", [_vm._v("No° Placa")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Terminado")]),
         _vm._v(" "),
         _c("th", [_vm._v("Espesor")]),
         _vm._v(" "),
@@ -61766,6 +61859,8 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Descuento ")]),
         _vm._v(" "),
+        _c("th", [_vm._v("Ubicacion")]),
+        _vm._v(" "),
         _c("th", [_vm._v("SubTotal")])
       ])
     ])
@@ -61774,7 +61869,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "10", align: "right" } }, [
+    return _c("td", { attrs: { colspan: "13", align: "right" } }, [
       _c("strong", [_vm._v("Total Parcial:")])
     ])
   },
@@ -61782,7 +61877,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "10", align: "right" } }, [
+    return _c("td", { attrs: { colspan: "13", align: "right" } }, [
       _c("strong", [_vm._v("Total Impuesto:")])
     ])
   },
@@ -61790,7 +61885,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "10", align: "right" } }, [
+    return _c("td", { attrs: { colspan: "13", align: "right" } }, [
       _c("strong", [_vm._v("Total Neto:")])
     ])
   },
@@ -61799,7 +61894,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("tr", [
-      _c("td", { staticClass: "text-center", attrs: { colspan: "11" } }, [
+      _c("td", { staticClass: "text-center", attrs: { colspan: "14" } }, [
         _c("strong", [_vm._v("NO hay artículos agregados...")])
       ])
     ])

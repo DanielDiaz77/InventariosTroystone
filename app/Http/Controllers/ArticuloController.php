@@ -103,14 +103,17 @@ class ArticuloController extends Controller
 
         $filtro = $request->filtro;
 
-        $articulos = Articulo::where('codigo',$filtro)
-        ->select('id','nombre','sku','codigo','origen','contenedor','ubicacion','fecha_llegada',
-        'idcategoria','terminado','espesor','file','largo','alto','metros_cuadrados','precio_venta','stock')
+        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+        ->select('articulos.id','articulos.nombre','articulos.sku','articulos.codigo','articulos.origen',
+        'articulos.contenedor','articulos.ubicacion','articulos.fecha_llegada','articulos.idcategoria',
+        'articulos.terminado','articulos.espesor','articulos.largo','articulos.alto','articulos.metros_cuadrados',
+        'articulos.precio_venta','articulos.stock','categorias.nombre as nombre_categoria')
         ->where([
+            ['codigo',$filtro],
             ['articulos.stock','>',0],
             ['articulos.condicion',1]
         ])
-        ->orderBy('sku','asc')->take(1)->get();
+        ->orderBy('articulos.sku','asc')->take(1)->get();
         return ['articulos' => $articulos];
 
     }

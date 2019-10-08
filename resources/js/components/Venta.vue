@@ -197,8 +197,10 @@
                             <thead>
                                 <tr>
                                     <th>Opciones</th>
+                                    <th>Material</th>
                                     <th>Código de material</th>
                                     <th>No° Placa</th>
+                                    <th>Terminado</th>
                                     <th>Espesor</th>
                                     <th>largo</th>
                                     <th>Alto</th>
@@ -206,6 +208,7 @@
                                     <th>Cantidad</th>
                                     <th>Precio</th>
                                     <th>Descuento </th>
+                                    <th>Ubicacion</th>
                                     <th>SubTotal</th>
                                 </tr>
                             </thead>
@@ -219,43 +222,46 @@
                                             <i class="icon-pencil"></i>
                                         </button> &nbsp;
                                     </td>
-                                    <td v-text="detalle.sku"></td>
-                                    <td>
-                                        <input v-model="detalle.codigo" type="text" class="form-control">
-                                    </td>
+                                    <td v-text="detalle.categoria"></td>
+                                    <td v-text="detalle.articulo"></td>
+                                    <td v-text="detalle.codigo"></td>
+                                    <td v-text="detalle.terminado"></td>
                                     <td v-text="detalle.espesor"></td>
                                     <td v-text="detalle.largo"></td>
                                     <td v-text="detalle.alto"></td>
                                     <td v-text="detalle.metros_cuadrados"></td>
                                     <td>
-                                        <input v-model="detalle.cantidad" min="0" type="number" class="form-control">
+                                        <span style="color:red;" v-show="detalle.cantidad>detalle.stock">Solo hay: {{detalle.stock}} disponibles</span>
+                                        <input v-model="detalle.cantidad" min="1" type="number" class="form-control">
+                                    </td>
+                                    <td v-text="detalle.precio">
+                                        <!-- <input v-model="detalle.precio" min="0" type="number" class="form-control"> -->
                                     </td>
                                     <td>
-                                        <input v-model="detalle.precio" min="0" type="number" class="form-control">
+                                        <span style="color:red" v-show="detalle.descuento>(detalle.precio * detalle.cantidad)">Descuento superior al subtotal!</span>
+                                        <input v-model="detalle.descuento" min="0" step="any" type="number" class="form-control">
                                     </td>
+                                    <td v-text="detalle.ubicacion"></td>
                                     <td>
-                                        <input v-model="detalle.descuento" min="0" type="number" class="form-control">
-                                    </td>
-                                    <td>
-                                       {{ detalle.precio_venta * detalle.cantidad }}
+                                       {{ (detalle.precio * detalle.cantidad) - detalle.descuento }}
                                     </td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="10" align="right"><strong>Total Parcial:</strong></td>
+                                    <td colspan="13" align="right"><strong>Total Parcial:</strong></td>
                                     <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="10" align="right"><strong>Total Impuesto:</strong></td>
+                                    <td colspan="13" align="right"><strong>Total Impuesto:</strong></td>
                                     <td>$ {{total_impuesto=((total * impuesto)/(1+impuesto)).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="10" align="right"><strong>Total Neto:</strong></td>
+                                    <td colspan="13" align="right"><strong>Total Neto:</strong></td>
                                     <td>$ {{total=calcularTotal}}</td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="11" class="text-center">
+                                    <td colspan="14" class="text-center">
                                         <strong>NO hay artículos agregados...</strong>
                                     </td>
                                 </tr>
@@ -487,7 +493,7 @@
                     <tr>
                         <td><strong>MATERIAL</strong></td>
                         <td>
-                            <select class="form-control" v-model="idcategoria_r">
+                            <select class="form-control" v-model="idcategoria">
                                 <option value="0" disabled>Seleccione un material</option>
                                 <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
                             </select>
@@ -653,7 +659,7 @@
                     <tr>
                         <td><strong>MATERIAL</strong></td>
 
-                        <select disabled class="form-control selectDetalle" v-model="idcategoria_r">
+                        <select disabled class="form-control selectDetalle" v-model="idcategoria">
                             <option value="0" disabled>Seleccione un material</option>
                             <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
                         </select>
@@ -759,6 +765,7 @@ export default {
             descuento : 0,
             moneda : 'Peso Mexicano',
             tipo_cambio : 0,
+            categoria : '',
 
             idarticulo : 0,
             articulo : "",
@@ -800,7 +807,7 @@ export default {
 
             //Registrar artículo
             articulo_idr: 0,
-            idcategoria_r :0,
+            idcategoria :0,
             nombre_categoria_r : '',
             codigo_r : '',
             sku : '',
@@ -864,7 +871,7 @@ export default {
                 let me=this;
                 let resultado = 0;
                 for(var i=0;i<me.arrayDetalle.length;i++){
-                    resultado = resultado + (me.arrayDetalle[i].precio_venta * me.arrayDetalle[i].cantidad)
+                    resultado = resultado + ((me.arrayDetalle[i].precio * me.arrayDetalle[i].cantidad) - me.arrayDetalle[i].descuento)
                 }
                 return resultado;
             },
@@ -924,6 +931,13 @@ export default {
                     me.idarticulo = me.arrayArticulo[0]['id'];
                     me.precio = me.arrayArticulo[0]['precio_venta'];
                     me.stock = me.arrayArticulo[0]['stock'];
+                    me.espesor = me.arrayArticulo[0]['espesor'];
+                    me.largo = me.arrayArticulo[0]['largo'];
+                    me.alto = me.arrayArticulo[0]['alto'];
+                    me.metros_cuadrados = me.arrayArticulo[0]['metros_cuadrados'];
+                    me.terminado =  me.arrayArticulo[0]['terminado'];
+                    me.ubicacion =  me.arrayArticulo[0]['ubicacion'];
+                    me.categoria = me.arrayArticulo[0]['nombre_categoria'];
                 }else{
                     me.articulo = 'No existe este artículo';
                     me.idarticulo = 0;
@@ -957,45 +971,80 @@ export default {
         },
         agregarDetalle(){
             let me = this;
-            if(me.codigo == 0 || me.precio_venta == 0 || me.cantidad == 0 || me.idcategoria_r == 0
-               || me.alto == 0 || me.largo == 0){
+            if(me.idarticulo == 0 || me.precio == 0 || me.cantidad == 0){
             }else{
-                if(me.encuentra(me.codigo)){
+                if(me.encuentra(me.idarticulo)){
                     Swal.fire({
                         type: 'error',
                         title: 'Error...',
                         text: 'Este No° de placa ya esta en el listado!',
-                    });
+                    })
                     me.codigo = "";
+                    me.sku = "";
+                    me.idarticulo = "";
+                    me.articulo="";
+                    me.cantidad = 0;
+                    me.precio = 0;
+                    me.descuento = 0;
+                    me.idcategoria = 0;
+                    me.largo = 0;
+                    me.alto = 0;
+                    me.metros_cuadrados = 0;
+                    me.terminado = 0;
+                    me.espesor = 0;
+                    me.stock = 0;
+                    me.ubicacion = "";
+                    me.categoria = "";
+
                 }else{
-                    me.arrayDetalle.push({
-                        contenedor       : me.contenedor,
-                        fecha_llegada    : me.fecha_llegada,
-                        origen           : me.origen,
-                        ubicacion        : me.ubicacion,
-                        articulo         : me.articulo,
-                        sku              : me.sku,
-                        codigo           : me.codigo,
-                        idcategoria      : me.idcategoria_r,
-                        largo            : me.largo,
-                        alto             : me.alto,
-                        metros_cuadrados : me.metros_cuadrados,
-                        terminado        : me.terminado,
-                        espesor          : me.espesor,
-                        precio_venta     : me.precio_venta,
-                        cantidad         : me.cantidad,
-                        stock            : me.cantidad,
-                        imagen           : me.file,
-                        descripcion      : me.descripcion_r,
-                        observacion      : me.observacion_r
-                    });
-                    me.codigo = "";
+                    if(me.cantidad > me.stock){
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Error...',
+                            text: 'La cantidad excede las placas disponibles de este material!',
+                        });
+                    }else{
+                        me.arrayDetalle.push({
+                            idarticulo       : me.idarticulo,
+                            articulo         : me.articulo,
+                            sku              : me.sku,
+                            codigo           : me.codigo,
+                            idcategoria      : me.idcategoria,
+                            largo            : me.largo,
+                            alto             : me.alto,
+                            metros_cuadrados : me.metros_cuadrados,
+                            terminado        : me.terminado,
+                            espesor          : me.espesor,
+                            precio           : me.precio,
+                            cantidad         : me.cantidad,
+                            stock            : me.stock,
+                            ubicacion        : me.ubicacion,
+                            descuento        : me.descuento,
+                            categoria        : me.categoria
+                        });
+                        me.codigo = "";
+                        me.sku = "";
+                        me.idarticulo = "";
+                        me.articulo="";
+                        me.cantidad = 0;
+                        me.precio = 0;
+                        me.descuento = 0;
+                        me.idcategoria = 0;
+                        me.largo = 0;
+                        me.alto = 0;
+                        me.metros_cuadrados = 0;
+                        me.terminado = 0;
+                        me.espesor = 0;
+                        me.stock = 0;
+                        me.ubicacion = "";
+                        me.categoria = "";
+                    }
                 }
             }
         },
         actualizarDetalle(){
             let me = this;
-            if(me.codigo == 0 || me.precio_venta == 0 || me.cantidad == 0 || me.idcategoria_r == 0
+            if(me.codigo == 0 || me.precio_venta == 0 || me.cantidad == 0 || me.idcategoria == 0
                || me.alto == 0 || me.largo == 0){
             }else{
                 me.eliminarDetalle(me.ind);
@@ -1007,7 +1056,7 @@ export default {
                     articulo         : me.articulo,
                     sku              : me.sku,
                     codigo           : me.codigo,
-                    idcategoria      : me.idcategoria_r,
+                    idcategoria      : me.idcategoria,
                     largo            : me.largo,
                     alto             : me.alto,
                     metros_cuadrados : me.metros_cuadrados,
@@ -1114,7 +1163,7 @@ export default {
             this.idarticulo = 0;
             this.articulo = "";
             this.sku = "";
-            this.idcategoria_r = 0;
+            this.idcategoria = 0;
             this.largo = 0;
             this.alto = 0;
             this.metros_cuadrados = 0;
@@ -1139,7 +1188,7 @@ export default {
             this.idarticulo = 0;
             this.articulo = "";
             this.sku = "";
-            this.idcategoria_r = 0;
+            this.idcategoria = 0;
             this.largo = 0;
             this.alto = 0;
             this.metros_cuadrados = 0;
@@ -1224,10 +1273,23 @@ export default {
             }
             else{
                 me.arrayDetalle.push({
-                    idarticulo: data['id'],
-                    articulo: data['nombre'],
+                    idarticulo       : data['id'],
+                    articulo         : data['sku'],
+                    sku              : data['sku'],
+                    codigo           : data['codigo'],
+                    idcategoria      : data['idcategoria'],
+                    largo            : data['largo'],
+                    alto             : data['alto'],
+                    metros_cuadrados : data['metros_cuadrados'],
+                    terminado        : data['terminado'],
+                    espesor          : data['espesor'],
+                    precio           : data['precio_venta'],
+                    stock            : data['stock'],
+                    ubicacion        : data['ubicacion'],
+                    categoria        : data['nombre_categoria'],
                     cantidad: 1,
-                    precio: 1
+                    descuento : 0
+
                 });
             }
         },
@@ -1238,7 +1300,7 @@ export default {
             me.tituloModal      = "Editar Artículo ";
             me.sku              = me.arrayDetalle[index]['sku'];
             me.codigo           = me.arrayDetalle[index]['codigo'];
-            me.idcategoria_r    = me.arrayDetalle[index]['idcategoria'];
+            me.idcategoria    = me.arrayDetalle[index]['idcategoria'];
             me.largo            = me.arrayDetalle[index]['largo'];
             me.alto             = me.arrayDetalle[index]['alto'];
             me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
@@ -1258,7 +1320,7 @@ export default {
             this.modal2 = 0;
             this.sku = '';
             this.codigo = '';
-            this.idcategoria_r = 0;
+            this.idcategoria = 0;
             this.largo = 0;
             this.alto = 0;
             this.terminado = '';
@@ -1301,7 +1363,7 @@ export default {
             me.tituloModal      = "Artículo ";
             me.sku              = me.arrayDetalle[index]['sku'];
             me.codigo           = me.arrayDetalle[index]['codigo'];
-            me.idcategoria_r    = me.arrayDetalle[index]['idcategoria'];
+            me.idcategoria    = me.arrayDetalle[index]['idcategoria'];
             me.largo            = me.arrayDetalle[index]['largo'];
             me.alto             = me.arrayDetalle[index]['alto'];
             me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
@@ -1323,7 +1385,7 @@ export default {
             this.modal3 = 0;
             this.sku = '';
             this.codigo = '';
-            this.idcategoria_r = 0;
+            this.idcategoria = 0;
             this.largo = 0;
             this.alto = 0;
             this.terminado = '';
