@@ -6661,6 +6661,44 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6681,6 +6719,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       descuento: 0,
       moneda: 'Peso Mexicano',
       tipo_cambio: 0,
+      observacion: '',
       categoria: '',
       idarticulo: 0,
       articulo: "",
@@ -6987,10 +7026,6 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       }
     },
     registrarArticulos: function registrarArticulos() {
-      if (this.validarIngreso()) {
-        return;
-      }
-
       var me = this;
       axios.post("/articulo/registrarDetalle", {
         'data': this.arrayDetalle
@@ -7000,18 +7035,24 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         console.log(error);
       });
     },
-    registrarIngreso: function registrarIngreso() {
+    registrarVenta: function registrarVenta() {
+      if (this.validarVenta()) {
+        return;
+      }
+
       var me = this;
-      axios.post('/ingreso/registrar', {
-        'idproveedor': this.idproveedor,
+      axios.post('/venta/registrar', {
+        'idcliente': this.idcliente,
         'tipo_comprobante': this.tipo_comprobante,
         'num_comprobante': this.num_comprobante,
         'impuesto': this.impuesto,
         'total': this.total,
+        'moneda': this.moneda,
+        'tipo_cambio': this.tipo_cambio,
         'data': this.arrayDetalle
       }).then(function (response) {
         me.ocultarDetalle();
-        me.listarIngreso(1, '', 'num_comprobante');
+        me.listarVenta(1, '', 'num_comprobante');
       })["catch"](function (error) {
         console.log(error);
       });
@@ -7047,16 +7088,25 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         } else if (result.dismiss === swal.DismissReason.cancel) {}
       });
     },
-    validarIngreso: function validarIngreso() {
-      this.errorIngreso = 0;
-      this.errorMostrarMsjIngreso = [];
-      if (this.idproveedor == 0) this.errorMostrarMsjIngreso.push("Seleccione un proveedor");
-      if (this.tipo_comprobante == 0) this.errorMostrarMsjIngreso.push("Seleccione un comprobante.");
-      if (!this.num_comprobante) this.errorMostrarMsjIngreso.push("Ingrese el numero de comprobante");
-      if (!this.impuesto) this.errorMostrarMsjIngreso.push("Ingrese el impuesto de la compra");
-      if (this.arrayDetalle.length <= 0) this.errorMostrarMsjIngreso.push("Introdusca articulos para registrar");
-      if (this.errorMostrarMsjIngreso.length) this.errorIngreso = 1;
-      return this.errorIngreso;
+    validarVenta: function validarVenta() {
+      var me = this;
+      var art;
+      me.errorVenta = 0;
+      me.errorMostrarMsjVenta = [];
+      me.arrayDetalle.map(function (x) {
+        if (x.cantidad > x.stock) {
+          art = "La cantidad del articulp " + x.codigo + " supera las cantidades disponibles.";
+          me.errorMostrarMsjVenta.push(art);
+        }
+      });
+      if (me.idcliente == 0) me.errorMostrarMsjVenta.push("Seleccione un cliente");
+      if (me.tipo_comprobante == 0) me.errorMostrarMsjVenta.push("Seleccione un comprobante.");
+      if (!me.num_comprobante) me.errorMostrarMsjVenta.push("Ingrese el numero de comprobante");
+      if (!me.impuesto) me.errorMostrarMsjVenta.push("Ingrese el impuesto de la venta");
+      if (me.arrayDetalle.length <= 0) me.errorMostrarMsjVenta.push("Introdusca articulos para la venta");
+      if (me.moneda != 'Peso Mexicano') me.errorMostrarMsjVenta.push("Seleccione el tipo de cambio de la moneda");
+      if (me.errorMostrarMsjVenta.length) me.errorVenta = 1;
+      return me.errorVenta;
     },
     mostrarDetalle: function mostrarDetalle() {
       this.listado = 0;
@@ -7096,39 +7146,48 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.terminado = '';
       this.espesor = 0;
       this.precio_venta = 0;
-      this.precio_venta = 0;
+      this.precio = 0;
       this.cantidad = 0;
       this.file = '';
       this.origen = '';
       this.contenedor = '';
       this.fecha_llegada = '';
       this.ubicacion = '';
+      this.moneda = 'Peso Mexicano';
+      this.tipo_cambio = '0';
+      this.stock = 0;
+      this.cliente = 0;
+      this.categoria = 0;
       this.arrayDetalle = [];
-      this.errorMostrarMsjIngreso = [];
-      this.idproveedor = 0;
+      this.errorMostrarMsjArticulo = [];
       this.num_comprobante = 0;
     },
-    verIngreso: function verIngreso(id) {
+    verVenta: function verVenta(id) {
       var me = this;
       me.listado = 2; //Obtener los datos del ingreso
 
-      var arrayIngresoT = [];
-      var url = '/ingreso/obtenerCabecera?id=' + id;
+      var arrayVentaT = [];
+      var url = '/venta/obtenerCabecera?id=' + id;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
-        arrayIngresoT = respuesta.ingreso;
-        var fechaform = arrayIngresoT[0]['fecha_hora'];
-        me.proveedor = arrayIngresoT[0]['nombre'];
-        me.tipo_comprobante = arrayIngresoT[0]['tipo_comprobante'];
-        me.num_comprobante = arrayIngresoT[0]['num_comprobante'];
-        me.user = arrayIngresoT[0]['usuario'];
+        arrayVentaT = respuesta.venta;
+        var fechaform = arrayVentaT[0]['fecha_hora'];
+        me.cliente = arrayVentaT[0]['nombre'];
+        me.tipo_comprobante = arrayVentaT[0]['tipo_comprobante'];
+        me.num_comprobante = arrayVentaT[0]['num_comprobante'];
+        me.user = arrayVentaT[0]['usuario'];
+        me.impuesto = arrayVentaT[0]['impuesto'];
+        me.total = arrayVentaT[0]['total'];
+        me.moneda = arrayVentaT[0]['moneda'];
+        me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
+        me.observacion = arrayVentaT[0]['observacion'];
         moment__WEBPACK_IMPORTED_MODULE_3___default.a.locale('es');
         me.fecha_llegada = moment__WEBPACK_IMPORTED_MODULE_3___default()(fechaform).format('llll');
       })["catch"](function (error) {
         console.log(error);
       }); //Obtener los detalles del ingreso
 
-      var url = '/ingreso/obtenerDetalles?id=' + id;
+      var url = '/venta/obtenerDetalles?id=' + id;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
         me.arrayDetalle = respuesta.detalles;
@@ -59520,7 +59579,22 @@ var render = function() {
                     _c("div", { staticClass: "col-md-4" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Tipo cambio")
+                          _vm._v("Tipo cambio"),
+                          _c(
+                            "span",
+                            {
+                              directives: [
+                                {
+                                  name: "show",
+                                  rawName: "v-show",
+                                  value: _vm.moneda != "Peso Mexicano",
+                                  expression: "moneda!='Peso Mexicano'"
+                                }
+                              ],
+                              staticStyle: { color: "red" }
+                            },
+                            [_vm._v("(*Seleccione)")]
+                          )
                         ]),
                         _vm._v(" "),
                         _c("input", {
@@ -60193,11 +60267,11 @@ var render = function() {
                     _c("div", { staticClass: "col-md-3" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Proveedor")
+                          _vm._v("Cliente")
                         ]),
                         _vm._v(" "),
                         _c("p", {
-                          domProps: { textContent: _vm._s(_vm.proveedor) }
+                          domProps: { textContent: _vm._s(_vm.cliente) }
                         })
                       ])
                     ]),
@@ -60246,6 +60320,62 @@ var render = function() {
                           domProps: { textContent: _vm._s(_vm.fecha_llegada) }
                         })
                       ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-3" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [_vm._v("Total:")]),
+                        _vm._v(" "),
+                        _c("p", {
+                          domProps: { textContent: _vm._s(_vm.total) }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Impuesto")
+                        ]),
+                        _vm._v(" "),
+                        _c("p", {
+                          domProps: { textContent: _vm._s(_vm.impuesto) }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [_vm._v("Moneda")]),
+                        _vm._v(" "),
+                        _c("p", {
+                          domProps: { textContent: _vm._s(_vm.moneda) }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Tipo de cambio")
+                        ]),
+                        _vm._v(" "),
+                        _c("p", {
+                          domProps: { textContent: _vm._s(_vm.tipo_cambio) }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Observaciones")
+                        ]),
+                        _vm._v(" "),
+                        _c("p", {
+                          domProps: { textContent: _vm._s(_vm.observacion) }
+                        })
+                      ])
                     ])
                   ]),
                   _vm._v(" "),
@@ -60263,116 +60393,176 @@ var render = function() {
                           _vm.arrayDetalle.length
                             ? _c(
                                 "tbody",
-                                _vm._l(_vm.arrayDetalle, function(
-                                  detalle,
-                                  index
-                                ) {
-                                  return _c("tr", { key: detalle.id }, [
-                                    _c("td", [
-                                      _c(
-                                        "button",
-                                        {
-                                          staticClass: "btn btn-success btn-sm",
-                                          attrs: { type: "button" },
-                                          on: {
-                                            click: function($event) {
-                                              return _vm.abrirModal3(index)
+                                [
+                                  _vm._l(_vm.arrayDetalle, function(
+                                    detalle,
+                                    index
+                                  ) {
+                                    return _c("tr", { key: detalle.id }, [
+                                      _c("td", [
+                                        _c(
+                                          "button",
+                                          {
+                                            staticClass:
+                                              "btn btn-success btn-sm",
+                                            attrs: { type: "button" },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.abrirModal3(index)
+                                              }
                                             }
-                                          }
-                                        },
-                                        [_c("i", { staticClass: "icon-eye" })]
-                                      ),
-                                      _vm._v(
-                                        "  \n                                  "
-                                      )
-                                    ]),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.sku)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.codigo)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.espesor)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.largo)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.alto)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(
-                                          detalle.metros_cuadrados
+                                          },
+                                          [_c("i", { staticClass: "icon-eye" })]
+                                        ),
+                                        _vm._v(
+                                          "  \n                                  "
                                         )
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.cantidad)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(
-                                          detalle.precio_compra
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.sku)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.codigo)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.terminado)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.espesor)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.largo)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.alto)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(
+                                            detalle.metros_cuadrados
+                                          )
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.cantidad)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.precio)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.descuento)
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _vm._v(
+                                          _vm._s(
+                                            detalle.precio * detalle.cantidad -
+                                              detalle.descuento
+                                          )
                                         )
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", {
-                                      domProps: {
-                                        textContent: _vm._s(detalle.descripcion)
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("td", [
-                                      detalle.condicion
-                                        ? _c("div", [
-                                            _c(
-                                              "span",
-                                              {
-                                                staticClass:
-                                                  "badge badge-success"
-                                              },
-                                              [_vm._v("Activo")]
-                                            )
-                                          ])
-                                        : _c("div", [
-                                            _c(
-                                              "span",
-                                              {
-                                                staticClass:
-                                                  "badge badge-danger"
-                                              },
-                                              [_vm._v("Desactivado")]
-                                            )
-                                          ])
+                                      ])
                                     ])
-                                  ])
-                                }),
-                                0
+                                  }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "tr",
+                                    {
+                                      staticStyle: {
+                                        "background-color": "#CEECF5"
+                                      }
+                                    },
+                                    [
+                                      _vm._m(8),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _vm._v(
+                                          "$ " +
+                                            _vm._s(
+                                              (_vm.total_parcial = (
+                                                _vm.total - _vm.total_impuesto
+                                              ).toFixed(2))
+                                            )
+                                        )
+                                      ])
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "tr",
+                                    {
+                                      staticStyle: {
+                                        "background-color": "#CEECF5"
+                                      }
+                                    },
+                                    [
+                                      _vm._m(9),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _vm._v(
+                                          "$ " +
+                                            _vm._s(
+                                              (_vm.total_impuesto = (
+                                                (_vm.total * _vm.impuesto) /
+                                                (1 + _vm.impuesto)
+                                              ).toFixed(2))
+                                            )
+                                        )
+                                      ])
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "tr",
+                                    {
+                                      staticStyle: {
+                                        "background-color": "#CEECF5"
+                                      }
+                                    },
+                                    [
+                                      _vm._m(10),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _vm._v(
+                                          "$ " +
+                                            _vm._s(
+                                              (_vm.total = _vm.calcularTotal)
+                                            )
+                                        )
+                                      ])
+                                    ]
+                                  )
+                                ],
+                                2
                               )
-                            : _c("tbody", [_vm._m(8)])
+                            : _c("tbody", [_vm._m(11)])
                         ]
                       )
                     ])
@@ -60569,7 +60759,7 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center"
                     },
                     [
-                      _vm._m(9),
+                      _vm._m(12),
                       _vm._v(" "),
                       _c(
                         "tbody",
@@ -60777,7 +60967,7 @@ var render = function() {
                   ),
                   _vm._v(" \n              "),
                   _c("div", { staticClass: "text-center" }, [
-                    _vm._m(10),
+                    _vm._m(13),
                     _vm._v(" "),
                     _c("input", {
                       staticClass: "form-control-file",
@@ -60793,11 +60983,11 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center"
                     },
                     [
-                      _vm._m(11),
+                      _vm._m(14),
                       _vm._v(" "),
                       _c("tbody", [
                         _c("tr", [
-                          _vm._m(12),
+                          _vm._m(15),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -60825,7 +61015,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(13),
+                          _vm._m(16),
                           _vm._v(" "),
                           _c("td", [
                             _c(
@@ -60880,7 +61070,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(14),
+                          _vm._m(17),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -60908,7 +61098,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(15),
+                          _vm._m(18),
                           _vm._v(" "),
                           _c("td", [
                             _c(
@@ -60976,7 +61166,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(16),
+                          _vm._m(19),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61009,7 +61199,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(17),
+                          _vm._m(20),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61042,7 +61232,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(18),
+                          _vm._m(21),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61054,7 +61244,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(19),
+                          _vm._m(22),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61082,7 +61272,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(20),
+                          _vm._m(23),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61110,7 +61300,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(21),
+                          _vm._m(24),
                           _vm._v(" "),
                           _c("td", [
                             _c(
@@ -61188,7 +61378,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(22),
+                          _vm._m(25),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61221,7 +61411,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(23),
+                          _vm._m(26),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61249,7 +61439,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(24),
+                          _vm._m(27),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61277,7 +61467,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(25),
+                          _vm._m(28),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61305,7 +61495,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(26),
+                          _vm._m(29),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61333,7 +61523,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(27),
+                          _vm._m(30),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61361,7 +61551,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(28),
+                          _vm._m(31),
                           _vm._v(" "),
                           _c("td", [
                             _c("input", {
@@ -61550,11 +61740,11 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center"
                     },
                     [
-                      _vm._m(29),
+                      _vm._m(32),
                       _vm._v(" "),
                       _c("tbody", [
                         _c("tr", [
-                          _vm._m(30),
+                          _vm._m(33),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.codigo) }
@@ -61562,7 +61752,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(31),
+                          _vm._m(34),
                           _vm._v(" "),
                           _c(
                             "select",
@@ -61617,7 +61807,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(32),
+                          _vm._m(35),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.sku) }
@@ -61625,7 +61815,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(33),
+                          _vm._m(36),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.terminado) }
@@ -61633,7 +61823,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(34),
+                          _vm._m(37),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.largo) }
@@ -61641,7 +61831,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(35),
+                          _vm._m(38),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.alto) }
@@ -61649,7 +61839,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(36),
+                          _vm._m(39),
                           _vm._v(" "),
                           _c("td", {
                             domProps: {
@@ -61659,34 +61849,10 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(37),
-                          _vm._v(" "),
-                          _c("td", {
-                            domProps: { textContent: _vm._s(_vm.espesor) }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _vm._m(38),
-                          _vm._v(" "),
-                          _c("td", {
-                            domProps: { textContent: _vm._s(_vm.precio_venta) }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _vm._m(39),
-                          _vm._v(" "),
-                          _c("td", {
-                            domProps: { textContent: _vm._s(_vm.ubicacion) }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
                           _vm._m(40),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.cantidad) }
+                            domProps: { textContent: _vm._s(_vm.espesor) }
                           })
                         ]),
                         _vm._v(" "),
@@ -61694,7 +61860,7 @@ var render = function() {
                           _vm._m(41),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.descripcion_r) }
+                            domProps: { textContent: _vm._s(_vm.precio_venta) }
                           })
                         ]),
                         _vm._v(" "),
@@ -61702,7 +61868,7 @@ var render = function() {
                           _vm._m(42),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.observacion_r) }
+                            domProps: { textContent: _vm._s(_vm.ubicacion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -61710,7 +61876,7 @@ var render = function() {
                           _vm._m(43),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.origen) }
+                            domProps: { textContent: _vm._s(_vm.cantidad) }
                           })
                         ]),
                         _vm._v(" "),
@@ -61718,7 +61884,7 @@ var render = function() {
                           _vm._m(44),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.contenedor) }
+                            domProps: { textContent: _vm._s(_vm.descripcion_r) }
                           })
                         ]),
                         _vm._v(" "),
@@ -61726,12 +61892,36 @@ var render = function() {
                           _vm._m(45),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.espesor) }
+                            domProps: { textContent: _vm._s(_vm.observacion_r) }
                           })
                         ]),
                         _vm._v(" "),
                         _c("tr", [
                           _vm._m(46),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.origen) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(47),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.contenedor) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(48),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.espesor) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(49),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.fecha_llegada) }
@@ -61911,6 +62101,8 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("No° Placa")]),
         _vm._v(" "),
+        _c("th", [_vm._v("Terminado")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Espesor")]),
         _vm._v(" "),
         _c("th", [_vm._v("largo")]),
@@ -61923,9 +62115,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Precio")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Descripción")]),
+        _c("th", [_vm._v("Descuento ")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Estado")])
+        _c("th", [_vm._v("SubTotal")])
       ])
     ])
   },
@@ -61933,8 +62125,32 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("td", { attrs: { colspan: "11", align: "right" } }, [
+      _c("strong", [_vm._v("Total Parcial:")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", { attrs: { colspan: "11", align: "right" } }, [
+      _c("strong", [_vm._v("Total Impuesto:")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", { attrs: { colspan: "11", align: "right" } }, [
+      _c("strong", [_vm._v("Total Neto:")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("tr", [
-      _c("td", { staticClass: "text-center", attrs: { colspan: "11" } }, [
+      _c("td", { staticClass: "text-center", attrs: { colspan: "12" } }, [
         _c("strong", [_vm._v("NO hay artículos en este detalle...")])
       ])
     ])

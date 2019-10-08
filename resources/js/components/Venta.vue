@@ -142,7 +142,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="">Tipo cambio</label>
+                            <label for="">Tipo cambio<span style="color:red;" v-show="moneda!='Peso Mexicano'">(*Seleccione)</span> </label>
                             <input type="text" class="form-control" v-model="tipo_cambio" placeholder="000xx">
                         </div>
                     </div>
@@ -284,8 +284,8 @@
                 <div class="form-group row border">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="">Proveedor</label>
-                            <p v-text="proveedor"></p>
+                            <label for="">Cliente</label>
+                            <p v-text="cliente"></p>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -312,6 +312,36 @@
                             <p v-text="fecha_llegada"></p>
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">Total:</label>
+                            <p v-text="total"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">Impuesto</label>
+                            <p v-text="impuesto"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">Moneda</label>
+                            <p v-text="moneda"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">Tipo de cambio</label>
+                            <p v-text="tipo_cambio"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">Observaciones</label>
+                            <p v-text="observacion"></p>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group row border">
                     <div class="table-responsive col-md-12">
@@ -321,14 +351,16 @@
                                     <th>Detalles</th>
                                     <th>Código de material</th>
                                     <th>No° Placa</th>
+                                    <th>Terminado</th>
                                     <th>Espesor</th>
                                     <th>largo</th>
                                     <th>Alto</th>
                                     <th>Metros <sup>2</sup></th>
                                     <th>Cantidad</th>
                                     <th>Precio</th>
-                                    <th>Descripción</th>
-                                    <th>Estado</th>
+                                    <th>Descuento </th>
+                                    <th>SubTotal</th>
+
                                 </tr>
                             </thead>
                             <tbody v-if="arrayDetalle.length">
@@ -340,26 +372,32 @@
                                     </td>
                                     <td v-text="detalle.sku"></td>
                                     <td v-text="detalle.codigo"></td>
+                                    <td v-text="detalle.terminado"></td>
                                     <td v-text="detalle.espesor"></td>
                                     <td v-text="detalle.largo"></td>
                                     <td v-text="detalle.alto"></td>
                                     <td v-text="detalle.metros_cuadrados"></td>
                                     <td v-text="detalle.cantidad"></td>
-                                    <td v-text="detalle.precio_compra"></td>
-                                    <td v-text="detalle.descripcion"></td>
-                                    <td>
-                                        <div v-if="detalle.condicion">
-                                            <span class="badge badge-success">Activo</span>
-                                        </div>
-                                        <div v-else>
-                                            <span class="badge badge-danger">Desactivado</span>
-                                        </div>
-                                    </td>
+                                    <td v-text="detalle.precio"></td>
+                                    <td v-text="detalle.descuento"></td>
+                                    <td>{{ (detalle.precio * detalle.cantidad) - detalle.descuento }}</td>
+                                </tr>
+                                 <tr style="background-color: #CEECF5;">
+                                    <td colspan="11" align="right"><strong>Total Parcial:</strong></td>
+                                    <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
+                                </tr>
+                                <tr style="background-color: #CEECF5;">
+                                    <td colspan="11" align="right"><strong>Total Impuesto:</strong></td>
+                                    <td>$ {{total_impuesto=((total * impuesto)/(1+impuesto)).toFixed(2)}}</td>
+                                </tr>
+                                <tr style="background-color: #CEECF5;">
+                                    <td colspan="11" align="right"><strong>Total Neto:</strong></td>
+                                    <td>$ {{total=calcularTotal}}</td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="11" class="text-center">
+                                    <td colspan="12" class="text-center">
                                         <strong>NO hay artículos en este detalle...</strong>
                                     </td>
                                 </tr>
@@ -765,8 +803,8 @@ export default {
             descuento : 0,
             moneda : 'Peso Mexicano',
             tipo_cambio : 0,
+            observacion : '',
             categoria : '',
-
             idarticulo : 0,
             articulo : "",
             codigo: "",
@@ -1075,9 +1113,6 @@ export default {
             }
         },
         registrarArticulos() {
-            if (this.validarIngreso()) {
-                return;
-            }
             let me = this;
 
             axios.post("/articulo/registrarDetalle", {
@@ -1090,18 +1125,24 @@ export default {
                 console.log(error);
             });
         },
-        registrarIngreso(){
+        registrarVenta(){
+
+            if (this.validarVenta()) {
+                return;
+            }
             let me = this;
-            axios.post('/ingreso/registrar',{
-                'idproveedor': this.idproveedor,
+            axios.post('/venta/registrar',{
+                'idcliente': this.idcliente,
                 'tipo_comprobante': this.tipo_comprobante,
                 'num_comprobante' : this.num_comprobante,
                 'impuesto' : this.impuesto,
                 'total' : this.total,
+                'moneda' : this.moneda,
+                'tipo_cambio' : this.tipo_cambio,
                 'data': this.arrayDetalle
             }).then(function(response) {
             me.ocultarDetalle();
-            me.listarIngreso(1,'','num_comprobante');
+            me.listarVenta(1,'','num_comprobante');
             })
             .catch(function(error) {
                 console.log(error);
@@ -1143,19 +1184,30 @@ export default {
                 }
             })
         },
-        validarIngreso() {
-            this.errorIngreso = 0;
-            this.errorMostrarMsjIngreso = [];
+        validarVenta() {
+            let me = this;
+            var art;
 
-            if (this.idproveedor==0) this.errorMostrarMsjIngreso.push("Seleccione un proveedor");
-            if (this.tipo_comprobante==0) this.errorMostrarMsjIngreso.push("Seleccione un comprobante.");
-            if (!this.num_comprobante) this.errorMostrarMsjIngreso.push("Ingrese el numero de comprobante");
-            if (!this.impuesto) this.errorMostrarMsjIngreso.push("Ingrese el impuesto de la compra");
-            if (this.arrayDetalle.length<=0) this.errorMostrarMsjIngreso.push("Introdusca articulos para registrar");
+            me.errorVenta = 0;
+            me.errorMostrarMsjVenta = [];
 
-            if (this.errorMostrarMsjIngreso.length) this.errorIngreso = 1;
+            me.arrayDetalle.map(function(x){
+                if(x.cantidad > x.stock){
+                    art ="La cantidad del articulp " + x.codigo + " supera las cantidades disponibles.";
+                    me.errorMostrarMsjVenta.push(art);
+                }
+            });
 
-            return this.errorIngreso;
+            if (me.idcliente==0) me.errorMostrarMsjVenta.push("Seleccione un cliente");
+            if (me.tipo_comprobante==0) me.errorMostrarMsjVenta.push("Seleccione un comprobante.");
+            if (!me.num_comprobante) me.errorMostrarMsjVenta.push("Ingrese el numero de comprobante");
+            if (!me.impuesto) me.errorMostrarMsjVenta.push("Ingrese el impuesto de la venta");
+            if (me.arrayDetalle.length<=0) me.errorMostrarMsjVenta.push("Introdusca articulos para la venta");
+            if (me.moneda != 'Peso Mexicano') me.errorMostrarMsjVenta.push("Seleccione el tipo de cambio de la moneda");
+
+            if (me.errorMostrarMsjVenta.length) me.errorVenta = 1;
+
+            return me.errorVenta;
         },
         mostrarDetalle(){
             this.listado = 0;
@@ -1195,37 +1247,47 @@ export default {
             this.terminado = '';
             this.espesor = 0;
             this.precio_venta = 0;
-            this.precio_venta = 0;
+            this.precio = 0;
             this.cantidad = 0;
             this.file = '';
             this.origen = '';
             this.contenedor = '';
             this.fecha_llegada = '';
             this.ubicacion = '';
+            this.moneda = 'Peso Mexicano';
+            this.tipo_cambio = '0';
+            this.stock = 0;
+            this.cliente = 0;
+            this.categoria = 0;
             this.arrayDetalle = [];
-            this.errorMostrarMsjIngreso = [];
-            this.idproveedor = 0;
+            this.errorMostrarMsjArticulo = [];
             this.num_comprobante = 0;
         },
-        verIngreso(id){
+        verVenta(id){
 
             let me = this;
             me.listado = 2;
 
             //Obtener los datos del ingreso
-            var arrayIngresoT=[];
-            var url= '/ingreso/obtenerCabecera?id=' + id;
+            var arrayVentaT=[];
+            var url= '/venta/obtenerCabecera?id=' + id;
 
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
-                arrayIngresoT = respuesta.ingreso;
+                arrayVentaT = respuesta.venta;
 
-                var fechaform  = arrayIngresoT[0]['fecha_hora'];
+                var fechaform  = arrayVentaT[0]['fecha_hora'];
 
-                me.proveedor = arrayIngresoT[0]['nombre'];
-                me.tipo_comprobante=arrayIngresoT[0]['tipo_comprobante'];
-                me.num_comprobante=arrayIngresoT[0]['num_comprobante'];
-                me.user=arrayIngresoT[0]['usuario'];
+                me.cliente = arrayVentaT[0]['nombre'];
+                me.tipo_comprobante=arrayVentaT[0]['tipo_comprobante'];
+                me.num_comprobante=arrayVentaT[0]['num_comprobante'];
+                me.user=arrayVentaT[0]['usuario'];
+                me.impuesto = arrayVentaT[0]['impuesto'];
+                me.total = arrayVentaT[0]['total'];
+                me.moneda = arrayVentaT[0]['moneda'];
+                me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
+                me.observacion = arrayVentaT[0]['observacion'];
+
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
             })
@@ -1234,7 +1296,7 @@ export default {
             });
 
             //Obtener los detalles del ingreso
-            var url= '/ingreso/obtenerDetalles?id=' + id;
+            var url= '/venta/obtenerDetalles?id=' + id;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayDetalle = respuesta.detalles;
