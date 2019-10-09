@@ -227,9 +227,12 @@
                                         <button @click="eliminarDetalle(index)" type="button" class="btn btn-danger btn-sm">
                                             <i class="icon-close"></i>
                                         </button>&nbsp;
-                                        <button type="button" @click="abrirModal2(index)" class="btn btn-warning btn-sm">
-                                            <i class="icon-pencil"></i>
+                                        <button type="button" @click="abrirModal2(index)" class="btn btn-success btn-sm">
+                                            <i class="icon-eye"></i>
                                         </button> &nbsp;
+                                        <button type="button" class="btn btn-warning btn-sm">
+                                            <i class="icon-crop"></i>
+                                        </button>
                                     </td>
                                     <td v-text="detalle.categoria"></td>
                                     <td v-text="detalle.articulo"></td>
@@ -370,6 +373,7 @@
                                     <th>Cantidad</th>
                                     <th>Precio m<sup>2</sup></th>
                                     <th>Descuento </th>
+                                    <th>Ubicacion</th>
                                     <th>SubTotal</th>
 
                                 </tr>
@@ -391,24 +395,25 @@
                                     <td v-text="detalle.cantidad"></td>
                                     <td v-text="detalle.precio"></td>
                                     <td v-text="detalle.descuento"></td>
-                                    <td>{{ (detalle.precio * detalle.cantidad) - detalle.descuento }}</td>
+                                    <td v-text="detalle.ubicacion"></td>
+                                    <td>{{ (( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento) }}</td>
                                 </tr>
                                  <tr style="background-color: #CEECF5;">
-                                    <td colspan="11" align="right"><strong>Total Parcial:</strong></td>
+                                    <td colspan="12" align="right"><strong>Total Parcial:</strong></td>
                                     <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="11" align="right"><strong>Total Impuesto:</strong></td>
+                                    <td colspan="12" align="right"><strong>Total Impuesto:</strong></td>
                                     <td>$ {{total_impuesto=((total * impuesto)/(1+impuesto)).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="11" align="right"><strong>Total Neto:</strong></td>
+                                    <td colspan="12" align="right"><strong>Total Neto:</strong></td>
                                     <td>$ {{total=calcularTotal}}</td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="12" class="text-center">
+                                    <td colspan="13" class="text-center">
                                         <strong>NO hay artículos en este detalle...</strong>
                                     </td>
                                 </tr>
@@ -515,7 +520,7 @@
 
     <!--Inicio del modal Visualizar articulo Insertado-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal2}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-warning modal-lg" role="document">
+      <div class="modal-dialog modal-info modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h4 class="modal-title" v-text="tituloModal + sku"></h4>
@@ -525,13 +530,9 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="file">
-                    <img class="img-responsive imgcenter" width="500px" :src="file">
+                <lightbox class="m-0" album="" :src="'http://localhost:8000/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/'+file">
                 </lightbox>&nbsp;
-                <div class="text-center">
-                    <label class="text-left" for=""><strong>Actualizar Imagen</strong></label>
-                     <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
-                </div>
                 <table class="table table-bordered table-striped table-sm text-center">
                     <thead>
                         <tr class="text-center">
@@ -539,128 +540,74 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><strong>NO° DE PLACA</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="codigo" readonly>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>MATERIAL</strong></td>
-                        <td>
-                            <select class="form-control" v-model="idcategoria">
-                                <option value="0" disabled>Seleccione un material</option>
-                                <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>CODIGO DE MATERIAL</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="sku">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>TERMINADO</strong></td>
-                        <td>
-                            <select class="form-control" v-model="terminado">
-                                <option value='' disabled>Seleccione un de terminado</option>
-                                <option value="Pulido">Pulido</option>
-                                <option value="Al Corte">Al Corte</option>
-                                <option value="Leather">Leather</option>
-                                <option value="Mate">Mate</option>
-                                <option value="Seda">Seda</option>
-                                <option value="Otro">Otro</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>LARGO</strong></td>
-                        <td>
-                            <input type="number" min="0" value="0" step="any" class="form-control" v-model="largo">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>ALTO</strong></td>
-                        <td>
-                            <input type="number" min="0" value="0" step="any" class="form-control" v-model="alto">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>METROS<sup>2</sup> </strong></td>
-                        <td>
-                             <input type="number" readonly :value="calcularMts" class="form-control"/>
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="espesor">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>PRECIO</strong></td>
-                        <td>
-                            <input type="number" min="0" value="0" class="form-control" v-model="precio_venta">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>BODEGA DE DESCARGA</strong></td>
-                        <td>
-                            <select class="form-control" v-model="ubicacion">
-                                <option value='' disabled>Seleccione una bodega de descarga</option>
-                                <option value="Del Musico">Del Músico</option>
-                                <option value="Del Escultor">Escultor</option>
-                                <option value="Del Sastre">Sastre</option>
-                                <option value="Mecanicos">Mecánicos</option>
-                                <option value="Tractorista">Tractorista</option>
-                                <option value="San Luis">San Luis</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>Cantidad</strong></td>
-                        <td>
-                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="cantidad">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>DESCRIPCION</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="descripcion_r">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>OBSERVACIONES</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="observacion_r">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>ORIGEN</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="origen">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>CONTENEDOR</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="contenedor">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="espesor">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>FECHA DE LLEGADA</strong></td>
-                        <td>
-                            <input type="date" v-model="fecha_llegada" class="form-control" placeholder="Fecha de llegada"/>
-                        </td>
-                    </tr>
-
+                        <tr>
+                            <td><strong>NO° DE PLACA</strong></td>
+                            <td v-text="codigo"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>MATERIAL</strong></td>
+                            <td v-text="categoria"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>CODIGO DE MATERIAL</strong></td>
+                            <td v-text="sku"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>TERMINADO</strong></td>
+                            <td v-text="terminado"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>LARGO</strong></td>
+                            <td v-text="largo"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>ALTO</strong></td>
+                            <td v-text="alto"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>METROS<sup>2</sup> </strong></td>
+                            <td v-text="calcularMts"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>ESPESOR</strong></td>
+                            <td v-text="espesor"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>PRECIO</strong></td>
+                            <td v-text="precio"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>BODEGA DE DESCARGA</strong></td>
+                            <td v-text="ubicacion"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>Stock</strong></td>
+                            <td v-text="stock"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>DESCRIPCION</strong></td>
+                            <td v-text="descripcion"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>OBSERVACIONES</strong></td>
+                            <td v-text="observacion"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>ORIGEN</strong></td>
+                            <td v-text="origen"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>CONTENEDOR</strong></td>
+                            <td v-text="contenedor"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>ESPESOR</strong></td>
+                            <td v-text="espesor"></td>
+                        </tr>
+                        <tr >
+                            <td><strong>FECHA DE LLEGADA</strong></td>
+                            <td v-text="fecha_llegada"></td>
+                        </tr>
                     </tbody>
                 </table>
                 <div class="text-center">
@@ -671,7 +618,6 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
-            <button type="button" class="btn btn-ligth" @click="actualizarDetalle()">Actualizar</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -758,11 +704,11 @@
                     </tr>
                     <tr >
                         <td><strong>DESCRIPCION</strong></td>
-                        <td v-text="descripcion_r"></td>
+                        <td v-text="descripcion"></td>
                     </tr>
                     <tr >
                         <td><strong>OBSERVACIONES</strong></td>
-                        <td v-text="observacion_r"></td>
+                        <td v-text="observacion"></td>
                     </tr>
                     <tr >
                         <td><strong>ORIGEN</strong></td>
@@ -825,6 +771,20 @@ export default {
             idarticulo : 0,
             articulo : "",
             codigo: "",
+            idcategoria :0,
+            sku : '',
+            terminado : '',
+            largo : 0,
+            alto : 0,
+            metros_cuadrados : 0,
+            espesor : 0,
+            ubicacion : '',
+            origen : '',
+            contenedor : '',
+            fecha_llegada : '',
+            file : '',
+            imagenMinatura : '',
+            arrayCategoria : [],
             condicion : 0,
             precio_venta : 0,
             cantidad : 0,
@@ -833,6 +793,7 @@ export default {
             total: 0.0,
             precio: 0.0,
             stock : 0,
+            descripcion : "",
             arrayArticulo : [],
             arrayVenta : [],
             arrayDetalle : [],
@@ -858,36 +819,7 @@ export default {
             criterio : 'num_comprobante',
             buscar : '',
             buscarA : '',
-            criterioA : 'sku',
-
-            //Registrar artículo
-            articulo_idr: 0,
-            idcategoria :0,
-            nombre_categoria_r : '',
-            codigo_r : '',
-            sku : '',
-            nombre_art: '',
-            terminado : '',
-            largo : 0,
-            alto : 0,
-            metros_cuadrados : 0,
-            espesor : 0,
-            ubicacion : '',
-
-            descripcion_r: '',
-            observacion_r : '',
-            origen : '',
-            contenedor : '',
-            fecha_llegada : '',
-            file : '',
-            imagenMinatura : '',
-            arrayArticulo_r: [],
-            errorArticulo: 0,
-            errorMostrarMsjArticulo: [],
-            arrayCategoria : [],
-            arryCodigos : [],
-            fecha_conv : ''
-
+            criterioA : 'sku'
         };
     },
     components: {
@@ -1005,6 +937,12 @@ export default {
                     me.terminado =  me.arrayArticulo[0]['terminado'];
                     me.ubicacion =  me.arrayArticulo[0]['ubicacion'];
                     me.categoria = me.arrayArticulo[0]['nombre_categoria'];
+                    me.origen = me.arrayArticulo[0]['origen'];
+                    me.contenedor = me.arrayArticulo[0]['contenedor'];
+                    me.descripcion =  me.arrayArticulo[0]['descripcion'];
+                    me.observacion = me.arrayArticulo[0]['observacion'];
+                    me.file = me.arrayArticulo[0]['file'];
+                    me.fecha_llegada = me.arrayArticulo[0]['fecha_llegada'];
                 }else{
                     me.articulo = 'No existe este artículo';
                     me.idarticulo = 0;
@@ -1087,7 +1025,13 @@ export default {
                             stock            : me.stock,
                             ubicacion        : me.ubicacion,
                             descuento        : me.descuento,
-                            categoria        : me.categoria
+                            categoria        : me.categoria,
+                            origen           : me.origen,
+                            contenedor       : me.contenedor,
+                            file             : me.file,
+                            descripcion      : me.descripcion,
+                            observacion      : me.observacion,
+                            fecha_llegada    : me.fecha_llegada
                         });
                         me.codigo = "";
                         me.sku = "";
@@ -1106,40 +1050,14 @@ export default {
                         me.ubicacion = "";
                         me.categoria = "";
                         me.observacion = "";
+                        me.origen = "";
+                        me.contenedor  = "";
+                        me.file  = "";
+                        me.observaciondescripcion   = "";
+                        me.observacion = "";
+                        me.fecha_llegada = "";
                     }
                 }
-            }
-        },
-        actualizarDetalle(){
-            let me = this;
-            if(me.codigo == 0 || me.precio_venta == 0 || me.cantidad == 0 || me.idcategoria == 0
-               || me.alto == 0 || me.largo == 0){
-            }else{
-                me.eliminarDetalle(me.ind);
-                me.arrayDetalle.push({
-                    contenedor       : me.contenedor,
-                    fecha_llegada    : me.fecha_llegada,
-                    origen           : me.origen,
-                    ubicacion        : me.ubicacion,
-                    articulo         : me.articulo,
-                    sku              : me.sku,
-                    codigo           : me.codigo,
-                    idcategoria      : me.idcategoria,
-                    largo            : me.largo,
-                    alto             : me.alto,
-                    metros_cuadrados : me.metros_cuadrados,
-                    terminado        : me.terminado,
-                    espesor          : me.espesor,
-                    precio_venta     : me.precio_venta,
-                    cantidad         : me.cantidad,
-                    stock            : me.cantidad,
-                    imagen           : me.file,
-                    descripcion      : me.descripcion_r,
-                    observacion      : me.observacion_r
-                });
-                me.codigo = "";
-                me.modal2 = 0;
-
             }
         },
         registrarArticulos() {
@@ -1370,9 +1288,9 @@ export default {
                 me.arrayDetalle.push({
                     idarticulo       : data['id'],
                     articulo         : data['sku'],
-                    sku              : data['sku'],
+                    /* sku              : data['sku'], */
                     codigo           : data['codigo'],
-                    idcategoria      : data['idcategoria'],
+                    categoria        : data['nombre_categoria'],
                     largo            : data['largo'],
                     alto             : data['alto'],
                     metros_cuadrados : data['metros_cuadrados'],
@@ -1382,6 +1300,12 @@ export default {
                     stock            : data['stock'],
                     ubicacion        : data['ubicacion'],
                     categoria        : data['nombre_categoria'],
+                    origen           : data['origen'],
+                    contenedor       : data['contenedor'],
+                    file             : data['file'],
+                    descripcion      : data['descripcion'],
+                    observacion      : data['observacion'],
+                    fecha_llegada    : data['fecha_llegada'],
                     cantidad: 1,
                     descuento : 0
 
@@ -1392,10 +1316,10 @@ export default {
             let me = this;
             me.ind = index;
             me.modal2 = 1;
-            me.tituloModal      = "Editar Artículo ";
-            me.sku              = me.arrayDetalle[index]['sku'];
+            me.tituloModal      = "Detalles Artículo ";
+            me.sku              = me.arrayDetalle[index]['articulo'];
             me.codigo           = me.arrayDetalle[index]['codigo'];
-            me.idcategoria      = me.arrayDetalle[index]['idcategoria'];
+            me.categoria        = me.arrayDetalle[index]['categoria'];
             me.largo            = me.arrayDetalle[index]['largo'];
             me.alto             = me.arrayDetalle[index]['alto'];
             me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
@@ -1406,26 +1330,34 @@ export default {
             me.contenedor       = me.arrayDetalle[index]['contenedor'];
             me.fecha_llegada    = me.arrayDetalle[index]['fecha_llegada'];
             me.origen           = me.arrayDetalle[index]['origen'];
-            me.cantidad         = me.arrayDetalle[index]['cantidad'];
-            me.file             = me.arrayDetalle[index]['imagen'];
-            me.descripcion_r    = "";
+            me.stock            = me.arrayDetalle[index]['stock'];
+            me.file             = me.arrayDetalle[index]['file'];
+            me.origen           = me.arrayDetalle[index]['origen'];
+            me.contenedor       = me.arrayDetalle[index]['contenedor'];
+            me.descripcion      = me.arrayDetalle[index]['descripcion'];
+            me.observacion      = me.arrayDetalle[index]['observacion'];
             me.selectCategoria();
         },
         cerrarModal2() {
             this.modal2 = 0;
             this.sku = '';
             this.codigo = '';
-            this.idcategoria = 0;
+            this.categoria = 0;
             this.largo = 0;
             this.alto = 0;
             this.terminado = '';
             this.espesor = 0;
+            this.ubicacion = '';
             this.precio_venta = 0;
             this.metros_cuadrados = 0;
             this.stock = 0;
             this.file = '';
-            this.descripcion_r = '';
+            this.origen = '';
+            this.observacion = '';
+            this.contenedor = '';
+            this.descripcion = '';
             this.ind = '';
+            this.fecha_llegada = '';
         },
         selectCategoria(){
             let me=this;
@@ -1471,9 +1403,9 @@ export default {
             me.origen           = me.arrayDetalle[index]['origen'];
             me.cantidad         = me.arrayDetalle[index]['cantidad'];
             me.file             = me.arrayDetalle[index]['file'];
-            me.descripcion_r    = me.arrayDetalle[index]['descripcion'];
-            me.observacion_r    = me.arrayDetalle[index]['observacion'];
-            me.condicion    = me.arrayDetalle[index]['condicion'];
+            me.descripcion      = me.arrayDetalle[index]['descripcion'];
+            me.observacion      = me.arrayDetalle[index]['observacion'];
+            me.condicion        = me.arrayDetalle[index]['condicion'];
             me.selectCategoria();
         },
         cerrarModal3() {
@@ -1489,7 +1421,7 @@ export default {
             this.metros_cuadrados = 0;
             this.stock = 0;
             this.file = '';
-            this.descripcion_r = '';
+            this.descripcion = '';
             this.ind = '';
         }
     },

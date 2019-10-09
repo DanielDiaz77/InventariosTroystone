@@ -107,7 +107,8 @@ class ArticuloController extends Controller
         ->select('articulos.id','articulos.nombre','articulos.sku','articulos.codigo','articulos.origen',
         'articulos.contenedor','articulos.ubicacion','articulos.fecha_llegada','articulos.idcategoria',
         'articulos.terminado','articulos.espesor','articulos.largo','articulos.alto','articulos.metros_cuadrados',
-        'articulos.precio_venta','articulos.stock','categorias.nombre as nombre_categoria')
+        'articulos.precio_venta','articulos.stock','categorias.nombre as nombre_categoria','articulos.descripcion',
+        'articulos.observacion','articulos.file')
         ->where([
             ['codigo',$filtro],
             ['articulos.stock','>',0],
