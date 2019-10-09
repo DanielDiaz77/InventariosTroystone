@@ -7674,6 +7674,8 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         me.listarArticulo(me.codigoA, 'codigo');
         me.cerrarModal4();
         me.abrirModal();
+        me.validatedA = 0;
+        me.validatedB = 0;
       })["catch"](function (error) {
         console.log(error);
       });

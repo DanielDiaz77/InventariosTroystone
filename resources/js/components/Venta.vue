@@ -1767,6 +1767,8 @@ export default {
                 me.listarArticulo(me.codigoA,'codigo');
                 me.cerrarModal4();
                 me.abrirModal();
+                me.validatedA = 0;
+                me.validatedB = 0;
 
             })
             .catch(function(error) {
