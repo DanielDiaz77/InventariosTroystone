@@ -76,6 +76,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/venta/desactivar', 'ventaController@desactivar');
         Route::get('/venta/obtenerCabecera', 'ventaController@obtenerCabecera');
         Route::get('/venta/obtenerDetalles', 'ventaController@obtenerDetalles');
+        Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
 
 
     });
@@ -101,6 +102,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/articulo/registrarDetalle', 'ArticuloController@storeDetalle');
         Route::get('/articulo/buscarArticuloVenta', 'ArticuloController@buscarArticuloVenta');
         Route::get('/articulo/listarArticuloVenta', 'ArticuloController@listarArticuloVenta');
+        Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
 
         //PROVEEDORES
         Route::get('/proveedor', 'ProveedorController@index');

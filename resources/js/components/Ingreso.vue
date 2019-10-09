@@ -410,8 +410,11 @@
                                     <td v-text="detalle.precio_compra"></td>
                                     <td v-text="detalle.descripcion"></td>
                                     <td>
-                                        <div v-if="detalle.condicion">
+                                        <div v-if="detalle.condicion == 1">
                                             <span class="badge badge-success">Activo</span>
+                                        </div>
+                                        <div v-else-if="detalle.condicion ==3">
+                                            <span class="badge badge-warning">Cortado</span>
                                         </div>
                                         <div v-else>
                                             <span class="badge badge-danger">Desactivado</span>
@@ -491,8 +494,11 @@
                                 <td v-text="articulo.stock"></td>
                                 <td v-text="articulo.ubicacion"></td>
                                 <td>
-                                <div v-if="articulo.condicion">
+                                <div v-if="articulo.condicion == 1">
                                     <span class="badge badge-success">Activo</span>
+                                </div>
+                                <div v-else-if="articulo.condicion == 3">
+                                    <span class="badge badge-success">Cortado</span>
                                 </div>
                                 <div v-else>
                                     <span class="badge badge-danger">Desactivado</span>
@@ -696,8 +702,11 @@
                 <lightbox class="m-0" album="" :src="'http://localhost:8000/'+file">
                     <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/'+file">
                 </lightbox>&nbsp;
-                <div v-if="condicion" class="text-center">
+                <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
+                </div>
+                <div v-else-if="condicion == 3" class="text-center">
+                    <span class="badge badge-warning">Cortado</span>
                 </div>
                 <div v-else class="text-center">
                     <span class="badge badge-danger">Desactivado</span>

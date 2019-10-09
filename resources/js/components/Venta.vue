@@ -230,7 +230,7 @@
                                         <button type="button" @click="abrirModal2(index)" class="btn btn-success btn-sm">
                                             <i class="icon-eye"></i>
                                         </button> &nbsp;
-                                        <button type="button" class="btn btn-warning btn-sm">
+                                        <button type="button" class="btn btn-warning btn-sm" @click="abrirModal4(index)">
                                             <i class="icon-crop"></i>
                                         </button>
                                     </td>
@@ -494,8 +494,11 @@
                                 <td v-text="articulo.stock"></td>
                                 <td v-text="articulo.ubicacion"></td>
                                 <td>
-                                <div v-if="articulo.condicion">
+                                <div v-if="articulo.condicion == 1">
                                     <span class="badge badge-success">Activo</span>
+                                </div>
+                                <div v-else-if="articulo.condicion == 3">
+                                    <span class="badge badge-warning">Cortado</span>
                                 </div>
                                 <div v-else>
                                     <span class="badge badge-danger">Desactivado</span>
@@ -625,6 +628,7 @@
       <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
+
     <!--Inicio del modal Visualizar articulo detalle listado==2-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal3}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
       <div class="modal-dialog modal-info modal-lg" role="document">
@@ -640,8 +644,11 @@
                 <lightbox class="m-0" album="" :src="'http://localhost:8000/'+file">
                     <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/'+file">
                 </lightbox>&nbsp;
-                <div v-if="condicion" class="text-center">
+                <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
+                </div>
+                <div v-else-if="condicion == 3" class="text-center">
+                    <span class="badge badge-warning">Cortado</span>
                 </div>
                 <div v-else class="text-center">
                     <span class="badge badge-danger">Desactivado</span>
@@ -743,6 +750,169 @@
       <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
+
+        <!--Inicio del modal-cortar placa articulos-->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal4}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-warning modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal + sku"></h4>
+                    <button type="button" v-if="validatedA==0 && validatedB==0" class="close" @click="cerrarModal4()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md">
+                            <h1 class="text-center" v-text="sku"></h1>
+                            <lightbox class="m-0" album="" :src="'http://localhost:8000/'+file">
+                                <img class="img-responsive imgcenter" width="250px" :src="'http://localhost:8000/'+file">
+                            </lightbox>&nbsp;
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-sm text-center">
+                            <thead>
+                            <tr class="text-center">
+                                <th>No° Placa</th>
+                                <th>Código de material</th>
+                                <th>Material</th>
+                                <th>Largo</th>
+                                <th>Alto</th>
+                                <th>Metros<sup>2</sup></th>
+                                <th>Espesor</th>
+                                <th>Terminado</th>
+                                <th>Stock</th>
+                                <th>Precio m<sup>2</sup></th>
+                                <th>Ubicacion</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td v-text="codigo"></td>
+                                <td v-text="sku"></td>
+                                <td v-text="categoria"></td>
+                                <td v-text="largo"></td>
+                                <td v-text="alto"></td>
+                                <td v-text="metros_cuadrados"></td>
+                                <td v-text="espesor"></td>
+                                <td v-text="terminado"></td>
+                                <td v-text="stock"></td>
+                                <td v-text="precio"></td>
+                                <td v-text="ubicacion"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="container">
+                        <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                            <div class="form-group row">
+
+                                <label class="col-md-4 form-control-label" for="text-input">Metros <sup> 2</sup> Restantes</label>
+                                <div class="col-md-4">
+                                    <input type="number" readonly :value="calcularMtsRestantes" class="form-control"/>
+                                </div>&nbsp;
+
+                                <span class="col-md-12 text-center" style="color:red;" v-show="metros_cuadradosA+metros_cuadradosB<metros_cuadrados">
+                                    <strong>(*La distrubucion de medidas no completa el tamaño original de la placa)</strong>
+                                </span>
+                                <span class="col-md-12 text-center" style="color:red;" v-show="metros_cuadradosA+metros_cuadradosB>metros_cuadrados">
+                                    <strong>(*La distrubucion de medidas supera el tamaño original de la placa)</strong>
+                                </span>
+                            <!-- ArticuloA -->
+                                <div class="col-md-6 border">
+                                    <h3 class="text-center" v-text="sku + ' A'"></h3>
+                                    <div class="form-group row">
+                                        <span class="col-md-12" style="color:red;" v-show="codigoA==''">(*Ingrese el código, recuerde debe ser único)</span>
+
+                                        <label class="col-md-4 form-control-label" for="text-input">No° de placa</label>
+                                        <div class="col-md-8">
+                                            <input type="text" v-model="codigoA" :disabled="validatedA == 1" class="form-control" placeholder="Código de barras"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <span class="col-md-12" style="color:red;" v-show="largoA==0">(*Ingrese el largo de la mitad A)</span>
+                                        <label class="col-md-4 form-control-label" for="text-input">Largo</label>
+                                        <div class="col-md-8">
+                                            <input type="number" v-model="largoA" :disabled="validatedA == 1" min="1" class="form-control" placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <span class="col-md-12" style="color:red;" v-show="altoA==0">(*Ingrese el alto de la mitad A)</span>
+                                        <label class="col-md-4 form-control-label" for="text-input">Alto</label>
+                                        <div class="col-md-8">
+                                            <input type="number" v-model="altoA" :disabled="validatedA == 1" min="1" class="form-control" placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-4 form-control-label" for="text-input">Metros<sup>2</sup></label>
+                                        <div class="col-md-8">
+                                            <input type="number" readonly :value="calcularMtsA" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <span class="col-md-12" style="color:red;" v-show="precioA==0">(*Ingrese el precio de la mitad A)</span>
+                                        <label class="col-md-4 form-control-label" for="text-input">Precio m<sup>2</sup></label>
+                                        <div class="col-md-8">
+                                            <input type="number" v-model="precioA" :disabled="validatedA == 1"  min="1" class="form-control" placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <button type="button" v-if="validatedA==0" class="btn btn-primary float-right" @click="registrarArticuloA()">Guardar</button>&nbsp;
+                                </div>
+                            <!-- ArticuloB -->
+                                <div class="col-md-6 border">
+                                    <h3 class="text-center" v-text="sku + ' B'"></h3>
+                                    <div class="form-group row">
+                                        <span class="col-md-12" style="color:red;" v-show="codigoB==''">(*Ingrese el código, recuerde debe ser único)</span>
+                                        <label class="col-md-4 form-control-label"  for="text-input">No° de placa</label>
+                                        <div class="col-md-8">
+                                            <input type="text" v-model="codigoB" :disabled="validatedB == 1" class="form-control" placeholder="Código de barras"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <span class="col-md-12" style="color:red;" v-show="largoB==0">(*Ingrese el largo de la mitad B)</span>
+                                        <label class="col-md-4 form-control-label" for="text-input">Largo</label>
+                                        <div class="col-md-8">
+                                            <input type="number" v-model="largoB" :disabled="validatedB == 1" min="1" class="form-control" placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <span class="col-md-12" style="color:red;" v-show="altoB==0">(*Ingrese el alto de la mitad B)</span>
+                                        <label class="col-md-4 form-control-label" for="text-input">Alto</label>
+                                        <div class="col-md-8">
+                                            <input type="number" v-model="altoB" :disabled="validatedB == 1" min="1" class="form-control" placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-4 form-control-label" for="text-input">Metros<sup>2</sup></label>
+                                        <div class="col-md-8">
+                                            <input type="number" readonly :value="calcularMtsB" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <span class="col-md-12" style="color:red;" v-show="precioB==0">(*Ingrese el precio de la mitad B)</span>
+                                        <label class="col-md-4 form-control-label" for="text-input">Precio m <sup>2</sup></label>
+                                        <div class="col-md-8">
+                                            <input type="number" v-model="precioB" :disabled="validatedB == 1" min="1" class="form-control" placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <button type="button" v-if="validatedB==0" class="btn btn-primary float-right" @click="registrarArticuloB()">Guardar</button>&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" v-if="validatedA==0 && validatedB==0" class="btn btn-secondary" @click="cerrarModal4()">Cerrar</button>
+                <button type="button" v-if="validatedA==1 || validatedB==1" class="btn btn-primary" @click="actualizarArticulo(),eliminarDetalle(ind)">Actualizar</button>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!--Fin del modal-->
+
   </main>
 </template>
 <script>
@@ -802,6 +972,7 @@ export default {
             modal: 0,
             modal2: 0,
             modal3: 0,
+            modal4: 0,
             ind : '',
             tituloModal: "",
             tipoAccion: 0,
@@ -819,7 +990,23 @@ export default {
             criterio : 'num_comprobante',
             buscar : '',
             buscarA : '',
-            criterioA : 'sku'
+            criterioA : 'sku',
+
+            //Variables Corte de placa
+            codigoA : "",
+            codigoB : "",
+            largoA : 0,
+            largoB : 0,
+            altoA : 0,
+            altoB : 0,
+            metros_cuadradosA : 0,
+            metros_cuadradosB : 0,
+            precioA : 0,
+            precioB : 0,
+            ubicacionA : "",
+            ubicacionB : "",
+            validatedB : 0,
+            validatedA : 0
         };
     },
     components: {
@@ -853,7 +1040,6 @@ export default {
                 }
                 return pagesArray;
             },
-
             calcularTotal : function(){
                 let me=this;
                 let resultado = 0;
@@ -872,6 +1058,20 @@ export default {
                 me.metros_cuadrados = resultado;
                 return resultado;
             },
+            calcularMtsA : function(){
+                let me=this;
+                let resultado = 0;
+                resultado = resultado + (me.altoA * me.largoA);
+                me.metros_cuadradosA = resultado;
+                return resultado;
+            },
+            calcularMtsB : function(){
+                let me=this;
+                let resultado = 0;
+                resultado = resultado + (me.altoB * me.largoB);
+                me.metros_cuadradosB = resultado;
+                return resultado;
+            },
             cacularPrecioExtranjero : function(){
                 let me=this;
                 let precioExt = 0;
@@ -883,6 +1083,12 @@ export default {
                     precioExt = me.precio;
                 }
                 return Math.ceil(precioExt);
+            },
+            calcularMtsRestantes : function(){
+                let me=this;
+                let resultado = 0;
+                resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
+                return resultado;
             }
         },
     methods: {
@@ -936,6 +1142,7 @@ export default {
                     me.metros_cuadrados = me.arrayArticulo[0]['metros_cuadrados'];
                     me.terminado =  me.arrayArticulo[0]['terminado'];
                     me.ubicacion =  me.arrayArticulo[0]['ubicacion'];
+                    me.idcategoria = me.arrayArticulo[0]['idcategoria'];
                     me.categoria = me.arrayArticulo[0]['nombre_categoria'];
                     me.origen = me.arrayArticulo[0]['origen'];
                     me.contenedor = me.arrayArticulo[0]['contenedor'];
@@ -1000,6 +1207,7 @@ export default {
                     me.stock = 0;
                     me.ubicacion = "";
                     me.categoria = "";
+                    me.idcategoria = 0;
 
                 }else{
                     if(me.cantidad > me.stock){
@@ -1290,6 +1498,7 @@ export default {
                     articulo         : data['sku'],
                     /* sku              : data['sku'], */
                     codigo           : data['codigo'],
+                    idcategoria      : data['idcategoria'],
                     categoria        : data['nombre_categoria'],
                     largo            : data['largo'],
                     alto             : data['alto'],
@@ -1423,7 +1632,147 @@ export default {
             this.file = '';
             this.descripcion = '';
             this.ind = '';
-        }
+        },
+        cerrarModal4() {
+            this.modal4 = 0;
+            this.idarticulo = 0;
+            this.sku = '';
+            this.codigo = '';
+            this.categoria = 0;
+            this.largo = 0;
+            this.alto = 0;
+            this.terminado = '';
+            this.espesor = 0;
+            this.ubicacion = '';
+            this.precio_venta = 0;
+            this.metros_cuadrados = 0;
+            this.stock = 0;
+            this.file = '';
+            this.origen = '';
+            this.observacion = '';
+            this.contenedor = '';
+            this.descripcion = '';
+            this.ind = '';
+            this.fecha_llegada = '';
+        },
+        /* modal-cortar */
+        abrirModal4(index) {
+            let me = this;
+            me.ind = index;
+            me.arrayArticulo=[];
+            me.modal4 = 1;
+            me.tituloModal      = "Dividir Placa ";
+            me.idarticulo       = me.arrayDetalle[index]['idarticulo'];
+            me.sku              = me.arrayDetalle[index]['articulo'];
+            me.codigo           = me.arrayDetalle[index]['codigo'];
+            me.idcategoria      = me.arrayDetalle[index]['idcategoria'];
+            me.categoria        = me.arrayDetalle[index]['categoria'];
+            me.largo            = me.arrayDetalle[index]['largo'];
+            me.alto             = me.arrayDetalle[index]['alto'];
+            me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
+            me.terminado        = me.arrayDetalle[index]['terminado'];
+            me.espesor          = me.arrayDetalle[index]['espesor'];
+            me.precio           = me.arrayDetalle[index]['precio'];
+            me.metros_cuadrados = me.arrayDetalle[index]['metros_cuadrados'];
+            me.contenedor       = me.arrayDetalle[index]['contenedor'];
+            me.fecha_llegada    = me.arrayDetalle[index]['fecha_llegada'];
+            me.origen           = me.arrayDetalle[index]['origen'];
+            me.stock            = me.arrayDetalle[index]['stock'];
+            me.file             = me.arrayDetalle[index]['file'];
+            me.origen           = me.arrayDetalle[index]['origen'];
+            me.contenedor       = me.arrayDetalle[index]['contenedor'];
+            me.descripcion      = me.arrayDetalle[index]['descripcion'];
+            me.observacion      = me.arrayDetalle[index]['observacion'];
+            me.codigoA          = me.codigo + '-A';
+            me.codigoB          = me.codigo + '-B';
+            me.largoA           = me.largo;
+            me.largoB           = me.largo;
+            me.altoA            = me.alto / 2;
+            me.altoB            = me.alto / 2;
+            me.precioA          = me.precio / 2;
+            me.precioB          = me.precio / 2;
+            me.selectCategoria();
+        },
+        registrarArticuloA(){
+            let me = this;
+            if(me.largoA == 0 || me.altoA == 0 || me.precioA == 0 || me.codigoA == ""){
+            }else{
+                axios.post("/articulo/registrar",{
+                    'idcategoria': this.idcategoria,
+                    'codigo': this.codigoA,
+                    'sku' : this.sku,
+                    'terminado' : this.terminado,
+                    'largo' : this.largoA,
+                    'alto' : this.altoA,
+                    'metros_cuadrados' : this.metros_cuadradosA,
+                    'espesor' : this.espesor,
+                    'precio_venta' : this.precioA,
+                    'ubicacion' : this.ubicacion,
+                    'stock': this.stock,
+                    'descripcion': this.descripcion,
+                    'observacion' : this.observacion,
+                    'origen' : this.origen,
+                    'contenedor' : this.contenedor,
+                    'fecha_llegada' : this.fecha_llegada
+                }).then(function (response) {
+                    me.validatedA = 1;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        registrarArticuloB(){
+            let me = this;
+            if(me.largoB == 0 || me.altoB == 0 || me.precioB == 0 || me.codigoB == ""){
+            }else{
+                axios.post("/articulo/registrar",{
+                    'idcategoria': this.idcategoria,
+                    'codigo': this.codigoB,
+                    'sku' : this.sku,
+                    'terminado' : this.terminado,
+                    'largo' : this.largoB,
+                    'alto' : this.altoB,
+                    'metros_cuadrados' : this.metros_cuadradosB,
+                    'espesor' : this.espesor,
+                    'precio_venta' : this.precioB,
+                    'ubicacion' : this.ubicacion,
+                    'stock': this.stock,
+                    'descripcion': this.descripcion,
+                    'observacion' : this.observacion,
+                    'origen' : this.origen,
+                    'contenedor' : this.contenedor,
+                    'fecha_llegada' : this.fecha_llegada
+                }).then(function (response) {
+                    me.validatedB = 1;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        actualizarArticulo() {
+            if (this.validatedA == 0 || this.validatedB == 0) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Error...',
+                    text: 'Se deben guardar cambios en la placa A Y B!',
+                })
+                return;
+            }
+            let me = this;
+            axios.put("/articulo/actualizarCorte", {
+                'stock': this.stock,
+                'id': this.idarticulo
+            })
+            .then(function(response) {
+                me.listarArticulo(me.codigoA,'codigo');
+                me.cerrarModal4();
+                me.abrirModal();
+
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
     },
     mounted() {
         this.listarVenta(1,this.buscar, this.criterio);

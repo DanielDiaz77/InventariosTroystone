@@ -79,12 +79,15 @@
                     <td v-text="articulo.stock"></td>
                     <td v-text="articulo.ubicacion"></td>
                     <td>
-                    <div v-if="articulo.condicion">
-                        <span class="badge badge-success">Activo</span>
-                    </div>
-                    <div v-else>
-                        <span class="badge badge-danger">Desactivado</span>
-                    </div>
+                        <div v-if="articulo.condicion == 1">
+                            <span class="badge badge-success">Activo</span>
+                        </div>
+                        <div v-else-if="articulo.condicion == 3">
+                            <span class="badge badge-warning">Cortado</span>
+                        </div>
+                        <div v-else>
+                            <span class="badge badge-danger">Desactivado</span>
+                        </div>
                     </td>
                 </tr>
                 </tbody>

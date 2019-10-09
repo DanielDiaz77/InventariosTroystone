@@ -107,8 +107,8 @@ class ArticuloController extends Controller
         ->select('articulos.id','articulos.nombre','articulos.sku','articulos.codigo','articulos.origen',
         'articulos.contenedor','articulos.ubicacion','articulos.fecha_llegada','articulos.idcategoria',
         'articulos.terminado','articulos.espesor','articulos.largo','articulos.alto','articulos.metros_cuadrados',
-        'articulos.precio_venta','articulos.stock','categorias.nombre as nombre_categoria','articulos.descripcion',
-        'articulos.observacion','articulos.file')
+        'articulos.precio_venta','articulos.stock','categorias.nombre as nombre_categoria','categorias.id as idcategoria',
+        'articulos.descripcion','articulos.observacion','articulos.file')
         ->where([
             ['codigo',$filtro],
             ['articulos.stock','>',0],
@@ -120,22 +120,27 @@ class ArticuloController extends Controller
     }
 
     public function store(Request $request){
+
         if(!$request->ajax()) return redirect('/');
 
-        $exploded = explode(',', $request->file);
+        $fileName = "";
 
-        $decoded = base64_decode($exploded[1]);
+        if($request->file != ""){
+            $exploded = explode(',', $request->file);
 
-        if(str_contains($exploded[0],'jpeg'))
-            $extension = 'jpg';
-        else
-            $extension = 'png';
+            $decoded = base64_decode($exploded[1]);
 
-        $fileName = str_random().'.'.$extension;
+            if(str_contains($exploded[0],'jpeg'))
+                $extension = 'jpg';
+            else
+                $extension = 'png';
 
-        $path = public_path().'/'.$fileName;
+            $fileName = str_random().'.'.$extension;
 
-        file_put_contents($path,$decoded);
+            $path = public_path().'/'.$fileName;
+
+            file_put_contents($path,$decoded);
+        }
 
         $articulo = new Articulo();
         $articulo->idcategoria      =   $request->idcategoria;
@@ -171,21 +176,23 @@ class ArticuloController extends Controller
 
             //Recorrido de todos los elementos
             foreach($detalles as $ep=>$art){
+                $fileName ="";
+                if($art['imagen'] != ""){
+                    $exploded = explode(',', $art['imagen']);
 
-                $exploded = explode(',', $art['imagen']);
+                    $decoded = base64_decode($exploded[1]);
 
-                $decoded = base64_decode($exploded[1]);
+                    if(str_contains($exploded[0],'jpeg'))
+                        $extension = 'jpg';
+                    else
+                        $extension = 'png';
 
-                if(str_contains($exploded[0],'jpeg'))
-                    $extension = 'jpg';
-                else
-                    $extension = 'png';
+                    $fileName = str_random().'.'.$extension;
 
-                $fileName = str_random().'.'.$extension;
+                    $path = public_path().'/'.$fileName;
 
-                $path = public_path().'/'.$fileName;
-
-                file_put_contents($path,$decoded);
+                    file_put_contents($path,$decoded);
+                }
 
                 $articulo = new Articulo();
                 $articulo->idcategoria      =   $art['idcategoria'];
@@ -442,5 +449,17 @@ class ArticuloController extends Controller
             ->orderBy('articulos.id', 'desc')->paginate(10);
         }
         return ['articulos' => $articulos];
+    }
+    public function updateCortado(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $newStock = $request->stock - 1;
+
+        $articulo = Articulo::findOrFail($request->id);
+        $articulo->stock            =   $newStock;
+        $articulo->condicion        =   '3';
+        $articulo->save();
+
     }
 }

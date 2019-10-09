@@ -2209,6 +2209,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_1___default.a);
@@ -3464,6 +3467,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_lightbox__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -6664,6 +6676,176 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6720,6 +6902,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       modal: 0,
       modal2: 0,
       modal3: 0,
+      modal4: 0,
       ind: '',
       tituloModal: "",
       tipoAccion: 0,
@@ -6737,7 +6920,22 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       criterio: 'num_comprobante',
       buscar: '',
       buscarA: '',
-      criterioA: 'sku'
+      criterioA: 'sku',
+      //Variables Corte de placa
+      codigoA: "",
+      codigoB: "",
+      largoA: 0,
+      largoB: 0,
+      altoA: 0,
+      altoB: 0,
+      metros_cuadradosA: 0,
+      metros_cuadradosB: 0,
+      precioA: 0,
+      precioB: 0,
+      ubicacionA: "",
+      ubicacionB: "",
+      validatedB: 0,
+      validatedA: 0
     };
   },
   components: {
@@ -6795,6 +6993,20 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       me.metros_cuadrados = resultado;
       return resultado;
     },
+    calcularMtsA: function calcularMtsA() {
+      var me = this;
+      var resultado = 0;
+      resultado = resultado + me.altoA * me.largoA;
+      me.metros_cuadradosA = resultado;
+      return resultado;
+    },
+    calcularMtsB: function calcularMtsB() {
+      var me = this;
+      var resultado = 0;
+      resultado = resultado + me.altoB * me.largoB;
+      me.metros_cuadradosB = resultado;
+      return resultado;
+    },
     cacularPrecioExtranjero: function cacularPrecioExtranjero() {
       var me = this;
       var precioExt = 0;
@@ -6807,6 +7019,12 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       }
 
       return Math.ceil(precioExt);
+    },
+    calcularMtsRestantes: function calcularMtsRestantes() {
+      var me = this;
+      var resultado = 0;
+      resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
+      return resultado;
     }
   },
   methods: {
@@ -6859,6 +7077,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
           me.metros_cuadrados = me.arrayArticulo[0]['metros_cuadrados'];
           me.terminado = me.arrayArticulo[0]['terminado'];
           me.ubicacion = me.arrayArticulo[0]['ubicacion'];
+          me.idcategoria = me.arrayArticulo[0]['idcategoria'];
           me.categoria = me.arrayArticulo[0]['nombre_categoria'];
           me.origen = me.arrayArticulo[0]['origen'];
           me.contenedor = me.arrayArticulo[0]['contenedor'];
@@ -6922,6 +7141,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
           me.stock = 0;
           me.ubicacion = "";
           me.categoria = "";
+          me.idcategoria = 0;
         } else {
           if (me.cantidad > me.stock) {
             Swal.fire({
@@ -7191,6 +7411,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
 
           /* sku              : data['sku'], */
           codigo: data['codigo'],
+          idcategoria: data['idcategoria'],
           categoria: data['nombre_categoria'],
           largo: data['largo'],
           alto: data['alto'],
@@ -7317,6 +7538,145 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.file = '';
       this.descripcion = '';
       this.ind = '';
+    },
+    cerrarModal4: function cerrarModal4() {
+      this.modal4 = 0;
+      this.idarticulo = 0;
+      this.sku = '';
+      this.codigo = '';
+      this.categoria = 0;
+      this.largo = 0;
+      this.alto = 0;
+      this.terminado = '';
+      this.espesor = 0;
+      this.ubicacion = '';
+      this.precio_venta = 0;
+      this.metros_cuadrados = 0;
+      this.stock = 0;
+      this.file = '';
+      this.origen = '';
+      this.observacion = '';
+      this.contenedor = '';
+      this.descripcion = '';
+      this.ind = '';
+      this.fecha_llegada = '';
+    },
+
+    /* modal-cortar */
+    abrirModal4: function abrirModal4(index) {
+      var me = this;
+      me.ind = index;
+      me.arrayArticulo = [];
+      me.modal4 = 1;
+      me.tituloModal = "Dividir Placa ";
+      me.idarticulo = me.arrayDetalle[index]['idarticulo'];
+      me.sku = me.arrayDetalle[index]['articulo'];
+      me.codigo = me.arrayDetalle[index]['codigo'];
+      me.idcategoria = me.arrayDetalle[index]['idcategoria'];
+      me.categoria = me.arrayDetalle[index]['categoria'];
+      me.largo = me.arrayDetalle[index]['largo'];
+      me.alto = me.arrayDetalle[index]['alto'];
+      me.ubicacion = me.arrayDetalle[index]['ubicacion'];
+      me.terminado = me.arrayDetalle[index]['terminado'];
+      me.espesor = me.arrayDetalle[index]['espesor'];
+      me.precio = me.arrayDetalle[index]['precio'];
+      me.metros_cuadrados = me.arrayDetalle[index]['metros_cuadrados'];
+      me.contenedor = me.arrayDetalle[index]['contenedor'];
+      me.fecha_llegada = me.arrayDetalle[index]['fecha_llegada'];
+      me.origen = me.arrayDetalle[index]['origen'];
+      me.stock = me.arrayDetalle[index]['stock'];
+      me.file = me.arrayDetalle[index]['file'];
+      me.origen = me.arrayDetalle[index]['origen'];
+      me.contenedor = me.arrayDetalle[index]['contenedor'];
+      me.descripcion = me.arrayDetalle[index]['descripcion'];
+      me.observacion = me.arrayDetalle[index]['observacion'];
+      me.codigoA = me.codigo + '-A';
+      me.codigoB = me.codigo + '-B';
+      me.largoA = me.largo;
+      me.largoB = me.largo;
+      me.altoA = me.alto / 2;
+      me.altoB = me.alto / 2;
+      me.precioA = me.precio / 2;
+      me.precioB = me.precio / 2;
+      me.selectCategoria();
+    },
+    registrarArticuloA: function registrarArticuloA() {
+      var me = this;
+
+      if (me.largoA == 0 || me.altoA == 0 || me.precioA == 0 || me.codigoA == "") {} else {
+        axios.post("/articulo/registrar", {
+          'idcategoria': this.idcategoria,
+          'codigo': this.codigoA,
+          'sku': this.sku,
+          'terminado': this.terminado,
+          'largo': this.largoA,
+          'alto': this.altoA,
+          'metros_cuadrados': this.metros_cuadradosA,
+          'espesor': this.espesor,
+          'precio_venta': this.precioA,
+          'ubicacion': this.ubicacion,
+          'stock': this.stock,
+          'descripcion': this.descripcion,
+          'observacion': this.observacion,
+          'origen': this.origen,
+          'contenedor': this.contenedor,
+          'fecha_llegada': this.fecha_llegada
+        }).then(function (response) {
+          me.validatedA = 1;
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+    },
+    registrarArticuloB: function registrarArticuloB() {
+      var me = this;
+
+      if (me.largoB == 0 || me.altoB == 0 || me.precioB == 0 || me.codigoB == "") {} else {
+        axios.post("/articulo/registrar", {
+          'idcategoria': this.idcategoria,
+          'codigo': this.codigoB,
+          'sku': this.sku,
+          'terminado': this.terminado,
+          'largo': this.largoB,
+          'alto': this.altoB,
+          'metros_cuadrados': this.metros_cuadradosB,
+          'espesor': this.espesor,
+          'precio_venta': this.precioB,
+          'ubicacion': this.ubicacion,
+          'stock': this.stock,
+          'descripcion': this.descripcion,
+          'observacion': this.observacion,
+          'origen': this.origen,
+          'contenedor': this.contenedor,
+          'fecha_llegada': this.fecha_llegada
+        }).then(function (response) {
+          me.validatedB = 1;
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+    },
+    actualizarArticulo: function actualizarArticulo() {
+      if (this.validatedA == 0 || this.validatedB == 0) {
+        Swal.fire({
+          type: 'error',
+          title: 'Error...',
+          text: 'Se deben guardar cambios en la placa A Y B!'
+        });
+        return;
+      }
+
+      var me = this;
+      axios.put("/articulo/actualizarCorte", {
+        'stock': this.stock,
+        'id': this.idarticulo
+      }).then(function (response) {
+        me.listarArticulo(me.codigoA, 'codigo');
+        me.cerrarModal4();
+        me.abrirModal();
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   },
   mounted: function mounted() {
@@ -50543,12 +50903,20 @@ var render = function() {
                       }),
                       _vm._v(" "),
                       _c("td", [
-                        articulo.condicion
+                        articulo.condicion == 1
                           ? _c("div", [
                               _c(
                                 "span",
                                 { staticClass: "badge badge-success" },
                                 [_vm._v("Activo")]
+                              )
+                            ])
+                          : articulo.condicion == 3
+                          ? _c("div", [
+                              _c(
+                                "span",
+                                { staticClass: "badge badge-warning" },
+                                [_vm._v("Cortado")]
                               )
                             ])
                           : _c("div", [
@@ -54991,7 +55359,7 @@ var render = function() {
                                     }),
                                     _vm._v(" "),
                                     _c("td", [
-                                      detalle.condicion
+                                      detalle.condicion == 1
                                         ? _c("div", [
                                             _c(
                                               "span",
@@ -55000,6 +55368,17 @@ var render = function() {
                                                   "badge badge-success"
                                               },
                                               [_vm._v("Activo")]
+                                            )
+                                          ])
+                                        : detalle.condicion == 3
+                                        ? _c("div", [
+                                            _c(
+                                              "span",
+                                              {
+                                                staticClass:
+                                                  "badge badge-warning"
+                                              },
+                                              [_vm._v("Cortado")]
                                             )
                                           ])
                                         : _c("div", [
@@ -55259,12 +55638,20 @@ var render = function() {
                             }),
                             _vm._v(" "),
                             _c("td", [
-                              articulo.condicion
+                              articulo.condicion == 1
                                 ? _c("div", [
                                     _c(
                                       "span",
                                       { staticClass: "badge badge-success" },
                                       [_vm._v("Activo")]
+                                    )
+                                  ])
+                                : articulo.condicion == 3
+                                ? _c("div", [
+                                    _c(
+                                      "span",
+                                      { staticClass: "badge badge-success" },
+                                      [_vm._v("Cortado")]
                                     )
                                   ])
                                 : _c("div", [
@@ -56160,10 +56547,16 @@ var render = function() {
                     ]
                   ),
                   _vm._v(" \n              "),
-                  _vm.condicion
+                  _vm.condicion == 1
                     ? _c("div", { staticClass: "text-center" }, [
                         _c("span", { staticClass: "badge badge-success" }, [
                           _vm._v("Activo")
+                        ])
+                      ])
+                    : _vm.condicion == 3
+                    ? _c("div", { staticClass: "text-center" }, [
+                        _c("span", { staticClass: "badge badge-warning" }, [
+                          _vm._v("Cortado")
                         ])
                       ])
                     : _c("div", { staticClass: "text-center" }, [
@@ -60006,7 +60399,24 @@ var render = function() {
                                         _vm._v(
                                           "  \n                                      "
                                         ),
-                                        _vm._m(3, true)
+                                        _c(
+                                          "button",
+                                          {
+                                            staticClass:
+                                              "btn btn-warning btn-sm",
+                                            attrs: { type: "button" },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.abrirModal4(index)
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c("i", {
+                                              staticClass: "icon-crop"
+                                            })
+                                          ]
+                                        )
                                       ]),
                                       _vm._v(" "),
                                       _c("td", {
@@ -60205,7 +60615,7 @@ var render = function() {
                                       }
                                     },
                                     [
-                                      _vm._m(4),
+                                      _vm._m(3),
                                       _vm._v(" "),
                                       _c("td", [
                                         _vm._v(
@@ -60228,7 +60638,7 @@ var render = function() {
                                       }
                                     },
                                     [
-                                      _vm._m(5),
+                                      _vm._m(4),
                                       _vm._v(" "),
                                       _c("td", [
                                         _vm._v(
@@ -60252,7 +60662,7 @@ var render = function() {
                                       }
                                     },
                                     [
-                                      _vm._m(6),
+                                      _vm._m(5),
                                       _vm._v(" "),
                                       _c("td", [
                                         _vm._v(
@@ -60267,7 +60677,7 @@ var render = function() {
                                 ],
                                 2
                               )
-                            : _c("tbody", [_vm._m(7)])
+                            : _c("tbody", [_vm._m(6)])
                         ]
                       )
                     ])
@@ -60455,7 +60865,7 @@ var render = function() {
                             "table table-bordered table-striped table-sm"
                         },
                         [
-                          _vm._m(8),
+                          _vm._m(7),
                           _vm._v(" "),
                           _vm.arrayDetalle.length
                             ? _c(
@@ -60575,7 +60985,7 @@ var render = function() {
                                       }
                                     },
                                     [
-                                      _vm._m(9),
+                                      _vm._m(8),
                                       _vm._v(" "),
                                       _c("td", [
                                         _vm._v(
@@ -60598,7 +61008,7 @@ var render = function() {
                                       }
                                     },
                                     [
-                                      _vm._m(10),
+                                      _vm._m(9),
                                       _vm._v(" "),
                                       _c("td", [
                                         _vm._v(
@@ -60622,7 +61032,7 @@ var render = function() {
                                       }
                                     },
                                     [
-                                      _vm._m(11),
+                                      _vm._m(10),
                                       _vm._v(" "),
                                       _c("td", [
                                         _vm._v(
@@ -60637,7 +61047,7 @@ var render = function() {
                                 ],
                                 2
                               )
-                            : _c("tbody", [_vm._m(12)])
+                            : _c("tbody", [_vm._m(11)])
                         ]
                       )
                     ])
@@ -60867,7 +61277,7 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center"
                     },
                     [
-                      _vm._m(13),
+                      _vm._m(12),
                       _vm._v(" "),
                       _c(
                         "tbody",
@@ -60928,12 +61338,20 @@ var render = function() {
                             }),
                             _vm._v(" "),
                             _c("td", [
-                              articulo.condicion
+                              articulo.condicion == 1
                                 ? _c("div", [
                                     _c(
                                       "span",
                                       { staticClass: "badge badge-success" },
                                       [_vm._v("Activo")]
+                                    )
+                                  ])
+                                : articulo.condicion == 3
+                                ? _c("div", [
+                                    _c(
+                                      "span",
+                                      { staticClass: "badge badge-warning" },
+                                      [_vm._v("Cortado")]
                                     )
                                   ])
                                 : _c("div", [
@@ -61090,11 +61508,11 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center"
                     },
                     [
-                      _vm._m(14),
+                      _vm._m(13),
                       _vm._v(" "),
                       _c("tbody", [
                         _c("tr", [
-                          _vm._m(15),
+                          _vm._m(14),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.codigo) }
@@ -61102,7 +61520,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(16),
+                          _vm._m(15),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.categoria) }
@@ -61110,7 +61528,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(17),
+                          _vm._m(16),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.sku) }
@@ -61118,7 +61536,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(18),
+                          _vm._m(17),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.terminado) }
@@ -61126,7 +61544,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(19),
+                          _vm._m(18),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.largo) }
@@ -61134,7 +61552,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(20),
+                          _vm._m(19),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.alto) }
@@ -61142,7 +61560,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(21),
+                          _vm._m(20),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.calcularMts) }
@@ -61150,7 +61568,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(22),
+                          _vm._m(21),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.espesor) }
@@ -61158,7 +61576,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(23),
+                          _vm._m(22),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.precio) }
@@ -61166,7 +61584,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(24),
+                          _vm._m(23),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.ubicacion) }
@@ -61174,7 +61592,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(25),
+                          _vm._m(24),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.stock) }
@@ -61182,7 +61600,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(26),
+                          _vm._m(25),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.descripcion) }
@@ -61190,7 +61608,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(27),
+                          _vm._m(26),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.observacion) }
@@ -61198,7 +61616,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(28),
+                          _vm._m(27),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.origen) }
@@ -61206,7 +61624,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(29),
+                          _vm._m(28),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.contenedor) }
@@ -61214,7 +61632,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(30),
+                          _vm._m(29),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.espesor) }
@@ -61222,7 +61640,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(31),
+                          _vm._m(30),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.fecha_llegada) }
@@ -61355,10 +61773,16 @@ var render = function() {
                     ]
                   ),
                   _vm._v(" \n              "),
-                  _vm.condicion
+                  _vm.condicion == 1
                     ? _c("div", { staticClass: "text-center" }, [
                         _c("span", { staticClass: "badge badge-success" }, [
                           _vm._v("Activo")
+                        ])
+                      ])
+                    : _vm.condicion == 3
+                    ? _c("div", { staticClass: "text-center" }, [
+                        _c("span", { staticClass: "badge badge-warning" }, [
+                          _vm._v("Cortado")
                         ])
                       ])
                     : _c("div", { staticClass: "text-center" }, [
@@ -61374,11 +61798,11 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center"
                     },
                     [
-                      _vm._m(32),
+                      _vm._m(31),
                       _vm._v(" "),
                       _c("tbody", [
                         _c("tr", [
-                          _vm._m(33),
+                          _vm._m(32),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.codigo) }
@@ -61386,7 +61810,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(34),
+                          _vm._m(33),
                           _vm._v(" "),
                           _c(
                             "select",
@@ -61441,7 +61865,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(35),
+                          _vm._m(34),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.sku) }
@@ -61449,7 +61873,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(36),
+                          _vm._m(35),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.terminado) }
@@ -61457,7 +61881,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(37),
+                          _vm._m(36),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.largo) }
@@ -61465,7 +61889,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(38),
+                          _vm._m(37),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.alto) }
@@ -61473,7 +61897,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(39),
+                          _vm._m(38),
                           _vm._v(" "),
                           _c("td", {
                             domProps: {
@@ -61483,7 +61907,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(40),
+                          _vm._m(39),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.espesor) }
@@ -61491,7 +61915,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(41),
+                          _vm._m(40),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.precio) }
@@ -61499,7 +61923,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(42),
+                          _vm._m(41),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.ubicacion) }
@@ -61507,7 +61931,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(43),
+                          _vm._m(42),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.cantidad) }
@@ -61515,7 +61939,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(44),
+                          _vm._m(43),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.descripcion) }
@@ -61523,7 +61947,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(45),
+                          _vm._m(44),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.observacion) }
@@ -61531,7 +61955,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(46),
+                          _vm._m(45),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.origen) }
@@ -61539,7 +61963,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(47),
+                          _vm._m(46),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.contenedor) }
@@ -61547,7 +61971,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(48),
+                          _vm._m(47),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.espesor) }
@@ -61555,7 +61979,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(49),
+                          _vm._m(48),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.fecha_llegada) }
@@ -61604,6 +62028,796 @@ var render = function() {
                   },
                   [_vm._v("Cerrar")]
                 )
+              ])
+            ])
+          ]
+        )
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        class: { mostrar: _vm.modal4 },
+        staticStyle: { display: "none" },
+        attrs: {
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "myModalLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-warning modal-lg",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h4", {
+                  staticClass: "modal-title",
+                  domProps: { textContent: _vm._s(_vm.tituloModal + _vm.sku) }
+                }),
+                _vm._v(" "),
+                _vm.validatedA == 0 && _vm.validatedB == 0
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "close",
+                        attrs: { type: "button", "aria-label": "Close" },
+                        on: {
+                          click: function($event) {
+                            return _vm.cerrarModal4()
+                          }
+                        }
+                      },
+                      [
+                        _c("span", { attrs: { "aria-hidden": "true" } }, [
+                          _vm._v("×")
+                        ])
+                      ]
+                    )
+                  : _vm._e()
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "form-group row" }, [
+                  _c(
+                    "div",
+                    { staticClass: "col-md" },
+                    [
+                      _c("h1", {
+                        staticClass: "text-center",
+                        domProps: { textContent: _vm._s(_vm.sku) }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "lightbox",
+                        {
+                          staticClass: "m-0",
+                          attrs: {
+                            album: "",
+                            src: "http://localhost:8000/" + _vm.file
+                          }
+                        },
+                        [
+                          _c("img", {
+                            staticClass: "img-responsive imgcenter",
+                            attrs: {
+                              width: "250px",
+                              src: "http://localhost:8000/" + _vm.file
+                            }
+                          })
+                        ]
+                      ),
+                      _vm._v(" \n                      ")
+                    ],
+                    1
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "table-responsive" }, [
+                  _c(
+                    "table",
+                    {
+                      staticClass:
+                        "table table-bordered table-striped table-sm text-center"
+                    },
+                    [
+                      _vm._m(49),
+                      _vm._v(" "),
+                      _c("tbody", [
+                        _c("tr", [
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.codigo) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.sku) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.categoria) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.largo) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.alto) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: {
+                              textContent: _vm._s(_vm.metros_cuadrados)
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.espesor) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.terminado) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.stock) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.precio) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.ubicacion) }
+                          })
+                        ])
+                      ])
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "container" }, [
+                  _c(
+                    "form",
+                    {
+                      staticClass: "form-horizontal",
+                      attrs: {
+                        action: "",
+                        method: "post",
+                        enctype: "multipart/form-data"
+                      }
+                    },
+                    [
+                      _c("div", { staticClass: "form-group row" }, [
+                        _vm._m(50),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-4" }, [
+                          _c("input", {
+                            staticClass: "form-control",
+                            attrs: { type: "number", readonly: "" },
+                            domProps: { value: _vm.calcularMtsRestantes }
+                          })
+                        ]),
+                        _vm._v(" \n\n                              "),
+                        _c(
+                          "span",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value:
+                                  _vm.metros_cuadradosA +
+                                    _vm.metros_cuadradosB <
+                                  _vm.metros_cuadrados,
+                                expression:
+                                  "metros_cuadradosA+metros_cuadradosB<metros_cuadrados"
+                              }
+                            ],
+                            staticClass: "col-md-12 text-center",
+                            staticStyle: { color: "red" }
+                          },
+                          [
+                            _c("strong", [
+                              _vm._v(
+                                "(*La distrubucion de medidas no completa el tamaño original de la placa)"
+                              )
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "span",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value:
+                                  _vm.metros_cuadradosA +
+                                    _vm.metros_cuadradosB >
+                                  _vm.metros_cuadrados,
+                                expression:
+                                  "metros_cuadradosA+metros_cuadradosB>metros_cuadrados"
+                              }
+                            ],
+                            staticClass: "col-md-12 text-center",
+                            staticStyle: { color: "red" }
+                          },
+                          [
+                            _c("strong", [
+                              _vm._v(
+                                "(*La distrubucion de medidas supera el tamaño original de la placa)"
+                              )
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-6 border" }, [
+                          _c("h3", {
+                            staticClass: "text-center",
+                            domProps: { textContent: _vm._s(_vm.sku + " A") }
+                          }),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _c(
+                              "span",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value: _vm.codigoA == "",
+                                    expression: "codigoA==''"
+                                  }
+                                ],
+                                staticClass: "col-md-12",
+                                staticStyle: { color: "red" }
+                              },
+                              [
+                                _vm._v(
+                                  "(*Ingrese el código, recuerde debe ser único)"
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "col-md-4 form-control-label",
+                                attrs: { for: "text-input" }
+                              },
+                              [_vm._v("No° de placa")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-8" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.codigoA,
+                                    expression: "codigoA"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "text",
+                                  disabled: _vm.validatedA == 1,
+                                  placeholder: "Código de barras"
+                                },
+                                domProps: { value: _vm.codigoA },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.codigoA = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _c(
+                              "span",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value: _vm.largoA == 0,
+                                    expression: "largoA==0"
+                                  }
+                                ],
+                                staticClass: "col-md-12",
+                                staticStyle: { color: "red" }
+                              },
+                              [_vm._v("(*Ingrese el largo de la mitad A)")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "col-md-4 form-control-label",
+                                attrs: { for: "text-input" }
+                              },
+                              [_vm._v("Largo")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-8" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.largoA,
+                                    expression: "largoA"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "number",
+                                  disabled: _vm.validatedA == 1,
+                                  min: "1",
+                                  placeholder: ""
+                                },
+                                domProps: { value: _vm.largoA },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.largoA = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _c(
+                              "span",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value: _vm.altoA == 0,
+                                    expression: "altoA==0"
+                                  }
+                                ],
+                                staticClass: "col-md-12",
+                                staticStyle: { color: "red" }
+                              },
+                              [_vm._v("(*Ingrese el alto de la mitad A)")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "col-md-4 form-control-label",
+                                attrs: { for: "text-input" }
+                              },
+                              [_vm._v("Alto")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-8" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.altoA,
+                                    expression: "altoA"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "number",
+                                  disabled: _vm.validatedA == 1,
+                                  min: "1",
+                                  placeholder: ""
+                                },
+                                domProps: { value: _vm.altoA },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.altoA = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _vm._m(51),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-8" }, [
+                              _c("input", {
+                                staticClass: "form-control",
+                                attrs: { type: "number", readonly: "" },
+                                domProps: { value: _vm.calcularMtsA }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _c(
+                              "span",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value: _vm.precioA == 0,
+                                    expression: "precioA==0"
+                                  }
+                                ],
+                                staticClass: "col-md-12",
+                                staticStyle: { color: "red" }
+                              },
+                              [_vm._v("(*Ingrese el precio de la mitad A)")]
+                            ),
+                            _vm._v(" "),
+                            _vm._m(52),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-8" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.precioA,
+                                    expression: "precioA"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "number",
+                                  disabled: _vm.validatedA == 1,
+                                  min: "1",
+                                  placeholder: ""
+                                },
+                                domProps: { value: _vm.precioA },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.precioA = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _vm.validatedA == 0
+                            ? _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-primary float-right",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.registrarArticuloA()
+                                    }
+                                  }
+                                },
+                                [_vm._v("Guardar")]
+                              )
+                            : _vm._e(),
+                          _vm._v(" \n                              ")
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-6 border" }, [
+                          _c("h3", {
+                            staticClass: "text-center",
+                            domProps: { textContent: _vm._s(_vm.sku + " B") }
+                          }),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _c(
+                              "span",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value: _vm.codigoB == "",
+                                    expression: "codigoB==''"
+                                  }
+                                ],
+                                staticClass: "col-md-12",
+                                staticStyle: { color: "red" }
+                              },
+                              [
+                                _vm._v(
+                                  "(*Ingrese el código, recuerde debe ser único)"
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "col-md-4 form-control-label",
+                                attrs: { for: "text-input" }
+                              },
+                              [_vm._v("No° de placa")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-8" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.codigoB,
+                                    expression: "codigoB"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "text",
+                                  disabled: _vm.validatedB == 1,
+                                  placeholder: "Código de barras"
+                                },
+                                domProps: { value: _vm.codigoB },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.codigoB = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _c(
+                              "span",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value: _vm.largoB == 0,
+                                    expression: "largoB==0"
+                                  }
+                                ],
+                                staticClass: "col-md-12",
+                                staticStyle: { color: "red" }
+                              },
+                              [_vm._v("(*Ingrese el largo de la mitad B)")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "col-md-4 form-control-label",
+                                attrs: { for: "text-input" }
+                              },
+                              [_vm._v("Largo")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-8" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.largoB,
+                                    expression: "largoB"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "number",
+                                  disabled: _vm.validatedB == 1,
+                                  min: "1",
+                                  placeholder: ""
+                                },
+                                domProps: { value: _vm.largoB },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.largoB = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _c(
+                              "span",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value: _vm.altoB == 0,
+                                    expression: "altoB==0"
+                                  }
+                                ],
+                                staticClass: "col-md-12",
+                                staticStyle: { color: "red" }
+                              },
+                              [_vm._v("(*Ingrese el alto de la mitad B)")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "col-md-4 form-control-label",
+                                attrs: { for: "text-input" }
+                              },
+                              [_vm._v("Alto")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-8" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.altoB,
+                                    expression: "altoB"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "number",
+                                  disabled: _vm.validatedB == 1,
+                                  min: "1",
+                                  placeholder: ""
+                                },
+                                domProps: { value: _vm.altoB },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.altoB = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _vm._m(53),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-8" }, [
+                              _c("input", {
+                                staticClass: "form-control",
+                                attrs: { type: "number", readonly: "" },
+                                domProps: { value: _vm.calcularMtsB }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _c(
+                              "span",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value: _vm.precioB == 0,
+                                    expression: "precioB==0"
+                                  }
+                                ],
+                                staticClass: "col-md-12",
+                                staticStyle: { color: "red" }
+                              },
+                              [_vm._v("(*Ingrese el precio de la mitad B)")]
+                            ),
+                            _vm._v(" "),
+                            _vm._m(54),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-8" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.precioB,
+                                    expression: "precioB"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "number",
+                                  disabled: _vm.validatedB == 1,
+                                  min: "1",
+                                  placeholder: ""
+                                },
+                                domProps: { value: _vm.precioB },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.precioB = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _vm.validatedB == 0
+                            ? _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-primary float-right",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.registrarArticuloB()
+                                    }
+                                  }
+                                },
+                                [_vm._v("Guardar")]
+                              )
+                            : _vm._e(),
+                          _vm._v("  \n                              ")
+                        ])
+                      ])
+                    ]
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _vm.validatedA == 0 && _vm.validatedB == 0
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-secondary",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.cerrarModal4()
+                          }
+                        }
+                      },
+                      [_vm._v("Cerrar")]
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.validatedA == 1 || _vm.validatedB == 1
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            _vm.actualizarArticulo(),
+                              _vm.eliminarDetalle(_vm.ind)
+                          }
+                        }
+                      },
+                      [_vm._v("Actualizar")]
+                    )
+                  : _vm._e()
               ])
             ])
           ]
@@ -61658,16 +62872,6 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("th", [_vm._v("Metros "), _c("sup", [_vm._v("2")])])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      { staticClass: "btn btn-warning btn-sm", attrs: { type: "button" } },
-      [_c("i", { staticClass: "icon-crop" })]
-    )
   },
   function() {
     var _vm = this
@@ -62030,6 +63234,101 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("td", [_c("strong", [_vm._v("FECHA DE LLEGADA")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticClass: "text-center" }, [
+        _c("th", [_vm._v("No° Placa")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Código de material")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Material")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Largo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Alto")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Metros"), _c("sup", [_vm._v("2")])]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Espesor")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Terminado")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Stock")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Precio m"), _c("sup", [_vm._v("2")])]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Ubicacion")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-4 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Metros "), _c("sup", [_vm._v(" 2")]), _vm._v(" Restantes")]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-4 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Metros"), _c("sup", [_vm._v("2")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-4 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Precio m"), _c("sup", [_vm._v("2")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-4 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Metros"), _c("sup", [_vm._v("2")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-4 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Precio m "), _c("sup", [_vm._v("2")])]
+    )
   }
 ]
 render._withStripped = true
