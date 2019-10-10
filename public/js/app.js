@@ -2212,6 +2212,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_1___default.a);
@@ -2320,6 +2323,9 @@ Vue.use(VueSilentbox); */
       })["catch"](function (error) {
         console.log(error);
       });
+    },
+    cargarPdf: function cargarPdf() {
+      window.open('http://127.0.0.1:8000/articulo/listarPdf', '_blank');
     },
     selectCategoria: function selectCategoria() {
       var me = this;
@@ -50658,7 +50664,7 @@ var render = function() {
       _c("div", { staticClass: "card" }, [
         _c("div", { staticClass: "card-header" }, [
           _c("i", { staticClass: "fa fa-align-justify" }),
-          _vm._v(" Artículos\n        "),
+          _vm._v(" Artículos\n          "),
           _c(
             "button",
             {
@@ -50670,7 +50676,27 @@ var render = function() {
                 }
               }
             },
-            [_c("i", { staticClass: "icon-plus" }), _vm._v(" Nuevo\n        ")]
+            [
+              _c("i", { staticClass: "icon-plus" }),
+              _vm._v(" Nuevo\n          ")
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-info",
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  return _vm.cargarPdf()
+                }
+              }
+            },
+            [
+              _c("i", { staticClass: "icon-doc" }),
+              _vm._v(" Reporte\n          ")
+            ]
           )
         ]),
         _vm._v(" "),

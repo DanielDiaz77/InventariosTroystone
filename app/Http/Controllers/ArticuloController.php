@@ -462,4 +462,25 @@ class ArticuloController extends Controller
         $articulo->save();
 
     }
+
+    public function listarPdf(){
+
+        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+            ->select(
+                'articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku',
+                'articulos.nombre','categorias.nombre as categoria','articulos.terminado',
+                'articulos.largo','articulos.alto','articulos.metros_cuadrados','articulos.espesor',
+                'articulos.precio_venta','articulos.ubicacion','articulos.contenedor','articulos.stock',
+                'articulos.descripcion','articulos.observacion','articulos.origen','articulos.fecha_llegada',
+                'articulos.file','articulos.condicion')
+               /*  ->where('articulos.condicion',1) */
+            ->orderBy('articulos.codigo', 'asc')->get();
+
+        $cont = Articulo::count();
+
+        $pdf = \PDF::loadView('pdf.articulospdf',['articulos' => $articulos,'cont'=>$cont]);
+
+        return $pdf->download('articulos.pdf');
+
+    }
 }

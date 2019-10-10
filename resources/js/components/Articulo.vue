@@ -8,10 +8,13 @@
       <!-- Ejemplo de tabla Listado -->
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Artículos
-          <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary">
-            <i class="icon-plus"></i>&nbsp;Nuevo
-          </button>
+            <i class="fa fa-align-justify"></i> Artículos
+            <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary">
+                <i class="icon-plus"></i>&nbsp;Nuevo
+            </button>
+            <button type="button" @click="cargarPdf()" class="btn btn-info">
+                <i class="icon-doc"></i>&nbsp;Reporte
+            </button>
         </div>
         <div class="card-body">
           <div class="form-group row">
@@ -478,6 +481,9 @@ export default {
                 console.log(error);
             });
         },
+        cargarPdf(){
+            window.open('http://127.0.0.1:8000/articulo/listarPdf','_blank');
+        },
         selectCategoria(){
             let me=this;
             var url= '/categoria/selectCategoria';
@@ -813,7 +819,7 @@ export default {
             this.file = '';
             this.errorArticulo = 0;
             this.imagenMinatura = '';
-        },
+        }
     },
     mounted() {
         this.listarArticulo(1,this.buscar, this.criterio);
