@@ -1393,8 +1393,28 @@ export default {
                 'observacion' : this.observacion,
                 'data': this.arrayDetalle
             }).then(function(response) {
-            me.ocultarDetalle();
-            me.listarVenta(1,'','num_comprobante');
+                me.ocultarDetalle();
+                me.listarVenta(1,'','num_comprobante');
+                me.idcliente = 0;
+                me.tipo_comprobante = "Presupuesto";
+                me.num_comprobante = 0;
+                me.impuesto = 0.16;
+                me.total = 0.0;
+                me.idarticulo = 0;
+                me.articulo = "";
+                me.cantidad = 0;
+                me.precio = 0;
+                me.stock = 0;
+                me.observacion = "";
+                me.descuento = 0;
+                me.forma_pago = "De contado";
+                me.tiempo_entrega = "";
+                me.lugar_entrega = "";
+                me.entregado = 0;
+                me.moneda = "Peso Mexicano";
+                me.tipo_cambio = "";
+                me.arrayDetalle = [];
+
             })
             .catch(function(error) {
                 console.log(error);
