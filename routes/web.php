@@ -11,6 +11,8 @@
 |
 */
 
+/* use Illuminate\Routing\Route; */
+
 Route::group(['middleware'=>['guest']],function(){
     //LOGIN
     Route::get('/', 'Auth\LoginController@showLoginForm');
@@ -24,6 +26,8 @@ Route::group(['middleware'=>['auth']],function(){
     Route::get('/main', function () {
         return view('contenido/contenido');
     })->name('main');
+
+    Route::get('/dashboard','DashboardController');
 
     Route::group(['middleware'=>['Almacenero']],function(){
         //CATEGORIAS
