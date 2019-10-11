@@ -50,12 +50,13 @@
         }
 
         #fact{
-        /*position: relative;*/
-        float: right;
-        margin-top: 0%;
-        margin-left: 2%;
-        margin-right: 2%;
-        font-size: 20px;
+            /*position: relative;*/
+            float: right;
+            margin-top: 2%;
+            margin-left: 2%;
+            margin-right: 2%;
+            margin-bottom: 2%
+            font-size: 20px;
         }
 
         section{
@@ -87,10 +88,10 @@
         }
 
         #facvendedor{
-        width: 100%;
-        border-collapse: collapse;
-        border-spacing: 0;
-        margin-bottom: 15px;
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin-bottom: 15px;
         }
 
         #facvendedor thead{
@@ -101,17 +102,17 @@
         }
 
         #facarticulo{
-        width: 100%;
-        border-collapse: collapse;
-        border-spacing: 0;
-        margin-bottom: 15px;
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin-bottom: 15px;
         }
 
         #facarticulo thead{
-        padding: 20px;
-        background: #f3861c;
-        text-align: center;
-        border-bottom: 1px solid #FFFFFF;
+            padding: 20px;
+            background: #f3861c;
+            text-align: center;
+            border-bottom: 1px solid #FFFFFF;
         }
 
         #gracias{
@@ -156,6 +157,7 @@
             {{-- <div id="divIzq">aaaaaaa</div> --}}
             <div>
                 <img id="logo" src="img/LogoFactura2.png" alt="TroyStoneLogo" id="imagen">
+                <p style="float: right;"> <strong >{{ $v->tipo_comprobante }}</strong>  : {{$v->num_comprobante}}</p>
             </div>
             <div id="divPiedra"> <b> La piedra de tus proyectos </b> </div><br><br><br><br><br>
             <div id="datos">
@@ -174,38 +176,10 @@
                 </p>
             </div>
             <div id="fact">
-                <p>{{ $v->tipo_comprobante }} : {{$v->num_comprobante}}</p>
+                <p><strong>Estado: </strong> {{ $v->entregado? "Entregado" : "No entregado" }}</p>
             </div>
         </header>
-        <br>
-        <section>
-                <div>
-                    <table id="facvendedor">
-                        <thead>
-                            <tr id="fv">
-                                <th>ATENDIO</th>
-                                <th>FECHA</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{{ $v->usuario }}</td>
-                                <td>
-                                    <?php
-                                        setlocale(LC_TIME, "spanish");
-                                        $mi_fecha = $v->created_at;
-                                        $mi_fecha = str_replace("/", "-", $mi_fecha);
-                                        $Nueva_Fecha = date("d-m-Y", strtotime($mi_fecha));
-                                        $Mes_Anyo = strftime("%A, %d de %B de %Y", strtotime($Nueva_Fecha));
-                                        echo $Mes_Anyo;
-                                    ?>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-            <br>
+
         <section>
             <div>
                 <table id="facliente">
@@ -220,7 +194,7 @@
                             RFC: {{ $v->rfc }}<br>
                             Domicilio: {{ $v->domicilio }} {{$v->ciudad}}<br>
                             Teléfono: {{ $v->telefono }}<br>
-                            Email: {{ $v->email  }}</p></th>
+                            Correo-E: {{ $v->email  }}</p></th>
                         </tr>
                     </tbody>
                 </table>
@@ -239,10 +213,8 @@
                             <th>P U</th>
                             <th>METROS <sup>2</sup></th>
                             <th>CANT.</th>
-                            <th>SUBTOTAL</th>
                             <th>DESCUENTO</th>
-                            <th>IVA</th>
-                            <th>TOTAL</th>
+                            <th>SUBTOTAL</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -255,14 +227,8 @@
                             <td class="td-b">{{ $det->precio }}</td>
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>
                             <td class="td-b">{{ $det->cantidad }}</td>
-                            <td class="td-b">{{ ((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento) }}</td>
                             <td class="td-b">{{ $det->descuento }}</td>
-                            <td class="td-b">{{ (((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento) * $ivaVenta) }}</td>
-                            <td class="td-b">{{
-                                (((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento)
-                                +
-                                (((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento) * $ivaVenta))
-                            }}</td>
+                            <td class="td-b">{{ ((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento) }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -274,25 +240,19 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
-                            <th></th>
                             <th class="th-b">SUBTOTAL</th>
-                            <td class="th-b">{{ round($v->total-($v->total*$v->impuesto),2)}}</td>
+                            <td class="th-b">{{ round($v->total/($v->impuesto + 1),2)}}</td>
                         </tr>
                         <tr>
-                            <th></th>
-                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
                             <th class="th-b">IVA</th>
-                            <td class="th-b">{{ round($v->total*$v->impuesto,2) }}</td>
+                            <td class="th-b">{{ round(($v->total/($v->impuesto + 1))*$v->impuesto,2) }}</td>
                         </tr>
                         <tr>
-                            <th></th>
-                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -305,7 +265,37 @@
                     </tfoot>
 
                 </table>
-
+                @foreach ($venta as $v)
+                <p>
+                    <strong>Fecha de realizacion: </strong>
+                    <?php
+                        setlocale(LC_TIME, "spanish");
+                        $mi_fecha = $v->created_at;
+                        $mi_fecha = str_replace("/", "-", $mi_fecha);
+                        $Nueva_Fecha = date("d-m-Y", strtotime($mi_fecha));
+                        $Mes_Anyo = strftime("%A, %d de %B de %Y", strtotime($Nueva_Fecha));
+                        echo $Mes_Anyo;
+                    ?> <br>
+                    <strong>Nota: </strong>{{ $v->observacion }} <br>
+                    <strong>Forma de pago: </strong>{{ $v->forma_pago }} <br>
+                    <strong>Tiempo de entrega:</strong>{{ $v->tiempo_entrega }}<br>
+                    <strong> Lugar de entrega: </strong>{{ $v->lugar_entrega }}
+                </p> <br>
+            @endforeach
+            <p style="text-align:center";><strong>Atentamente, <br>
+                Lic. Andrés Pérez Arenzana</strong></p>
+            <strong>Cuentas para depositar en pesos:</strong><br>
+            <strong>Beneficiario: TROYSTONE, S.A. DE C.V. RFC: TRO 120511 B35 </strong><br><hr>
+            <strong> - IXE / Banorte - Cuenta: 001750 8770 CLABE: <u> 07232 0000 1750 8770 5</u>  </strong><br>
+            <strong> - Banamex - Suc.: 7005 Cuenta: 3393 800 CLABE: <u> 00232 07005 3393 800 9 </u> </strong><br><hr>
+            <strong> - Santander - Cuenta: 6550 4375 654 CLABE: <u> 01432 06550 4375 654 2 </u> </strong><br><hr>
+            <p style="font-size:7px;">*** SUGERIMOS A NUESTROS CLIENTES SELLAR SU MATERIAL CON PRODUCTOS LATICRETE
+                    *** PRECIOS LAB EN BODEGA TROYSTONE ZMG *APLICA PARA VENTA DE MATERIAL*
+                    *** TIEMPO DE ENTREGA SUJETO A DISPONIBILIDAD.
+                    *** NUESTROS PRODUCTOS SON DE ORIGEN NATURAL, POR LO QUE PUEDEN PRESENTAR VARIACIONES EN SU TONALIDAD O EN SUS BETAS
+                    *** CAMBIOS DE PRECIO SIN PREVIO AVISO SI EL MATERIAL NO ESTA LIQUIDADO AL 100%
+                    *** EL TIPO DE CAMBIO SE TOMA DE BANAMEX A LA VENTA DEL DÍA DE LA OPERACIÓN, APLICA PARA VENTA EN USD.
+                    ***UNA VEZ SALIDA LA MERCANCIA EL RIESGO CORRE POR EL CLIENTE, NO NOS HACEMOS CARGO DE DAÑOS, O ALGUN OTRO PERCANCE </p>
             </div>
         </section>
         <br>

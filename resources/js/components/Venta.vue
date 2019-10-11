@@ -55,6 +55,9 @@
                                     <button type="button" class="btn btn-success btn-sm" @click="verVenta(venta.id)">
                                         <i class="icon-eye"></i>
                                     </button>&nbsp;
+                                    <button type="button" class="btn btn-info btn-sm" @click="pdfVenta(venta.id)">
+                                        <i class="icon-doc"></i>
+                                    </button>&nbsp;
                                     <template v-if="venta.estado=='Registrado'">
                                         <button type="button" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)">
                                             <i class="icon-trash"></i>
@@ -1905,6 +1908,9 @@ export default {
             }).catch(function (error) {
                 console.log(error);
             });
+        },
+        pdfVenta(id){
+            window.open('http://127.0.0.1:8000/venta/pdf/'+id + ',' + '_blank');
         }
     },
     mounted() {
