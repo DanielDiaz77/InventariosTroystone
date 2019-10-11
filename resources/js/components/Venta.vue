@@ -44,6 +44,7 @@
                                 <th>Moneda</th>
                                 <th>Tipo Cambio</th>
                                 <th>Estado</th>
+                                <th>Entregado</th>
 
                             </tr>
                         </thead>
@@ -69,6 +70,12 @@
                                 <td v-text="venta.moneda"></td>
                                 <td v-text="venta.tipo_cambio"></td>
                                 <td v-text="venta.estado "></td>
+                                <td v-if="venta.entregado">
+                                    <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                </td>
+                                <td v-else>
+                                    <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -397,13 +404,17 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="">Estado: </label>
-                            <div v-if="entregado">
-                                <span class="badge badge-success">Entregado</span>
+                            <label for="">Entregado: </label>
+                            <div v-if="estadoVn == 'Registrado'">
+                                <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
                             <div v-else>
-                                <span class="badge badge-danger">No entregado</span>
+                                <span class="badge badge-danger">Presupuesto cancelado</span>
                             </div>
+                            <!-- <div v-if="entregado">
+                                <span class="badge badge-success">Entregado</span>
+                            </div> -->
+
                         </div>
                     </div>
                 </div>
@@ -982,7 +993,9 @@ import vSelect from 'vue-select';
 import VueBarcode from 'vue-barcode';
 import VueLightbox from 'vue-lightbox';
 import moment from 'moment';
+import ToggleButton from 'vue-js-toggle-button'
 Vue.component("Lightbox",VueLightbox);
+Vue.use(ToggleButton);
 export default {
     data() {
         return {
@@ -1073,7 +1086,9 @@ export default {
             ubicacionA : "",
             ubicacionB : "",
             validatedB : 0,
-            validatedA : 0
+            validatedA : 0,
+            btnEntrega : false,
+            estadoVn : ""
         };
     },
     components: {
@@ -1162,6 +1177,7 @@ export default {
                 resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
                 return resultado;
             }
+
         },
     methods: {
         listarVenta (page,buscar,criterio){
@@ -1496,6 +1512,8 @@ export default {
             this.errorVenta =0;
             this.errorMostrarMsjVenta = [];
             this.num_comprobante = 0;
+            this.entregado = 0;
+            this.btnEntrega =  false;
         },
         verVenta(id){
 
@@ -1514,6 +1532,7 @@ export default {
 
                 var total_parcial = 0;
 
+                me.venta_id = arrayVentaT[0]['id'];
                 me.cliente = arrayVentaT[0]['nombre'];
                 me.tipo_comprobante=arrayVentaT[0]['tipo_comprobante'];
                 me.num_comprobante=arrayVentaT[0]['num_comprobante'];
@@ -1527,6 +1546,7 @@ export default {
                 me.moneda = arrayVentaT[0]['moneda'];
                 me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
                 me.observacion = arrayVentaT[0]['observacion'];
+                me.estadoVn = arrayVentaT[0]['estado'];
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
@@ -1534,6 +1554,10 @@ export default {
                  var imp =   parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
 
                 me.divImp = imp + 1;
+
+                if(me.entregado ==1){
+                    me.btnEntrega = true;
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -1860,6 +1884,27 @@ export default {
                 console.log(error);
             });
         },
+        cambiarEstadoEntrega(id){
+          let me = this;
+            if(me.btnEntrega == true){
+                me.entregado = 1;
+            }else{
+                me.entregado = 0;
+            }
+            axios.post('/venta/cambiarEntrega',{
+                'id': id,
+                'entregado' : this.entregado
+            }).then(function (response) {
+                me.listarVenta(1,'','num_comprobante');
+                swal(
+                    'Estado Cambiado!',
+                    'El estado del presupuesto ha sido cambiado con éxito.',
+                    'success'
+                )
+            }).catch(function (error) {
+                console.log(error);
+            });
+        }
     },
     mounted() {
         this.listarVenta(1,this.buscar, this.criterio);

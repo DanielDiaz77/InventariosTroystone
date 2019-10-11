@@ -26,6 +26,7 @@
     "dependencies": {
         "moment": "^2.24.0",
         "vue-barcode": "^1.2.0",
+        "vue-js-toggle-button": "^1.3.2",
         "vue-lightbox": "^1.1.6",
         "vue-select": "^2.4.0",
         "vue-silentbox": "^0.1.9"

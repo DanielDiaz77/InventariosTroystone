@@ -102,8 +102,7 @@ class VentaController extends Controller
 
         }
     }
-    public function desactivar(Request $request)
-    {
+    public function desactivar(Request $request){
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);
         $venta->estado = 'Anulada';
@@ -169,5 +168,12 @@ class VentaController extends Controller
         $pdf = \PDF::loadView('pdf.venta',['venta' => $venta,'detalles'=>$detalles,'ivaVenta' =>$ivaagregado[0]->impuesto]);
 
         return $pdf->stream('venta-'.$numventa[0]->num_comprobante.'.pdf');
+    }
+
+    public function cambiarEntrega(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $venta = Venta::findOrFail($request->id);
+        $venta->entregado = $request->entregado;
+        $venta->save();
     }
 }
