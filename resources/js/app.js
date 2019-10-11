@@ -28,7 +28,10 @@ Vue.component('user', require('./components/User.vue').default);
 Vue.component('ingreso', require('./components/Ingreso.vue').default);
 Vue.component('venta', require('./components/Venta.vue').default);
 Vue.component('dashboard', require('./components/Dashboard.vue').default);
-
+Vue.component('consultaingreso', require('./components/ConsultaIngreso.vue').default);
+Vue.component('consultaventa', require('./components/ConsultaVenta.vue').default);
+Vue.component('ayuda', require('./components/Ayuda.vue').default);
+Vue.component('acerca', require('./components/Acerca.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

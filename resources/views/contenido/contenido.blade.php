@@ -40,19 +40,19 @@
             </template>
 
             <template v-if="menu==9">
-                <h1> Reporte de ingresos</h1>
+                <consultaingreso></consultaingreso>
             </template>
 
             <template v-if="menu==10">
-                <h1>Reporte de ventas</h1>
+                <consultaventa></consultaventa>
             </template>
 
             <template v-if="menu==11">
-                <h1>Ayuda</h1>
+                <ayuda></ayuda>
             </template>
 
             <template v-if="menu==12">
-                <h1>Acerca de</h1>
+                <acerca></acerca>
             </template>
         @elseif(Auth::user()->idrol == 2)
 
@@ -73,15 +73,15 @@
             </template>
 
             <template v-if="menu==10">
-                <h1>Reporte de ventas</h1>
+                <consultaventa></consultaventa>
             </template>
 
             <template v-if="menu==11">
-                <h1>Ayuda</h1>
+                <ayuda></ayuda>
             </template>
 
             <template v-if="menu==12">
-                <h1>Acerca de</h1>
+                <acerca></acerca>
             </template>
 
         @elseif(Auth::user()->idrol == 3)
@@ -107,15 +107,15 @@
             </template>
 
             <template v-if="menu==9">
-                <h1> Reporte de ingresos</h1>
+                <consultaingreso></consultaingreso>
             </template>
 
             <template v-if="menu==11">
-                <h1>Ayuda</h1>
+                <ayuda></ayuda>
             </template>
 
             <template v-if="menu==12">
-                <h1>Acerca de</h1>
+                <acerca></acerca>
             </template>
         @else
 
