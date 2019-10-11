@@ -6852,6 +6852,68 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6864,7 +6926,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       idcliente: 0,
       cliente: '',
       user: '',
-      tipo_comprobante: "FACTURA",
+      tipo_comprobante: "PRESUPUESTO",
       num_comprobante: "",
       impuesto: 0.16,
       totalImpuesto: 0,
@@ -6896,8 +6958,13 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       cantidad: 0,
       total_impuesto: 0.0,
       total_parcial: 0.0,
+      divImp: 0.0,
       total: 0.0,
+      forma_pago: "De contado",
+      tiempo_entrega: "",
+      lugar_entrega: "",
       precio: 0.0,
+      entregado: 0,
       stock: 0,
       descripcion: "",
       arrayArticulo: [],
@@ -6984,7 +7051,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       var resultado = 0;
 
       for (var i = 0; i < me.arrayDetalle.length; i++) {
-        resultado = resultado + (me.arrayDetalle[i].precio * me.arrayDetalle[i].cantidad * me.arrayDetalle[i].metros_cuadrados - me.arrayDetalle[i].descuento);
+        resultado = resultado + (me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados * me.arrayDetalle[i].cantidad - me.arrayDetalle[i].descuento) * (me.impuesto + 1);
       }
 
       return resultado;
@@ -7229,6 +7296,9 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         'num_comprobante': this.num_comprobante,
         'impuesto': this.impuesto,
         'total': this.total,
+        'forma_pago': this.forma_pago,
+        'tiempo_entrega': this.tiempo_entrega,
+        'lugar_entrega': this.lugar_entrega,
         'moneda': this.moneda,
         'tipo_cambio': this.tipo_cambio,
         'observacion': this.observacion,
@@ -7278,7 +7348,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       me.errorMostrarMsjVenta = [];
       me.arrayDetalle.map(function (x) {
         if (x.cantidad > x.stock) {
-          art = "La cantidad del articulp " + x.codigo + " supera las cantidades disponibles.";
+          art = "La cantidad del articulo " + x.codigo + " supera las cantidades disponibles.";
           me.errorMostrarMsjVenta.push(art);
         }
       });
@@ -7357,17 +7427,24 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
         var respuesta = response.data;
         arrayVentaT = respuesta.venta;
         var fechaform = arrayVentaT[0]['fecha_hora'];
+        var total_parcial = 0;
         me.cliente = arrayVentaT[0]['nombre'];
         me.tipo_comprobante = arrayVentaT[0]['tipo_comprobante'];
         me.num_comprobante = arrayVentaT[0]['num_comprobante'];
         me.user = arrayVentaT[0]['usuario'];
         me.impuesto = arrayVentaT[0]['impuesto'];
         me.total = arrayVentaT[0]['total'];
+        me.forma_pago = arrayVentaT[0]['forma_pago'];
+        me.lugar_entrega = arrayVentaT[0]['lugar_entrega'];
+        me.tiempo_entrega = arrayVentaT[0]['tiempo_entrega'];
+        me.entregado = arrayVentaT[0]['entregado'];
         me.moneda = arrayVentaT[0]['moneda'];
         me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
         me.observacion = arrayVentaT[0]['observacion'];
         moment__WEBPACK_IMPORTED_MODULE_3___default.a.locale('es');
         me.fecha_llegada = moment__WEBPACK_IMPORTED_MODULE_3___default()(fechaform).format('llll');
+        var imp = parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
+        me.divImp = imp + 1;
       })["catch"](function (error) {
         console.log(error);
       }); //Obtener los detalles del ingreso
@@ -59847,16 +59924,8 @@ var render = function() {
                               _vm._v("Seleccione")
                             ]),
                             _vm._v(" "),
-                            _c("option", { attrs: { value: "NOTA" } }, [
-                              _vm._v("Nota")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "FACTURA" } }, [
-                              _vm._v("Factura")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "TICKET" } }, [
-                              _vm._v("Ticket")
+                            _c("option", { attrs: { value: "PRESUPUESTO" } }, [
+                              _vm._v("PRESUPUESTO")
                             ])
                           ]
                         )
@@ -59866,7 +59935,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-4" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Número de Comprobante (*)")
+                          _vm._v("Número de presupuesto (*)")
                         ]),
                         _vm._v(" "),
                         _c("input", {
@@ -60009,6 +60078,224 @@ var render = function() {
                             }
                           }
                         })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-4" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Forma de pago"),
+                          _c(
+                            "span",
+                            {
+                              directives: [
+                                {
+                                  name: "show",
+                                  rawName: "v-show",
+                                  value: _vm.forma_pago == "",
+                                  expression: "forma_pago==''"
+                                }
+                              ],
+                              staticStyle: { color: "red" }
+                            },
+                            [_vm._v("(*Seleccione)")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.forma_pago,
+                                expression: "forma_pago"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.forma_pago = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { value: "", disabled: "" } },
+                              [_vm._v("Seleccione la forma de pago")]
+                            ),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "De contado" } }, [
+                              _vm._v("De contado")
+                            ])
+                          ]
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-4" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Tiempo de entrga"),
+                          _c(
+                            "span",
+                            {
+                              directives: [
+                                {
+                                  name: "show",
+                                  rawName: "v-show",
+                                  value: _vm.tiempo_entrega == "",
+                                  expression: "tiempo_entrega==''"
+                                }
+                              ],
+                              staticStyle: { color: "red" }
+                            },
+                            [_vm._v("(*Seleccione el tiempo de entregada)")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.tiempo_entrega,
+                                expression: "tiempo_entrega"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.tiempo_entrega = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { value: "", disabled: "" } },
+                              [_vm._v("Seleccione el tiempo de entregada")]
+                            ),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Inmediata" } }, [
+                              _vm._v("Inmediata")
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "de 2 a 10 dias" } },
+                              [_vm._v("de 2 a 10 dias")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "de 10 a 20 dias" } },
+                              [_vm._v("de 10 a 20 dias")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "de 21 a 40 dias" } },
+                              [_vm._v("de 10 a 20 dias")]
+                            )
+                          ]
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-4" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Lugar de entrega"),
+                          _c(
+                            "span",
+                            {
+                              directives: [
+                                {
+                                  name: "show",
+                                  rawName: "v-show",
+                                  value: _vm.lugar_entrega == "",
+                                  expression: "lugar_entrega==''"
+                                }
+                              ],
+                              staticStyle: { color: "red" }
+                            },
+                            [_vm._v("(*Seleccione)")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.lugar_entrega,
+                                expression: "lugar_entrega"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.lugar_entrega = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { value: "", disabled: "" } },
+                              [_vm._v("Seleccione el lugar de entrega")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "LAB TROYSTONE" } },
+                              [_vm._v("LAB TROYSTONE")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "LAB TROYSTONE S.L.P." } },
+                              [_vm._v("LAB TROYSTONE S.L.P.")]
+                            )
+                          ]
+                        )
                       ])
                     ]),
                     _vm._v(" "),
@@ -60696,7 +60983,9 @@ var render = function() {
                                         _vm._v(
                                           "$ " +
                                             _vm._s(
-                                              (_vm.total = _vm.calcularTotal)
+                                              (_vm.total = _vm.calcularTotal.toFixed(
+                                                2
+                                              ))
                                             )
                                         )
                                       ])
@@ -60839,7 +61128,7 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "col-md-3" }, [
+                    _c("div", { staticClass: "col-md-2" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", { attrs: { for: "" } }, [_vm._v("Total:")]),
                         _vm._v(" "),
@@ -60880,6 +61169,42 @@ var render = function() {
                         _c("p", {
                           domProps: { textContent: _vm._s(_vm.tipo_cambio) }
                         })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Forma de pago")
+                        ]),
+                        _vm._v(" "),
+                        _c("p", {
+                          domProps: { textContent: _vm._s(_vm.forma_pago) }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Estado: ")
+                        ]),
+                        _vm._v(" "),
+                        _vm.entregado
+                          ? _c("div", [
+                              _c(
+                                "span",
+                                { staticClass: "badge badge-success" },
+                                [_vm._v("Entregado")]
+                              )
+                            ])
+                          : _c("div", [
+                              _c(
+                                "span",
+                                { staticClass: "badge badge-danger" },
+                                [_vm._v("No entregado")]
+                              )
+                            ])
                       ])
                     ])
                   ]),
@@ -61020,7 +61345,7 @@ var render = function() {
                                           "$ " +
                                             _vm._s(
                                               (_vm.total_parcial = (
-                                                _vm.total - _vm.total_impuesto
+                                                _vm.total / _vm.divImp
                                               ).toFixed(2))
                                             )
                                         )
@@ -61044,7 +61369,7 @@ var render = function() {
                                             _vm._s(
                                               (_vm.total_impuesto = (
                                                 (_vm.total * _vm.impuesto) /
-                                                (1 + _vm.impuesto)
+                                                _vm.divImp
                                               ).toFixed(2))
                                             )
                                         )
@@ -61063,12 +61388,7 @@ var render = function() {
                                       _vm._m(10),
                                       _vm._v(" "),
                                       _c("td", [
-                                        _vm._v(
-                                          "$ " +
-                                            _vm._s(
-                                              (_vm.total = _vm.calcularTotal)
-                                            )
-                                        )
+                                        _vm._v("$ " + _vm._s(_vm.total) + " ")
                                       ])
                                     ]
                                   )
@@ -61110,6 +61430,30 @@ var render = function() {
                           }
                         }
                       })
+                    ]),
+                    _vm._v(" \n                  "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Lugar de entrega")
+                        ]),
+                        _vm._v(" "),
+                        _c("p", {
+                          domProps: { textContent: _vm._s(_vm.lugar_entrega) }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" \n                  "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Tiempo de entrega")
+                        ]),
+                        _vm._v(" "),
+                        _c("p", {
+                          domProps: { textContent: _vm._s(_vm.tiempo_entrega) }
+                        })
+                      ])
                     ]),
                     _vm._v(" \n              ")
                   ]),
@@ -62914,7 +63258,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("td", { attrs: { colspan: "13", align: "right" } }, [
-      _c("strong", [_vm._v("Total Impuesto:")])
+      _c("strong", [_vm._v("Total IVA:")])
     ])
   },
   function() {

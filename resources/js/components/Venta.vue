@@ -117,15 +117,15 @@
                             <label for="">Tipo Comprobante (*) </label>
                             <select v-model="tipo_comprobante" class="form-control">
                                 <option value="">Seleccione</option>
-                                <option value="NOTA">Nota</option>
-                                <option value="FACTURA">Factura</option>
-                                <option value="TICKET">Ticket</option>
+                                <!-- <option value="NOTA">Nota</option> -->
+                                <option value="PRESUPUESTO">PRESUPUESTO</option>
+                                <!-- <option value="TICKET">Ticket</option> -->
                             </select>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="">Número de Comprobante (*)</label>
+                            <label for="">Número de presupuesto (*)</label>
                             <input type="text" class="form-control" v-model="num_comprobante" placeholder="000xx">
                         </div>
                     </div>
@@ -144,6 +144,39 @@
                         <div class="form-group">
                             <label for="">Tipo cambio<span style="color:red;" v-show="moneda!='Peso Mexicano'">(*Ingrese el tipo de cambio)</span> </label>
                             <input type="text" class="form-control" v-model="tipo_cambio" placeholder="000xx">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Forma de pago<span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
+                            <select class="form-control" v-model="forma_pago">
+                                <option value='' disabled>Seleccione la forma de pago</option>
+                                <option value="De contado">De contado</option>
+                                <!-- <option value="Dolar USA">Dolar USA</option>
+                                <option value="EURO">EURO</option> -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Tiempo de entrga<span style="color:red;" v-show="tiempo_entrega==''">(*Seleccione el tiempo de entregada)</span></label>
+                            <select class="form-control" v-model="tiempo_entrega">
+                                <option value='' disabled>Seleccione el tiempo de entregada</option>
+                                <option value="Inmediata">Inmediata</option>
+                                <option value="de 2 a 10 dias">de 2 a 10 dias</option>
+                                <option value="de 10 a 20 dias">de 10 a 20 dias</option>
+                                <option value="de 21 a 40 dias">de 10 a 20 dias</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Lugar de entrega<span style="color:red;" v-show="lugar_entrega==''">(*Seleccione)</span></label>
+                            <select class="form-control" v-model="lugar_entrega">
+                                <option value='' disabled>Seleccione el lugar de entrega</option>
+                                <option value="LAB TROYSTONE">LAB TROYSTONE</option>
+                                <option value="LAB TROYSTONE S.L.P.">LAB TROYSTONE S.L.P.</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -265,12 +298,12 @@
                                     <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="13" align="right"><strong>Total Impuesto:</strong></td>
+                                    <td colspan="13" align="right"><strong>Total IVA:</strong></td>
                                     <td>$ {{total_impuesto=((total * impuesto)/(1+impuesto)).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Neto:</strong></td>
-                                    <td>$ {{total=calcularTotal}}</td>
+                                    <td>$ {{total=(calcularTotal.toFixed(2))}}</td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
@@ -332,7 +365,7 @@
                             <p v-text="fecha_llegada"></p>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for="">Total:</label>
                             <p v-text="total"></p>
@@ -354,6 +387,23 @@
                         <div class="form-group">
                             <label for="">Tipo de cambio</label>
                             <p v-text="tipo_cambio"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">Forma de pago</label>
+                            <p v-text="forma_pago"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">Estado: </label>
+                            <div v-if="entregado">
+                                <span class="badge badge-success">Entregado</span>
+                            </div>
+                            <div v-else>
+                                <span class="badge badge-danger">No entregado</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -400,15 +450,15 @@
                                 </tr>
                                  <tr style="background-color: #CEECF5;">
                                     <td colspan="12" align="right"><strong>Total Parcial:</strong></td>
-                                    <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
+                                    <td>$ {{total_parcial = (total / divImp).toFixed(2) }}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="12" align="right"><strong>Total Impuesto:</strong></td>
-                                    <td>$ {{total_impuesto=((total * impuesto)/(1+impuesto)).toFixed(2)}}</td>
+                                    <td>$ {{total_impuesto=((total * impuesto)/(divImp)).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="12" align="right"><strong>Total Neto:</strong></td>
-                                    <td>$ {{total=calcularTotal}}</td>
+                                    <td>$ {{ total}} </td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
@@ -425,6 +475,18 @@
                     <div class="col-md-4">
                         <label for="exampleFormControlTextarea2">Observaciones</label>
                         <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacion"></textarea>
+                    </div>&nbsp;
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">Lugar de entrega</label>
+                            <p v-text="lugar_entrega"></p>
+                        </div>
+                    </div>&nbsp;
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">Tiempo de entrega</label>
+                            <p v-text="tiempo_entrega"></p>
+                        </div>
                     </div>&nbsp;
                 </div>
                 <div class="form-group row">
@@ -928,7 +990,7 @@ export default {
             idcliente: 0,
             cliente: '',
             user: '',
-            tipo_comprobante: "FACTURA",
+            tipo_comprobante: "PRESUPUESTO",
             num_comprobante: "",
             impuesto: 0.16,
             totalImpuesto : 0,
@@ -960,8 +1022,13 @@ export default {
             cantidad : 0,
             total_impuesto : 0.0,
             total_parcial : 0.0,
+            divImp: 0.0,
             total: 0.0,
+            forma_pago : "De contado",
+            tiempo_entrega : "",
+            lugar_entrega : "",
             precio: 0.0,
+            entregado : 0,
             stock : 0,
             descripcion : "",
             arrayArticulo : [],
@@ -1044,7 +1111,12 @@ export default {
                 let me=this;
                 let resultado = 0;
                 for(var i=0;i<me.arrayDetalle.length;i++){
-                    resultado = resultado + (((me.arrayDetalle[i].precio * me.arrayDetalle[i].cantidad) * me.arrayDetalle[i].metros_cuadrados)- me.arrayDetalle[i].descuento)
+                    resultado = resultado + (
+                        (
+
+                            ((((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)) - me.arrayDetalle[i].descuento) * (me.impuesto + 1))
+
+                        )
                 }
                 return resultado;
             },
@@ -1293,6 +1365,9 @@ export default {
                 'num_comprobante' : this.num_comprobante,
                 'impuesto' : this.impuesto,
                 'total' : this.total,
+                'forma_pago' : this.forma_pago,
+                'tiempo_entrega' : this.tiempo_entrega,
+                'lugar_entrega' : this.lugar_entrega,
                 'moneda' : this.moneda,
                 'tipo_cambio' : this.tipo_cambio,
                 'observacion' : this.observacion,
@@ -1350,7 +1425,7 @@ export default {
 
             me.arrayDetalle.map(function(x){
                 if(x.cantidad > x.stock){
-                    art ="La cantidad del articulp " + x.codigo + " supera las cantidades disponibles.";
+                    art ="La cantidad del articulo " + x.codigo + " supera las cantidades disponibles.";
                     me.errorMostrarMsjVenta.push(art);
                 }
             });
@@ -1437,18 +1512,28 @@ export default {
 
                 var fechaform  = arrayVentaT[0]['fecha_hora'];
 
+                var total_parcial = 0;
+
                 me.cliente = arrayVentaT[0]['nombre'];
                 me.tipo_comprobante=arrayVentaT[0]['tipo_comprobante'];
                 me.num_comprobante=arrayVentaT[0]['num_comprobante'];
                 me.user=arrayVentaT[0]['usuario'];
                 me.impuesto = arrayVentaT[0]['impuesto'];
                 me.total = arrayVentaT[0]['total'];
+                me.forma_pago = arrayVentaT[0]['forma_pago'];
+                me.lugar_entrega = arrayVentaT[0]['lugar_entrega'];
+                me.tiempo_entrega = arrayVentaT[0]['tiempo_entrega'];
+                me.entregado = arrayVentaT[0]['entregado'];
                 me.moneda = arrayVentaT[0]['moneda'];
                 me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
                 me.observacion = arrayVentaT[0]['observacion'];
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
+
+                 var imp =   parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
+
+                me.divImp = imp + 1;
             })
             .catch(function (error) {
                 console.log(error);

@@ -22,7 +22,8 @@ class VentaController extends Controller
             ->join('users','ventas.idusuario','=','users.id')
             ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
             'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-            'ventas.moneda','ventas.tipo_cambio','ventas.observacion',
+            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado',
             'personas.nombre','users.usuario')
             ->orderBy('ventas.id', 'desc')->paginate(12);
         }
@@ -31,7 +32,8 @@ class VentaController extends Controller
             ->join('users','ventas.idusuario','=','users.id')
             ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
             'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-            'ventas.moneda','ventas.tipo_cambio','ventas.observacion',
+            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado',
             'personas.nombre','users.usuario')
             ->where('ventas.'.$criterio, 'like', '%'. $buscar . '%')
             ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -67,6 +69,10 @@ class VentaController extends Controller
             $venta->fecha_hora = $mytime;
             $venta->impuesto = $request->impuesto;
             $venta->total = $request->total;
+            $venta->forma_pago = $request->forma_pago;
+            $venta->tiempo_entrega = $request->tiempo_entrega;
+            $venta->lugar_entrega = $request->lugar_entrega;
+            $venta->entregado = 0;
             $venta->estado = 'Registrado';
             $venta->moneda = $request->moneda;
             $venta->tipo_cambio = $request->tipo_cambio;
@@ -112,7 +118,8 @@ class VentaController extends Controller
         ->join('users','ventas.idusuario','=','users.id')
         ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
         'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-        'ventas.moneda','ventas.tipo_cambio','ventas.observacion',
+        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado',
         'personas.nombre','users.usuario')
         ->where('ventas.id','=',$id)
         ->orderBy('ventas.id', 'desc')->take(1)->get();
@@ -135,5 +142,32 @@ class VentaController extends Controller
         ->orderBy('detalle_ventas.id','desc')->get();
 
         return ['detalles' => $detalles];
+    }
+
+    public function pdf(Request $request,$id){
+
+        $venta =  Venta::join('personas','ventas.idcliente','=','personas.id')
+        ->join('users','ventas.idusuario','=','users.id')
+        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+            'ventas.created_at','ventas.impuesto','ventas.total','ventas.estado',
+            'ventas.forma_pago','ventas.tiempo_entrega','ventas.lugar_entrega',
+            'ventas.entregado','ventas.moneda','ventas.tipo_cambio', 'ventas.observacion',
+            'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
+            'personas.telefono','personas.email','users.usuario')
+        ->where('ventas.id',$id)->take(1)->get();
+
+        $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
+            ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
+                'articulos.sku as articulo','articulos.largo','articulos.alto','articulos.metros_cuadrados')
+            ->where('detalle_ventas.idventa',$id)
+            ->orderBy('detalle_ventas.id','desc')->get();
+
+        $numventa = Venta::select('num_comprobante')->where('id',$id)->get();
+
+        $ivaagregado = Venta::select('impuesto')->where('id',$id)->get();
+
+        $pdf = \PDF::loadView('pdf.venta',['venta' => $venta,'detalles'=>$detalles,'ivaVenta' =>$ivaagregado[0]->impuesto]);
+
+        return $pdf->stream('venta-'.$numventa[0]->num_comprobante.'.pdf');
     }
 }
