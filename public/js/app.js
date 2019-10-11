@@ -6927,6 +6927,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 
@@ -60432,6 +60433,10 @@ var render = function() {
                             _vm._v(" "),
                             _c("option", { attrs: { value: "estado" } }, [
                               _vm._v("Estado")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "entregado" } }, [
+                              _vm._v("Entregado")
                             ])
                           ]
                         ),

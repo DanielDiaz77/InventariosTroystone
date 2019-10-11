@@ -23,6 +23,7 @@
                         <option value="num_comprobante">No° Comprobante</option>
                         <option value="fecha_hora">Fecha</option>
                         <option value="estado">Estado</option>
+                        <option value="entregado">Entregado</option>
                         </select>
                         <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
                         <button type="submit" @click="listarVenta(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>

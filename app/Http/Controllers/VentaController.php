@@ -106,6 +106,7 @@ class VentaController extends Controller
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);
         $venta->estado = 'Anulada';
+        $venta->entregado = 0;
         $venta->save();
     }
 
