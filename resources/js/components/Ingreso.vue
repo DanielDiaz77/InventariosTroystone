@@ -1055,6 +1055,7 @@ export default {
                         observacion      : me.observacion_r
                     });
                     me.codigo = "";
+                    me.file = "";
                 }
             }
         },
@@ -1086,6 +1087,7 @@ export default {
                     observacion      : me.observacion_r
                 });
                 me.codigo = "";
+                me.file = "";
                 me.modal2 = 0;
 
             }

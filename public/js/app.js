@@ -6250,6 +6250,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
             observacion: me.observacion_r
           });
           me.codigo = "";
+          me.file = "";
         }
       }
     },
@@ -6280,6 +6281,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
           observacion: me.observacion_r
         });
         me.codigo = "";
+        me.file = "";
         me.modal2 = 0;
       }
     },
