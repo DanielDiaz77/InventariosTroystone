@@ -126,6 +126,7 @@ class ArticuloController extends Controller
         $fileName = "";
 
         if($request->file != ""){
+
             $exploded = explode(',', $request->file);
 
             $decoded = base64_decode($exploded[1]);
@@ -136,8 +137,16 @@ class ArticuloController extends Controller
                 $extension = 'png';
 
             $fileName = str_random().'.'.$extension;
+            //The name of the directory that we need to create.
+            $directoryName = 'images';
 
-            $path = public_path().'/'.$fileName;
+            //Check if the directory already exists.
+            if(!is_dir($directoryName)){
+                //Directory does not exist, so lets create it.
+                mkdir($directoryName, 0755);
+}
+
+            $path = public_path($directoryName).'/'.$fileName;
 
             file_put_contents($path,$decoded);
         }
@@ -188,6 +197,8 @@ class ArticuloController extends Controller
                         $extension = 'png';
 
                     $fileName = str_random().'.'.$extension;
+
+
 
                     $path = public_path().'/'.$fileName;
 

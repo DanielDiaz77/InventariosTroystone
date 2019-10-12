@@ -27,6 +27,10 @@
                 <venta></venta>
             </template>
 
+            <template v-if="menu==13">
+                    <h1 class="text-center"> COTIZACIONES EN CONSTRUCCIÓN</h1>
+             </template>
+
             <template v-if="menu==6">
                 <cliente></cliente>
             </template>
@@ -66,6 +70,10 @@
 
             <template v-if="menu==5">
                 <venta></venta>
+            </template>
+
+            <template v-if="menu==13">
+                   <h1 class="text-center"> COTIZACIONES EN CONSTRUCCIÓN</h1>
             </template>
 
             <template v-if="menu==6">
