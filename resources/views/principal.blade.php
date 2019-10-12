@@ -26,14 +26,14 @@
             <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <ul class="nav navbar-nav d-md-down-none">
+            {{-- <ul class="nav navbar-nav d-md-down-none">
                 <li class="nav-item px-3">
-                    <a class="nav-link" href="#">Escritorio</a>
+                    <a class="nav-link" href="/">Escritorio</a>
                 </li>
                 <li class="nav-item px-3">
                     <a class="nav-link" href="#">Configuraciones</a>
                 </li>
-            </ul>
+            </ul> --}}
             <ul class="nav navbar-nav ml-auto">
                 <notification :notifications ="notifications" ></notification>
                 <li class="nav-item dropdown">
