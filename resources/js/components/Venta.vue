@@ -610,8 +610,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/'+file">
+                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
                 </lightbox>&nbsp;
                 <table class="table table-bordered table-striped table-sm text-center">
                     <thead>
@@ -718,8 +718,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/'+file">
+                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
                 </lightbox>&nbsp;
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
@@ -842,8 +842,8 @@
                     <div class="form-group row">
                         <div class="col-md">
                             <h1 class="text-center" v-text="sku"></h1>
-                            <lightbox class="m-0" album="" :src="'http://localhost:8000/'+file">
-                                <img class="img-responsive imgcenter" width="250px" :src="'http://localhost:8000/'+file">
+                            <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
+                                <img class="img-responsive imgcenter" width="250px" :src="'http://localhost:8000/images/'+file">
                             </lightbox>&nbsp;
                         </div>
                     </div>

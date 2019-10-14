@@ -2215,6 +2215,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_1___default.a);
@@ -74670,27 +74678,66 @@ var render = function() {
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.terminado,
-                              expression: "terminado"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text", placeholder: "Terminado" },
-                          domProps: { value: _vm.terminado },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.terminado,
+                                expression: "terminado"
                               }
-                              _vm.terminado = $event.target.value
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.terminado = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
                             }
-                          }
-                        })
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { value: "", disabled: "" } },
+                              [_vm._v("Seleccione un de terminado")]
+                            ),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Pulido" } }, [
+                              _vm._v("Pulido")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Al Corte" } }, [
+                              _vm._v("Al Corte")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Leather" } }, [
+                              _vm._v("Leather")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Mate" } }, [
+                              _vm._v("Mate")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Seda" } }, [
+                              _vm._v("Seda")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Otro" } }, [
+                              _vm._v("Otro")
+                            ])
+                          ]
+                        )
                       ])
                     ]),
                     _vm._v(" "),
@@ -74812,14 +74859,7 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group row" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-md-3 form-control-label",
-                          attrs: { for: "text-input" }
-                        },
-                        [_vm._v("Precio")]
-                      ),
+                      _vm._m(3),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
                         _c("input", {
@@ -75345,11 +75385,11 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center"
                     },
                     [
-                      _vm._m(3),
+                      _vm._m(4),
                       _vm._v(" "),
                       _c("tbody", [
                         _c("tr", [
-                          _vm._m(4),
+                          _vm._m(5),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.sku) }
@@ -75357,7 +75397,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(5),
+                          _vm._m(6),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.terminado) }
@@ -75365,7 +75405,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(6),
+                          _vm._m(7),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.largo) }
@@ -75373,7 +75413,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(7),
+                          _vm._m(8),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.alto) }
@@ -75381,7 +75421,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(8),
+                          _vm._m(9),
                           _vm._v(" "),
                           _c("td", {
                             domProps: {
@@ -75391,18 +75431,10 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(9),
-                          _vm._v(" "),
-                          _c("td", {
-                            domProps: { textContent: _vm._s(_vm.espesor) }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
                           _vm._m(10),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.precio_venta) }
+                            domProps: { textContent: _vm._s(_vm.espesor) }
                           })
                         ]),
                         _vm._v(" "),
@@ -75410,7 +75442,7 @@ var render = function() {
                           _vm._m(11),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.ubicacion) }
+                            domProps: { textContent: _vm._s(_vm.precio_venta) }
                           })
                         ]),
                         _vm._v(" "),
@@ -75418,7 +75450,7 @@ var render = function() {
                           _vm._m(12),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.stock) }
+                            domProps: { textContent: _vm._s(_vm.ubicacion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -75426,7 +75458,7 @@ var render = function() {
                           _vm._m(13),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.descripcion) }
+                            domProps: { textContent: _vm._s(_vm.stock) }
                           })
                         ]),
                         _vm._v(" "),
@@ -75434,7 +75466,7 @@ var render = function() {
                           _vm._m(14),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.observacion) }
+                            domProps: { textContent: _vm._s(_vm.descripcion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -75442,7 +75474,7 @@ var render = function() {
                           _vm._m(15),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.contenedor) }
+                            domProps: { textContent: _vm._s(_vm.observacion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -75450,12 +75482,20 @@ var render = function() {
                           _vm._m(16),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.espesor) }
+                            domProps: { textContent: _vm._s(_vm.contenedor) }
                           })
                         ]),
                         _vm._v(" "),
                         _c("tr", [
                           _vm._m(17),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.espesor) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(18),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.fecha_llegada) }
@@ -75566,6 +75606,19 @@ var staticRenderFns = [
         attrs: { for: "text-input" }
       },
       [_vm._v("Metros"), _c("sup", [_vm._v("2")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Precio m"), _c("sup", [_vm._v("2")])]
     )
   },
   function() {
@@ -77699,7 +77752,7 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/" + _vm.file
+                        src: "http://localhost:8000/images/" + _vm.file
                       }
                     },
                     [
@@ -77707,7 +77760,7 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/" + _vm.file
+                          src: "http://localhost:8000/images/" + _vm.file
                         }
                       })
                     ]
@@ -79042,7 +79095,7 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/" + _vm.file
+                        src: "http://localhost:8000/images/" + _vm.file
                       }
                     },
                     [
@@ -79050,7 +79103,7 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/" + _vm.file
+                          src: "http://localhost:8000/images/" + _vm.file
                         }
                       })
                     ]
@@ -79314,7 +79367,7 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/" + _vm.file
+                        src: "http://localhost:8000/images/" + _vm.file
                       }
                     },
                     [
@@ -79322,7 +79375,7 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/" + _vm.file
+                          src: "http://localhost:8000/images/" + _vm.file
                         }
                       })
                     ]
@@ -82937,7 +82990,7 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/" + _vm.file
+                        src: "http://localhost:8000/images/" + _vm.file
                       }
                     },
                     [
@@ -82945,7 +82998,7 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/" + _vm.file
+                          src: "http://localhost:8000/images/" + _vm.file
                         }
                       })
                     ]
@@ -88323,7 +88376,7 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/" + _vm.file
+                        src: "http://localhost:8000/images/" + _vm.file
                       }
                     },
                     [
@@ -88331,7 +88384,7 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/" + _vm.file
+                          src: "http://localhost:8000/images/" + _vm.file
                         }
                       })
                     ]
@@ -88595,7 +88648,7 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/" + _vm.file
+                        src: "http://localhost:8000/images/" + _vm.file
                       }
                     },
                     [
@@ -88603,7 +88656,7 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/" + _vm.file
+                          src: "http://localhost:8000/images/" + _vm.file
                         }
                       })
                     ]
@@ -88937,7 +88990,7 @@ var render = function() {
                           staticClass: "m-0",
                           attrs: {
                             album: "",
-                            src: "http://localhost:8000/" + _vm.file
+                            src: "http://localhost:8000/images/" + _vm.file
                           }
                         },
                         [
@@ -88945,7 +88998,7 @@ var render = function() {
                             staticClass: "img-responsive imgcenter",
                             attrs: {
                               width: "250px",
-                              src: "http://localhost:8000/" + _vm.file
+                              src: "http://localhost:8000/images/" + _vm.file
                             }
                           })
                         ]

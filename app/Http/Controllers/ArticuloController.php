@@ -143,8 +143,8 @@ class ArticuloController extends Controller
             //Check if the directory already exists.
             if(!is_dir($directoryName)){
                 //Directory does not exist, so lets create it.
-                mkdir($directoryName, 0755);
-}
+                mkdir($directoryName, 0777);
+            }
 
             $path = public_path($directoryName).'/'.$fileName;
 
@@ -198,9 +198,14 @@ class ArticuloController extends Controller
 
                     $fileName = str_random().'.'.$extension;
 
+                    //The name of the directory that we need to create.
+                    $directoryName = 'images';
+                    if(!is_dir($directoryName)){
+                        //Directory does not exist, so lets create it.
+                        mkdir($directoryName, 0777);
+                    }
 
-
-                    $path = public_path().'/'.$fileName;
+                    $path = public_path($directoryName).'/'.$fileName;
 
                     file_put_contents($path,$decoded);
                 }
@@ -241,12 +246,23 @@ class ArticuloController extends Controller
 
         if($request->file != ""){
 
+            $directoryName = 'images';
+
+            //Check if the directory already exists.
+            if(!is_dir($directoryName)){
+                //Directory does not exist, so lets create it.
+                mkdir($directoryName, 0777);
+            }
+
             $art= Articulo::findOrFail($request->id);
             $img = $art->file;
 
-            if(file_exists($img)){
-                $image_path = public_path().'/'.$img;
-                unlink($image_path);
+            if($img != null){
+                $image_path = public_path($directoryName).'/'.$img;
+
+                if(file_exists($image_path)){
+                    unlink($image_path);
+                }
             }
 
             $exploded = explode(',', $request->file);
@@ -258,7 +274,7 @@ class ArticuloController extends Controller
                 $extension = 'png';
 
             $fileName = str_random().'.'.$extension;
-            $path = public_path().'/'.$fileName;
+            $path = public_path($directoryName).'/'.$fileName;
             file_put_contents($path,$decoded);
 
             $articulo = Articulo::findOrFail($request->id);

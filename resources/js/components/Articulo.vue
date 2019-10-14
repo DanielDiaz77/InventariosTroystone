@@ -158,7 +158,15 @@
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Terminado</label>
                     <div class="col-md-9">
-                        <input type="text" v-model="terminado" class="form-control" placeholder="Terminado"/>
+                        <select class="form-control" v-model="terminado">
+                                <option value='' disabled>Seleccione un de terminado</option>
+                                <option value="Pulido">Pulido</option>
+                                <option value="Al Corte">Al Corte</option>
+                                <option value="Leather">Leather</option>
+                                <option value="Mate">Mate</option>
+                                <option value="Seda">Seda</option>
+                                <option value="Otro">Otro</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -186,7 +194,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Precio</label>
+                    <label class="col-md-3 form-control-label" for="text-input">Precio m<sup>2</sup></label>
                     <div class="col-md-9">
                         <input type="number" min="1" value="0" step="any" v-model="precio_venta" class="form-control" placeholder=""/>
                     </div>
