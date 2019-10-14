@@ -12,8 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class VentaController extends Controller
 {
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         if (!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
@@ -54,8 +53,7 @@ class VentaController extends Controller
             'ventas' => $ventas
         ];
     }
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         if(!$request->ajax()) return redirect('/');
 
         $mytime = Carbon::now('America/Mexico_City');
@@ -124,6 +122,7 @@ class VentaController extends Controller
 
         }
     }
+
     public function desactivar(Request $request){
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);

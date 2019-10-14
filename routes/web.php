@@ -145,12 +145,20 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/ingreso/obtenerDetalles', 'ingresoController@obtenerDetalles');
 
         //VENTAS
-        Route::get('/venta', 'ventaController@index');
+        Route::get('/venta','ventaController@index');
         Route::post('/venta/registrar', 'ventaController@store');
         Route::put('/venta/desactivar', 'ventaController@desactivar');
         Route::get('/venta/obtenerCabecera', 'ventaController@obtenerCabecera');
         Route::get('/venta/obtenerDetalles', 'ventaController@obtenerDetalles');
         Route::get('/venta/pdf/{id}', 'ventaController@pdf')->name('venta_pdf');
+
+        //COTIZACIONES
+        Route::get('/cotizacion', 'CotizacionController@index');
+        Route::post('/cotizacion/registrar', 'CotizacionController@store');
+        Route::put('/cotizacion/desactivar', 'CotizacionController@desactivar');
+        Route::get('/cotizacion/obtenerCabecera','CotizacionController@obtenerCabecera');
+        Route::get('/cotizacion/obtenerDetalles','CotizacionController@obtenerDetalles');
+        Route::get('/cotizacion/pdf/{id}','CotizacionController@pdf')->name('venta_pdf');
 
     });
 });
