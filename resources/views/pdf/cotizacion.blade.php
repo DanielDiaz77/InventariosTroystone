@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <title>Reporte de venta</title>
+    <title>Cotizacion</title>
     <style>
         body {
         /*position: relative;*/
@@ -152,12 +152,12 @@
         }
     </style>
     <body>
-        @foreach ($venta as $v)
+        @foreach ($cotizacion as $c)
         <header>
             {{-- <div id="divIzq">aaaaaaa</div> --}}
             <div>
                 <img id="logo" src="img/LogoFactura2.png" alt="TroyStoneLogo" id="imagen">
-                <p style="float: right;"> <strong >{{ $v->tipo_comprobante }}</strong>  : {{$v->num_comprobante}}</p>
+                <p style="float: right;"> <strong >{{ $c->tipo_comprobante }}</strong>  : {{$c->num_comprobante}}</p>
             </div>
             <div id="divPiedra"> <b> La piedra de tus proyectos </b> </div><br><br><br><br><br>
             <div id="datos">
@@ -176,18 +176,18 @@
                 </p>
             </div>
             <div id="fact">
-                <p><strong>Estado: </strong> {{-- {{ $v->entregado? "Entregado" : "No entregado" }} --}}
-                @php
-                    if ($v->entregado){
-                        echo "Entregado";
-                    }else{
-                        if($v->estado == 'Anulada'){
-                            echo "Presupuesto cancelada";
+                <p><strong>Estado: </strong>
+                        @php
+                        if ($c->aceptado){
+                            echo "Aceptada";
                         }else{
-                            echo "No Entregado";
+                            if($c->estado == 'Anulada'){
+                                echo "Cotización cancelada";
+                            }else{
+                                echo "No aceptada";
+                            }
                         }
-                    }
-                @endphp
+                        @endphp
                 </p>
             </div>
         </header>
@@ -202,11 +202,11 @@
                     </thead>
                     <tbody>
                         <tr>
-                        <th><p id="cliente">{{$v->nombre}}<br>
-                            RFC: {{ $v->rfc }}<br>
-                            Domicilio: {{ $v->domicilio }} {{$v->ciudad}}<br>
-                            Teléfono: {{ $v->telefono }}<br>
-                            Correo-E: {{ $v->email  }}</p></th>
+                        <th><p id="cliente">{{$c->nombre}}<br>
+                            RFC: {{ $c->rfc }}<br>
+                            Domicilio: {{ $c->domicilio }} {{$c->ciudad}}<br>
+                            Teléfono: {{ $c->telefono }}<br>
+                            Correo-E: {{ $c->email  }}</p></th>
                         </tr>
                     </tbody>
                 </table>
@@ -245,7 +245,7 @@
                         @endforeach
                     </tbody>
                     <tfoot>
-                        @foreach ($venta as $v)
+                        @foreach ($cotizacion as $c)
                         <tr>
                             <th></th>
                             <th></th>
@@ -253,7 +253,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">SUBTOTAL</th>
-                            <td class="th-b">{{ round($v->total/($v->impuesto + 1),2)}}</td>
+                            <td class="th-b">{{ round($c->total/($c->impuesto + 1),2)}}</td>
                         </tr>
                         <tr>
                             <th></th>
@@ -262,7 +262,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">IVA</th>
-                            <td class="th-b">{{ round(($v->total/($v->impuesto + 1))*$v->impuesto,2) }}</td>
+                            <td class="th-b">{{ round(($c->total/($c->impuesto + 1))*$c->impuesto,2) }}</td>
                         </tr>
                         <tr>
                             <th></th>
@@ -271,27 +271,27 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">TOTAL</th>
-                            <td class="th-b">{{ $v->total }}</td>
+                            <td class="th-b">{{ $c->total }}</td>
                         </tr>
                         @endforeach
                     </tfoot>
 
                 </table>
-                @foreach ($venta as $v)
+                @foreach ($cotizacion as $c)
                 <p>
-                    <strong>Fecha de realizacion: </strong>
+                    <strong>Vigencia: </strong>
                     <?php
                         setlocale(LC_TIME, "spanish");
-                        $mi_fecha = $v->created_at;
+                        $mi_fecha = $c->vigencia;
                         $mi_fecha = str_replace("/", "-", $mi_fecha);
                         $Nueva_Fecha = date("d-m-Y", strtotime($mi_fecha));
                         $Mes_Anyo = strftime("%A, %d de %B de %Y", strtotime($Nueva_Fecha));
                         echo $Mes_Anyo;
                     ?> <br>
-                    <strong>Nota: </strong>{{ $v->observacion }} <br>
-                    <strong>Forma de pago: </strong>{{ $v->forma_pago }} <br>
-                    <strong>Tiempo de entrega:</strong>{{ $v->tiempo_entrega }}<br>
-                    <strong> Lugar de entrega: </strong>{{ $v->lugar_entrega }}
+                    <strong>Nota: </strong>{{ $c->observacion }} <br>
+                    <strong>Forma de pago: </strong>{{ $c->forma_pago }} <br>
+                    <strong>Tiempo de entrega:</strong>{{ $c->tiempo_entrega }}<br>
+                    <strong> Lugar de entrega: </strong>{{ $c->lugar_entrega }}
                 </p> <br>
             @endforeach
             <p style="text-align:center";><strong>Atentamente, <br>

@@ -154,22 +154,22 @@ class CotizacionController extends Controller
         ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
             'cotizaciones.created_at','cotizaciones.impuesto','cotizaciones.total','cotizaciones.estado',
             'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-            'cotizaciones.entregado','cotizaciones.moneda','cotizaciones.tipo_cambio', 'cotizaciones.observacion',
-            'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
+            'cotizaciones.aceptado','cotizaciones.moneda','cotizaciones.tipo_cambio', 'cotizaciones.observacion',
+            'cotizaciones.vigencia','personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
             'personas.telefono','personas.email','users.usuario')
         ->where('cotizaciones.id',$id)->take(1)->get();
 
         $detalles = DetalleCotizacion::join('articulos','detalle_cotizaciones.idarticulo','=','articulos.id')
             ->select('detalle_cotizaciones.cantidad','detalle_cotizaciones.precio','detalle_cotizaciones.descuento',
                 'articulos.sku as articulo','articulos.largo','articulos.alto','articulos.metros_cuadrados')
-            ->where('detalle_cotizaciones.idventa',$id)
+            ->where('detalle_cotizaciones.idcotizacion',$id)
             ->orderBy('detalle_cotizaciones.id','desc')->get();
 
         $numcotizacion = Cotizacion::select('num_comprobante')->where('id',$id)->get();
 
         $ivaagregado = Cotizacion::select('impuesto')->where('id',$id)->get();
 
-        $pdf = \PDF::loadView('pdf.venta',['cotizacion' => $cotizacion,'detalles'=>$detalles,'ivaCotizacion' =>$ivaagregado[0]->impuesto]);
+        $pdf = \PDF::loadView('pdf.cotizacion',['cotizacion' => $cotizacion,'detalles'=>$detalles,'ivaCotizacion' =>$ivaagregado[0]->impuesto]);
 
         return $pdf->stream('cotizacion-'.$numcotizacion[0]->num_comprobante.'.pdf');
     }
@@ -177,7 +177,7 @@ class CotizacionController extends Controller
     public function aceptarCotizacion(Request $request){
         if (!$request->ajax()) return redirect('/');
         $cotizacion = Cotizacion::findOrFail($request->id);
-        $cotizacion->aceptado = $request->entregado;
+        $cotizacion->aceptado = $request->aceptado;
         $cotizacion->save();
     }
 }

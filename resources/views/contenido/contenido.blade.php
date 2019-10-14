@@ -28,7 +28,7 @@
             </template>
 
             <template v-if="menu==13">
-                    <h1 class="text-center"> COTIZACIONES EN CONSTRUCCIÓN</h1>
+                <cotizacion></cotizacion>
              </template>
 
             <template v-if="menu==6">
@@ -73,7 +73,7 @@
             </template>
 
             <template v-if="menu==13">
-                   <h1 class="text-center"> COTIZACIONES EN CONSTRUCCIÓN</h1>
+                <cotizacion></cotizacion>
             </template>
 
             <template v-if="menu==6">

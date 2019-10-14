@@ -158,7 +158,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/cotizacion/desactivar', 'CotizacionController@desactivar');
         Route::get('/cotizacion/obtenerCabecera','CotizacionController@obtenerCabecera');
         Route::get('/cotizacion/obtenerDetalles','CotizacionController@obtenerDetalles');
-        Route::get('/cotizacion/pdf/{id}','CotizacionController@pdf')->name('venta_pdf');
+        Route::get('/cotizacion/pdf/{id}','CotizacionController@pdf')->name('cotizacion_pdf');
+        Route::put('/cotizacion/aceptarCotizacion', 'CotizacionController@aceptarCotizacion');
 
     });
 });

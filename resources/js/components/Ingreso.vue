@@ -346,31 +346,31 @@
                 <div class="form-group row border">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="">Proveedor</label>
+                            <label for=""><strong>Proveedor</strong> </label>
                             <p v-text="proveedor"></p>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="">Tipo Comprobante</label>
+                            <label for=""><strong>Tipo Comprobante</strong></label>
                             <p v-text="tipo_comprobante"></p>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="">Número de Comprobante</label>
+                            <label for=""><strong>Número de Comprobante</strong></label>
                             <p v-text="num_comprobante"></p>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="">Registrado por:</label>
+                            <label for=""><strong>Registrado por:</strong></label>
                             <p v-text="user"></p>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="">Fecha:</label>
+                            <label for=""><strong>Fecha:</strong></label>
                             <p v-text="fecha_llegada"></p>
                         </div>
                     </div>
