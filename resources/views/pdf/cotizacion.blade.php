@@ -240,7 +240,7 @@
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>
                             <td class="td-b">{{ $det->cantidad }}</td>
                             <td class="td-b">{{ $det->descuento }}</td>
-                            <td class="td-b">{{ ((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento) }}</td>
+                            <td class="td-b">{{ number_format(((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento),2) }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -253,7 +253,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">SUBTOTAL</th>
-                            <td class="th-b">{{ round($c->total/($c->impuesto + 1),2)}}</td>
+                            <td class="th-b">{{ number_format(round($c->total/($c->impuesto + 1),2),2)}}</td>
                         </tr>
                         <tr>
                             <th></th>
@@ -262,7 +262,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">IVA</th>
-                            <td class="th-b">{{ round(($c->total/($c->impuesto + 1))*$c->impuesto,2) }}</td>
+                            <td class="th-b">{{ number_format(round(($c->total/($c->impuesto + 1))*$c->impuesto,2),2) }}</td>
                         </tr>
                         <tr>
                             <th></th>
@@ -271,7 +271,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">TOTAL</th>
-                            <td class="th-b">{{ $c->total }}</td>
+                            <td class="th-b">{{ number_format($c->total,2) }}</td>
                         </tr>
                         @endforeach
                     </tfoot>
