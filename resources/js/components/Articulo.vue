@@ -38,7 +38,6 @@
                     <th>Opciones</th>
                     <th>No. Placa</th>
                     <th>Código de Material</th>
-                    <!-- <th>Nombre</th> -->
                     <th>Material</th>
                     <th>Descripción</th>
                     <th>Largo</th>
@@ -48,6 +47,8 @@
                     <th>Stock</th>
                     <th>Bodega de descarga</th>
                     <th>Estado</th>
+                    <th>Cotizacion</th>
+                    <th>Cliente</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -92,6 +93,14 @@
                             <span class="badge badge-danger">Desactivado</span>
                         </div>
                     </td>
+                    <template v-if="articulo.estado_cotizacion != 'Anulada'">
+                        <td v-text="articulo.cotizacion"></td>
+                        <td v-text="articulo.cliente"></td>
+                    </template>
+                    <template v-else>
+                        <td></td>
+                        <td></td>
+                    </template>
                 </tr>
                 </tbody>
             </table>

@@ -102,6 +102,7 @@ Route::group(['middleware'=>['auth']],function(){
 
         //ARTICULOS
         Route::get('/articulo', 'ArticuloController@index');
+        /* Route::get('/articulocot', 'ArticuloController@indexcot'); */
         Route::post('/articulo/registrar', 'ArticuloController@store');
         Route::put('/articulo/actualizar', 'ArticuloController@update');
         Route::put('/articulo/desactivar', 'ArticuloController@desactivar');
