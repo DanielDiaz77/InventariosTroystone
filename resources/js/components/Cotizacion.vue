@@ -18,16 +18,21 @@
             <div class="card-body">
                 <div class="form-group row">
                     <div class="col-md-6">
-                    <div class="input-group">
-                        <select class="form-control col-md-3" v-model="criterio">
-                        <option value="num_comprobante">No° Comprobante</option>
-                        <option value="fecha_hora">Fecha</option>
-                        <option value="estado">Estado</option>
-                        <option value="aceptado">Aceptado</option>
-                        </select>
-                        <input type="text" v-model="buscar" @keyup.enter="listarCotizacion(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                        <button type="submit" @click="listarCotizacion(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                        <div class="input-group">
+                            <select class="form-control col-md-3" v-model="criterio">
+                            <option value="num_comprobante">No° Comprobante</option>
+                            <option value="fecha_hora">Fecha</option>
+                            <option value="estado">Estado</option>
+                            <option value="aceptado">Aceptado</option>
+                            </select>
+                            <input type="text" v-model="buscar" @keyup.enter="listarCotizacion(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
+                            <button type="submit" @click="listarCotizacion(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                        </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-inline">
+                            <button @click="abrirModal5()" class="btn btn-primary">...</button>&nbsp;<strong>Buscar Articulos cotizados</strong>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -566,7 +571,7 @@
                                 <th>Metros<sup>2</sup></th>
                                 <th>Stock</th>
                                 <th>Ubicacion</th>
-                                <th>Estado</th>
+                                <th>Comprometido</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -585,14 +590,14 @@
                                 <td v-text="articulo.stock"></td>
                                 <td v-text="articulo.ubicacion"></td>
                                 <td>
-                                <div v-if="articulo.condicion == 1">
-                                    <span class="badge badge-success">Activo</span>
+                                <div v-if="articulo.comprometido">
+                                    <span class="badge badge-success">SI</span>
                                 </div>
-                                <div v-else-if="articulo.condicion == 3">
+                                <!-- <div v-else-if="articulo.condicion == 3">
                                     <span class="badge badge-warning">Cortado</span>
-                                </div>
+                                </div> -->
                                 <div v-else>
-                                    <span class="badge badge-danger">Desactivado</span>
+                                    <span class="badge badge-danger">NO</span>
                                 </div>
                                 </td>
                             </tr>
@@ -1004,6 +1009,82 @@
     </div>
     <!--Fin del modal-->
 
+    <!--Inicio del modal listar articulos-cotizados-->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal5}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-primary modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal5()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md">
+                            <div class="input-group">
+                                <select class="form-control col-md-3" v-model="criterioA">
+                                    <option value="sku">Código de material</option>
+                                    <option value="codigo">No° de placa</option>
+                                    <option value="descripcion">Descripción</option>
+                                </select>
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticuloCotizado(buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
+                                <button type="submit" @click="listarArticuloCotizado(buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-sm text-center">
+                            <thead>
+                            <tr class="text-center">
+                                <th>No° Placa</th>
+                                <th>Código de material</th>
+                                <th>Material</th>
+                                <!-- <th>Largo</th>
+                                <th>Alto</th> -->
+                                <th>Metros<sup>2</sup></th>
+                                <th>Stock</th>
+                                <th>Ubicacion</th>
+                                <th>No° Cotización</th>
+                                <th>Cliente</th>
+                                <th>Comprometido</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="articulo in arrayArticulo" :key="articulo.id">
+                                <td v-text="articulo.codigo"></td>
+                                <td v-text="articulo.sku"></td>
+                                <td v-text="articulo.nombre_categoria"></td>
+                                <!-- <td v-text="articulo.largo"></td>
+                                <td v-text="articulo.alto"></td> -->
+                                <td v-text="articulo.metros_cuadrados"></td>
+                                <td v-text="articulo.stock"></td>
+                                <td v-text="articulo.ubicacion"></td>
+                                <td v-text="articulo.cotizacion"></td>
+                                <td v-text="articulo.cliente"></td>
+                                <td>
+                                <div v-if="articulo.comprometido">
+                                    <span class="badge badge-success">SI</span>
+                                </div>
+                                <div v-else>
+                                    <span class="badge badge-danger">NO</span>
+                                </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal5()">Cerrar</button>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!--Fin del modal-->
+
   </main>
 </template>
 <script>
@@ -1062,6 +1143,7 @@ export default {
             precio: 0.0,
             aceptado : 0,
             stock : 0,
+            comprometido : 0,
             descripcion : "",
             arrayArticulo : [],
             arrayCotizacion : [],
@@ -1072,6 +1154,7 @@ export default {
             modal2: 0,
             modal3: 0,
             modal4: 0,
+            modal5: 0,
             ind : '',
             tituloModal: "",
             tipoAccion: 0,
@@ -1115,87 +1198,87 @@ export default {
         'barcode': VueBarcode
     },
     computed:{
-            isActived: function(){
-                return this.pagination.current_page;
-            },
-            //Calcula los elementos de la paginación
-            pagesNumber: function() {
-                if(!this.pagination.to) {
-                    return [];
-                }
-
-                var from = this.pagination.current_page - this.offset;
-                if(from < 1) {
-                    from = 1;
-                }
-
-                var to = from + (this.offset * 2);
-                if(to >= this.pagination.last_page){
-                    to = this.pagination.last_page;
-                }
-
-                var pagesArray = [];
-                while(from <= to) {
-                    pagesArray.push(from);
-                    from++;
-                }
-                return pagesArray;
-            },
-            calcularTotal : function(){
-                let me=this;
-                let resultado = 0;
-                for(var i=0;i<me.arrayDetalle.length;i++){
-                    resultado = resultado + (
-                        (
-
-                            ((((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)) - me.arrayDetalle[i].descuento) * (me.impuesto + 1))
-
-                        )
-                }
-                return resultado;
-            },
-            imagen(){
-                return this.imagenMinatura;
-            },
-            calcularMts : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.alto * me.largo);
-                me.metros_cuadrados = resultado;
-                return resultado;
-            },
-            calcularMtsA : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.altoA * me.largoA);
-                me.metros_cuadradosA = resultado;
-                return resultado;
-            },
-            calcularMtsB : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.altoB * me.largoB);
-                me.metros_cuadradosB = resultado;
-                return resultado;
-            },
-            cacularPrecioExtranjero : function(){
-                let me=this;
-                let precioExt = 0;
-
-                if(me.moneda != 'Peso Mexicano'){
-                    precioExt = (precioExt + (me.precio / me.tipo_cambio));
-                    me.precio = Math.ceil(precioExt);
-                }else{
-                    precioExt = me.precio;
-                }
-                return Math.ceil(precioExt);
-            },
-            calcularMtsRestantes : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
-                return resultado;
+        isActived: function(){
+            return this.pagination.current_page;
+        },
+        //Calcula los elementos de la paginación
+        pagesNumber: function() {
+            if(!this.pagination.to) {
+                return [];
             }
+
+            var from = this.pagination.current_page - this.offset;
+            if(from < 1) {
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.pagination.last_page){
+                to = this.pagination.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+        calcularTotal : function(){
+            let me=this;
+            let resultado = 0;
+            for(var i=0;i<me.arrayDetalle.length;i++){
+                resultado = resultado + (
+                    (
+
+                        ((((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)) - me.arrayDetalle[i].descuento) * (me.impuesto + 1))
+
+                    )
+            }
+            return resultado;
+        },
+        imagen(){
+            return this.imagenMinatura;
+        },
+        calcularMts : function(){
+            let me=this;
+            let resultado = 0;
+            resultado = resultado + (me.alto * me.largo);
+            me.metros_cuadrados = resultado;
+            return resultado;
+        },
+        calcularMtsA : function(){
+            let me=this;
+            let resultado = 0;
+            resultado = resultado + (me.altoA * me.largoA);
+            me.metros_cuadradosA = resultado;
+            return resultado;
+        },
+        calcularMtsB : function(){
+            let me=this;
+            let resultado = 0;
+            resultado = resultado + (me.altoB * me.largoB);
+            me.metros_cuadradosB = resultado;
+            return resultado;
+        },
+        cacularPrecioExtranjero : function(){
+            let me=this;
+            let precioExt = 0;
+
+            if(me.moneda != 'Peso Mexicano'){
+                precioExt = (precioExt + (me.precio / me.tipo_cambio));
+                me.precio = Math.ceil(precioExt);
+            }else{
+                precioExt = me.precio;
+            }
+            return Math.ceil(precioExt);
+        },
+        calcularMtsRestantes : function(){
+            let me=this;
+            let resultado = 0;
+            resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
+            return resultado;
+        }
 
         },
     methods: {
@@ -1257,6 +1340,7 @@ export default {
                     me.observacion = me.arrayArticulo[0]['observacion'];
                     me.file = me.arrayArticulo[0]['file'];
                     me.fecha_llegada = me.arrayArticulo[0]['fecha_llegada'];
+                    me.comprometido = me.arrayArticulo[0]['comprometido'];
                 }else{
                     me.articulo = 'No existe este artículo';
                     me.idarticulo = 0;
@@ -1315,6 +1399,7 @@ export default {
                     me.ubicacion = "";
                     me.categoria = "";
                     me.idcategoria = 0;
+                    me.comprometido = 0;
 
                 }else{
                     if(me.cantidad > me.stock){
@@ -1324,53 +1409,63 @@ export default {
                             text: 'La cantidad excede las placas disponibles de este material!',
                         });
                     }else{
-                        me.arrayDetalle.push({
-                            idarticulo       : me.idarticulo,
-                            articulo         : me.articulo,
-                            sku              : me.sku,
-                            codigo           : me.codigo,
-                            idcategoria      : me.idcategoria,
-                            largo            : me.largo,
-                            alto             : me.alto,
-                            metros_cuadrados : me.metros_cuadrados,
-                            terminado        : me.terminado,
-                            espesor          : me.espesor,
-                            precio           : me.precio,
-                            cantidad         : me.cantidad,
-                            stock            : me.stock,
-                            ubicacion        : me.ubicacion,
-                            descuento        : me.descuento,
-                            categoria        : me.categoria,
-                            origen           : me.origen,
-                            contenedor       : me.contenedor,
-                            file             : me.file,
-                            descripcion      : me.descripcion,
-                            observacion      : me.observacion,
-                            fecha_llegada    : me.fecha_llegada
-                        });
-                        me.codigo = "";
-                        me.sku = "";
-                        me.idarticulo = "";
-                        me.articulo="";
-                        me.cantidad = 0;
-                        me.precio = 0;
-                        me.descuento = 0;
-                        me.idcategoria = 0;
-                        me.largo = 0;
-                        me.alto = 0;
-                        me.metros_cuadrados = 0;
-                        me.terminado = 0;
-                        me.espesor = 0;
-                        me.stock = 0;
-                        me.ubicacion = "";
-                        me.categoria = "";
-                        me.observacion = "";
-                        me.origen = "";
-                        me.contenedor  = "";
-                        me.file  = "";
-                        me.observaciondescripcion   = "";
-                        me.observacion = "";
-                        me.fecha_llegada = "";
+                        if(me.comprometido == 1){
+                            Swal.fire({
+                                type: 'error',
+                                title: 'Error...',
+                                text: 'Este articulo esta comprometido!',
+                            });
+                        }else{
+                            me.arrayDetalle.push({
+                                idarticulo       : me.idarticulo,
+                                articulo         : me.articulo,
+                                sku              : me.sku,
+                                codigo           : me.codigo,
+                                idcategoria      : me.idcategoria,
+                                largo            : me.largo,
+                                alto             : me.alto,
+                                metros_cuadrados : me.metros_cuadrados,
+                                terminado        : me.terminado,
+                                espesor          : me.espesor,
+                                precio           : me.precio,
+                                cantidad         : me.cantidad,
+                                stock            : me.stock,
+                                ubicacion        : me.ubicacion,
+                                descuento        : me.descuento,
+                                categoria        : me.categoria,
+                                origen           : me.origen,
+                                contenedor       : me.contenedor,
+                                file             : me.file,
+                                descripcion      : me.descripcion,
+                                observacion      : me.observacion,
+                                fecha_llegada    : me.fecha_llegada
+                            });
+                            me.codigo = "";
+                            me.sku = "";
+                            me.idarticulo = "";
+                            me.articulo="";
+                            me.cantidad = 0;
+                            me.precio = 0;
+                            me.descuento = 0;
+                            me.idcategoria = 0;
+                            me.largo = 0;
+                            me.alto = 0;
+                            me.metros_cuadrados = 0;
+                            me.terminado = 0;
+                            me.espesor = 0;
+                            me.stock = 0;
+                            me.ubicacion = "";
+                            me.categoria = "";
+                            me.observacion = "";
+                            me.origen = "";
+                            me.contenedor  = "";
+                            me.file  = "";
+                            me.observaciondescripcion   = "";
+                            me.observacion = "";
+                            me.fecha_llegada = "";
+                            me.comprometido = 0;
+
+                        }
                     }
                 }
             }
@@ -1431,6 +1526,7 @@ export default {
                 me.aceptado = 0;
                 me.moneda = "Peso Mexicano";
                 me.tipo_cambio = "";
+                me.comprometido = 0;
                 me.arrayDetalle = [];
 
             })
@@ -1522,6 +1618,7 @@ export default {
             this.arrayDetalle = [];
             this.idproveedor = 0;
             this.num_comprobante = 0;
+            this.comprometido = 0;
             this.selectCategoria();
         },
         ocultarDetalle(){
@@ -1557,6 +1654,7 @@ export default {
             this.errorMostrarMsjCotizacion = [];
             this.num_comprobante = 0;
             this.aceptado = 0;
+            this.comprometido = 0;
             this.btnEntrega =  false;
         },
         verCotizacion(id){
@@ -1640,39 +1738,46 @@ export default {
         agregarDetalleModal(data =[]){
             let me=this;
             if(me.encuentra(data['id'])){
-            Swal.fire({
-                type: 'error',
-                title: 'Lo siento...',
-                text: 'Este No° de placa ya esta en el listado!!',
-            })
+                Swal.fire({
+                    type: 'error',
+                    title: 'Lo siento...',
+                    text: 'Este No° de placa ya esta en el listado!!',
+                })
             }
             else{
-                me.arrayDetalle.push({
-                    idarticulo       : data['id'],
-                    articulo         : data['sku'],
-                    /* sku              : data['sku'], */
-                    codigo           : data['codigo'],
-                    idcategoria      : data['idcategoria'],
-                    categoria        : data['nombre_categoria'],
-                    largo            : data['largo'],
-                    alto             : data['alto'],
-                    metros_cuadrados : data['metros_cuadrados'],
-                    terminado        : data['terminado'],
-                    espesor          : data['espesor'],
-                    precio           : data['precio_venta'],
-                    stock            : data['stock'],
-                    ubicacion        : data['ubicacion'],
-                    categoria        : data['nombre_categoria'],
-                    origen           : data['origen'],
-                    contenedor       : data['contenedor'],
-                    file             : data['file'],
-                    descripcion      : data['descripcion'],
-                    observacion      : data['observacion'],
-                    fecha_llegada    : data['fecha_llegada'],
-                    cantidad: 1,
-                    descuento : 0
-
-                });
+                if(data['comprometido'] ==1){
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Lo siento...',
+                        text: 'Esta placa esta comprometida!',
+                    })
+                }else{
+                    me.arrayDetalle.push({
+                        idarticulo       : data['id'],
+                        articulo         : data['sku'],
+                        /* sku              : data['sku'], */
+                        codigo           : data['codigo'],
+                        idcategoria      : data['idcategoria'],
+                        categoria        : data['nombre_categoria'],
+                        largo            : data['largo'],
+                        alto             : data['alto'],
+                        metros_cuadrados : data['metros_cuadrados'],
+                        terminado        : data['terminado'],
+                        espesor          : data['espesor'],
+                        precio           : data['precio_venta'],
+                        stock            : data['stock'],
+                        ubicacion        : data['ubicacion'],
+                        categoria        : data['nombre_categoria'],
+                        origen           : data['origen'],
+                        contenedor       : data['contenedor'],
+                        file             : data['file'],
+                        descripcion      : data['descripcion'],
+                        observacion      : data['observacion'],
+                        fecha_llegada    : data['fecha_llegada'],
+                        cantidad: 1,
+                        descuento : 0
+                    });
+                }
             }
         },
         abrirModal2(index){
@@ -1846,6 +1951,25 @@ export default {
             me.precioA          = me.precio / 2;
             me.precioB          = me.precio / 2;
             me.selectCategoria();
+        },
+        cerrarModal5() {
+            this.modal5 = 0;
+        },
+        abrirModal5() {
+            this.arrayArticulo=[];
+            this.modal5 = 1;
+            this.tituloModal = "Artículos Cotizados";
+        },
+        listarArticuloCotizado (buscar,criterio){
+            let me=this;
+            var url= '/articulo/listarArticuloCotizado?buscar=' + buscar + '&criterio='+ criterio;
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.arrayArticulo = respuesta.articulos.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         },
         registrarArticuloA(){
             let me = this;

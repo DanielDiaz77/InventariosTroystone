@@ -74,7 +74,7 @@ class ArticuloController extends Controller
         'articulos.contenedor','articulos.ubicacion','articulos.fecha_llegada','articulos.idcategoria',
         'articulos.terminado','articulos.espesor','articulos.largo','articulos.alto','articulos.metros_cuadrados',
         'articulos.precio_venta','articulos.stock','categorias.nombre as nombre_categoria','categorias.id as idcategoria',
-        'articulos.descripcion','articulos.observacion','articulos.file')
+        'articulos.descripcion','articulos.observacion','articulos.file','articulos.comprometido')
         ->where([
             ['codigo',$filtro],
             ['articulos.stock','>',0],
@@ -374,28 +374,12 @@ class ArticuloController extends Controller
 
         if($buscar==''){
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->select(
-                'articulos.id',
-                'articulos.idcategoria',
-                'articulos.codigo',
-                'articulos.sku',
-                'articulos.nombre',
-                'categorias.nombre as nombre_categoria',
-                'articulos.terminado',
-                'articulos.largo',
-                'articulos.alto',
-                'articulos.metros_cuadrados',
-                'articulos.espesor',
-                'articulos.precio_venta',
-                'articulos.ubicacion',
-                'articulos.contenedor',
-                'articulos.stock',
-                'articulos.descripcion',
-                'articulos.observacion',
-                'articulos.origen',
-                'articulos.fecha_llegada',
-                'articulos.file',
-                'articulos.condicion')
+            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku',
+                'articulos.nombre','categorias.nombre as nombre_categoria','articulos.terminado',
+                'articulos.largo','articulos.alto','articulos.metros_cuadrados','articulos.espesor',
+                'articulos.precio_venta','articulos.ubicacion','articulos.contenedor','articulos.stock',
+                'articulos.descripcion','articulos.observacion','articulos.origen','articulos.fecha_llegada',
+                'articulos.file','articulos.comprometido','articulos.condicion')
                 ->where([
                     ['articulos.stock','>',0],
                     ['articulos.condicion',1]
@@ -404,28 +388,12 @@ class ArticuloController extends Controller
         }else{
 
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->select(
-                'articulos.id',
-                'articulos.idcategoria',
-                'articulos.codigo',
-                'articulos.sku',
-                'articulos.nombre',
-                'categorias.nombre as nombre_categoria',
-                'articulos.terminado',
-                'articulos.largo',
-                'articulos.alto',
-                'articulos.metros_cuadrados',
-                'articulos.espesor',
-                'articulos.precio_venta',
-                'articulos.ubicacion',
-                'articulos.contenedor',
-                'articulos.stock',
-                'articulos.descripcion',
-                'articulos.observacion',
-                'articulos.origen',
-                'articulos.fecha_llegada',
-                'articulos.file',
-                'articulos.condicion')
+            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku',
+                'articulos.nombre','categorias.nombre as nombre_categoria','articulos.terminado',
+                'articulos.largo','articulos.alto','articulos.metros_cuadrados','articulos.espesor',
+                'articulos.precio_venta','articulos.ubicacion','articulos.contenedor','articulos.stock',
+                'articulos.descripcion','articulos.observacion','articulos.origen','articulos.fecha_llegada',
+                'articulos.file','articulos.comprometido','articulos.condicion')
             ->where([
                 ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                 ['articulos.condicion',1],
@@ -435,6 +403,56 @@ class ArticuloController extends Controller
         }
         return ['articulos' => $articulos];
     }
+
+    public function listarArticuloCotizado(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $buscar = $request->buscar;
+        $criterio = $request->criterio;
+
+        if($buscar==''){
+            $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+            ->join('detalle_cotizaciones','articulos.id','=','detalle_cotizaciones.idarticulo')
+            ->join('cotizaciones','cotizaciones.id','=','detalle_cotizaciones.idcotizacion')
+            ->join('personas','personas.id','cotizaciones.idcliente')
+            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                'articulos.comprometido','cotizaciones.id as idcotizacion','articulos.comprometido',
+                'cotizaciones.num_comprobante as cotizacion','cotizaciones.estado as estado_cotizacion' ,
+                'personas.nombre as cliente')
+            ->where([
+                ['cotizaciones.estado','!=','Anulada'],
+                ['articulos.condicion',1]
+            ])
+            ->orderBy('articulos.id', 'desc')->paginate(10);
+        }else{
+
+            $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+            ->join('detalle_cotizaciones','articulos.id','=','detalle_cotizaciones.idarticulo')
+            ->join('cotizaciones','cotizaciones.id','=','detalle_cotizaciones.idcotizacion')
+            ->join('personas','personas.id','cotizaciones.idcliente')
+            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                'articulos.comprometido','cotizaciones.id as idcotizacion','articulos.comprometido',
+                'cotizaciones.num_comprobante as cotizacion','cotizaciones.estado as estado_cotizacion' ,
+                'personas.nombre as cliente')
+            ->where([
+                ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                ['articulos.condicion',1],
+                ['cotizaciones.estado','!=','Anulada']
+            ])
+            ->orderBy('articulos.id', 'desc')->paginate(12);
+        }
+        return ['articulos' => $articulos];
+    }
+
     public function updateCortado(Request $request){
 
         if(!$request->ajax()) return redirect('/');

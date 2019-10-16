@@ -114,6 +114,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
         Route::get('/articulo/listarPdf','ArticuloController@listarPdf')->name('articulos_pdf');
         Route::put('/articulo/cambiarComprometido', 'ArticuloController@cambiarComprometido');
+        Route::get('/articulo/listarArticuloCotizado', 'ArticuloController@listarArticuloCotizado');
 
         //PROVEEDORES
         Route::get('/proveedor', 'ProveedorController@index');

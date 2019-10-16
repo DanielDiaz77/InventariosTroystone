@@ -6099,6 +6099,87 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6154,6 +6235,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       precio: 0.0,
       aceptado: 0,
       stock: 0,
+      comprometido: 0,
       descripcion: "",
       arrayArticulo: [],
       arrayCotizacion: [],
@@ -6164,6 +6246,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       modal2: 0,
       modal3: 0,
       modal4: 0,
+      modal5: 0,
       ind: '',
       tituloModal: "",
       tipoAccion: 0,
@@ -6348,6 +6431,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
           me.observacion = me.arrayArticulo[0]['observacion'];
           me.file = me.arrayArticulo[0]['file'];
           me.fecha_llegada = me.arrayArticulo[0]['fecha_llegada'];
+          me.comprometido = me.arrayArticulo[0]['comprometido'];
         } else {
           me.articulo = 'No existe este artículo';
           me.idarticulo = 0;
@@ -6405,6 +6489,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
           me.ubicacion = "";
           me.categoria = "";
           me.idcategoria = 0;
+          me.comprometido = 0;
         } else {
           if (me.cantidad > me.stock) {
             Swal.fire({
@@ -6413,53 +6498,62 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
               text: 'La cantidad excede las placas disponibles de este material!'
             });
           } else {
-            me.arrayDetalle.push({
-              idarticulo: me.idarticulo,
-              articulo: me.articulo,
-              sku: me.sku,
-              codigo: me.codigo,
-              idcategoria: me.idcategoria,
-              largo: me.largo,
-              alto: me.alto,
-              metros_cuadrados: me.metros_cuadrados,
-              terminado: me.terminado,
-              espesor: me.espesor,
-              precio: me.precio,
-              cantidad: me.cantidad,
-              stock: me.stock,
-              ubicacion: me.ubicacion,
-              descuento: me.descuento,
-              categoria: me.categoria,
-              origen: me.origen,
-              contenedor: me.contenedor,
-              file: me.file,
-              descripcion: me.descripcion,
-              observacion: me.observacion,
-              fecha_llegada: me.fecha_llegada
-            });
-            me.codigo = "";
-            me.sku = "";
-            me.idarticulo = "";
-            me.articulo = "";
-            me.cantidad = 0;
-            me.precio = 0;
-            me.descuento = 0;
-            me.idcategoria = 0;
-            me.largo = 0;
-            me.alto = 0;
-            me.metros_cuadrados = 0;
-            me.terminado = 0;
-            me.espesor = 0;
-            me.stock = 0;
-            me.ubicacion = "";
-            me.categoria = "";
-            me.observacion = "";
-            me.origen = "";
-            me.contenedor = "";
-            me.file = "";
-            me.observaciondescripcion = "";
-            me.observacion = "";
-            me.fecha_llegada = "";
+            if (me.comprometido == 1) {
+              Swal.fire({
+                type: 'error',
+                title: 'Error...',
+                text: 'Este articulo esta comprometido!'
+              });
+            } else {
+              me.arrayDetalle.push({
+                idarticulo: me.idarticulo,
+                articulo: me.articulo,
+                sku: me.sku,
+                codigo: me.codigo,
+                idcategoria: me.idcategoria,
+                largo: me.largo,
+                alto: me.alto,
+                metros_cuadrados: me.metros_cuadrados,
+                terminado: me.terminado,
+                espesor: me.espesor,
+                precio: me.precio,
+                cantidad: me.cantidad,
+                stock: me.stock,
+                ubicacion: me.ubicacion,
+                descuento: me.descuento,
+                categoria: me.categoria,
+                origen: me.origen,
+                contenedor: me.contenedor,
+                file: me.file,
+                descripcion: me.descripcion,
+                observacion: me.observacion,
+                fecha_llegada: me.fecha_llegada
+              });
+              me.codigo = "";
+              me.sku = "";
+              me.idarticulo = "";
+              me.articulo = "";
+              me.cantidad = 0;
+              me.precio = 0;
+              me.descuento = 0;
+              me.idcategoria = 0;
+              me.largo = 0;
+              me.alto = 0;
+              me.metros_cuadrados = 0;
+              me.terminado = 0;
+              me.espesor = 0;
+              me.stock = 0;
+              me.ubicacion = "";
+              me.categoria = "";
+              me.observacion = "";
+              me.origen = "";
+              me.contenedor = "";
+              me.file = "";
+              me.observaciondescripcion = "";
+              me.observacion = "";
+              me.fecha_llegada = "";
+              me.comprometido = 0;
+            }
           }
         }
       }
@@ -6517,6 +6611,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         me.aceptado = 0;
         me.moneda = "Peso Mexicano";
         me.tipo_cambio = "";
+        me.comprometido = 0;
         me.arrayDetalle = [];
       })["catch"](function (error) {
         console.log(error);
@@ -6597,6 +6692,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.arrayDetalle = [];
       this.idproveedor = 0;
       this.num_comprobante = 0;
+      this.comprometido = 0;
       this.selectCategoria();
     },
     ocultarDetalle: function ocultarDetalle() {
@@ -6632,6 +6728,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.errorMostrarMsjCotizacion = [];
       this.num_comprobante = 0;
       this.aceptado = 0;
+      this.comprometido = 0;
       this.btnEntrega = false;
     },
     verCotizacion: function verCotizacion(id) {
@@ -6711,25 +6808,33 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
           text: 'Este No° de placa ya esta en el listado!!'
         });
       } else {
-        var _me$arrayDetalle$push;
+        if (data['comprometido'] == 1) {
+          Swal.fire({
+            type: 'error',
+            title: 'Lo siento...',
+            text: 'Esta placa esta comprometida!'
+          });
+        } else {
+          var _me$arrayDetalle$push;
 
-        me.arrayDetalle.push((_me$arrayDetalle$push = {
-          idarticulo: data['id'],
-          articulo: data['sku'],
+          me.arrayDetalle.push((_me$arrayDetalle$push = {
+            idarticulo: data['id'],
+            articulo: data['sku'],
 
-          /* sku              : data['sku'], */
-          codigo: data['codigo'],
-          idcategoria: data['idcategoria'],
-          categoria: data['nombre_categoria'],
-          largo: data['largo'],
-          alto: data['alto'],
-          metros_cuadrados: data['metros_cuadrados'],
-          terminado: data['terminado'],
-          espesor: data['espesor'],
-          precio: data['precio_venta'],
-          stock: data['stock'],
-          ubicacion: data['ubicacion']
-        }, _defineProperty(_me$arrayDetalle$push, "categoria", data['nombre_categoria']), _defineProperty(_me$arrayDetalle$push, "origen", data['origen']), _defineProperty(_me$arrayDetalle$push, "contenedor", data['contenedor']), _defineProperty(_me$arrayDetalle$push, "file", data['file']), _defineProperty(_me$arrayDetalle$push, "descripcion", data['descripcion']), _defineProperty(_me$arrayDetalle$push, "observacion", data['observacion']), _defineProperty(_me$arrayDetalle$push, "fecha_llegada", data['fecha_llegada']), _defineProperty(_me$arrayDetalle$push, "cantidad", 1), _defineProperty(_me$arrayDetalle$push, "descuento", 0), _me$arrayDetalle$push));
+            /* sku              : data['sku'], */
+            codigo: data['codigo'],
+            idcategoria: data['idcategoria'],
+            categoria: data['nombre_categoria'],
+            largo: data['largo'],
+            alto: data['alto'],
+            metros_cuadrados: data['metros_cuadrados'],
+            terminado: data['terminado'],
+            espesor: data['espesor'],
+            precio: data['precio_venta'],
+            stock: data['stock'],
+            ubicacion: data['ubicacion']
+          }, _defineProperty(_me$arrayDetalle$push, "categoria", data['nombre_categoria']), _defineProperty(_me$arrayDetalle$push, "origen", data['origen']), _defineProperty(_me$arrayDetalle$push, "contenedor", data['contenedor']), _defineProperty(_me$arrayDetalle$push, "file", data['file']), _defineProperty(_me$arrayDetalle$push, "descripcion", data['descripcion']), _defineProperty(_me$arrayDetalle$push, "observacion", data['observacion']), _defineProperty(_me$arrayDetalle$push, "fecha_llegada", data['fecha_llegada']), _defineProperty(_me$arrayDetalle$push, "cantidad", 1), _defineProperty(_me$arrayDetalle$push, "descuento", 0), _me$arrayDetalle$push));
+        }
       }
     },
     abrirModal2: function abrirModal2(index) {
@@ -6907,6 +7012,24 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       me.precioA = me.precio / 2;
       me.precioB = me.precio / 2;
       me.selectCategoria();
+    },
+    cerrarModal5: function cerrarModal5() {
+      this.modal5 = 0;
+    },
+    abrirModal5: function abrirModal5() {
+      this.arrayArticulo = [];
+      this.modal5 = 1;
+      this.tituloModal = "Artículos Cotizados";
+    },
+    listarArticuloCotizado: function listarArticuloCotizado(buscar, criterio) {
+      var me = this;
+      var url = '/articulo/listarArticuloCotizado?buscar=' + buscar + '&criterio=' + criterio;
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.arrayArticulo = respuesta.articulos.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     },
     registrarArticuloA: function registrarArticuloA() {
       var me = this;
@@ -82291,6 +82414,25 @@ var render = function() {
                           ]
                         )
                       ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-6" }, [
+                      _c("div", { staticClass: "form-inline" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary",
+                            on: {
+                              click: function($event) {
+                                return _vm.abrirModal5()
+                              }
+                            }
+                          },
+                          [_vm._v("...")]
+                        ),
+                        _vm._v(" "),
+                        _c("strong", [_vm._v("Buscar Articulos cotizados")])
+                      ])
                     ])
                   ]),
                   _vm._v(" "),
@@ -84397,27 +84539,19 @@ var render = function() {
                             }),
                             _vm._v(" "),
                             _c("td", [
-                              articulo.condicion == 1
+                              articulo.comprometido
                                 ? _c("div", [
                                     _c(
                                       "span",
                                       { staticClass: "badge badge-success" },
-                                      [_vm._v("Activo")]
-                                    )
-                                  ])
-                                : articulo.condicion == 3
-                                ? _c("div", [
-                                    _c(
-                                      "span",
-                                      { staticClass: "badge badge-warning" },
-                                      [_vm._v("Cortado")]
+                                      [_vm._v("SI")]
                                     )
                                   ])
                                 : _c("div", [
                                     _c(
                                       "span",
                                       { staticClass: "badge badge-danger" },
-                                      [_vm._v("Desactivado")]
+                                      [_vm._v("NO")]
                                     )
                                   ])
                             ])
@@ -85882,6 +86016,267 @@ var render = function() {
           ]
         )
       ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        class: { mostrar: _vm.modal5 },
+        staticStyle: { display: "none" },
+        attrs: {
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "myModalLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-primary modal-lg",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h4", {
+                  staticClass: "modal-title",
+                  domProps: { textContent: _vm._s(_vm.tituloModal) }
+                }),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button", "aria-label": "Close" },
+                    on: {
+                      click: function($event) {
+                        return _vm.cerrarModal5()
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "form-group row" }, [
+                  _c("div", { staticClass: "col-md" }, [
+                    _c("div", { staticClass: "input-group" }, [
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.criterioA,
+                              expression: "criterioA"
+                            }
+                          ],
+                          staticClass: "form-control col-md-3",
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.criterioA = $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            }
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "sku" } }, [
+                            _vm._v("Código de material")
+                          ]),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "codigo" } }, [
+                            _vm._v("No° de placa")
+                          ]),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "descripcion" } }, [
+                            _vm._v("Descripción")
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.buscarA,
+                            expression: "buscarA"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text", placeholder: "Texto a buscar" },
+                        domProps: { value: _vm.buscarA },
+                        on: {
+                          keyup: function($event) {
+                            if (
+                              !$event.type.indexOf("key") &&
+                              _vm._k(
+                                $event.keyCode,
+                                "enter",
+                                13,
+                                $event.key,
+                                "Enter"
+                              )
+                            ) {
+                              return null
+                            }
+                            return _vm.listarArticuloCotizado(
+                              _vm.buscarA,
+                              _vm.criterioA
+                            )
+                          },
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.buscarA = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary",
+                          attrs: { type: "submit" },
+                          on: {
+                            click: function($event) {
+                              return _vm.listarArticuloCotizado(
+                                _vm.buscarA,
+                                _vm.criterioA
+                              )
+                            }
+                          }
+                        },
+                        [
+                          _c("i", { staticClass: "fa fa-search" }),
+                          _vm._v(" Buscar")
+                        ]
+                      ),
+                      _vm._v(" \n                          ")
+                    ])
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "table-responsive" }, [
+                  _c(
+                    "table",
+                    {
+                      staticClass:
+                        "table table-bordered table-striped table-sm text-center"
+                    },
+                    [
+                      _vm._m(70),
+                      _vm._v(" "),
+                      _c(
+                        "tbody",
+                        _vm._l(_vm.arrayArticulo, function(articulo) {
+                          return _c("tr", { key: articulo.id }, [
+                            _c("td", {
+                              domProps: { textContent: _vm._s(articulo.codigo) }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: { textContent: _vm._s(articulo.sku) }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(articulo.nombre_categoria)
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(articulo.metros_cuadrados)
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: { textContent: _vm._s(articulo.stock) }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(articulo.ubicacion)
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(articulo.cotizacion)
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(articulo.cliente)
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td", [
+                              articulo.comprometido
+                                ? _c("div", [
+                                    _c(
+                                      "span",
+                                      { staticClass: "badge badge-success" },
+                                      [_vm._v("SI")]
+                                    )
+                                  ])
+                                : _c("div", [
+                                    _c(
+                                      "span",
+                                      { staticClass: "badge badge-danger" },
+                                      [_vm._v("NO")]
+                                    )
+                                  ])
+                            ])
+                          ])
+                        }),
+                        0
+                      )
+                    ]
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        return _vm.cerrarModal5()
+                      }
+                    }
+                  },
+                  [_vm._v("Cerrar")]
+                )
+              ])
+            ])
+          ]
+        )
+      ]
     )
   ])
 }
@@ -86178,7 +86573,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Ubicacion")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Estado")])
+        _c("th", [_vm._v("Comprometido")])
       ])
     ])
   },
@@ -86508,6 +86903,32 @@ var staticRenderFns = [
       },
       [_vm._v("Precio m "), _c("sup", [_vm._v("2")])]
     )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticClass: "text-center" }, [
+        _c("th", [_vm._v("No° Placa")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Código de material")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Material")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Metros"), _c("sup", [_vm._v("2")])]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Stock")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Ubicacion")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("No° Cotización")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Cliente")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Comprometido")])
+      ])
+    ])
   }
 ]
 render._withStripped = true
