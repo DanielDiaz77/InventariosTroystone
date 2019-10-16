@@ -1011,7 +1011,7 @@ import vSelect from 'vue-select';
 import VueBarcode from 'vue-barcode';
 import VueLightbox from 'vue-lightbox';
 import moment from 'moment';
-import ToggleButton from 'vue-js-toggle-button'
+import ToggleButton from 'vue-js-toggle-button';
 Vue.component("Lightbox",VueLightbox);
 Vue.use(ToggleButton);
 export default {

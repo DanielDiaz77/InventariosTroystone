@@ -9,47 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class ArticuloController extends Controller
 {
-
-    /* public function index(Request $request)
-    {
-        //if(!$request->ajax()) return redirect('/');
-
-        $buscar = $request->buscar;
-        $criterio = $request->criterio;
-
-        if($buscar==''){
-            $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion')
-            ->orderBy('articulos.id', 'desc')->paginate(12);
-        }else{
-            $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion')
-            ->where('articulos.'.$criterio, 'like', '%'. $buscar . '%')
-            ->orderBy('articulos.id', 'desc')->paginate(12);
-        }
-
-        return [
-            'pagination' => [
-                'total'         => $articulos->total(),
-                'current_page'  => $articulos->currentPage(),
-                'per_page'      => $articulos->perPage(),
-                'last_page'     => $articulos->lastPage(),
-                'from'          => $articulos->firstItem(),
-                'to'            => $articulos->lastItem(),
-            ],
-            'articulos' => $articulos
-        ];
-    } */
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         if(!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
@@ -57,29 +17,24 @@ class ArticuloController extends Controller
 
         if($buscar==''){
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->leftJoin('detalle_cotizaciones','articulos.id','=','detalle_cotizaciones.idarticulo')
-            ->leftJoin('cotizaciones','cotizaciones.id','=','detalle_cotizaciones.idcotizacion')
-            ->leftJoin('personas','personas.id','cotizaciones.idcliente')
+            ->leftjoin('users','articulos.idusuario','=','users.id')
             ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
                 'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
                 'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
                 'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                 'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                'cotizaciones.id as idcotizacion','cotizaciones.num_comprobante as cotizacion',
-                'cotizaciones.estado as estado_cotizacion' ,'personas.nombre as cliente')
+                'articulos.comprometido','users.usuario')
+
             ->orderBy('articulos.id', 'desc')->paginate(12);
         }else{
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->leftJoin('detalle_cotizaciones','articulos.id','=','detalle_cotizaciones.idarticulo')
-            ->leftJoin('cotizaciones','cotizaciones.id','=','detalle_cotizaciones.idcotizacion')
-            ->leftJoin('personas','personas.id','cotizaciones.idcliente')
+            ->leftjoin('users','articulos.idusuario','=','users.id')
             ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
                 'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
                 'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
                 'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                 'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                'cotizaciones.id as idcotizacion','cotizaciones.num_comprobante as cotizacion',
-                'cotizaciones.estado as estado_cotizacion' ,'personas.nombre as cliente')
+                'articulos.comprometido','users.usuario')
             ->where('articulos.'.$criterio, 'like', '%'. $buscar . '%')
             ->orderBy('articulos.id', 'desc')->paginate(12);
         }
@@ -96,7 +51,6 @@ class ArticuloController extends Controller
             'articulos' => $articulos
         ];
     }
-
     public function buscarArticulo(Request $request){
 
         if(!$request->ajax()) return redirect('/');
@@ -109,7 +63,6 @@ class ArticuloController extends Controller
         return ['articulos' => $articulos];
 
     }
-
     public function buscarArticuloVenta(Request $request){
 
         if(!$request->ajax()) return redirect('/');
@@ -131,7 +84,6 @@ class ArticuloController extends Controller
         return ['articulos' => $articulos];
 
     }
-
     public function store(Request $request){
 
         if(!$request->ajax()) return redirect('/');
@@ -186,7 +138,6 @@ class ArticuloController extends Controller
         $articulo->condicion        =   '1';
         $articulo->save();
     }
-
     public function storeDetalle(Request $request){
 
         if(!$request->ajax()) return redirect('/');
@@ -252,7 +203,6 @@ class ArticuloController extends Controller
 
         }
     }
-
     public function update(Request $request){
 
         if(!$request->ajax()) return redirect('/');
@@ -335,10 +285,7 @@ class ArticuloController extends Controller
             $articulo->condicion        =   '1';
             $articulo->save();
         }
-
-
     }
-
     public function desactivar(Request $request){
         if(!$request->ajax()) return redirect('/');
         $articulo = Articulo::findOrFail($request->id);
@@ -346,14 +293,12 @@ class ArticuloController extends Controller
         $articulo->save();
 
     }
-
     public function activar(Request $request){
         if(!$request->ajax()) return redirect('/');
         $articulo = Articulo::findOrFail($request->id);
         $articulo->condicion = '1';
         $articulo->save();
     }
-
     public function listarArticulo(Request $request){
 
         if(!$request->ajax()) return redirect('/');
@@ -502,7 +447,6 @@ class ArticuloController extends Controller
         $articulo->save();
 
     }
-
     public function listarPdf(){
 
         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
@@ -522,5 +466,14 @@ class ArticuloController extends Controller
 
         return $pdf->download('articulos.pdf');
 
+    }
+    public function cambiarComprometido(Request $request){
+
+        if (!$request->ajax()) return redirect('/');
+
+        $articulo = Articulo::findOrFail($request->id);
+        $articulo->comprometido = $request->comprometido;
+        $articulo->idusuario = \Auth::user()->id;
+        $articulo->save();
     }
 }

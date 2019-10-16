@@ -47,8 +47,7 @@
                     <th>Stock</th>
                     <th>Bodega de descarga</th>
                     <th>Estado</th>
-                    <th>Cotizacion</th>
-                    <th>Cliente</th>
+                    <th>Comprometido</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -93,14 +92,14 @@
                             <span class="badge badge-danger">Desactivado</span>
                         </div>
                     </td>
-                    <template v-if="articulo.estado_cotizacion != 'Anulada'">
-                        <td v-text="articulo.cotizacion"></td>
-                        <td v-text="articulo.cliente"></td>
-                    </template>
-                    <template v-else>
-                        <td></td>
-                        <td></td>
-                    </template>
+                    <td>
+                        <div v-if="articulo.comprometido">
+                            <span class="badge badge-success">Si</span>
+                        </div>
+                        <div v-else>
+                            <span class="badge badge-danger">No</span>
+                        </div>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -134,6 +133,14 @@
           </div>
           <div class="modal-body">
             <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                <div class="form-group row" v-if="isEdition && estado">
+                    <label class="col-md-3 form-control-label" for="text-input">Comprometido: </label>
+                    <div class="col-md-3">
+                        <toggle-button @change="cambiarComprometido(articulo_id)" v-model="btnComprometido" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                    </div>
+                    <label class="col-md-3 form-control-label" for="text-input">Actualizo: </label>
+                    <p  class="col-md-3" v-text="usuario"></p>
+                </div>
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Material</label>
                     <div class="col-md-9">
@@ -392,7 +399,9 @@
 
 import VueBarcode from 'vue-barcode';
 import VueLightbox from 'vue-lightbox';
+import ToggleButton from 'vue-js-toggle-button';
 Vue.component("Lightbox",VueLightbox);
+Vue.use(ToggleButton);
 /* import VueSilentbox from 'vue-silentbox';
 Vue.use(VueSilentbox); */
 export default {
@@ -403,7 +412,6 @@ export default {
             nombre_categoria : '',
             codigo : '',
             sku : '',
-           /*  nombre: '', */
             terminado : '',
             largo : 0,
             alto : 0,
@@ -412,12 +420,15 @@ export default {
             precio_venta : 0,
             ubicacion : '',
             stock : 0,
+            comprometido : 0,
+            usuario : '',
             descripcion: '',
             observacion : '',
             origen : '',
             contenedor: '',
             fecha_llegada : '',
             file : '',
+            estado : 0,
             imagenMinatura : '',
             arrayArticulo: [],
             modal: 0,
@@ -438,7 +449,8 @@ export default {
             criterio : 'codigo',
             buscar : '',
             arrayCategoria : [],
-
+            btnComprometido : '',
+            isEdition : false
         };
     },
     components: {
@@ -701,7 +713,6 @@ export default {
             this.idcategoria = 0;
             this.codigo = '';
             this.sku = '';
-            /* this.nombre = ''; */
             this.terminado = '';
             this.largo = 0;
             this.alto = 0;
@@ -718,6 +729,11 @@ export default {
             this.file = '';
             this.errorArticulo = 0;
             this.imagenMinatura = '';
+            this.btnComprometido = '';
+            this.comprometido = 0;
+            this.usuario = '';
+            this.isEdition = false;
+            this.listarArticulo(1,'','sku');
 
         },
         abrirModal(modelo, accion, data = []) {
@@ -750,7 +766,6 @@ export default {
                             break;
                         }
                         case "actualizar": {
-                            //console.log(data);
                             this.modal = 1;
                             this.tituloModal = "Actualizar Artículo";
                             this.tipoAccion = 2;
@@ -758,7 +773,6 @@ export default {
                             this.idcategoria = data['idcategoria'];
                             this.codigo = data['codigo'];
                             this.sku = data['sku'];
-                            /* this.nombre = data['nombre']; */
                             this.terminado = data['terminado'];
                             this.largo = data['largo'];
                             this.alto = data['alto'];
@@ -773,12 +787,40 @@ export default {
                             this.contenedor = data['contenedor'];
                             this.fecha_llegada = data['fecha_llegada'];
                             this.imagenMinatura = data['file'];
+                            this.estado = data['condicion'];
+                            this.comprometido = data['comprometido'];
+                            this.usuario = data['usuario'];
+                            this.isEdition = true;
+
+                            if(this.comprometido == 1){
+                                this.btnComprometido = true;
+                            }else{
+                                this.btnComprometido = false;
+                            }
+
                             break;
                         }
                     }
                 }
             }
             this.selectCategoria();
+        },
+        cambiarComprometido(id){
+          let me = this;
+            if(me.btnComprometido == true){
+                me.comprometido = 1;
+            }else{
+                me.comprometido = 0;
+            }
+            axios.put('/articulo/cambiarComprometido',{
+                'id': id,
+                'comprometido' : this.comprometido
+            }).then(function (response) {
+                me.listarArticulo(1,'','sku');
+                /* location.reload(); */
+            }).catch(function (error) {
+                console.log(error);
+            });
         },
         abrirModal2(modelo, accion, data = []) {
             switch (modelo) {
