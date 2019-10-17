@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-sm">
+                    <table class="table table-bordered table-striped table-sm table-hover">
                         <thead>
                             <tr>
                                 <th>Opciones</th>
@@ -241,7 +241,7 @@
 
                 <div class="form-group row border">
                     <div class="table-responsive col-md-12">
-                        <table class="table table-bordered table-striped table-sm">
+                        <table class="table table-bordered table-striped table-sm table-hover">
                             <thead>
                                 <tr>
                                     <th>Opciones</th>
@@ -424,7 +424,7 @@
                 </div>
                 <div class="form-group row border">
                     <div class="table-responsive col-md-12">
-                        <table class="table table-bordered table-striped table-sm">
+                        <table class="table table-bordered table-striped table-sm table-hover">
                             <thead>
                                 <tr>
                                     <th>Detalles</th>
@@ -540,7 +540,7 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm text-center">
+                        <table class="table table-bordered table-striped table-sm text-center table-hover">
                             <thead>
                             <tr class="text-center">
                                 <th>Opciones</th>
@@ -613,7 +613,7 @@
                 <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
                     <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
                 </lightbox>&nbsp;
-                <table class="table table-bordered table-striped table-sm text-center">
+                <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
                         <tr class="text-center">
                             <th class="text-center" colspan="2">Detalle del artículo</th>
@@ -730,7 +730,7 @@
                 <div v-else class="text-center">
                     <span class="badge badge-danger">Desactivado</span>
                 </div>&nbsp;
-                <table class="table table-bordered table-striped table-sm text-center">
+                <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
                         <tr class="text-center">
                             <th class="text-center" colspan="2">Detalle del artículo</th>
@@ -848,7 +848,7 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm text-center">
+                        <table class="table table-bordered table-striped table-sm text-center table-hover">
                             <thead>
                             <tr class="text-center">
                                 <th>No° Placa</th>

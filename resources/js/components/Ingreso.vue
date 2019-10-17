@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-sm">
+                    <table class="table table-bordered table-striped table-sm table-hover">
                         <thead>
                             <tr>
                                 <th>Opciones</th>
@@ -262,7 +262,7 @@
 
                 <div class="form-group row border">
                     <div class="table-responsive col-md-12">
-                        <table class="table table-bordered table-striped table-sm">
+                        <table class="table table-bordered table-striped table-sm table-hover">
                             <thead>
                                 <tr>
                                     <th>Opciones</th>
@@ -377,7 +377,7 @@
                 </div>
                 <div class="form-group row border">
                     <div class="table-responsive col-md-12">
-                        <table class="table table-bordered table-striped table-sm">
+                        <table class="table table-bordered table-striped table-sm table-hover">
                             <thead>
                                 <tr>
                                     <th>Detalles</th>
@@ -468,7 +468,7 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm text-center">
+                        <table class="table table-bordered table-striped table-sm text-center table-hover">
                             <thead>
                             <tr class="text-center">
                                 <!-- <th>Opciones</th> -->
@@ -540,7 +540,7 @@
                     <label class="text-left" for=""><strong>Actualizar Imagen</strong></label>
                      <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
                 </div>
-                <table class="table table-bordered table-striped table-sm text-center">
+                <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
                         <tr class="text-center">
                             <th class="text-center" colspan="2">Detalle del artículo</th>
@@ -711,7 +711,7 @@
                 <div v-else class="text-center">
                     <span class="badge badge-danger">Desactivado</span>
                 </div>&nbsp;
-                <table class="table table-bordered table-striped table-sm text-center">
+                <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
                         <tr class="text-center">
                             <th class="text-center" colspan="2">Detalle del artículo</th>

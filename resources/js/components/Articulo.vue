@@ -32,7 +32,7 @@
             </div>
           </div>
           <div class="table-responsive col-md-12">
-            <table class="table table-bordered table-striped table-sm text-center">
+            <table class="table table-bordered table-striped table-sm text-center table-hover">
                 <thead>
                 <tr class="text-center">
                     <th>Opciones</th>
@@ -312,7 +312,7 @@
                 <!-- <figure>
                     <img width="500" height="230" class="img-responsive imgcenter" :src="'http://localhost:8000/'+file" alt="Foto del artículo">
                 </figure> -->
-                <table class="table table-bordered table-striped table-sm text-center">
+                <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
                         <tr class="text-center">
                             <th class="text-center" colspan="2">Detalle del artículo</th>

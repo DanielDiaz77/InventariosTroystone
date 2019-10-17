@@ -28,7 +28,7 @@
             </div>
           </div>
           <div class="table-responsive col-md-12">
-            <table class="table table-bordered table-striped table-sm">
+            <table class="table table-bordered table-striped table-sm table-hover">
                 <thead>
                     <tr>
                         <th>Opciones</th>

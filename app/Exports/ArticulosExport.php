@@ -28,7 +28,7 @@ class ArticulosExport implements FromCollection, WithHeadings
             '#',
             'No° Placa',
             'Codigo',
-            'Categoria',
+            'Material',
             'Terminado',
             'Largo',
             'Alto',
