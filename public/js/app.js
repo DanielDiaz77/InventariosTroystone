@@ -2355,8 +2355,12 @@ Vue.use(VueSilentbox); */
         console.log(error);
       });
     },
-    cargarPdf: function cargarPdf() {
-      window.open('http://127.0.0.1:8000/articulo/listarPdf', '_blank');
+
+    /* cargarPdf(){
+        window.open('http://127.0.0.1:8000/articulo/listarPdf','_blank');
+    }, */
+    cargarExcel: function cargarExcel() {
+      window.open('http://127.0.0.1:8000/articulo/listarExcel', '_blank');
     },
     selectCategoria: function selectCategoria() {
       var me = this;
@@ -76262,13 +76266,13 @@ var render = function() {
               attrs: { type: "button" },
               on: {
                 click: function($event) {
-                  return _vm.cargarPdf()
+                  return _vm.cargarExcel()
                 }
               }
             },
             [
               _c("i", { staticClass: "icon-doc" }),
-              _vm._v(" Reporte\n          ")
+              _vm._v(" Articulos Excel\n          ")
             ]
           )
         ]),

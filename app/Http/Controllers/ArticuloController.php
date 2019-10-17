@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Articulo;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ArticulosExport;
 
 class ArticuloController extends Controller
 {
@@ -465,7 +467,7 @@ class ArticuloController extends Controller
         $articulo->save();
 
     }
-    public function listarPdf(){
+    /* public function listarPdf(){
 
         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
             ->select(
@@ -475,7 +477,6 @@ class ArticuloController extends Controller
                 'articulos.precio_venta','articulos.ubicacion','articulos.contenedor','articulos.stock',
                 'articulos.descripcion','articulos.observacion','articulos.origen','articulos.fecha_llegada',
                 'articulos.file','articulos.condicion')
-               /*  ->where('articulos.condicion',1) */
             ->orderBy('articulos.codigo', 'asc')->get();
 
         $cont = Articulo::count();
@@ -484,6 +485,9 @@ class ArticuloController extends Controller
 
         return $pdf->download('articulos.pdf');
 
+    } */
+    public function listarExcel(){
+        return Excel::download(new ArticulosExport, 'lista-articulos.xlsx');
     }
     public function cambiarComprometido(Request $request){
 

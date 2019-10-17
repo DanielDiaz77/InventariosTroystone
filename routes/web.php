@@ -113,6 +113,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/articulo/listarArticuloVenta', 'ArticuloController@listarArticuloVenta');
         Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
         Route::get('/articulo/listarPdf','ArticuloController@listarPdf')->name('articulos_pdf');
+        Route::get('/articulo/listarExcel','ArticuloController@listarExcel')->name('articulos_excel');
         Route::put('/articulo/cambiarComprometido', 'ArticuloController@cambiarComprometido');
         Route::get('/articulo/listarArticuloCotizado', 'ArticuloController@listarArticuloCotizado');
 

@@ -12,8 +12,8 @@
             <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary">
                 <i class="icon-plus"></i>&nbsp;Nuevo
             </button>
-            <button type="button" @click="cargarPdf()" class="btn btn-info">
-                <i class="icon-doc"></i>&nbsp;Reporte
+            <button type="button" @click="cargarExcel()" class="btn btn-info">
+                <i class="icon-doc"></i>&nbsp;Articulos Excel
             </button>
         </div>
         <div class="card-body">
@@ -510,8 +510,11 @@ export default {
                 console.log(error);
             });
         },
-        cargarPdf(){
+        /* cargarPdf(){
             window.open('http://127.0.0.1:8000/articulo/listarPdf','_blank');
+        }, */
+        cargarExcel(){
+            window.open('http://127.0.0.1:8000/articulo/listarExcel','_blank');
         },
         selectCategoria(){
             let me=this;
