@@ -77612,7 +77612,7 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/images/" + _vm.file
+                        src: "http://127.0.0.1:8000/images/" + _vm.file
                       }
                     },
                     [
@@ -77620,7 +77620,7 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/images/" + _vm.file
+                          src: "http://127.0.0.1:8000/images/" + _vm.file
                         }
                       })
                     ]

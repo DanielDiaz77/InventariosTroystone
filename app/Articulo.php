@@ -9,7 +9,7 @@ class Articulo extends Model
     //
     protected $fillable = [
         'idcategoria', 'codigo', 'sku','nombre','terminado','largo','alto','metros_cuadrados','espesor','precio_venta','ubicacion',
-        'contenedor','stock','descripcion', 'observacion','origen','fecha_llegada','file','condicion'
+        'contenedor','stock','descripcion', 'observacion','origen','fecha_llegada','file','condicion', 'comprometido','idusuario'
     ];
 
     public function categoria(){

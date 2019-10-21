@@ -306,8 +306,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://127.0.0.1:8000/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://127.0.0.1:8000/images/'+file">
                 </lightbox>&nbsp;
                 <!-- <figure>
                     <img width="500" height="230" class="img-responsive imgcenter" :src="'http://localhost:8000/'+file" alt="Foto del artículo">
