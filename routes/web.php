@@ -87,6 +87,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
         Route::get('/venta/pdf/{id}', 'ventaController@pdf')->name('venta_pdf');
         Route::post('/venta/cambiarEntrega', 'ventaController@cambiarEntrega');
+        Route::post('/venta/cambiarPagado', 'ventaController@cambiarPagado');
 
     });
 

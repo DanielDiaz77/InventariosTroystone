@@ -21,7 +21,11 @@ class Venta extends Model
         'estado',
         'moneda',
         'tipo_cambio',
-        'observacion'
+        'observacion',
+        'num_cheque',
+        'banco',
+        'tipo_facturacion',
+        'pagado'
     ];
 
     public function usuario(){

@@ -176,18 +176,31 @@
                 </p>
             </div>
             <div id="fact">
-                <p><strong>Estado: </strong> {{-- {{ $v->entregado? "Entregado" : "No entregado" }} --}}
-                @php
-                    if ($v->entregado){
-                        echo "Entregado";
+                    <p><strong>Estado: </strong>
+                    @php
+                    if($v->estado == 'Anulada'){
+                        echo "Anulado";
                     }else{
-                        if($v->estado == 'Anulada'){
-                            echo "Presupuesto cancelada";
+                        if($v->pagado){
+                            echo "Pagado";
                         }else{
-                            echo "No Entregado";
+                            echo "Pendiente de pago";
+                        }
+                        if ($v->entregado){
+                            echo " y Entregado";
+                        }else{
+                            echo " y no entregado";
                         }
                     }
-                @endphp
+                    @endphp
+                    {{-- <p><strong>Estado: </strong> {{ $v->pagado? "Pagado" : "Pendiente de pago" }} --}}
+                    {{-- @php
+                        if ($v->entregado){
+                            echo " y Entregado";
+                        }else{
+                            echo " y no entregado";
+                        }
+                    @endphp --}}
                 </p>
             </div>
         </header>
@@ -289,13 +302,22 @@
                         echo $Mes_Anyo;
                     ?> <br>
                     <strong>Nota: </strong>{{ $v->observacion }} <br>
-                    <strong>Forma de pago: </strong>{{ $v->forma_pago }} <br>
+                    <strong>Forma de pago: </strong>{{ $v->forma_pago }}
+                    {{-- <strong>
+                    @php
+                        if($v->forma_pago == 'Cheque'){
+                            echo "No° Cheque: ".$v->num_cheque;
+                            echo " Banco: ".$v->banco;
+                        }
+                    @endphp
+                    </strong> --}}
+                    <br>
                     <strong>Tiempo de entrega:</strong>{{ $v->tiempo_entrega }}<br>
                     <strong> Lugar de entrega: </strong>{{ $v->lugar_entrega }}
                 </p> <br>
             @endforeach
-            <p style="text-align:center";><strong>Atentamente, <br>
-                Lic. Andrés Pérez Arenzana</strong></p>
+            {{-- <p style="text-align:center";><strong>Atentamente, <br>
+                Lic. Andrés Pérez Arenzana</strong></p> --}}
             <strong>Cuentas para depositar en pesos:</strong><br>
             <strong>Beneficiario: TROYSTONE, S.A. DE C.V. RFC: TRO 120511 B35 </strong><br><hr>
             <strong> - IXE / Banorte - Cuenta: 001750 8770 CLABE: <u> 07232 0000 1750 8770 5</u>  </strong><br>

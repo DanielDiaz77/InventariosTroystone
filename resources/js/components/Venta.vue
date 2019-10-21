@@ -24,6 +24,7 @@
                         <option value="fecha_hora">Fecha</option>
                         <option value="estado">Estado</option>
                         <option value="entregado">Entregado</option>
+                        <option value="forma_pago">Forma de pago</option>
                         </select>
                         <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
                         <button type="submit" @click="listarVenta(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
@@ -35,17 +36,18 @@
                         <thead>
                             <tr>
                                 <th>Opciones</th>
-                                <th>Usuario</th>
+                                <th>Atendió</th>
                                 <th>Cliente</th>
                                 <th>Tipo Comprobante</th>
                                 <th>No° Comprobante</th>
                                 <th>Fecha Hora</th>
                                 <th>Impuesto</th>
                                 <th>Total</th>
-                                <th>Moneda</th>
-                                <th>Tipo Cambio</th>
-                                <th>Estado</th>
+                                <th>Forma de pago</th>
+                                <th>Facturación</th>
                                 <th>Entregado</th>
+                                <th>100% Pagado</th>
+                                <th>Estado</th>
 
                             </tr>
                         </thead>
@@ -71,15 +73,21 @@
                                 <td v-text="venta.fecha_hora"></td>
                                 <td v-text="venta.impuesto"></td>
                                 <td v-text="venta.total"></td>
-                                <td v-text="venta.moneda"></td>
-                                <td v-text="venta.tipo_cambio"></td>
-                                <td v-text="venta.estado "></td>
+                                <td v-text="venta.forma_pago"></td>
+                                <td v-text="venta.tipo_facturacion"></td>
                                 <td v-if="venta.entregado">
                                     <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
                                 </td>
                                 <td v-else>
                                     <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
                                 </td>
+                                 <td v-if="venta.pagado">
+                                    <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                </td>
+                                <td v-else>
+                                    <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                </td>
+                                <td v-text="venta.estado "></td>
                             </tr>
                         </tbody>
                     </table>
@@ -105,25 +113,18 @@
         <template v-else-if="listado==0">
             <div class="card-body">
                 <div class="form-group row border">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="">Cliente (*)</label>
-                                <v-select
-                                    :on-search="selectCliente"
-                                    label="nombre"
-                                    :options="arrayCliente"
-                                    placeholder="Buscar clientes..."
-                                    :onChange="getDatosCliente"
-                                >
-
+                                <v-select :on-search="selectCliente" label="nombre" :options="arrayCliente" placeholder="Buscar clientes..." :onChange="getDatosCliente">
                                 </v-select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label for="">Impuesto (*)</label>
                         <input type="text" class="form-control" v-model="impuesto">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for="">Tipo Comprobante (*) </label>
                             <select v-model="tipo_comprobante" class="form-control">
@@ -134,41 +135,43 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="">Número de presupuesto (*)</label>
                             <input type="text" class="form-control" v-model="num_comprobante" placeholder="000xx">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for="">Moneda<span style="color:red;" v-show="moneda==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="moneda">
                                 <option value='' disabled>Seleccione la moneda del cobro</option>
                                 <option value="Peso Mexicano">Peso Mexicano</option>
-                                <option value="Dolar USA">Dolar USA</option>
-                                <option value="EURO">EURO</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="">Tipo cambio<span style="color:red;" v-show="moneda!='Peso Mexicano'">(*Ingrese el tipo de cambio)</span> </label>
-                            <input type="text" class="form-control" v-model="tipo_cambio" placeholder="000xx">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="">Forma de pago<span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
-                            <select class="form-control" v-model="forma_pago">
-                                <option value='' disabled>Seleccione la forma de pago</option>
-                                <option value="De contado">De contado</option>
                                 <!-- <option value="Dolar USA">Dolar USA</option>
                                 <option value="EURO">EURO</option> -->
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <!-- <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Tipo cambio<span style="color:red;" v-show="moneda!='Peso Mexicano'">(*Ingrese el tipo de cambio)</span> </label>
+                            <input type="text" class="form-control" v-model="tipo_cambio" placeholder="000xx">
+                        </div>
+                    </div> -->
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">Forma de pago<span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
+                            <select class="form-control" v-model="forma_pago">
+                                <option value='' disabled>Seleccione la forma de pago</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                                <option value="Cheque">Cheque</option>
+                                <!-- <option value="Dolar USA">Dolar USA</option>
+                                <option value="EURO">EURO</option> -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="">Tiempo de entrega<span style="color:red;" v-show="tiempo_entrega==''">(*Seleccione el tiempo de entrega)</span></label>
                             <select class="form-control" v-model="tiempo_entrega">
@@ -180,7 +183,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="">Lugar de entrega<span style="color:red;" v-show="lugar_entrega==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="lugar_entrega">
@@ -188,6 +191,28 @@
                                 <option value="LAB TROYSTONE">LAB TROYSTONE</option>
                                 <option value="LAB TROYSTONE S.L.P.">LAB TROYSTONE S.L.P.</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">Tipo de facturación<span style="color:red;" v-show="tipo_facturacion==''">(*Seleccione)</span></label>
+                            <select class="form-control" v-model="tipo_facturacion">
+                                <option value='' disabled>Seleccione el tipo de facturación</option>
+                                <option value="Publico General">Publico General</option>
+                                <option value="Cliente">Cliente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3" v-if="forma_pago =='Cheque'">
+                        <div class="form-group">
+                            <label for="">No° de Cheque<span style="color:red;" v-show="num_cheque==0">(*Ingrese el no° de cheque)</span></label>
+                            <input type="number" min="0" class="form-control" v-model="num_cheque" placeholder="000xx">
+                        </div>
+                    </div>
+                    <div class="col-md-3" v-if="forma_pago =='Cheque'">
+                        <div class="form-group">
+                            <label for="">Banco<span style="color:red;" v-show="banco==''">(*Ingrese el banco)</span></label>
+                            <input type="text" class="form-control" v-model="banco" placeholder="Banco del cheque">
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -402,23 +427,48 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for=""><strong>Forma de pago</strong></label>
-                            <p v-text="forma_pago"></p>
+                            <label for=""><strong>Tipo de facturación</strong></label>
+                            <p v-text="tipo_facturacion"></p>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <div class="form-group">
                             <label for=""><strong>Entregado:</strong> </label>
-                            <div v-if="estadoVn == 'Registrado'">
+                            <div v-if="pagado == 1">
                                 <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                            <div v-else>
+                                <span class="badge badge-danger">Pendiente de pago</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label for=""><strong>100% Pagado: </strong> </label>
+                            <div v-if="estadoVn == 'Registrado'">
+                                <toggle-button @change="cambiarEstadoPagado(venta_id)" v-model="btnPagado" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
                             <div v-else>
                                 <span class="badge badge-danger">Presupuesto cancelado</span>
                             </div>
-                            <!-- <div v-if="entregado">
-                                <span class="badge badge-success">Entregado</span>
-                            </div> -->
-
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for=""><strong>Forma de pago</strong></label>
+                            <p v-text="forma_pago"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2" v-if="forma_pago =='Cheque'">
+                        <div class="form-group">
+                            <label for=""><strong>No° de cheque</strong></label>
+                            <p v-text="num_cheque"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2" v-if="forma_pago =='Cheque'">
+                        <div class="form-group">
+                            <label for=""><strong>Banco</strong></label>
+                            <p v-text="banco"></p>
                         </div>
                     </div>
                 </div>
@@ -1041,13 +1091,17 @@ export default {
             total_parcial : 0.0,
             divImp: 0.0,
             total: 0.0,
-            forma_pago : "De contado",
+            forma_pago : "Efectivo",
             tiempo_entrega : "",
             lugar_entrega : "",
             precio: 0.0,
             entregado : 0,
             stock : 0,
             descripcion : "",
+            tipo_facturacion : "",
+            num_cheque : 0,
+            banco : "",
+            pagado : 0,
             arrayArticulo : [],
             arrayVenta : [],
             arrayDetalle : [],
@@ -1092,6 +1146,7 @@ export default {
             validatedB : 0,
             validatedA : 0,
             btnEntrega : false,
+            btnPagado : false,
             estadoVn : ""
         };
     },
@@ -1378,7 +1433,14 @@ export default {
             if (this.validarVenta()) {
                 return;
             }
+
+            if(this.forma_pago != 'Cheque'){
+                this.num_cheque = 0;
+                this.banco = '';
+            }
+
             let me = this;
+
             axios.post('/venta/registrar',{
                 'idcliente': this.idcliente,
                 'tipo_comprobante': this.tipo_comprobante,
@@ -1391,6 +1453,9 @@ export default {
                 'moneda' : this.moneda,
                 'tipo_cambio' : this.tipo_cambio,
                 'observacion' : this.observacion,
+                'num_cheque'  : this.num_cheque,
+                'banco'       : this.banco,
+                'tipo_facturacion' : this.tipo_facturacion,
                 'data': this.arrayDetalle
             }).then(function(response) {
                 me.ocultarDetalle();
@@ -1407,11 +1472,14 @@ export default {
                 me.stock = 0;
                 me.observacion = "";
                 me.descuento = 0;
-                me.forma_pago = "De contado";
+                me.forma_pago = "Efectivo";
                 me.tiempo_entrega = "";
                 me.lugar_entrega = "";
                 me.entregado = 0;
                 me.moneda = "Peso Mexicano";
+                me.banco = "";
+                me.num_cheque = 0;
+                me.tipo_facturacion = "";
                 me.tipo_cambio = "";
                 me.arrayDetalle = [];
 
@@ -1538,6 +1606,7 @@ export default {
             this.num_comprobante = 0;
             this.entregado = 0;
             this.btnEntrega =  false;
+            this.btnPagado = false;
         },
         verVenta(id){
 
@@ -1571,6 +1640,10 @@ export default {
                 me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
                 me.observacion = arrayVentaT[0]['observacion'];
                 me.estadoVn = arrayVentaT[0]['estado'];
+                me.num_cheque = arrayVentaT[0]['num_cheque'];
+                me.banco = arrayVentaT[0]['banco'];
+                me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
+                me.pagado = arrayVentaT[0]['pagado'];
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
@@ -1581,6 +1654,10 @@ export default {
 
                 if(me.entregado ==1){
                     me.btnEntrega = true;
+                }
+
+                if(me.pagado ==1){
+                    me.btnPagado = true;
                 }
             })
             .catch(function (error) {
@@ -1909,7 +1986,7 @@ export default {
             });
         },
         cambiarEstadoEntrega(id){
-          let me = this;
+            let me = this;
             if(me.btnEntrega == true){
                 me.entregado = 1;
             }else{
@@ -1920,11 +1997,24 @@ export default {
                 'entregado' : this.entregado
             }).then(function (response) {
                 me.listarVenta(1,'','num_comprobante');
-                swal(
-                    'Estado Cambiado!',
-                    'El estado del presupuesto ha sido cambiado con éxito.',
-                    'success'
-                )
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        cambiarEstadoPagado(id){
+          let me = this;
+            if(me.btnPagado == true){
+                me.pagado = 1;
+            }else{
+                me.pagado = 0;
+                me.btnEntrega = false;
+                me.cambiarEstadoEntrega(id);
+            }
+            axios.post('/venta/cambiarPagado',{
+                'id': id,
+                'pagado' : this.pagado
+            }).then(function (response) {
+                me.listarVenta(1,'','num_comprobante');
             }).catch(function (error) {
                 console.log(error);
             });

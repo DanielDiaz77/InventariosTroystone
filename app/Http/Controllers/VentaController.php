@@ -24,8 +24,8 @@ class VentaController extends Controller
             ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
             'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
             'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado',
-            'personas.nombre','users.usuario')
+            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.num_cheque',
+            'ventas.banco','ventas.tipo_facturacion','ventas.pagado','personas.nombre','users.usuario')
             ->orderBy('ventas.id', 'desc')->paginate(12);
         }
         else{
@@ -34,8 +34,8 @@ class VentaController extends Controller
             ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
             'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
             'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado',
-            'personas.nombre','users.usuario')
+            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.num_cheque',
+            'ventas.banco','ventas.tipo_facturacion','ventas.pagado','personas.nombre','users.usuario')
             ->where('ventas.'.$criterio, 'like', '%'. $buscar . '%')
             ->orderBy('ventas.id', 'desc')->paginate(12);
         }
@@ -77,6 +77,9 @@ class VentaController extends Controller
             $venta->moneda = $request->moneda;
             $venta->tipo_cambio = $request->tipo_cambio;
             $venta->observacion = $request->observacion;
+            $venta->num_cheque = $request->num_cheque;
+            $venta->banco = $request->banco;
+            $venta->tipo_facturacion = $request->tipo_facturacion;
 
             $venta->save();
 
@@ -128,6 +131,7 @@ class VentaController extends Controller
         $venta = Venta::findOrFail($request->id);
         $venta->estado = 'Anulada';
         $venta->entregado = 0;
+        $venta->pagado = 0;
         $venta->save();
     }
 
@@ -140,8 +144,8 @@ class VentaController extends Controller
         ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
         'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
         'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado',
-        'personas.nombre','users.usuario')
+        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.num_cheque',
+        'ventas.banco','ventas.tipo_facturacion','ventas.pagado','personas.nombre','users.usuario')
         ->where('ventas.id','=',$id)
         ->orderBy('ventas.id', 'desc')->take(1)->get();
 
@@ -173,6 +177,7 @@ class VentaController extends Controller
             'ventas.created_at','ventas.impuesto','ventas.total','ventas.estado',
             'ventas.forma_pago','ventas.tiempo_entrega','ventas.lugar_entrega',
             'ventas.entregado','ventas.moneda','ventas.tipo_cambio', 'ventas.observacion',
+            'ventas.num_cheque','ventas.banco','ventas.tipo_facturacion','ventas.pagado',
             'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
             'personas.telefono','personas.email','users.usuario')
         ->where('ventas.id',$id)->take(1)->get();
@@ -196,6 +201,13 @@ class VentaController extends Controller
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);
         $venta->entregado = $request->entregado;
+        $venta->save();
+    }
+
+    public function cambiarPagado(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $venta = Venta::findOrFail($request->id);
+        $venta->pagado = $request->pagado;
         $venta->save();
     }
 }

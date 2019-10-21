@@ -32,17 +32,18 @@
                         <thead>
                             <tr>
                                 <th>Opciones</th>
-                                <th>Usuario</th>
+                                <th>Atendió</th>
                                 <th>Cliente</th>
                                 <th>Tipo Comprobante</th>
                                 <th>No° Comprobante</th>
                                 <th>Fecha Hora</th>
                                 <th>Impuesto</th>
                                 <th>Total</th>
-                                <th>Moneda</th>
-                                <th>Tipo Cambio</th>
-                                <th>Estado</th>
+                                <th>Forma de pago</th>
+                                <th>Facturación</th>
                                 <th>Entregado</th>
+                                <th>100% Pagado</th>
+                                <th>Estado</th>
 
                             </tr>
                         </thead>
@@ -56,22 +57,28 @@
                                         <i class="icon-doc"></i>
                                     </button>&nbsp;
                                 </td>
-                                <td v-text="venta.usuario"></td>
+                                 <td v-text="venta.usuario"></td>
                                 <td v-text="venta.nombre"></td>
                                 <td v-text="venta.tipo_comprobante"></td>
                                 <td v-text="venta.num_comprobante"></td>
                                 <td v-text="venta.fecha_hora"></td>
                                 <td v-text="venta.impuesto"></td>
                                 <td v-text="venta.total"></td>
-                                <td v-text="venta.moneda"></td>
-                                <td v-text="venta.tipo_cambio"></td>
-                                <td v-text="venta.estado "></td>
+                                <td v-text="venta.forma_pago"></td>
+                                <td v-text="venta.tipo_facturacion"></td>
                                 <td v-if="venta.entregado">
                                     <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
                                 </td>
                                 <td v-else>
                                     <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
                                 </td>
+                                 <td v-if="venta.pagado">
+                                    <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                </td>
+                                <td v-else>
+                                    <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                </td>
+                                <td v-text="venta.estado "></td>
                             </tr>
                         </tbody>
                     </table>
@@ -153,23 +160,48 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="">Forma de pago</label>
-                            <p v-text="forma_pago"></p>
+                            <label for="">Tipo de Facturación</label>
+                            <p v-text="tipo_facturacion"></p>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <div class="form-group">
-                            <label for="">Entregado: </label>
+                            <label for=""><strong>Entregado:</strong> </label>
+                            <div v-if="pagado == 1">
+                                <toggle-button disabled v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}"/>
+                            </div>
+                            <div v-else>
+                                <span class="badge badge-danger">Pendiente de pago</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label for=""><strong>100% Pagado: </strong> </label>
                             <div v-if="estadoVn == 'Registrado'">
-                                <toggle-button v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                <toggle-button disabled v-model="btnPagado" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
                             <div v-else>
                                 <span class="badge badge-danger">Presupuesto cancelado</span>
                             </div>
-                            <!-- <div v-if="entregado">
-                                <span class="badge badge-success">Entregado</span>
-                            </div> -->
-
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">Forma de pago</label>
+                            <p v-text="forma_pago"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2" v-if="forma_pago =='Cheque'">
+                        <div class="form-group">
+                            <label for=""><strong>No° de cheque</strong></label>
+                            <p v-text="num_cheque"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2" v-if="forma_pago =='Cheque'">
+                        <div class="form-group">
+                            <label for=""><strong>Banco</strong></label>
+                            <p v-text="banco"></p>
                         </div>
                     </div>
                 </div>
@@ -553,6 +585,10 @@ export default {
             lugar_entrega : "",
             precio: 0.0,
             entregado : 0,
+            tipo_facturacion : "",
+            num_cheque : 0,
+            banco : "",
+            pagado : 0,
             stock : 0,
             descripcion : "",
             arrayArticulo : [],
@@ -599,6 +635,7 @@ export default {
             validatedB : 0,
             validatedA : 0,
             btnEntrega : false,
+            btnPagado : false,
             estadoVn : ""
         };
     },
@@ -733,6 +770,10 @@ export default {
             this.arrayDetalle = [];
             this.idproveedor = 0;
             this.num_comprobante = 0;
+            this.tipo_facturacion = "";
+            this.num_cheque = 0;
+            this.banco = "";
+            this.pagado = 0;
             this.selectCategoria();
         },
         ocultarDetalle(){
@@ -766,7 +807,12 @@ export default {
             this.errorMostrarMsjVenta = [];
             this.num_comprobante = 0;
             this.entregado = 0;
+            this.tipo_facturacion = "";
+            this.num_cheque = 0;
+            this.banco = "";
+            this.pagado = 0;
             this.btnEntrega =  false;
+            this.btnPagado = false;
         },
         verVenta(id){
 
@@ -800,6 +846,10 @@ export default {
                 me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
                 me.observacion = arrayVentaT[0]['observacion'];
                 me.estadoVn = arrayVentaT[0]['estado'];
+                me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
+                me.num_cheque = arrayVentaT[0]['num_cheque'];
+                me.banco = arrayVentaT[0]['banco'];
+                me.pagado = arrayVentaT[0]['pagado'];
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
@@ -810,6 +860,10 @@ export default {
 
                 if(me.entregado ==1){
                     me.btnEntrega = true;
+                }
+
+                if(me.pagado == 1){
+                    me.btnPagado = true;
                 }
             })
             .catch(function (error) {
