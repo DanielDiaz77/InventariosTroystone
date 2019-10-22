@@ -24,7 +24,7 @@ class ProveedorController extends Controller
             'personas.num_documento','personas.domicilio','personas.telefono',
             'personas.ciudad','personas.rfc','personas.email','proveedores.contacto',
             'proveedores.telefono_contacto')
-            ->orderBy('personas.id', 'desc')->paginate(3);
+            ->orderBy('personas.id', 'desc')->paginate(12);
         }
         else{
             $personas = Proveedor::join('personas','proveedores.id','=','personas.id')
@@ -33,7 +33,7 @@ class ProveedorController extends Controller
             'personas.ciudad','personas.rfc','personas.email','proveedores.contacto',
             'proveedores.telefono_contacto')
             ->where('personas.'.$criterio, 'like', '%'. $buscar . '%')
-            ->orderBy('personas.id', 'desc')->paginate(3);
+            ->orderBy('personas.id', 'desc')->paginate(12);
         }
 
 

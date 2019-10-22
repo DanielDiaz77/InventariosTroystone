@@ -78927,16 +78927,6 @@ var render = function() {
                       }),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: {
-                          textContent: _vm._s(persona.tipo_documento)
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.num_documento) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
                         domProps: { textContent: _vm._s(persona.ciudad) }
                       }),
                       _vm._v(" "),
@@ -79140,104 +79130,6 @@ var render = function() {
                                 return
                               }
                               _vm.nombre = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-md-3 form-control-label",
-                          attrs: { for: "text-input" }
-                        },
-                        [_vm._v("Documento")]
-                      ),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-md-9" }, [
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.tipo_documento,
-                                expression: "tipo_documento"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.tipo_documento = $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              }
-                            }
-                          },
-                          [
-                            _c("option", { attrs: { value: "" } }, [
-                              _vm._v("Selecciona una opción")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "INE" } }, [
-                              _vm._v("INE/IFE")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Pasaporte" } }, [
-                              _vm._v("Pasaporte")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Licencia C." } }, [
-                              _vm._v("Licencia de conducir")
-                            ])
-                          ]
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-md-3 form-control-label",
-                          attrs: { for: "text-input" }
-                        },
-                        [_vm._v("Número de documento")]
-                      ),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-md-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.num_documento,
-                              expression: "num_documento"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "text",
-                            placeholder: "Número del documento"
-                          },
-                          domProps: { value: _vm.num_documento },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.num_documento = $event.target.value
                             }
                           }
                         })
@@ -79540,10 +79432,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("Opciones")]),
         _vm._v(" "),
         _c("th", [_vm._v("Nombre")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Documento")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("No° Documento")]),
         _vm._v(" "),
         _c("th", [_vm._v("Ciudad")]),
         _vm._v(" "),
@@ -91178,16 +91066,6 @@ var render = function() {
                       }),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: {
-                          textContent: _vm._s(persona.tipo_documento)
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.num_documento) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
                         domProps: { textContent: _vm._s(persona.ciudad) }
                       }),
                       _vm._v(" "),
@@ -91401,104 +91279,6 @@ var render = function() {
                                 return
                               }
                               _vm.nombre = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-md-3 form-control-label",
-                          attrs: { for: "text-input" }
-                        },
-                        [_vm._v("Documento")]
-                      ),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-md-9" }, [
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.tipo_documento,
-                                expression: "tipo_documento"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.tipo_documento = $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              }
-                            }
-                          },
-                          [
-                            _c("option", { attrs: { value: "" } }, [
-                              _vm._v("Selecciona una opción")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "INE" } }, [
-                              _vm._v("INE/IFE")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Pasaporte" } }, [
-                              _vm._v("Pasaporte")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Licencia C." } }, [
-                              _vm._v("Licencia de conducir")
-                            ])
-                          ]
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-md-3 form-control-label",
-                          attrs: { for: "text-input" }
-                        },
-                        [_vm._v("Número de documento")]
-                      ),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-md-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.num_documento,
-                              expression: "num_documento"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "text",
-                            placeholder: "Número del documento"
-                          },
-                          domProps: { value: _vm.num_documento },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.num_documento = $event.target.value
                             }
                           }
                         })
@@ -91877,10 +91657,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("Opciones")]),
         _vm._v(" "),
         _c("th", [_vm._v("Nombre")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Documento")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("No° Documento")]),
         _vm._v(" "),
         _c("th", [_vm._v("Ciudad")]),
         _vm._v(" "),
@@ -92399,16 +92175,6 @@ var render = function() {
                       }),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: {
-                          textContent: _vm._s(persona.tipo_documento)
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.num_documento) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
                         domProps: { textContent: _vm._s(persona.ciudad) }
                       }),
                       _vm._v(" "),
@@ -92620,104 +92386,6 @@ var render = function() {
                                 return
                               }
                               _vm.nombre = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-md-3 form-control-label",
-                          attrs: { for: "text-input" }
-                        },
-                        [_vm._v("Documento")]
-                      ),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-md-9" }, [
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.tipo_documento,
-                                expression: "tipo_documento"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.tipo_documento = $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              }
-                            }
-                          },
-                          [
-                            _c("option", { attrs: { value: "" } }, [
-                              _vm._v("Selecciona una opción")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "INE" } }, [
-                              _vm._v("INE/IFE")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Pasaporte" } }, [
-                              _vm._v("Pasaporte")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "Licencia C." } }, [
-                              _vm._v("Licencia de conducir")
-                            ])
-                          ]
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-md-3 form-control-label",
-                          attrs: { for: "text-input" }
-                        },
-                        [_vm._v("Número de documento")]
-                      ),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-md-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.num_documento,
-                              expression: "num_documento"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "text",
-                            placeholder: "Número del documento"
-                          },
-                          domProps: { value: _vm.num_documento },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.num_documento = $event.target.value
                             }
                           }
                         })
@@ -93155,10 +92823,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("Opciones")]),
         _vm._v(" "),
         _c("th", [_vm._v("Nombre")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Documento")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("No° Documento")]),
         _vm._v(" "),
         _c("th", [_vm._v("Ciudad")]),
         _vm._v(" "),

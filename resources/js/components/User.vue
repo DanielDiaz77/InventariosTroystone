@@ -33,8 +33,8 @@
                     <tr>
                         <th>Opciones</th>
                         <th>Nombre</th>
-                        <th>Documento</th>
-                        <th>No° Documento</th>
+                        <!-- <th>Documento</th>
+                        <th>No° Documento</th> -->
                         <th>Ciudad</th>
                         <th>Domicilio</th>
                         <th>Teléfono</th>
@@ -62,8 +62,8 @@
                             </template>
                         </td>
                         <td v-text="persona.nombre"></td>
-                        <td v-text="persona.tipo_documento"></td>
-                        <td v-text="persona.num_documento"></td>
+                        <!-- <td v-text="persona.tipo_documento"></td>
+                        <td v-text="persona.num_documento"></td> -->
                         <td v-text="persona.ciudad"></td>
                         <td v-text="persona.domicilio"></td>
                         <td v-text="persona.telefono"></td>
@@ -110,7 +110,7 @@
                   <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del usuarío"/>
                 </div>
               </div>
-              <div class="form-group row">
+              <!-- <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="text-input">Documento</label>
                 <div class="col-md-9">
                   <select v-model="tipo_documento" class="form-control">
@@ -120,13 +120,13 @@
                       <option value="Licencia C.">Licencia de conducir</option>
                   </select>
                 </div>
-              </div>
-              <div class="form-group row">
+              </div> -->
+              <!-- <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="text-input">Número de documento</label>
                 <div class="col-md-9">
                   <input type="text" v-model="num_documento" class="form-control" placeholder="Número del documento"/>
                 </div>
-              </div>
+              </div> -->
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Ciudad</label>
                     <div class="col-md-9">

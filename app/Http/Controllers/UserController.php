@@ -24,7 +24,7 @@ class UserController extends Controller
             'personas.num_documento','personas.domicilio','personas.telefono',
             'personas.ciudad','personas.rfc','personas.email','users.usuario',
             'users.password','users.condicion','users.idrol','roles.nombre as rol')
-            ->orderBy('personas.id', 'desc')->paginate(3);
+            ->orderBy('personas.id', 'desc')->paginate(12);
         }
         else{
             $personas = User::join('personas','users.id','=','personas.id')
@@ -34,7 +34,7 @@ class UserController extends Controller
             'personas.ciudad','personas.rfc','personas.email','users.usuario',
             'users.password','users.condicion','users.idrol','roles.nombre as rol')
             ->where('personas.'.$criterio, 'like', '%'. $buscar . '%')
-            ->orderBy('personas.id', 'desc')->paginate(3);
+            ->orderBy('personas.id', 'desc')->paginate(12);
         }
 
 
