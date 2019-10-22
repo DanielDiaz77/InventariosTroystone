@@ -53,18 +53,23 @@
                 <tbody>
                 <tr v-for="articulo in arrayArticulo" :key="articulo.id">
                     <td>
-                    <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
-                        <i class="icon-pencil"></i>
-                    </button> &nbsp;
-                    <template v-if="articulo.condicion">
+                    <template v-if="articulo.condicion == 1">
+                        <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
+                            <i class="icon-pencil"></i>
+                        </button> &nbsp;
+                    </template>
+                    <template v-else></template>
+                    <template v-if="articulo.condicion == 1">
                         <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
                         <i class="icon-trash"></i>
                         </button>
                     </template>
-                    <template v-else>
+                    <template v-else-if="articulo.condicion == 0">
                         <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
                         <i class="icon-check"></i>
                         </button>
+                    </template>
+                    <template v-else>
                     </template>&nbsp;
                     <button type="button" @click="abrirModal2('articulo','visualizar',articulo)" class="btn btn-success btn-sm">
                         <i class="icon-eye"></i>

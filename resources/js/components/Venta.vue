@@ -437,9 +437,10 @@
                             <div v-if="pagado == 1">
                                 <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
-                            <div v-else>
+                            <div v-else-if="estadoVn == 'Registrado'">
                                 <span class="badge badge-danger">Pendiente de pago</span>
                             </div>
+                            <div v-else></div>
                         </div>
                     </div>
                     <div class="col-md-1">

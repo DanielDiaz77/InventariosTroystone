@@ -2241,6 +2241,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -9920,6 +9925,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
 //
 //
 //
@@ -76537,25 +76543,30 @@ var render = function() {
                       _c(
                         "td",
                         [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-warning btn-sm",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.abrirModal(
-                                    "articulo",
-                                    "actualizar",
-                                    articulo
-                                  )
-                                }
-                              }
-                            },
-                            [_c("i", { staticClass: "icon-pencil" })]
-                          ),
-                          _vm._v("  \n                  "),
-                          articulo.condicion
+                          articulo.condicion == 1
+                            ? [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-warning btn-sm",
+                                    attrs: { type: "button" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.abrirModal(
+                                          "articulo",
+                                          "actualizar",
+                                          articulo
+                                        )
+                                      }
+                                    }
+                                  },
+                                  [_c("i", { staticClass: "icon-pencil" })]
+                                ),
+                                _vm._v("  \n                  ")
+                              ]
+                            : void 0,
+                          _vm._v(" "),
+                          articulo.condicion == 1
                             ? [
                                 _c(
                                   "button",
@@ -76573,7 +76584,8 @@ var render = function() {
                                   [_c("i", { staticClass: "icon-trash" })]
                                 )
                               ]
-                            : [
+                            : articulo.condicion == 0
+                            ? [
                                 _c(
                                   "button",
                                   {
@@ -76587,7 +76599,8 @@ var render = function() {
                                   },
                                   [_c("i", { staticClass: "icon-check" })]
                                 )
-                              ],
+                              ]
+                            : void 0,
                           _vm._v(" \n                  "),
                           _c(
                             "button",
@@ -94831,13 +94844,15 @@ var render = function() {
                               ],
                               1
                             )
-                          : _c("div", [
+                          : _vm.estadoVn == "Registrado"
+                          ? _c("div", [
                               _c(
                                 "span",
                                 { staticClass: "badge badge-danger" },
                                 [_vm._v("Pendiente de pago")]
                               )
                             ])
+                          : _c("div")
                       ])
                     ]),
                     _vm._v(" "),
