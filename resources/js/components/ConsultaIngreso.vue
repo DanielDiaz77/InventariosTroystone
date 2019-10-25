@@ -309,7 +309,6 @@ Vue.component("Lightbox",VueLightbox);
 export default {
     data() {
         return {
-            ingreso_id: 0,
             idproveedor: 0,
             proveedor: '',
             user: '',
@@ -323,23 +322,15 @@ export default {
             condicion : 0,
             precio_venta : 0,
             cantidad : 0,
-            total_impuesto : 0.0,
-            total_parcial : 0.0,
             total: 0.0,
-
             arrayArticulo : [],
             arrayIngreso : [],
             arrayDetalle : [],
-            arrayProveedor : [],
             listado : 1,
             modal: 0,
-            modal2: 0,
             modal3: 0,
             ind : '',
             tituloModal: "",
-            tipoAccion: 0,
-            errorIngreso: 0,
-            errorMostrarMsjIngreso: [],
             pagination : {
                 'total'        : 0,
                 'current_page' : 0,
@@ -351,16 +342,8 @@ export default {
             offset : 3,
             criterio : 'num_comprobante',
             buscar : '',
-            buscarA : '',
-            criterioA : 'sku',
-
-            //Registrar artículo
-            articulo_idr: 0,
             idcategoria_r :0,
-            nombre_categoria_r : '',
-            codigo_r : '',
             sku : '',
-            nombre_art: '',
             terminado : '',
             largo : 0,
             alto : 0,
@@ -375,12 +358,7 @@ export default {
             fecha_llegada : '',
             file : '',
             imagenMinatura : '',
-            arrayArticulo_r: [],
-            errorArticulo: 0,
-            errorMostrarMsjArticulo: [],
-            arrayCategoria : [],
-            arryCodigos : [],
-            fecha_conv : ''
+            arrayCategoria : []
 
         };
     },
@@ -415,25 +393,9 @@ export default {
                 }
                 return pagesArray;
             },
-
-            calcularTotal : function(){
-                let me=this;
-                let resultado = 0;
-                for(var i=0;i<me.arrayDetalle.length;i++){
-                    resultado = resultado + (me.arrayDetalle[i].precio_venta * me.arrayDetalle[i].cantidad)
-                }
-                return resultado;
-            },
             imagen(){
                 return this.imagenMinatura;
             },
-            calcularMts : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.alto * me.largo);
-                me.metros_cuadrados = resultado;
-                return resultado;
-            }
         },
     methods: {
 
@@ -502,7 +464,6 @@ export default {
             this.fecha_llegada = '';
             this.ubicacion = '';
             this.arrayDetalle = [];
-            this.errorMostrarMsjIngreso = [];
             this.idproveedor = 0;
             this.num_comprobante = 0;
         },

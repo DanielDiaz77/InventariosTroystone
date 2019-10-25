@@ -543,14 +543,11 @@ export default {
     data() {
         return {
             venta_id: 0,
-            idcliente: 0,
             cliente: '',
             user: '',
             tipo_comprobante: "PRESUPUESTO",
             num_comprobante: "",
             impuesto: 0.16,
-            totalImpuesto : 0,
-            totalParcial : 0,
             descuento : 0,
             moneda : 'Peso Mexicano',
             tipo_cambio : 0,
@@ -591,20 +588,14 @@ export default {
             pagado : 0,
             stock : 0,
             descripcion : "",
-            arrayArticulo : [],
             arrayVenta : [],
             arrayDetalle : [],
-            arrayCliente : [],
             listado : 1,
             modal: 0,
             modal2: 0,
             modal3: 0,
-            modal4: 0,
             ind : '',
             tituloModal: "",
-            tipoAccion: 0,
-            errorVenta: 0,
-            errorMostrarMsjVenta: [],
             pagination : {
                 'total'        : 0,
                 'current_page' : 0,
@@ -616,24 +607,6 @@ export default {
             offset : 3,
             criterio : 'num_comprobante',
             buscar : '',
-            buscarA : '',
-            criterioA : 'sku',
-
-            //Variables Corte de placa
-            codigoA : "",
-            codigoB : "",
-            largoA : 0,
-            largoB : 0,
-            altoA : 0,
-            altoB : 0,
-            metros_cuadradosA : 0,
-            metros_cuadradosB : 0,
-            precioA : 0,
-            precioB : 0,
-            ubicacionA : "",
-            ubicacionB : "",
-            validatedB : 0,
-            validatedA : 0,
             btnEntrega : false,
             btnPagado : false,
             estadoVn : ""
@@ -670,19 +643,6 @@ export default {
                 }
                 return pagesArray;
             },
-            calcularTotal : function(){
-                let me=this;
-                let resultado = 0;
-                for(var i=0;i<me.arrayDetalle.length;i++){
-                    resultado = resultado + (
-                        (
-
-                            ((((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)) - me.arrayDetalle[i].descuento) * (me.impuesto + 1))
-
-                        )
-                }
-                return resultado;
-            },
             imagen(){
                 return this.imagenMinatura;
             },
@@ -691,38 +651,6 @@ export default {
                 let resultado = 0;
                 resultado = resultado + (me.alto * me.largo);
                 me.metros_cuadrados = resultado;
-                return resultado;
-            },
-            calcularMtsA : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.altoA * me.largoA);
-                me.metros_cuadradosA = resultado;
-                return resultado;
-            },
-            calcularMtsB : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.altoB * me.largoB);
-                me.metros_cuadradosB = resultado;
-                return resultado;
-            },
-            cacularPrecioExtranjero : function(){
-                let me=this;
-                let precioExt = 0;
-
-                if(me.moneda != 'Peso Mexicano'){
-                    precioExt = (precioExt + (me.precio / me.tipo_cambio));
-                    me.precio = Math.ceil(precioExt);
-                }else{
-                    precioExt = me.precio;
-                }
-                return Math.ceil(precioExt);
-            },
-            calcularMtsRestantes : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
                 return resultado;
             }
 
@@ -803,8 +731,6 @@ export default {
             this.categoria = 0;
             this.observacion = "";
             this.arrayDetalle = [];
-            this.errorVenta =0;
-            this.errorMostrarMsjVenta = [];
             this.num_comprobante = 0;
             this.entregado = 0;
             this.tipo_facturacion = "";

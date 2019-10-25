@@ -819,7 +819,6 @@ Vue.component("Lightbox",VueLightbox);
 export default {
     data() {
         return {
-            ingreso_id: 0,
             idproveedor: 0,
             proveedor: '',
             user: '',
@@ -836,7 +835,6 @@ export default {
             total_impuesto : 0.0,
             total_parcial : 0.0,
             total: 0.0,
-
             arrayArticulo : [],
             arrayIngreso : [],
             arrayDetalle : [],
@@ -863,14 +861,8 @@ export default {
             buscar : '',
             buscarA : '',
             criterioA : 'sku',
-
-            //Registrar artículo
-            articulo_idr: 0,
             idcategoria_r :0,
-            nombre_categoria_r : '',
-            codigo_r : '',
             sku : '',
-            nombre_art: '',
             terminado : '',
             largo : 0,
             alto : 0,
@@ -885,13 +877,7 @@ export default {
             fecha_llegada : '',
             file : '',
             imagenMinatura : '',
-            arrayArticulo_r: [],
-            errorArticulo: 0,
-            errorMostrarMsjArticulo: [],
-            arrayCategoria : [],
-            arryCodigos : [],
-            fecha_conv : ''
-
+            arrayCategoria : []
         };
     },
     components: {
@@ -902,7 +888,6 @@ export default {
             isActived: function(){
                 return this.pagination.current_page;
             },
-            //Calcula los elementos de la paginación
             pagesNumber: function() {
                 if(!this.pagination.to) {
                     return [];
@@ -925,7 +910,6 @@ export default {
                 }
                 return pagesArray;
             },
-
             calcularTotal : function(){
                 let me=this;
                 let resultado = 0;
@@ -946,7 +930,6 @@ export default {
             }
         },
     methods: {
-
         listarIngreso (page,buscar,criterio){
             let me=this;
             var url= '/ingreso?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;

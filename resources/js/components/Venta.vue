@@ -241,11 +241,11 @@
                         </div>
                     </div>
                     <div class="col-sm-2">
-                        <div class="form-group" v-if="moneda!='Peso Mexicano'">
+                       <!--  <div class="form-group" v-if="moneda!='Peso Mexicano'">
                             <label for="">Precio m<sup>2</sup> {{moneda}} <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
                            <input type="number" readonly :value="cacularPrecioExtranjero" class="form-control"/>
-                        </div>
-                        <div class="form-group" v-else>
+                        </div> -->
+                        <div class="form-group">
                             <label for="">Precio m<sup>2</sup> <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="precio">
                         </div>
@@ -1061,8 +1061,6 @@ export default {
             tipo_comprobante: "PRESUPUESTO",
             num_comprobante: "",
             impuesto: 0.16,
-            totalImpuesto : 0,
-            totalParcial : 0,
             descuento : 0,
             moneda : 'Peso Mexicano',
             tipo_cambio : 0,
@@ -1130,8 +1128,6 @@ export default {
             buscar : '',
             buscarA : '',
             criterioA : 'sku',
-
-            //Variables Corte de placa
             codigoA : "",
             codigoB : "",
             largoA : 0,
@@ -1219,24 +1215,24 @@ export default {
                 me.metros_cuadradosB = resultado;
                 return resultado;
             },
-            cacularPrecioExtranjero : function(){
-                let me=this;
-                let precioExt = 0;
-
-                if(me.moneda != 'Peso Mexicano'){
-                    precioExt = (precioExt + (me.precio / me.tipo_cambio));
-                    me.precio = Math.ceil(precioExt);
-                }else{
-                    precioExt = me.precio;
-                }
-                return Math.ceil(precioExt);
-            },
             calcularMtsRestantes : function(){
                 let me=this;
                 let resultado = 0;
                 resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
                 return resultado;
             }
+            /*  cacularPrecioExtranjero : function(){
+                    let me=this;
+                    let precioExt = 0;
+
+                    if(me.moneda != 'Peso Mexicano'){
+                        precioExt = (precioExt + (me.precio / me.tipo_cambio));
+                        me.precio = Math.ceil(precioExt);
+                    }else{
+                        precioExt = me.precio;
+                    }
+                    return Math.ceil(precioExt);
+                }, */
 
         },
     methods: {
@@ -1415,19 +1411,6 @@ export default {
                     }
                 }
             }
-        },
-        registrarArticulos() {
-            let me = this;
-
-            axios.post("/articulo/registrarDetalle", {
-                'data' : this.arrayDetalle
-            })
-            .then(function(response) {
-                me.registrarIngreso();
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
         },
         registrarVenta(){
 
@@ -1790,19 +1773,6 @@ export default {
                 console.log(error);
             });
         },
-        obtenerImagen(e){
-            let img = e.target.files[0];
-            this.file = img;
-            this.cargarImagen(img);
-        },
-        cargarImagen(img){
-            let reader = new FileReader();
-            reader.onload = (e) => {
-                this.imagenMinatura = e.target.result;
-                this.file =  e.target.result;
-            }
-            reader.readAsDataURL(img);
-        },
         abrirModal3(index){
             let me = this;
             me.ind = index;
@@ -2021,7 +1991,7 @@ export default {
             });
         },
         pdfVenta(id){
-            window.open('http://127.0.0.1:8000/venta/pdf/'+id + ',' + '_blank');
+            window.open('http://127.0.0.1:8000/venta/pdf/'+id);
         }
     },
     mounted() {

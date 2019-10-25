@@ -2251,9 +2251,6 @@ __webpack_require__.r(__webpack_exports__);
 
 Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_1___default.a);
 Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
-/* import VueSilentbox from 'vue-silentbox';
-Vue.use(VueSilentbox); */
-
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2360,10 +2357,6 @@ Vue.use(VueSilentbox); */
         console.log(error);
       });
     },
-
-    /* cargarPdf(){
-        window.open('http://127.0.0.1:8000/articulo/listarPdf','_blank');
-    }, */
     cargarExcel: function cargarExcel() {
       window.open('http://127.0.0.1:8000/articulo/listarExcel', '_blank');
     },
@@ -3853,7 +3846,6 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      ingreso_id: 0,
       idproveedor: 0,
       proveedor: '',
       user: '',
@@ -3867,22 +3859,15 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       condicion: 0,
       precio_venta: 0,
       cantidad: 0,
-      total_impuesto: 0.0,
-      total_parcial: 0.0,
       total: 0.0,
       arrayArticulo: [],
       arrayIngreso: [],
       arrayDetalle: [],
-      arrayProveedor: [],
       listado: 1,
       modal: 0,
-      modal2: 0,
       modal3: 0,
       ind: '',
       tituloModal: "",
-      tipoAccion: 0,
-      errorIngreso: 0,
-      errorMostrarMsjIngreso: [],
       pagination: {
         'total': 0,
         'current_page': 0,
@@ -3894,15 +3879,8 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       offset: 3,
       criterio: 'num_comprobante',
       buscar: '',
-      buscarA: '',
-      criterioA: 'sku',
-      //Registrar artículo
-      articulo_idr: 0,
       idcategoria_r: 0,
-      nombre_categoria_r: '',
-      codigo_r: '',
       sku: '',
-      nombre_art: '',
       terminado: '',
       largo: 0,
       alto: 0,
@@ -3917,12 +3895,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       fecha_llegada: '',
       file: '',
       imagenMinatura: '',
-      arrayArticulo_r: [],
-      errorArticulo: 0,
-      errorMostrarMsjArticulo: [],
-      arrayCategoria: [],
-      arryCodigos: [],
-      fecha_conv: ''
+      arrayCategoria: []
     };
   },
   components: {
@@ -3960,25 +3933,8 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
 
       return pagesArray;
     },
-    calcularTotal: function calcularTotal() {
-      var me = this;
-      var resultado = 0;
-
-      for (var i = 0; i < me.arrayDetalle.length; i++) {
-        resultado = resultado + me.arrayDetalle[i].precio_venta * me.arrayDetalle[i].cantidad;
-      }
-
-      return resultado;
-    },
     imagen: function imagen() {
       return this.imagenMinatura;
-    },
-    calcularMts: function calcularMts() {
-      var me = this;
-      var resultado = 0;
-      resultado = resultado + me.alto * me.largo;
-      me.metros_cuadrados = resultado;
-      return resultado;
     }
   },
   methods: {
@@ -4046,7 +4002,6 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.fecha_llegada = '';
       this.ubicacion = '';
       this.arrayDetalle = [];
-      this.errorMostrarMsjIngreso = [];
       this.idproveedor = 0;
       this.num_comprobante = 0;
     },
@@ -4700,14 +4655,11 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
   data: function data() {
     return {
       venta_id: 0,
-      idcliente: 0,
       cliente: '',
       user: '',
       tipo_comprobante: "PRESUPUESTO",
       num_comprobante: "",
       impuesto: 0.16,
-      totalImpuesto: 0,
-      totalParcial: 0,
       descuento: 0,
       moneda: 'Peso Mexicano',
       tipo_cambio: 0,
@@ -4748,20 +4700,14 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       pagado: 0,
       stock: 0,
       descripcion: "",
-      arrayArticulo: [],
       arrayVenta: [],
       arrayDetalle: [],
-      arrayCliente: [],
       listado: 1,
       modal: 0,
       modal2: 0,
       modal3: 0,
-      modal4: 0,
       ind: '',
       tituloModal: "",
-      tipoAccion: 0,
-      errorVenta: 0,
-      errorMostrarMsjVenta: [],
       pagination: {
         'total': 0,
         'current_page': 0,
@@ -4773,23 +4719,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       offset: 3,
       criterio: 'num_comprobante',
       buscar: '',
-      buscarA: '',
-      criterioA: 'sku',
-      //Variables Corte de placa
-      codigoA: "",
-      codigoB: "",
-      largoA: 0,
-      largoB: 0,
-      altoA: 0,
-      altoB: 0,
-      metros_cuadradosA: 0,
-      metros_cuadradosB: 0,
-      precioA: 0,
-      precioB: 0,
-      ubicacionA: "",
-      ubicacionB: "",
-      validatedB: 0,
-      validatedA: 0,
       btnEntrega: false,
       btnPagado: false,
       estadoVn: ""
@@ -4830,16 +4759,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
 
       return pagesArray;
     },
-    calcularTotal: function calcularTotal() {
-      var me = this;
-      var resultado = 0;
-
-      for (var i = 0; i < me.arrayDetalle.length; i++) {
-        resultado = resultado + (me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados * me.arrayDetalle[i].cantidad - me.arrayDetalle[i].descuento) * (me.impuesto + 1);
-      }
-
-      return resultado;
-    },
     imagen: function imagen() {
       return this.imagenMinatura;
     },
@@ -4848,39 +4767,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       var resultado = 0;
       resultado = resultado + me.alto * me.largo;
       me.metros_cuadrados = resultado;
-      return resultado;
-    },
-    calcularMtsA: function calcularMtsA() {
-      var me = this;
-      var resultado = 0;
-      resultado = resultado + me.altoA * me.largoA;
-      me.metros_cuadradosA = resultado;
-      return resultado;
-    },
-    calcularMtsB: function calcularMtsB() {
-      var me = this;
-      var resultado = 0;
-      resultado = resultado + me.altoB * me.largoB;
-      me.metros_cuadradosB = resultado;
-      return resultado;
-    },
-    cacularPrecioExtranjero: function cacularPrecioExtranjero() {
-      var me = this;
-      var precioExt = 0;
-
-      if (me.moneda != 'Peso Mexicano') {
-        precioExt = precioExt + me.precio / me.tipo_cambio;
-        me.precio = Math.ceil(precioExt);
-      } else {
-        precioExt = me.precio;
-      }
-
-      return Math.ceil(precioExt);
-    },
-    calcularMtsRestantes: function calcularMtsRestantes() {
-      var me = this;
-      var resultado = 0;
-      resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
       return resultado;
     }
   },
@@ -4959,8 +4845,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.categoria = 0;
       this.observacion = "";
       this.arrayDetalle = [];
-      this.errorVenta = 0;
-      this.errorMostrarMsjVenta = [];
       this.num_comprobante = 0;
       this.entregado = 0;
       this.tipo_facturacion = "";
@@ -8210,7 +8094,6 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      ingreso_id: 0,
       idproveedor: 0,
       proveedor: '',
       user: '',
@@ -8253,13 +8136,8 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       buscar: '',
       buscarA: '',
       criterioA: 'sku',
-      //Registrar artículo
-      articulo_idr: 0,
       idcategoria_r: 0,
-      nombre_categoria_r: '',
-      codigo_r: '',
       sku: '',
-      nombre_art: '',
       terminado: '',
       largo: 0,
       alto: 0,
@@ -8274,12 +8152,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       fecha_llegada: '',
       file: '',
       imagenMinatura: '',
-      arrayArticulo_r: [],
-      errorArticulo: 0,
-      errorMostrarMsjArticulo: [],
-      arrayCategoria: [],
-      arryCodigos: [],
-      fecha_conv: ''
+      arrayCategoria: []
     };
   },
   components: {
@@ -8290,7 +8163,6 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
     isActived: function isActived() {
       return this.pagination.current_page;
     },
-    //Calcula los elementos de la paginación
     pagesNumber: function pagesNumber() {
       if (!this.pagination.to) {
         return [];
@@ -10987,8 +10859,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       tipo_comprobante: "PRESUPUESTO",
       num_comprobante: "",
       impuesto: 0.16,
-      totalImpuesto: 0,
-      totalParcial: 0,
       descuento: 0,
       moneda: 'Peso Mexicano',
       tipo_cambio: 0,
@@ -11056,7 +10926,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       buscar: '',
       buscarA: '',
       criterioA: 'sku',
-      //Variables Corte de placa
       codigoA: "",
       codigoB: "",
       largoA: 0,
@@ -11145,25 +11014,24 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       me.metros_cuadradosB = resultado;
       return resultado;
     },
-    cacularPrecioExtranjero: function cacularPrecioExtranjero() {
-      var me = this;
-      var precioExt = 0;
-
-      if (me.moneda != 'Peso Mexicano') {
-        precioExt = precioExt + me.precio / me.tipo_cambio;
-        me.precio = Math.ceil(precioExt);
-      } else {
-        precioExt = me.precio;
-      }
-
-      return Math.ceil(precioExt);
-    },
     calcularMtsRestantes: function calcularMtsRestantes() {
       var me = this;
       var resultado = 0;
       resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
       return resultado;
     }
+    /*  cacularPrecioExtranjero : function(){
+            let me=this;
+            let precioExt = 0;
+             if(me.moneda != 'Peso Mexicano'){
+                precioExt = (precioExt + (me.precio / me.tipo_cambio));
+                me.precio = Math.ceil(precioExt);
+            }else{
+                precioExt = me.precio;
+            }
+            return Math.ceil(precioExt);
+        }, */
+
   },
   methods: {
     listarVenta: function listarVenta(page, buscar, criterio) {
@@ -11338,16 +11206,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
           }
         }
       }
-    },
-    registrarArticulos: function registrarArticulos() {
-      var me = this;
-      axios.post("/articulo/registrarDetalle", {
-        'data': this.arrayDetalle
-      }).then(function (response) {
-        me.registrarIngreso();
-      })["catch"](function (error) {
-        console.log(error);
-      });
     },
     registrarVenta: function registrarVenta() {
       if (this.validarVenta()) {
@@ -11676,23 +11534,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         console.log(error);
       });
     },
-    obtenerImagen: function obtenerImagen(e) {
-      var img = e.target.files[0];
-      this.file = img;
-      this.cargarImagen(img);
-    },
-    cargarImagen: function cargarImagen(img) {
-      var _this2 = this;
-
-      var reader = new FileReader();
-
-      reader.onload = function (e) {
-        _this2.imagenMinatura = e.target.result;
-        _this2.file = e.target.result;
-      };
-
-      reader.readAsDataURL(img);
-    },
     abrirModal3: function abrirModal3(index) {
       var me = this;
       me.ind = index;
@@ -11914,7 +11755,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       });
     },
     pdfVenta: function pdfVenta(id) {
-      window.open('http://127.0.0.1:8000/venta/pdf/' + id + ',' + '_blank');
+      window.open('http://127.0.0.1:8000/venta/pdf/' + id);
     }
   },
   mounted: function mounted() {
@@ -94092,84 +93933,55 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-sm-2" }, [
-                      _vm.moneda != "Peso Mexicano"
-                        ? _c("div", { staticClass: "form-group" }, [
-                            _c("label", { attrs: { for: "" } }, [
-                              _vm._v("Precio m"),
-                              _c("sup", [_vm._v("2")]),
-                              _vm._v(" " + _vm._s(_vm.moneda) + " "),
-                              _c(
-                                "span",
-                                {
-                                  directives: [
-                                    {
-                                      name: "show",
-                                      rawName: "v-show",
-                                      value: _vm.precio == 0,
-                                      expression: "precio==0"
-                                    }
-                                  ],
-                                  staticStyle: { color: "red" }
-                                },
-                                [_vm._v("(*Ingrese el precio)")]
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("input", {
-                              staticClass: "form-control",
-                              attrs: { type: "number", readonly: "" },
-                              domProps: { value: _vm.cacularPrecioExtranjero }
-                            })
-                          ])
-                        : _c("div", { staticClass: "form-group" }, [
-                            _c("label", { attrs: { for: "" } }, [
-                              _vm._v("Precio m"),
-                              _c("sup", [_vm._v("2")]),
-                              _vm._v(" "),
-                              _c(
-                                "span",
-                                {
-                                  directives: [
-                                    {
-                                      name: "show",
-                                      rawName: "v-show",
-                                      value: _vm.precio == 0,
-                                      expression: "precio==0"
-                                    }
-                                  ],
-                                  staticStyle: { color: "red" }
-                                },
-                                [_vm._v("(*Ingrese el precio)")]
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("input", {
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Precio m"),
+                          _c("sup", [_vm._v("2")]),
+                          _vm._v(" "),
+                          _c(
+                            "span",
+                            {
                               directives: [
                                 {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.precio,
-                                  expression: "precio"
+                                  name: "show",
+                                  rawName: "v-show",
+                                  value: _vm.precio == 0,
+                                  expression: "precio==0"
                                 }
                               ],
-                              staticClass: "form-control",
-                              attrs: {
-                                type: "number",
-                                min: "0",
-                                value: "0",
-                                step: "any"
-                              },
-                              domProps: { value: _vm.precio },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.precio = $event.target.value
-                                }
+                              staticStyle: { color: "red" }
+                            },
+                            [_vm._v("(*Ingrese el precio)")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.precio,
+                              expression: "precio"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "number",
+                            min: "0",
+                            value: "0",
+                            step: "any"
+                          },
+                          domProps: { value: _vm.precio },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
                               }
-                            })
-                          ])
+                              _vm.precio = $event.target.value
+                            }
+                          }
+                        })
+                      ])
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-sm-2" }, [

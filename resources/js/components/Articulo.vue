@@ -407,8 +407,6 @@ import VueLightbox from 'vue-lightbox';
 import ToggleButton from 'vue-js-toggle-button';
 Vue.component("Lightbox",VueLightbox);
 Vue.use(ToggleButton);
-/* import VueSilentbox from 'vue-silentbox';
-Vue.use(VueSilentbox); */
 export default {
     data() {
         return {
@@ -515,9 +513,6 @@ export default {
                 console.log(error);
             });
         },
-        /* cargarPdf(){
-            window.open('http://127.0.0.1:8000/articulo/listarPdf','_blank');
-        }, */
         cargarExcel(){
             window.open('http://127.0.0.1:8000/articulo/listarExcel','_blank');
         },
