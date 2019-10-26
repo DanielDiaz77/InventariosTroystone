@@ -60,11 +60,11 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/proveedor/selectProveedor', 'ProveedorController@selectProveedor');
 
         //INGRESOS
-        Route::get('/ingreso', 'ingresoController@index');
-        Route::post('/ingreso/registrar', 'ingresoController@store');
-        Route::get('/ingreso/desactivar', 'ingresoController@desactivar');
-        Route::get('/ingreso/obtenerCabecera', 'ingresoController@obtenerCabecera');
-        Route::get('/ingreso/obtenerDetalles', 'ingresoController@obtenerDetalles');
+        Route::get('/ingreso', 'IngresoController@index');
+        Route::post('/ingreso/registrar', 'IngresoController@store');
+        Route::get('/ingreso/desactivar', 'IngresoController@desactivar');
+        Route::get('/ingreso/obtenerCabecera', 'IngresoController@obtenerCabecera');
+        Route::get('/ingreso/obtenerDetalles', 'IngresoController@obtenerDetalles');
 
     });
 
@@ -80,15 +80,16 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/articulo/listarArticuloVenta', 'ArticuloController@listarArticuloVenta');
 
         //VENTAS
-        Route::get('/venta', 'ventaController@index');
-        Route::post('/venta/registrar', 'ventaController@store');
-        Route::put('/venta/desactivar', 'ventaController@desactivar');
-        Route::get('/venta/obtenerCabecera', 'ventaController@obtenerCabecera');
-        Route::get('/venta/obtenerDetalles', 'ventaController@obtenerDetalles');
+        Route::get('/venta', 'VentaController@index');
+        Route::post('/venta/registrar', 'VentaController@store');
+        Route::put('/venta/desactivar', 'VentaController@desactivar');
+        Route::get('/venta/obtenerCabecera', 'VentaController@obtenerCabecera');
+        Route::get('/venta/obtenerDetalles', 'VentaController@obtenerDetalles');
         Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
-        Route::get('/venta/pdf/{id}', 'ventaController@pdf')->name('venta_pdf');
-        Route::post('/venta/cambiarEntrega', 'ventaController@cambiarEntrega');
-        Route::post('/venta/cambiarPagado', 'ventaController@cambiarPagado');
+        Route::get('/venta/pdf/{id}', 'VentaController@pdf')->name('venta_pdf');
+        Route::post('/venta/cambiarEntrega', 'VentaController@cambiarEntrega');
+        Route::post('/venta/cambiarPagado', 'VentaController@cambiarPagado');
+        Route::post('/venta/actualizarObservacion', 'VentaController@actualizarObservacion');
 
     });
 
@@ -143,19 +144,22 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/user/activar', 'UserController@activar');
 
         //INGRESOS
-        Route::get('/ingreso', 'ingresoController@index');
-        Route::post('/ingreso/registrar', 'ingresoController@store');
-        Route::put('/ingreso/desactivar', 'ingresoController@desactivar');
-        Route::get('/ingreso/obtenerCabecera', 'ingresoController@obtenerCabecera');
-        Route::get('/ingreso/obtenerDetalles', 'ingresoController@obtenerDetalles');
+        Route::get('/ingreso', 'IngresoController@index');
+        Route::post('/ingreso/registrar', 'IngresoController@store');
+        Route::put('/ingreso/desactivar', 'IngresoController@desactivar');
+        Route::get('/ingreso/obtenerCabecera', 'IngresoController@obtenerCabecera');
+        Route::get('/ingreso/obtenerDetalles', 'IngresoController@obtenerDetalles');
 
-        //VENTAS
-        Route::get('/venta','ventaController@index');
-        Route::post('/venta/registrar', 'ventaController@store');
-        Route::put('/venta/desactivar', 'ventaController@desactivar');
-        Route::get('/venta/obtenerCabecera', 'ventaController@obtenerCabecera');
-        Route::get('/venta/obtenerDetalles', 'ventaController@obtenerDetalles');
-        Route::get('/venta/pdf/{id}', 'ventaController@pdf')->name('venta_pdf');
+        Route::get('/venta', 'VentaController@index');
+        Route::post('/venta/registrar', 'VentaController@store');
+        Route::put('/venta/desactivar', 'VentaController@desactivar');
+        Route::get('/venta/obtenerCabecera', 'VentaController@obtenerCabecera');
+        Route::get('/venta/obtenerDetalles', 'VentaController@obtenerDetalles');
+        Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
+        Route::get('/venta/pdf/{id}', 'VentaController@pdf')->name('venta_pdf');
+        Route::post('/venta/cambiarEntrega', 'VentaController@cambiarEntrega');
+        Route::post('/venta/cambiarPagado', 'VentaController@cambiarPagado');
+        Route::post('/venta/actualizarObservacion', 'VentaController@actualizarObservacion');
 
         //COTIZACIONES
         Route::get('/cotizacion', 'CotizacionController@index');

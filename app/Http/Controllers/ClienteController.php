@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         if(!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
@@ -33,8 +32,7 @@ class ClienteController extends Controller
         ];
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         if(!$request->ajax()) return redirect('/');
         $persona = new Persona();
         $persona->nombre = $request->nombre;
@@ -45,7 +43,8 @@ class ClienteController extends Controller
         $persona->telefono = $request->telefono;
         $persona->email = $request->email;
         $persona->rfc = $request->rfc;
-
+        $persona->tipo = $request->tipo;
+        $persona->observacion = $request->observacion;
         $persona->save();
     }
 
@@ -61,7 +60,8 @@ class ClienteController extends Controller
         $persona->telefono = $request->telefono;
         $persona->email = $request->email;
         $persona->rfc = $request->rfc;
-
+        $persona->tipo = $request->tipo;
+        $persona->observacion = $request->observacion;
         $persona->save();
     }
 

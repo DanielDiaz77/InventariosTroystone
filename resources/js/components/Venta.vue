@@ -138,7 +138,11 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="">Número de presupuesto (*)</label>
-                            <input type="text" class="form-control" v-model="num_comprobante" placeholder="000xx">
+                            <div class="row">
+
+                                <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
+                                <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -539,8 +543,30 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-4">
-                        <label for="exampleFormControlTextarea2"><strong>Observaciones</strong></label>
-                        <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacion"></textarea>
+                        <div class="row">
+                            <div class="col">
+                                <label for="exampleFormControlTextarea2"><strong>Observaciones</strong></label>
+                            </div>
+                            <div class="col-2">
+                                <template v-if="obsEditable == 0">
+                                    <button type="button" class="btn btn-warning btn-sm float-right" @click="editObservacion()">
+                                        <i class="icon-pencil"></i>
+                                    </button>
+                                </template>
+                                <template v-else>
+                                    <button type="button" class="btn btn-primary btn-sm float-right" @click="actualizarObservacion(venta_id)">
+                                        <i class="fa fa-floppy-o"></i>
+                                    </button>
+                                </template>&nbsp;
+
+                            </div>
+                        </div>&nbsp;
+                        <template v-if="obsEditable == 0">
+                            <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacion"></textarea>
+                        </template>
+                        <template v-else>
+                            <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
+                        </template>
                     </div>&nbsp;
                     <div class="col-md-2">
                         <div class="form-group">
@@ -1144,7 +1170,9 @@ export default {
             validatedA : 0,
             btnEntrega : false,
             btnPagado : false,
-            estadoVn : ""
+            estadoVn : "",
+            CodeDate : "",
+            obsEditable : 0
         };
     },
     components: {
@@ -1202,7 +1230,7 @@ export default {
                 return resultado;
             },
             calcularMtsA : function(){
-                let me=this;
+                let me = this;
                 let resultado = 0;
                 resultado = resultado + (me.altoA * me.largoA);
                 me.metros_cuadradosA = resultado;
@@ -1220,6 +1248,14 @@ export default {
                 let resultado = 0;
                 resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
                 return resultado;
+            },
+            getFechaCode : function(){
+                let me = this;
+                let date = "";
+                moment.locale('es');
+                date = moment().format('YYMMDD');
+                me.CodeDate = moment().format('YYMMDD');
+                return date;
             }
             /*  cacularPrecioExtranjero : function(){
                     let me=this;
@@ -1425,10 +1461,12 @@ export default {
 
             let me = this;
 
+            var numcomp = "V-".concat(me.CodeDate,"-",me.num_comprobante);
+
             axios.post('/venta/registrar',{
                 'idcliente': this.idcliente,
                 'tipo_comprobante': this.tipo_comprobante,
-                'num_comprobante' : this.num_comprobante,
+                'num_comprobante' : numcomp,
                 'impuesto' : this.impuesto,
                 'total' : this.total,
                 'forma_pago' : this.forma_pago,
@@ -1591,6 +1629,7 @@ export default {
             this.entregado = 0;
             this.btnEntrega =  false;
             this.btnPagado = false;
+            this.obsEditable = 0;
         },
         verVenta(id){
 
@@ -1986,6 +2025,21 @@ export default {
                 'pagado' : this.pagado
             }).then(function (response) {
                 me.listarVenta(1,'','num_comprobante');
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        editObservacion(){
+            let me = this;
+            me.obsEditable = 1;
+        },
+        actualizarObservacion(id){
+            let me = this;
+            axios.post('/venta/actualizarObservacion',{
+                'id': id,
+                'observacion' : this.observacion
+            }).then(function (response) {
+                me.obsEditable = 0;
             }).catch(function (error) {
                 console.log(error);
             });

@@ -210,4 +210,11 @@ class VentaController extends Controller
         $venta->pagado = $request->pagado;
         $venta->save();
     }
+
+    public function actualizarObservacion(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $venta = Venta::findOrFail($request->id);
+        $venta->observacion = $request->observacion;
+        $venta->save();
+    }
 }

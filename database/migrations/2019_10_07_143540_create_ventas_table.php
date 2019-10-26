@@ -25,9 +25,17 @@ class CreateVentasTable extends Migration
             $table->dateTime('fecha_hora');
             $table->decimal('impuesto',4,2);
             $table->decimal('total',11,2);
+            $table->string('forma_pago',50)->nullable();
+            $table->string('tiempo_entrega',50)->nullable();
+            $table->string('lugar_entrega',50)->nullable();
+            $table->boolean('entregado')->default(0);
             $table->string('estado',20);
             $table->string('moneda',20);
             $table->decimal('tipo_cambio',11,4)->nullable();
+            $table->integer('num_cheque')->nullable();
+            $table->string('banco',50)->nullable();
+            $table->string('tipo_facturacion',50);
+            $table->boolean('pagado')->default(0);
             $table->string('observacion',256)->nullable();
             $table->timestamps();
         });

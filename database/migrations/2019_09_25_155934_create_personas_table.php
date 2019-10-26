@@ -23,6 +23,8 @@ class CreatePersonasTable extends Migration
             $table->string('telefono',20)->nullable();
             $table->string('email',50)->nullable();
             $table->string('rfc',13)->nullable()->unique();
+            $table->string('tipo',20)->nullable();
+            $table->string('observacion',256)->nullable();
             $table->timestamps();
         });
     }

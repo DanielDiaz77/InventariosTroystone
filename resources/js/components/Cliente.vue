@@ -35,11 +35,13 @@
                         <th>Nombre</th>
                         <!-- <th>Documento</th>
                         <th>No° Documento</th> -->
-                        <th>Ciudad</th>
+                        <th>Ciudad y estado</th>
                         <th>Domicilio</th>
                         <th>Teléfono</th>
                         <th>Correo electrónico</th>
                         <th>RFC</th>
+                        <th>Tipo</th>
+                        <th>Observaciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,6 +59,8 @@
                         <td v-text="persona.telefono"></td>
                         <td v-text="persona.email"></td>
                         <td v-text="persona.rfc"></td>
+                        <td v-text="persona.tipo"></td>
+                        <td v-text="persona.observacion"></td>
                     </tr>
                 </tbody>
             </table>
@@ -114,9 +118,9 @@
                 </div>
               </div> -->
                 <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Ciudad</label>
+                    <label class="col-md-3 form-control-label" for="text-input">Ciudad y estado</label>
                     <div class="col-md-9">
-                        <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad donde habita persona"/>
+                        <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado donde habita persona"/>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -142,6 +146,28 @@
                     <div class="col-md-9">
                         <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC de la persona"/>
                     </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 form-control-label" for="text-input">Tipo</label>
+                    <div class="col-md-9">
+                         <select class="form-control" v-model="tipo">
+                            <option value="" disabled>Seleccione el tipo de cliente</option>
+                            <option value="PROSPECTO">PROSPECTO</option>
+                            <option value="PRIMER CONTACTO">PRIMER CONTACTO</option>
+                            <option value="CLIENTE FINAL">CLIENTE FINAL</option>
+                            <option value="CLIENTE MARMOLERO">CLIENTE MARMOLERO</option>
+                            <option value="CLIENTE COCINERO">CLIENTE COCINERO</option>
+                            <option value="CLIENTE ARQ">CLIENTE ARQ</option>
+                            <option value="GENERAL Y PAGOS">GENERAL Y PAGOS</option>
+                            <option value="NO PROMOVER">NO PROMOVER</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                     <label class="col-md-3 form-control-label" for="text-area">Observaciones</label>
+                    <div class="col-md-9">
+                        <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
+                    </div>&nbsp;
                 </div>
 
               <div v-show="errorPersona" class="form-group row div-error">
@@ -178,6 +204,8 @@ export default {
             telefono: "",
             email: "",
             rfc: "",
+            tipo: "",
+            observacion: "",
             arrayPersona: [],
             modal: 0,
             tituloModal: "",
@@ -264,7 +292,9 @@ export default {
                 'domicilio': this.domicilio,
                 'telefono': this.telefono,
                 'email': this.email,
-                'rfc': this.rfc
+                'rfc': this.rfc,
+                'tipo': this.tipo,
+                'observacion':this.observacion
             })
             .then(function(response) {
                 me.cerrarModal();
@@ -288,7 +318,9 @@ export default {
                 'telefono': this.telefono,
                 'email': this.email,
                 'rfc': this.rfc,
-                'id': this.persona_id
+                'id': this.persona_id,
+                'tipo': this.tipo,
+                'observacion':this.observacion
             })
             .then(function(response) {
                 me.cerrarModal();
@@ -321,6 +353,8 @@ export default {
             this.email = "";
             this.rfc = "";
             this.errorPersona = 0;
+            this.tipo = "";
+            this.observacion = "";
         },
         abrirModal(modelo, accion, data = []) {
             switch (modelo) {
@@ -337,6 +371,8 @@ export default {
                             this.telefono = "";
                             this.email = "";
                             this.rfc = "";
+                            this.tipo = "";
+                            this.observacion = "";
                             this.tipoAccion = 1;
                             break;
                         }
@@ -354,6 +390,8 @@ export default {
                             this.telefono = data["telefono"];"";
                             this.email = data["email"];
                             this.rfc = data["rfc"];
+                            this.tipo = data["tipo"];
+                            this.observacion = data["observacion"];
                             break;
                         }
                     }

@@ -3319,6 +3319,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -3331,6 +3357,8 @@ __webpack_require__.r(__webpack_exports__);
       telefono: "",
       email: "",
       rfc: "",
+      tipo: "",
+      observacion: "",
       arrayPersona: [],
       modal: 0,
       tituloModal: "",
@@ -3415,7 +3443,9 @@ __webpack_require__.r(__webpack_exports__);
         'domicilio': this.domicilio,
         'telefono': this.telefono,
         'email': this.email,
-        'rfc': this.rfc
+        'rfc': this.rfc,
+        'tipo': this.tipo,
+        'observacion': this.observacion
       }).then(function (response) {
         me.cerrarModal();
         me.listarPersona(1, '', 'nombre');
@@ -3438,7 +3468,9 @@ __webpack_require__.r(__webpack_exports__);
         'telefono': this.telefono,
         'email': this.email,
         'rfc': this.rfc,
-        'id': this.persona_id
+        'id': this.persona_id,
+        'tipo': this.tipo,
+        'observacion': this.observacion
       }).then(function (response) {
         me.cerrarModal();
         me.listarPersona(1, '', 'nombre');
@@ -3465,6 +3497,8 @@ __webpack_require__.r(__webpack_exports__);
       this.email = "";
       this.rfc = "";
       this.errorPersona = 0;
+      this.tipo = "";
+      this.observacion = "";
     },
     abrirModal: function abrirModal(modelo, accion) {
       var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
@@ -3485,6 +3519,8 @@ __webpack_require__.r(__webpack_exports__);
                   this.telefono = "";
                   this.email = "";
                   this.rfc = "";
+                  this.tipo = "";
+                  this.observacion = "";
                   this.tipoAccion = 1;
                   break;
                 }
@@ -3505,6 +3541,8 @@ __webpack_require__.r(__webpack_exports__);
                   "";
                   this.email = data["email"];
                   this.rfc = data["rfc"];
+                  this.tipo = data["tipo"];
+                  this.observacion = data["observacion"];
                   break;
                 }
             }
@@ -10842,6 +10880,32 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -10942,7 +11006,9 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       validatedA: 0,
       btnEntrega: false,
       btnPagado: false,
-      estadoVn: ""
+      estadoVn: "",
+      CodeDate: "",
+      obsEditable: 0
     };
   },
   components: {
@@ -11019,6 +11085,14 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       var resultado = 0;
       resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
       return resultado;
+    },
+    getFechaCode: function getFechaCode() {
+      var me = this;
+      var date = "";
+      moment__WEBPACK_IMPORTED_MODULE_3___default.a.locale('es');
+      date = moment__WEBPACK_IMPORTED_MODULE_3___default()().format('YYMMDD');
+      me.CodeDate = moment__WEBPACK_IMPORTED_MODULE_3___default()().format('YYMMDD');
+      return date;
     }
     /*  cacularPrecioExtranjero : function(){
             let me=this;
@@ -11218,10 +11292,11 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       }
 
       var me = this;
+      var numcomp = "V-".concat(me.CodeDate, "-", me.num_comprobante);
       axios.post('/venta/registrar', {
         'idcliente': this.idcliente,
         'tipo_comprobante': this.tipo_comprobante,
-        'num_comprobante': this.num_comprobante,
+        'num_comprobante': numcomp,
         'impuesto': this.impuesto,
         'total': this.total,
         'forma_pago': this.forma_pago,
@@ -11372,6 +11447,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.entregado = 0;
       this.btnEntrega = false;
       this.btnPagado = false;
+      this.obsEditable = 0;
     },
     verVenta: function verVenta(id) {
       var me = this;
@@ -11750,6 +11826,21 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         'pagado': this.pagado
       }).then(function (response) {
         me.listarVenta(1, '', 'num_comprobante');
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    editObservacion: function editObservacion() {
+      var me = this;
+      me.obsEditable = 1;
+    },
+    actualizarObservacion: function actualizarObservacion(id) {
+      var me = this;
+      axios.post('/venta/actualizarObservacion', {
+        'id': id,
+        'observacion': this.observacion
+      }).then(function (response) {
+        me.obsEditable = 0;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -78798,6 +78889,14 @@ var render = function() {
                       _vm._v(" "),
                       _c("td", {
                         domProps: { textContent: _vm._s(persona.rfc) }
+                      }),
+                      _vm._v(" "),
+                      _c("td", {
+                        domProps: { textContent: _vm._s(persona.tipo) }
+                      }),
+                      _vm._v(" "),
+                      _c("td", {
+                        domProps: { textContent: _vm._s(persona.observacion) }
                       })
                     ])
                   }),
@@ -78997,7 +79096,7 @@ var render = function() {
                           staticClass: "col-md-3 form-control-label",
                           attrs: { for: "text-input" }
                         },
-                        [_vm._v("Ciudad")]
+                        [_vm._v("Ciudad y estado")]
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
@@ -79013,7 +79112,7 @@ var render = function() {
                           staticClass: "form-control",
                           attrs: {
                             type: "text",
-                            placeholder: "Ciudad donde habita persona"
+                            placeholder: "Ciudad y estado donde habita persona"
                           },
                           domProps: { value: _vm.ciudad },
                           on: {
@@ -79181,6 +79280,134 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-md-3 form-control-label",
+                          attrs: { for: "text-input" }
+                        },
+                        [_vm._v("Tipo")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-9" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.tipo,
+                                expression: "tipo"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.tipo = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { value: "", disabled: "" } },
+                              [_vm._v("Seleccione el tipo de cliente")]
+                            ),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "PROSPECTO" } }, [
+                              _vm._v("PROSPECTO")
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "PRIMER CONTACTO" } },
+                              [_vm._v("PRIMER CONTACTO")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "CLIENTE FINAL" } },
+                              [_vm._v("CLIENTE FINAL")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "CLIENTE MARMOLERO" } },
+                              [_vm._v("CLIENTE MARMOLERO")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "CLIENTE COCINERO" } },
+                              [_vm._v("CLIENTE COCINERO")]
+                            ),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "CLIENTE ARQ" } }, [
+                              _vm._v("CLIENTE ARQ")
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "GENERAL Y PAGOS" } },
+                              [_vm._v("GENERAL Y PAGOS")]
+                            ),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "NO PROMOVER" } }, [
+                              _vm._v("NO PROMOVER")
+                            ])
+                          ]
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-md-3 form-control-label",
+                          attrs: { for: "text-area" }
+                        },
+                        [_vm._v("Observaciones")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-9" }, [
+                        _c("textarea", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.observacion,
+                              expression: "observacion"
+                            }
+                          ],
+                          staticClass: "form-control rounded-0",
+                          attrs: { rows: "3", maxlength: "256" },
+                          domProps: { value: _vm.observacion },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.observacion = $event.target.value
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" \n              ")
+                    ]),
+                    _vm._v(" "),
                     _c(
                       "div",
                       {
@@ -79287,7 +79514,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Nombre")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Ciudad")]),
+        _c("th", [_vm._v("Ciudad y estado")]),
         _vm._v(" "),
         _c("th", [_vm._v("Domicilio")]),
         _vm._v(" "),
@@ -79295,7 +79522,11 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Correo electrónico")]),
         _vm._v(" "),
-        _c("th", [_vm._v("RFC")])
+        _c("th", [_vm._v("RFC")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Tipo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Observaciones")])
       ])
     ])
   }
@@ -93268,27 +93499,35 @@ var render = function() {
                           _vm._v("Número de presupuesto (*)")
                         ]),
                         _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.num_comprobante,
-                              expression: "num_comprobante"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text", placeholder: "000xx" },
-                          domProps: { value: _vm.num_comprobante },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
+                        _c("div", { staticClass: "row" }, [
+                          _c("input", {
+                            staticClass: "form-control col-md",
+                            attrs: { type: "number", readonly: "" },
+                            domProps: { value: _vm.getFechaCode }
+                          }),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.num_comprobante,
+                                expression: "num_comprobante"
                               }
-                              _vm.num_comprobante = $event.target.value
+                            ],
+                            staticClass: "form-control col-md",
+                            attrs: { type: "text", placeholder: "000xx" },
+                            domProps: { value: _vm.num_comprobante },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.num_comprobante = $event.target.value
+                              }
                             }
-                          }
-                        })
+                          })
+                        ])
                       ])
                     ]),
                     _vm._v(" "),
@@ -94937,31 +95176,116 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group row" }, [
-                    _c("div", { staticClass: "col-md-4" }, [
-                      _vm._m(27),
-                      _vm._v(" "),
-                      _c("textarea", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.observacion,
-                            expression: "observacion"
-                          }
-                        ],
-                        staticClass: "form-control rounded-0",
-                        attrs: { rows: "3", maxlength: "256", readonly: "" },
-                        domProps: { value: _vm.observacion },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.observacion = $event.target.value
-                          }
-                        }
-                      })
-                    ]),
+                    _c(
+                      "div",
+                      { staticClass: "col-md-4" },
+                      [
+                        _c("div", { staticClass: "row" }, [
+                          _vm._m(27),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-2" },
+                            [
+                              _vm.obsEditable == 0
+                                ? [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass:
+                                          "btn btn-warning btn-sm float-right",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.editObservacion()
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-pencil" })]
+                                    )
+                                  ]
+                                : [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass:
+                                          "btn btn-primary btn-sm float-right",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.actualizarObservacion(
+                                              _vm.venta_id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("i", {
+                                          staticClass: "fa fa-floppy-o"
+                                        })
+                                      ]
+                                    )
+                                  ],
+                              _vm._v(" \n\n                          ")
+                            ],
+                            2
+                          )
+                        ]),
+                        _vm._v(" \n                      "),
+                        _vm.obsEditable == 0
+                          ? [
+                              _c("textarea", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.observacion,
+                                    expression: "observacion"
+                                  }
+                                ],
+                                staticClass: "form-control rounded-0",
+                                attrs: {
+                                  rows: "3",
+                                  maxlength: "256",
+                                  readonly: ""
+                                },
+                                domProps: { value: _vm.observacion },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.observacion = $event.target.value
+                                  }
+                                }
+                              })
+                            ]
+                          : [
+                              _c("textarea", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.observacion,
+                                    expression: "observacion"
+                                  }
+                                ],
+                                staticClass: "form-control rounded-0",
+                                attrs: { rows: "3", maxlength: "256" },
+                                domProps: { value: _vm.observacion },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.observacion = $event.target.value
+                                  }
+                                }
+                              })
+                            ]
+                      ],
+                      2
+                    ),
                     _vm._v(" \n                  "),
                     _c("div", { staticClass: "col-md-2" }, [
                       _c("div", { staticClass: "form-group" }, [
@@ -97002,8 +97326,10 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("label", { attrs: { for: "exampleFormControlTextarea2" } }, [
-      _c("strong", [_vm._v("Observaciones")])
+    return _c("div", { staticClass: "col" }, [
+      _c("label", { attrs: { for: "exampleFormControlTextarea2" } }, [
+        _c("strong", [_vm._v("Observaciones")])
+      ])
     ])
   },
   function() {
