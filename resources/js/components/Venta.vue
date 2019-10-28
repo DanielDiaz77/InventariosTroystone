@@ -139,7 +139,6 @@
                         <div class="form-group">
                             <label for="">Número de presupuesto (*)</label>
                             <div class="row">
-
                                 <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
                                 <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
                             </div>
@@ -1172,7 +1171,8 @@ export default {
             btnPagado : false,
             estadoVn : "",
             CodeDate : "",
-            obsEditable : 0
+            obsEditable : 0,
+            sigNum : 0
         };
     },
     components: {
@@ -1572,6 +1572,7 @@ export default {
             return me.errorVenta;
         },
         mostrarDetalle(){
+            this.getLastNum();
             this.listado = 0;
             this.codigo = "";
             this.idarticulo = 0;
@@ -1593,7 +1594,7 @@ export default {
             this.ubicacion = '';
             this.arrayDetalle = [];
             this.idproveedor = 0;
-            this.num_comprobante = 0;
+            this.num_comprobante = (parseInt(this.sigNum)+1);
             this.selectCategoria();
         },
         ocultarDetalle(){
@@ -1630,6 +1631,7 @@ export default {
             this.btnEntrega =  false;
             this.btnPagado = false;
             this.obsEditable = 0;
+            this.getLastNum();
         },
         verVenta(id){
 
@@ -2046,10 +2048,22 @@ export default {
         },
         pdfVenta(id){
             window.open('http://127.0.0.1:8000/venta/pdf/'+id);
+        },
+        getLastNum(){
+            let me=this;
+            var url= '/venta/nextNum';
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.sigNum = respuesta.SigNum;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         }
     },
     mounted() {
         this.listarVenta(1,this.buscar, this.criterio);
+        this.getLastNum();
     }
 };
 </script>

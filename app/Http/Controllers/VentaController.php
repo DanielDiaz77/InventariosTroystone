@@ -217,4 +217,11 @@ class VentaController extends Controller
         $venta->observacion = $request->observacion;
         $venta->save();
     }
+
+    public function getLastNum(){
+        $lastNum = Venta::select('num_comprobante')->get()->last();
+        $noComp = explode('"',$lastNum);
+        $SigNum = explode("-",$noComp[3]);
+        return ['SigNum' => $SigNum[2]];
+    }
 }

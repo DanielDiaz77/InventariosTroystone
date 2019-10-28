@@ -180,4 +180,11 @@ class CotizacionController extends Controller
         $cotizacion->aceptado = $request->aceptado;
         $cotizacion->save();
     }
+
+    public function getLastNum(){
+        $lastNum = Cotizacion::select('num_comprobante')->get()->last();
+        $noComp = explode('"',$lastNum);
+        $SigNum = explode("-",$noComp[3]);
+        return ['SigNum' => $SigNum[2]];
+    }
 }

@@ -6165,6 +6165,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -6266,7 +6270,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       validatedB: 0,
       validatedA: 0,
       btnEntrega: false,
-      estadoVn: ""
+      estadoVn: "",
+      CodeDate: ""
     };
   },
   components: {
@@ -6356,6 +6361,14 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       var resultado = 0;
       resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
       return resultado;
+    },
+    getFechaCode: function getFechaCode() {
+      var me = this;
+      var date = "";
+      moment__WEBPACK_IMPORTED_MODULE_3___default.a.locale('es');
+      date = moment__WEBPACK_IMPORTED_MODULE_3___default()().format('YYMMDD');
+      me.CodeDate = moment__WEBPACK_IMPORTED_MODULE_3___default()().format('YYMMDD');
+      return date;
     }
   },
   methods: {
@@ -6559,10 +6572,11 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       }
 
       var me = this;
+      var numcomp = "C-".concat(me.CodeDate, "-", me.num_comprobante);
       axios.post('/cotizacion/registrar', {
         'idcliente': this.idcliente,
         'tipo_comprobante': this.tipo_comprobante,
-        'num_comprobante': this.num_comprobante,
+        'num_comprobante': numcomp,
         'impuesto': this.impuesto,
         'total': this.total,
         'forma_pago': this.forma_pago,
@@ -6656,6 +6670,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       return me.errorCotizacion;
     },
     mostrarDetalle: function mostrarDetalle() {
+      this.getLastNum();
       this.listado = 0;
       this.codigo = "";
       this.idarticulo = 0;
@@ -6676,7 +6691,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.ubicacion = '';
       this.arrayDetalle = [];
       this.idproveedor = 0;
-      this.num_comprobante = 0;
+      this.num_comprobante = parseInt(this.sigNum) + 1;
       this.comprometido = 0;
       this.selectCategoria();
     },
@@ -6715,6 +6730,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.aceptado = 0;
       this.comprometido = 0;
       this.btnEntrega = false;
+      this.getLastNum();
     },
     verCotizacion: function verCotizacion(id) {
       var me = this;
@@ -7116,10 +7132,21 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
     },
     pdfCotizacion: function pdfCotizacion(id) {
       window.open('http://127.0.0.1:8000/cotizacion/pdf/' + id + ',' + '_blank');
+    },
+    getLastNum: function getLastNum() {
+      var me = this;
+      var url = '/cotizacion/nextNum';
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.sigNum = respuesta.SigNum;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   },
   mounted: function mounted() {
     this.listarCotizacion(1, this.buscar, this.criterio);
+    this.getLastNum();
   }
 });
 
@@ -8124,6 +8151,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 
@@ -8190,7 +8220,9 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       fecha_llegada: '',
       file: '',
       imagenMinatura: '',
-      arrayCategoria: []
+      arrayCategoria: [],
+      CodeDate: "",
+      sigNum: 0
     };
   },
   components: {
@@ -8246,6 +8278,14 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       resultado = resultado + me.alto * me.largo;
       me.metros_cuadrados = resultado;
       return resultado;
+    },
+    getFechaCode: function getFechaCode() {
+      var me = this;
+      var date = "";
+      moment__WEBPACK_IMPORTED_MODULE_3___default.a.locale('es');
+      date = moment__WEBPACK_IMPORTED_MODULE_3___default()().format('YYMMDD');
+      me.CodeDate = moment__WEBPACK_IMPORTED_MODULE_3___default()().format('YYMMDD');
+      return date;
     }
   },
   methods: {
@@ -8405,10 +8445,11 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
     },
     registrarIngreso: function registrarIngreso() {
       var me = this;
+      var numcomp = "I-".concat(me.CodeDate, "-", me.num_comprobante);
       axios.post('/ingreso/registrar', {
         'idproveedor': this.idproveedor,
         'tipo_comprobante': this.tipo_comprobante,
-        'num_comprobante': this.num_comprobante,
+        'num_comprobante': numcomp,
         'impuesto': this.impuesto,
         'total': this.total,
         'data': this.arrayDetalle
@@ -8462,6 +8503,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       return this.errorIngreso;
     },
     mostrarDetalle: function mostrarDetalle() {
+      this.getLastNum();
       this.listado = 0;
       this.codigo = "";
       this.idarticulo = 0;
@@ -8472,10 +8514,9 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.alto = 0;
       this.metros_cuadrados = 0;
       this.terminado = '';
-      this.espesor = 0;
+      this.espesor = 2;
       this.precio_venta = 0;
-      this.precio_venta = 0;
-      this.cantidad = 0;
+      this.cantidad = 1;
       this.file = '';
       this.origen = '';
       this.contenedor = '';
@@ -8483,7 +8524,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.ubicacion = '';
       this.arrayDetalle = [];
       this.idproveedor = 0;
-      this.num_comprobante = 0;
+      this.num_comprobante = parseInt(this.sigNum) + 1;
       this.selectCategoria();
     },
     ocultarDetalle: function ocultarDetalle() {
@@ -8510,6 +8551,7 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.errorMostrarMsjIngreso = [];
       this.idproveedor = 0;
       this.num_comprobante = 0;
+      this.getLastNum();
     },
     verIngreso: function verIngreso(id) {
       var me = this;
@@ -8663,10 +8705,21 @@ Vue.component("Lightbox", vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.file = '';
       this.descripcion_r = '';
       this.ind = '';
+    },
+    getLastNum: function getLastNum() {
+      var me = this;
+      var url = '/ingreso/nextNum';
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.sigNum = respuesta.SigNum;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   },
   mounted: function mounted() {
     this.listarIngreso(1, this.buscar, this.criterio);
+    this.getLastNum();
   }
 });
 
@@ -10905,7 +10958,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 
 
@@ -11008,7 +11060,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       btnPagado: false,
       estadoVn: "",
       CodeDate: "",
-      obsEditable: 0
+      obsEditable: 0,
+      sigNum: 0
     };
   },
   components: {
@@ -11390,6 +11443,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       return me.errorVenta;
     },
     mostrarDetalle: function mostrarDetalle() {
+      this.getLastNum();
       this.listado = 0;
       this.codigo = "";
       this.idarticulo = 0;
@@ -11411,7 +11465,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.ubicacion = '';
       this.arrayDetalle = [];
       this.idproveedor = 0;
-      this.num_comprobante = 0;
+      this.num_comprobante = parseInt(this.sigNum) + 1;
       this.selectCategoria();
     },
     ocultarDetalle: function ocultarDetalle() {
@@ -11448,6 +11502,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.btnEntrega = false;
       this.btnPagado = false;
       this.obsEditable = 0;
+      this.getLastNum();
     },
     verVenta: function verVenta(id) {
       var me = this;
@@ -11847,10 +11902,21 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
     },
     pdfVenta: function pdfVenta(id) {
       window.open('http://127.0.0.1:8000/venta/pdf/' + id);
+    },
+    getLastNum: function getLastNum() {
+      var me = this;
+      var url = '/venta/nextNum';
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.sigNum = respuesta.SigNum;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   },
   mounted: function mounted() {
     this.listarVenta(1, this.buscar, this.criterio);
+    this.getLastNum();
   }
 });
 
@@ -83000,31 +83066,41 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-md-4" }, [
-                      _c("label", { attrs: { for: "" } }, [
-                        _vm._v("Impuesto (*)")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.impuesto,
-                            expression: "impuesto"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text" },
-                        domProps: { value: _vm.impuesto },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Número de cotizacion (*)")
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row" }, [
+                          _c("input", {
+                            staticClass: "form-control col-md",
+                            attrs: { type: "number", readonly: "" },
+                            domProps: { value: _vm.getFechaCode }
+                          }),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.num_comprobante,
+                                expression: "num_comprobante"
+                              }
+                            ],
+                            staticClass: "form-control col-md",
+                            attrs: { type: "text", placeholder: "000xx" },
+                            domProps: { value: _vm.num_comprobante },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.num_comprobante = $event.target.value
+                              }
                             }
-                            _vm.impuesto = $event.target.value
-                          }
-                        }
-                      })
+                          })
+                        ])
+                      ])
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-md-4" }, [
@@ -83075,33 +83151,31 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-md-4" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Número de cotizacion (*)")
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.num_comprobante,
-                              expression: "num_comprobante"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text", placeholder: "000xx" },
-                          domProps: { value: _vm.num_comprobante },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.num_comprobante = $event.target.value
-                            }
+                      _c("label", { attrs: { for: "" } }, [
+                        _vm._v("Impuesto (*)")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.impuesto,
+                            expression: "impuesto"
                           }
-                        })
-                      ])
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.impuesto },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.impuesto = $event.target.value
+                          }
+                        }
+                      })
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-md-4" }, [
@@ -87725,33 +87799,41 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4" }, [
+                    _c("div", { staticClass: "col-md-3" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Número de Comprobante (*)")
+                          _vm._v("Número de ingreso (*)")
                         ]),
                         _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.num_comprobante,
-                              expression: "num_comprobante"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text", placeholder: "000xx" },
-                          domProps: { value: _vm.num_comprobante },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
+                        _c("div", { staticClass: "row" }, [
+                          _c("input", {
+                            staticClass: "form-control col-md",
+                            attrs: { type: "number", readonly: "" },
+                            domProps: { value: _vm.getFechaCode }
+                          }),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.num_comprobante,
+                                expression: "num_comprobante"
                               }
-                              _vm.num_comprobante = $event.target.value
+                            ],
+                            staticClass: "form-control col-md",
+                            attrs: { type: "text", placeholder: "000xx" },
+                            domProps: { value: _vm.num_comprobante },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.num_comprobante = $event.target.value
+                              }
                             }
-                          }
-                        })
+                          })
+                        ])
                       ])
                     ]),
                     _vm._v(" "),
@@ -88542,7 +88624,9 @@ var render = function() {
                     _c("div", { staticClass: "col-sm-2" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", { attrs: { for: "" } }, [
-                          _vm._v("Precio "),
+                          _vm._v("Precio m "),
+                          _c("sup", [_vm._v("2")]),
+                          _vm._v(" "),
                           _c(
                             "span",
                             {

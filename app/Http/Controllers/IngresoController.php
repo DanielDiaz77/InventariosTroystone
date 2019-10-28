@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class IngresoController extends Controller
 {
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         if (!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
@@ -51,8 +50,7 @@ class IngresoController extends Controller
             'ingresos' => $ingresos
         ];
     }
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         if(!$request->ajax()) return redirect('/');
 
         $mytime = Carbon::now('America/Mexico_City');
@@ -119,15 +117,14 @@ class IngresoController extends Controller
         }
     }
 
-    public function desactivar(Request $request)
-    {
+    public function desactivar(Request $request){
         if (!$request->ajax()) return redirect('/');
         $ingreso = Ingreso::findOrFail($request->id);
         $ingreso->estado = 'Anulado';
         $ingreso->save();
     }
 
-     public function obtenerCabecera(Request $request){
+    public function obtenerCabecera(Request $request){
         if (!$request->ajax()) return redirect('/');
 
         $id = $request->id;
@@ -155,6 +152,13 @@ class IngresoController extends Controller
             'articulos.contenedor','articulos.fecha_llegada','articulos.observacion','articulos.condicion')
         ->where('detalle_ingresos.idingreso',$id)->get();
         return ['detalles' => $detalles];
+    }
+
+    public function getLastNum(){
+        $lastNum = Ingreso::select('num_comprobante')->get()->last();
+        $noComp = explode('"',$lastNum);
+        $SigNum = explode("-",$noComp[3]);
+        return ['SigNum' => $SigNum[2]];
     }
 
 }

@@ -11,8 +11,7 @@ use App\Persona;
 
 class ProveedorController extends Controller
 {
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         if (!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
@@ -49,8 +48,7 @@ class ProveedorController extends Controller
             'personas' => $personas
         ];
     }
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         if(!$request->ajax()) return redirect('/');
 
         try{
@@ -83,9 +81,7 @@ class ProveedorController extends Controller
 
 
     }
-
-    public function update(Request $request)
-    {
+    public function update(Request $request){
         if(!$request->ajax()) return redirect('/');
 
         try{
@@ -119,7 +115,6 @@ class ProveedorController extends Controller
 
         }
     }
-
     public function selectProveedor(Request $request){
 
         if (!$request->ajax()) return redirect('/');

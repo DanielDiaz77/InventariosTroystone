@@ -65,6 +65,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/ingreso/desactivar', 'IngresoController@desactivar');
         Route::get('/ingreso/obtenerCabecera', 'IngresoController@obtenerCabecera');
         Route::get('/ingreso/obtenerDetalles', 'IngresoController@obtenerDetalles');
+        Route::get('/ingreso/nextNum','IngresoController@getLastNum');
 
     });
 
@@ -90,6 +91,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/venta/cambiarEntrega', 'VentaController@cambiarEntrega');
         Route::post('/venta/cambiarPagado', 'VentaController@cambiarPagado');
         Route::post('/venta/actualizarObservacion', 'VentaController@actualizarObservacion');
+        Route::get('/venta/nextNum','VentaController@getLastNum');
+
 
     });
 
@@ -149,6 +152,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/ingreso/desactivar', 'IngresoController@desactivar');
         Route::get('/ingreso/obtenerCabecera', 'IngresoController@obtenerCabecera');
         Route::get('/ingreso/obtenerDetalles', 'IngresoController@obtenerDetalles');
+        Route::get('/ingreso/nextNum','IngresoController@getLastNum');
 
         Route::get('/venta', 'VentaController@index');
         Route::post('/venta/registrar', 'VentaController@store');
@@ -160,6 +164,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/venta/cambiarEntrega', 'VentaController@cambiarEntrega');
         Route::post('/venta/cambiarPagado', 'VentaController@cambiarPagado');
         Route::post('/venta/actualizarObservacion', 'VentaController@actualizarObservacion');
+        Route::get('/venta/nextNum','VentaController@getLastNum');
 
         //COTIZACIONES
         Route::get('/cotizacion', 'CotizacionController@index');
@@ -169,6 +174,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/cotizacion/obtenerDetalles','CotizacionController@obtenerDetalles');
         Route::get('/cotizacion/pdf/{id}','CotizacionController@pdf')->name('cotizacion_pdf');
         Route::put('/cotizacion/aceptarCotizacion', 'CotizacionController@aceptarCotizacion');
+        Route::get('/cotizacion/nextNum','CotizacionController@getLastNum');
+
 
     });
 });

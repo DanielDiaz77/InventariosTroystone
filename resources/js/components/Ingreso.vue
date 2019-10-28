@@ -118,10 +118,13 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="">Número de Comprobante (*)</label>
-                            <input type="text" class="form-control" v-model="num_comprobante" placeholder="000xx">
+                            <label for="">Número de ingreso (*)</label>
+                            <div class="row">
+                                <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
+                                <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -248,7 +251,7 @@
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for="">Precio <span style="color:red;" v-show="precio_venta==0">(*Ingrese el precio)</span></label>
+                            <label for="">Precio m <sup>2</sup> <span style="color:red;" v-show="precio_venta==0">(*Ingrese el precio)</span></label>
                             <input type="number" min="0" value="0" class="form-control" v-model="precio_venta">
                         </div>
                     </div>
@@ -877,7 +880,9 @@ export default {
             fecha_llegada : '',
             file : '',
             imagenMinatura : '',
-            arrayCategoria : []
+            arrayCategoria : [],
+            CodeDate : "",
+            sigNum : 0
         };
     },
     components: {
@@ -927,6 +932,14 @@ export default {
                 resultado = resultado + (me.alto * me.largo);
                 me.metros_cuadrados = resultado;
                 return resultado;
+            },
+            getFechaCode : function(){
+                let me = this;
+                let date = "";
+                moment.locale('es');
+                date = moment().format('YYMMDD');
+                me.CodeDate = moment().format('YYMMDD');
+                return date;
             }
         },
     methods: {
@@ -1093,10 +1106,12 @@ export default {
         },
         registrarIngreso(){
             let me = this;
+            var numcomp = "I-".concat(me.CodeDate,"-",me.num_comprobante);
+
             axios.post('/ingreso/registrar',{
                 'idproveedor': this.idproveedor,
                 'tipo_comprobante': this.tipo_comprobante,
-                'num_comprobante' : this.num_comprobante,
+                'num_comprobante' : numcomp,
                 'impuesto' : this.impuesto,
                 'total' : this.total,
                 'data': this.arrayDetalle
@@ -1159,6 +1174,7 @@ export default {
             return this.errorIngreso;
         },
         mostrarDetalle(){
+            this.getLastNum();
             this.listado = 0;
             this.codigo = "";
             this.idarticulo = 0;
@@ -1169,10 +1185,9 @@ export default {
             this.alto = 0;
             this.metros_cuadrados = 0;
             this.terminado = '';
-            this.espesor = 0;
+            this.espesor = 2;
             this.precio_venta = 0;
-            this.precio_venta = 0;
-            this.cantidad = 0;
+            this.cantidad = 1;
             this.file = '';
             this.origen = '';
             this.contenedor = '';
@@ -1180,8 +1195,9 @@ export default {
             this.ubicacion = '';
             this.arrayDetalle = [];
             this.idproveedor = 0;
-            this.num_comprobante = 0;
+            this.num_comprobante = (parseInt(this.sigNum)+1);
             this.selectCategoria();
+
         },
         ocultarDetalle(){
             this.listado = 1;
@@ -1207,6 +1223,7 @@ export default {
             this.errorMostrarMsjIngreso = [];
             this.idproveedor = 0;
             this.num_comprobante = 0;
+            this.getLastNum();
         },
         verIngreso(id){
 
@@ -1366,10 +1383,22 @@ export default {
             this.file = '';
             this.descripcion_r = '';
             this.ind = '';
+        },
+        getLastNum(){
+            let me=this;
+            var url= '/ingreso/nextNum';
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.sigNum = respuesta.SigNum;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         }
     },
     mounted() {
         this.listarIngreso(1,this.buscar, this.criterio);
+        this.getLastNum();
     }
 };
 </script>

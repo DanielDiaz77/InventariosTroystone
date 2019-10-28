@@ -127,9 +127,15 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <label for="">Impuesto (*)</label>
-                        <input type="text" class="form-control" v-model="impuesto">
+                        <div class="form-group">
+                            <label for="">Número de cotizacion (*)</label>
+                            <div class="row">
+                                <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
+                                <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                            </div>
+                        </div>
                     </div>
+
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="">Tipo de documento (*) </label>
@@ -142,10 +148,8 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="">Número de cotizacion (*)</label>
-                            <input type="text" class="form-control" v-model="num_comprobante" placeholder="000xx">
-                        </div>
+                        <label for="">Impuesto (*)</label>
+                        <input type="text" class="form-control" v-model="impuesto">
                     </div>
                     <!-- <div class="col-md-4">
                         <div class="form-group">
@@ -1190,7 +1194,8 @@ export default {
             validatedB : 0,
             validatedA : 0,
             btnEntrega : false,
-            estadoVn : ""
+            estadoVn : "",
+            CodeDate : ""
         };
     },
     components: {
@@ -1278,6 +1283,14 @@ export default {
             let resultado = 0;
             resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
             return resultado;
+        },
+        getFechaCode : function(){
+            let me = this;
+            let date = "";
+            moment.locale('es');
+            date = moment().format('YYMMDD');
+            me.CodeDate = moment().format('YYMMDD');
+            return date;
         }
 
         },
@@ -1489,10 +1502,13 @@ export default {
                 return;
             }
             let me = this;
+
+            var numcomp = "C-".concat(me.CodeDate,"-",me.num_comprobante);
+
             axios.post('/cotizacion/registrar',{
                 'idcliente': this.idcliente,
                 'tipo_comprobante': this.tipo_comprobante,
-                'num_comprobante' : this.num_comprobante,
+                'num_comprobante' : numcomp,
                 'impuesto' : this.impuesto,
                 'total' : this.total,
                 'forma_pago' : this.forma_pago,
@@ -1597,6 +1613,7 @@ export default {
             return me.errorCotizacion;
         },
         mostrarDetalle(){
+            this.getLastNum();
             this.listado = 0;
             this.codigo = "";
             this.idarticulo = 0;
@@ -1617,7 +1634,7 @@ export default {
             this.ubicacion = '';
             this.arrayDetalle = [];
             this.idproveedor = 0;
-            this.num_comprobante = 0;
+            this.num_comprobante = (parseInt(this.sigNum)+1);
             this.comprometido = 0;
             this.selectCategoria();
         },
@@ -1656,6 +1673,7 @@ export default {
             this.aceptado = 0;
             this.comprometido = 0;
             this.btnEntrega =  false;
+            this.getLastNum();
         },
         verCotizacion(id){
 
@@ -2071,10 +2089,22 @@ export default {
         },
         pdfCotizacion(id){
             window.open('http://127.0.0.1:8000/cotizacion/pdf/'+id + ',' + '_blank');
+        },
+        getLastNum(){
+            let me=this;
+            var url= '/cotizacion/nextNum';
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.sigNum = respuesta.SigNum;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         }
     },
     mounted() {
         this.listarCotizacion(1,this.buscar, this.criterio);
+        this.getLastNum();
     }
 };
 </script>
