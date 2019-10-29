@@ -89,6 +89,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
         Route::get('/venta/pdf/{id}', 'VentaController@pdf')->name('venta_pdf');
         Route::post('/venta/cambiarEntrega', 'VentaController@cambiarEntrega');
+        Route::post('/venta/cambiarEntregaParcial', 'VentaController@cambiarEntregaParcial');
         Route::post('/venta/cambiarPagado', 'VentaController@cambiarPagado');
         Route::post('/venta/actualizarObservacion', 'VentaController@actualizarObservacion');
         Route::get('/venta/nextNum','VentaController@getLastNum');
@@ -163,6 +164,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
         Route::get('/venta/pdf/{id}', 'VentaController@pdf')->name('venta_pdf');
         Route::post('/venta/cambiarEntrega', 'VentaController@cambiarEntrega');
+        Route::post('/venta/cambiarEntregaParcial', 'VentaController@cambiarEntregaParcial');
         Route::post('/venta/cambiarPagado', 'VentaController@cambiarPagado');
         Route::post('/venta/actualizarObservacion', 'VentaController@actualizarObservacion');
         Route::get('/venta/nextNum','VentaController@getLastNum');

@@ -67,10 +67,13 @@
                                 <td v-text="venta.forma_pago"></td>
                                 <td v-text="venta.tipo_facturacion"></td>
                                 <td v-if="venta.entregado">
-                                    <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                    <span class="badge badge-success">100%</span>
+                                </td>
+                                <td v-else-if="venta.entrega_parcial">
+                                    <span class="badge badge-warning">Parcial</span>
                                 </td>
                                 <td v-else>
-                                    <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                     <span class="badge badge-danger">No entregado</span>
                                 </td>
                                  <td v-if="venta.pagado">
                                     <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
@@ -167,12 +170,15 @@
                     <div class="col-md-1">
                         <div class="form-group">
                             <label for=""><strong>Entregado:</strong> </label>
-                            <div v-if="pagado == 1">
-                                <toggle-button disabled v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}"/>
-                            </div>
-                            <div v-else>
-                                <span class="badge badge-danger">Pendiente de pago</span>
-                            </div>
+                                <td v-if="entregado">
+                                    <span class="badge badge-success">100%</span>
+                                </td>
+                                <td v-else-if="entregado_parcial">
+                                    <span class="badge badge-warning">Parcial</span>
+                                </td>
+                                <td v-else>
+                                     <span class="badge badge-danger">No entregado</span>
+                                </td>
                         </div>
                     </div>
                     <div class="col-md-1">
@@ -582,6 +588,7 @@ export default {
             lugar_entrega : "",
             precio: 0.0,
             entregado : 0,
+            entregado_parcial : 0,
             tipo_facturacion : "",
             num_cheque : 0,
             banco : "",
@@ -733,6 +740,7 @@ export default {
             this.arrayDetalle = [];
             this.num_comprobante = 0;
             this.entregado = 0;
+            this.entregado_parcial = 0;
             this.tipo_facturacion = "";
             this.num_cheque = 0;
             this.banco = "";
@@ -768,6 +776,7 @@ export default {
                 me.lugar_entrega = arrayVentaT[0]['lugar_entrega'];
                 me.tiempo_entrega = arrayVentaT[0]['tiempo_entrega'];
                 me.entregado = arrayVentaT[0]['entregado'];
+                me.entregado_parcial =  arrayVentaT[0]['entrega_parcial'];
                 me.moneda = arrayVentaT[0]['moneda'];
                 me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
                 me.observacion = arrayVentaT[0]['observacion'];

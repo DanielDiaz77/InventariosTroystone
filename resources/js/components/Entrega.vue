@@ -39,7 +39,7 @@
                                 <th>Fecha Hora</th>
                                 <th>Total</th>
                                 <th>Facturación</th>
-                                <th>100% Entregado</th>
+                                <th>Entregado</th>
                                 <th>100% Pagado</th>
                                 <th>Estado</th>
                             </tr>
@@ -64,10 +64,13 @@
                                 <td v-text="venta.total"></td>
                                 <td v-text="venta.tipo_facturacion"></td>
                                 <td v-if="venta.entregado">
-                                    <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                    <span class="badge badge-success">100%</span>
+                                </td>
+                                <td v-else-if="venta.entrega_parcial">
+                                    <span class="badge badge-warning">Parcial</span>
                                 </td>
                                 <td v-else>
-                                    <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                     <span class="badge badge-danger">No entregado</span>
                                 </td>
                                 <td v-if="venta.pagado">
                                     <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
@@ -167,6 +170,18 @@
                             <label for=""><strong>Entregado 100%:</strong> </label>
                             <div v-if="pagado == 1">
                                 <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                            <div v-else-if="estadoVn == 'Registrado'">
+                                <span class="badge badge-danger">Pendiente de pago</span>
+                            </div>
+                            <div v-else></div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label for=""><strong>Entregado Parcial:</strong> </label>
+                            <div v-if="pagado == 1">
+                                <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
                             <div v-else-if="estadoVn == 'Registrado'">
                                 <span class="badge badge-danger">Pendiente de pago</span>
@@ -344,6 +359,18 @@
                             <label for=""><strong>Entregado 100%:</strong> </label>
                             <div v-if="pagado == 1">
                                 <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                            <div v-else-if="estadoVn == 'Registrado'">
+                                <span class="badge badge-danger">Pendiente de pago</span>
+                            </div>
+                            <div v-else></div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label for=""><strong>Entregado Parcial:</strong> </label>
+                            <div v-if="pagado == 1">
+                                <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
                             <div v-else-if="estadoVn == 'Registrado'">
                                 <span class="badge badge-danger">Pendiente de pago</span>
@@ -634,6 +661,7 @@ export default {
             lugar_entrega : "",
             precio: 0.0,
             entregado : 0,
+            entregado_parcial: 0,
             stock : 0,
             descripcion : "",
             tipo_facturacion : "",
@@ -679,6 +707,7 @@ export default {
             validatedB : 0,
             validatedA : 0,
             btnEntrega : false,
+            btnEntregaParcial : false,
             btnPagado : false,
             estadoVn : "",
             CodeDate : "",
@@ -825,6 +854,7 @@ export default {
             this.num_comprobante = 0;
             this.entregado = 0;
             this.btnEntrega =  false;
+            this.btnEntregaParcial = false;
             this.btnPagado = false;
             this.obsEditable = 0;
             this.entregasComp = 0;
@@ -858,6 +888,7 @@ export default {
                 me.lugar_entrega = arrayVentaT[0]['lugar_entrega'];
                 me.tiempo_entrega = arrayVentaT[0]['tiempo_entrega'];
                 me.entregado = arrayVentaT[0]['entregado'];
+                me.entregado_parcial = arrayVentaT[0]['entrega_parcial'];
                 me.moneda = arrayVentaT[0]['moneda'];
                 me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
                 me.observacion = arrayVentaT[0]['observacion'];
@@ -866,6 +897,7 @@ export default {
                 me.banco = arrayVentaT[0]['banco'];
                 me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
                 me.pagado = arrayVentaT[0]['pagado'];
+
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
@@ -876,6 +908,12 @@ export default {
 
                 if(me.entregado ==1){
                     me.btnEntrega = true;
+                    me.btnEntregaParcial = false;
+                }
+
+                if(me.entregado_parcial ==1){
+                    me.btnEntregaParcial = true;
+                    me.btnEntrega = false;
                 }
 
                 if(me.pagado ==1){
@@ -964,6 +1002,22 @@ export default {
                 console.log(error);
             });
         },
+        cambiarEstadoEntregaParcial(id){
+            let me = this;
+            if(me.btnEntregaParcial == true){
+                me.entregado_parcial = 1;
+            }else{
+                me.entregado_parcial = 0;
+            }
+            axios.post('/venta/cambiarEntregaParcial',{
+                'id': id,
+                'entrega_parcial' : this.entregado_parcial
+            }).then(function (response) {
+                me.listarVenta(1,'','num_comprobante');
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
         editObservacion(){
             let me = this;
             me.obsEditable = 1;
@@ -1009,6 +1063,7 @@ export default {
                 me.lugar_entrega = arrayVentaT[0]['lugar_entrega'];
                 me.tiempo_entrega = arrayVentaT[0]['tiempo_entrega'];
                 me.entregado = arrayVentaT[0]['entregado'];
+                me.entregado_parcial = arrayVentaT[0]['entrega_parcial'];
                 me.moneda = arrayVentaT[0]['moneda'];
                 me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
                 me.observacion = arrayVentaT[0]['observacion'];
@@ -1027,6 +1082,12 @@ export default {
 
                 if(me.entregado ==1){
                     me.btnEntrega = true;
+                    me.btnEntregaParcial = false;
+                }
+
+               if(me.entregado_parcial ==1){
+                    me.btnEntregaParcial = true;
+                    me.btnEntrega = false;
                 }
 
                 if(me.pagado ==1){
@@ -1070,6 +1131,7 @@ export default {
                 me.tiempo_entrega = "";
                 me.lugar_entrega = "";
                 me.entregado = 0;
+                me.entregado_parcial = 0;
                 me.moneda = "Peso Mexicano";
                 me.banco = "";
                 me.num_cheque = 0;

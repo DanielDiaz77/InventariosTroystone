@@ -186,8 +186,10 @@
                         }else{
                             echo "Pendiente de pago";
                         }
-                        if ($v->entregado){
+                        if($v->entregado){
                             echo " y Entregado";
+                        }elseif ($v->entrega_parcial) {
+                            echo " y Entregado Parcialmente";
                         }else{
                             echo " y no entregado";
                         }
@@ -239,6 +241,8 @@
                             <th>P U</th>
                             <th>METROS <sup>2</sup></th>
                             <th>CANT.</th>
+                            <th>ENTREGADAS</th>
+                            <th>PENDIENTES</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -252,6 +256,8 @@
                             <td class="td-b">{{ $det->precio }}</td>
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>
                             <td class="td-b">{{ $det->cantidad }}</td>
+                            <td class="td-b">{{ $det->entregadas }}</td>
+                            <td class="td-b">{{ $det->pendientes }}</td>
                         </tr>
                         @endforeach
                     </tbody>

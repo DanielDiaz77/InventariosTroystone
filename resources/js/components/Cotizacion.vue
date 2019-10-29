@@ -23,7 +23,6 @@
                             <option value="num_comprobante">No° Comprobante</option>
                             <option value="fecha_hora">Fecha</option>
                             <option value="estado">Estado</option>
-                            <option value="aceptado">Aceptado</option>
                             </select>
                             <input type="text" v-model="buscar" @keyup.enter="listarCotizacion(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
                             <button type="submit" @click="listarCotizacion(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
@@ -51,7 +50,7 @@
                                 <!-- <th>Moneda</th>
                                 <th>Tipo Cambio</th> -->
                                 <th>Estado</th>
-                                <th>Aceptado</th>
+                                <!-- <th>Aceptado</th> -->
 
                             </tr>
                         </thead>
@@ -81,12 +80,12 @@
                                 <!-- <td v-text="cotizacion.moneda"></td>
                                 <td v-text="cotizacion.tipo_cambio"></td> -->
                                 <td v-text="cotizacion.estado "></td>
-                                <td v-if="cotizacion.aceptado">
+                                <!-- <td v-if="cotizacion.aceptado">
                                     <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
                                 </td>
                                 <td v-else>
                                     <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
-                                </td>
+                                </td> -->
                             </tr>
                         </tbody>
                     </table>
@@ -112,33 +111,32 @@
         <template v-else-if="listado==0">
             <div class="card-body">
                 <div class="form-group row border">
-                    <div class="col-md-4">
+                    <div class="col-md-3 text-center">
                         <div class="form-group">
-                            <label for="">Cliente (*)</label>
-                                <v-select
-                                    :on-search="selectCliente"
-                                    label="nombre"
-                                    :options="arrayCliente"
-                                    placeholder="Buscar clientes..."
-                                    :onChange="getDatosCliente"
-                                >
-
+                            <label for=""><strong>Cliente (*)</strong></label>
+                                <v-select :on-search="selectCliente" label="nombre" :options="arrayCliente" placeholder="Buscar clientes..." :onChange="getDatosCliente">
                                 </v-select>
                         </div>
-                    </div>
-                    <div class="col-md-4">
+                    </div>&nbsp;
+                     <div class="col-md-3 text-center">
                         <div class="form-group">
-                            <label for="">Número de cotizacion (*)</label>
-                            <div class="row">
-                                <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
-                                <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
-                            </div>
+                            <label for=""><strong>Tipo de cliente</strong></label>
+                            <!-- <p v-text="tipo_cliente"></p> -->
+                            <input type="text" readonly :value="tipo_cliente" class="form-control col-md">
                         </div>
                     </div>
-
-                    <div class="col-md-4">
+                     <div class="col-md-3 text-center">
                         <div class="form-group">
-                            <label for="">Tipo de documento (*) </label>
+                            <label for=""><strong>RFC</strong></label>
+                            <!-- <p v-text="rfc_cliente"></p> -->
+                            <input type="text" readonly :value="rfc_cliente" class="form-control col-md">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row border">
+                    <div class="col-md-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Tipo de documento (*) </strong></label>
                             <select v-model="tipo_comprobante" class="form-control">
                                 <option value="">Seleccione</option>
                                 <!-- <option value="NOTA">Nota</option> -->
@@ -147,8 +145,19 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="">Impuesto (*)</label>
+
+                    <div class="col-md-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Número de cotizacion (*)</strong></label>
+                            <div class="row">
+                                <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
+                                <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-1 text-center">
+                        <label for=""><strong>Impuesto (*)</strong></label>
                         <input type="text" class="form-control" v-model="impuesto">
                     </div>
                     <!-- <div class="col-md-4">
@@ -168,9 +177,9 @@
                             <input type="text" class="form-control" v-model="tipo_cambio" placeholder="000xx">
                         </div>
                     </div> -->
-                    <div class="col-md-4">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Forma de pago<span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
+                            <label for=""><strong>Forma de pago</strong><span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="forma_pago">
                                 <option value='' disabled>Seleccione la forma de pago</option>
                                 <option value="De contado">De contado</option>
@@ -179,9 +188,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Tiempo de entrega<span style="color:red;" v-show="tiempo_entrega==''"> (*Seleccione el tiempo de entrega)</span></label>
+                            <label for=""><strong>Tiempo de entrega</strong><span style="color:red;" v-show="tiempo_entrega==''"> (*Seleccione)</span></label>
                             <select class="form-control" v-model="tiempo_entrega">
                                 <option value='' disabled>Seleccione el tiempo de entrega</option>
                                 <option value="Inmediata">Inmediata</option>
@@ -191,9 +200,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Lugar de entrega<span style="color:red;" v-show="lugar_entrega==''">(*Seleccione)</span></label>
+                            <label for=""><strong>Lugar de entrega</strong><span style="color:red;" v-show="lugar_entrega==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="lugar_entrega">
                                 <option value='' disabled>Seleccione el lugar de entrega</option>
                                 <option value="LAB TROYSTONE">LAB TROYSTONE</option>
@@ -201,13 +210,13 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Vigencia<span style="color:red;" v-show="vigencia==''">(*Ingrese la vigencia)</span> </label>
+                            <label for=""><strong>Vigencia</strong><span style="color:red;" v-show="vigencia==''">(*Seleccione)</span> </label>
                              <input type="date" v-model="vigencia" class="form-control"/>
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-12 text-center">
                         <div v-show="errorCotizacion" class="form-group row div-error">
                             <div class="text-center text-error">
                                 <div v-for="error in errorMostrarMsjCotizacion" :key="error" v-text="error"></div>
@@ -218,7 +227,7 @@
                 <div class="form-group row border">
                     <div class="col-sm-4">
                         <div class="form-group">
-                            <label for="">Articulo <span style="color:red;" v-show="articulo==''">(*Seleccione)</span> </label>
+                            <label for=""><strong>Articulo</strong> <span style="color:red;" v-show="articulo==''">(*Seleccione)</span> </label>
                             <div class="form-inline">
                                 <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()"  placeholder="Ingrese el artículo" >
                                 <button @click="abrirModal()" class="btn btn-primary">...</button>
@@ -226,29 +235,29 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 text-center">
                         <div class="form-group">
-                            <label for="">Cantidad <span style="color:red;" v-show="cantidad==0">(*Ingrese la cantidad)</span></label>
+                            <label for=""><strong>Cantidad</strong> <span style="color:red;" v-show="cantidad==0">(*Ingrese la cantidad)</span></label>
                             <input type="number" min="0" value="0"  class="form-control" v-model="cantidad">
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 text-center">
                         <div class="form-group" v-if="moneda!='Peso Mexicano'">
-                            <label for="">Precio m<sup>2</sup> {{moneda}} <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
+                            <label for=""><strong>Precio m<sup>2</sup> {{moneda}} </strong><span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
                            <input type="number" readonly :value="cacularPrecioExtranjero" class="form-control"/>
                         </div>
                         <div class="form-group" v-else>
-                            <label for="">Precio m<sup>2</sup> <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
+                            <label for=""><strong>Precio m<sup>2</sup></strong> <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="precio">
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 text-center">
                         <div class="form-group">
-                            <label for="">Descuento (%)</label>
+                            <label for=""><strong>Descuento (%)</strong></label>
                             <input type="number" min="0" value="0" class="form-control" v-model="descuento">
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 text-center">
                         <div class="form-group">
                             <button @click="agregarDetalle()" class="btn btn-success form-control btnagregar"><i class="icon-plus"></i></button>
                         </div>
@@ -345,8 +354,8 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-4">
-                        <label for="exampleFormControlTextarea2">Observaciones</label>
+                    <div class="col-md-4 text-center">
+                        <label for="exampleFormControlTextarea2"><strong>Observaciones</strong></label>
                         <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
                     </div>&nbsp;
                 </div>
@@ -425,9 +434,9 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for=""> <strong>Aceptado: </strong></label>
+                            <label for=""> <strong>Estado: </strong></label>
                             <div v-if="estadoVn == 'Registrado'">
-                                <toggle-button @change="aceptarCotizacion(cotizacion_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                <span class="badge badge-success">Registrado</span>
                             </div>
                             <div v-else>
                                 <span class="badge badge-danger">Cotizacion cancelada</span>
@@ -1104,6 +1113,8 @@ export default {
         return {
             cotizacion_id: 0,
             idcliente: 0,
+            rfc_cliente : "",
+            tipo_cliente : "",
             cliente: '',
             user: '',
             tipo_comprobante: "COTIZACION",
@@ -1195,7 +1206,9 @@ export default {
             validatedA : 0,
             btnEntrega : false,
             estadoVn : "",
-            CodeDate : ""
+            CodeDate : "",
+            vig : "",
+            pastDays : 0
         };
     },
     components: {
@@ -1325,6 +1338,8 @@ export default {
             let me = this;
             me.loading = true;
             me.idcliente = val1.id;
+            me.rfc_cliente =  val1.rfc;
+            me.tipo_cliente = val1.tipo;
         },
         buscarArticulo(){
             let me = this;
@@ -1586,6 +1601,42 @@ export default {
                 }
             })
         },
+        desactivarCotizacionAnulada(id) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "Esta cotizacion ya se vencio favor de anular",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/cotizacion/desactivar',{
+                        'id': id
+                    }).then(function (response) {
+                        me.listarCotizacion(1,'','num_comprobante');
+                        swal(
+                        'Anulado!',
+                        'La cotizacion ha sido anulado con éxito.',
+                        'success'
+                        )
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
+        },
         validarCotizacion() {
             let me = this;
             var art;
@@ -1711,6 +1762,9 @@ export default {
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
                 me.vigencia=moment(vigeformt).format('llll');
+                me.vig = moment(vigeformt).format('YY-MM-DD');
+
+                me.getPastDays(me.vig,me.cotizacion_id,me.estadoVn);
 
                 var imp =   parseFloat(me.impuesto = arrayCotizacionT[0]['impuesto']);
 
@@ -1733,6 +1787,32 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
+        },
+        getPastDays(dateVig,id,estado){
+            let me = this;
+            let vdate = dateVig;
+            let date = "";
+            moment.locale('es');
+            date = moment().format('YY-MM-DD');
+
+            if(date > vdate){
+                console.log("Cotizacion vencida");
+                if(estado == 'Registrado'){
+                    me.desactivarCotizacionAnulada(id);
+                }else{
+                    Swal.fire({
+                    type: 'error',
+                    title: 'Atención!...',
+                    text: 'Esta cotizacion esta vencida!!',
+                })
+                }
+
+            }else if(date == vdate){
+                console.log("La cotizacion vence hoy!");
+            }else{
+                console.log("Disponible");
+            }
+
         },
         cerrarModal() {
             this.modal = 0;

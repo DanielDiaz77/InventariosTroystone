@@ -186,8 +186,10 @@
                         }else{
                             echo "Pendiente de pago";
                         }
-                        if ($v->entregado){
+                        if($v->entregado){
                             echo " y Entregado";
+                        }elseif ($v->entrega_parcial) {
+                            echo " y Entregado Parcialmente";
                         }else{
                             echo " y no entregado";
                         }
@@ -234,6 +236,7 @@
                     <thead>
                         <tr id="fa">
                             <th>MATERIAL</th>
+                            <th>No° PLACA</th>
                             <th>MEDIDAS</th>
                             <th>P U</th>
                             <th>METROS <sup>2</sup></th>
@@ -248,6 +251,7 @@
 
                         <tr>
                             <td class="td-b">{{ $det->articulo }}</td>
+                            <td class="td-b">{{ $det->codigo }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
                             <td class="td-b">{{ $det->precio }}</td>
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>
@@ -265,6 +269,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                             <th class="th-b">SUBTOTAL</th>
                             <td class="th-b">{{ number_format(round($v->total/($v->impuesto + 1),2),2)}}</td>
                         </tr>
@@ -274,10 +279,12 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                             <th class="th-b">IVA</th>
                             <td class="th-b">{{ number_format(round(($v->total/($v->impuesto + 1))*$v->impuesto,2),2) }}</td>
                         </tr>
                         <tr>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>

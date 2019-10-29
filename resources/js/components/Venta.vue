@@ -76,10 +76,13 @@
                                 <td v-text="venta.forma_pago"></td>
                                 <td v-text="venta.tipo_facturacion"></td>
                                 <td v-if="venta.entregado">
-                                    <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                    <span class="badge badge-success">100%</span>
+                                </td>
+                                <td v-else-if="venta.entrega_parcial">
+                                    <span class="badge badge-warning">Parcial</span>
                                 </td>
                                 <td v-else>
-                                    <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                     <span class="badge badge-danger">No entregado</span>
                                 </td>
                                  <td v-if="venta.pagado">
                                     <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
@@ -113,20 +116,32 @@
         <template v-else-if="listado==0">
             <div class="card-body">
                 <div class="form-group row border">
-                    <div class="col-md-3">
+                    <div class="col-md-3 text-center">
                         <div class="form-group">
-                            <label for="">Cliente (*)</label>
+                            <label for=""><strong>Cliente (*)</strong></label>
                                 <v-select :on-search="selectCliente" label="nombre" :options="arrayCliente" placeholder="Buscar clientes..." :onChange="getDatosCliente">
                                 </v-select>
                         </div>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="">Impuesto (*)</label>
-                        <input type="text" class="form-control" v-model="impuesto">
-                    </div>
-                    <div class="col-md-2">
+                    </div>&nbsp;
+                     <div class="col-md-3 text-center">
                         <div class="form-group">
-                            <label for="">Tipo Comprobante (*) </label>
+                            <label for=""><strong>Tipo de cliente</strong></label>
+                            <!-- <p v-text="tipo_cliente"></p> -->
+                            <input type="text" readonly :value="tipo_cliente" class="form-control col-md">
+                        </div>
+                    </div>
+                     <div class="col-md-3 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>RFC</strong></label>
+                            <!-- <p v-text="rfc_cliente"></p> -->
+                            <input type="text" readonly :value="rfc_cliente" class="form-control col-md">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row border">
+                    <div class="col-md-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Tipo Comprobante (*)</strong></label>
                             <select v-model="tipo_comprobante" class="form-control">
                                 <option value="">Seleccione</option>
                                 <!-- <option value="NOTA">Nota</option> -->
@@ -135,18 +150,47 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Número de presupuesto (*)</label>
+                            <label for=""><strong>Número de presupuesto (*)</strong></label>
                             <div class="row">
                                 <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
                                 <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Moneda<span style="color:red;" v-show="moneda==''">(*Seleccione)</span></label>
+                            <label for=""><strong>Forma de pago</strong><span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
+                            <select class="form-control" v-model="forma_pago">
+                                <option value='' disabled>Seleccione la forma de pago</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                                <option value="Cheque">Cheque</option>
+                                <!-- <option value="Dolar USA">Dolar USA</option>
+                                <option value="EURO">EURO</option> -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center" v-if="forma_pago =='Cheque'">
+                        <div class="form-group">
+                            <label for=""><strong>No° de Cheque</strong><span style="color:red;" v-show="num_cheque==0">(*Ingrese)</span></label>
+                            <input type="number" min="0" class="form-control" v-model="num_cheque" placeholder="000xx">
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center" v-if="forma_pago =='Cheque'">
+                        <div class="form-group">
+                            <label for=""><strong>Banco</strong><span style="color:red;" v-show="banco==''">(*Ingrese)</span></label>
+                            <input type="text" class="form-control" v-model="banco" placeholder="Banco del cheque">
+                        </div>
+                    </div>
+                    <div class="col-md-1 text-center">
+                        <label for=""><strong>IVA (*)</strong></label>
+                        <input type="text" class="form-control" v-model="impuesto">
+                    </div>
+                    <div class="col-md-1 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Moneda</strong><span style="color:red;" v-show="moneda==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="moneda">
                                 <option value='' disabled>Seleccione la moneda del cobro</option>
                                 <option value="Peso Mexicano">Peso Mexicano</option>
@@ -161,22 +205,9 @@
                             <input type="text" class="form-control" v-model="tipo_cambio" placeholder="000xx">
                         </div>
                     </div> -->
-                    <div class="col-md-3">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Forma de pago<span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
-                            <select class="form-control" v-model="forma_pago">
-                                <option value='' disabled>Seleccione la forma de pago</option>
-                                <option value="Efectivo">Efectivo</option>
-                                <option value="Tarjeta">Tarjeta</option>
-                                <option value="Cheque">Cheque</option>
-                                <!-- <option value="Dolar USA">Dolar USA</option>
-                                <option value="EURO">EURO</option> -->
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="">Tiempo de entrega<span style="color:red;" v-show="tiempo_entrega==''">(*Seleccione el tiempo de entrega)</span></label>
+                            <label for=""><strong>Tiempo de entrega</strong><span style="color:red;" v-show="tiempo_entrega==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="tiempo_entrega">
                                 <option value='' disabled>Seleccione el tiempo de entrega</option>
                                 <option value="Inmediata">Inmediata</option>
@@ -186,9 +217,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Lugar de entrega<span style="color:red;" v-show="lugar_entrega==''">(*Seleccione)</span></label>
+                            <label for=""><strong>Lugar de entrega</strong><span style="color:red;" v-show="lugar_entrega==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="lugar_entrega">
                                 <option value='' disabled>Seleccione el lugar de entrega</option>
                                 <option value="LAB TROYSTONE">LAB TROYSTONE</option>
@@ -196,9 +227,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Tipo de facturación<span style="color:red;" v-show="tipo_facturacion==''">(*Seleccione)</span></label>
+                            <label for=""><strong>Tipo de facturación</strong><span style="color:red;" v-show="tipo_facturacion==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="tipo_facturacion">
                                 <option value='' disabled>Seleccione el tipo de facturación</option>
                                 <option value="Publico General">Publico General</option>
@@ -206,19 +237,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3" v-if="forma_pago =='Cheque'">
-                        <div class="form-group">
-                            <label for="">No° de Cheque<span style="color:red;" v-show="num_cheque==0">(*Ingrese el no° de cheque)</span></label>
-                            <input type="number" min="0" class="form-control" v-model="num_cheque" placeholder="000xx">
-                        </div>
-                    </div>
-                    <div class="col-md-3" v-if="forma_pago =='Cheque'">
-                        <div class="form-group">
-                            <label for="">Banco<span style="color:red;" v-show="banco==''">(*Ingrese el banco)</span></label>
-                            <input type="text" class="form-control" v-model="banco" placeholder="Banco del cheque">
-                        </div>
-                    </div>
-                    <div class="col-md-12">
+                    <div class="col-md-12 text-center">
                         <div v-show="errorVenta" class="form-group row div-error">
                             <div class="text-center text-error">
                                 <div v-for="error in errorMostrarMsjVenta" :key="error" v-text="error"></div>
@@ -229,7 +248,7 @@
                 <div class="form-group row border">
                     <div class="col-sm-4">
                         <div class="form-group">
-                            <label for="">Articulo <span style="color:red;" v-show="articulo==''">(*Seleccione)</span> </label>
+                            <label for=""><strong>Articulo</strong> <span style="color:red;" v-show="articulo==''">(*Seleccione)</span> </label>
                             <div class="form-inline">
                                 <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()"  placeholder="Ingrese el artículo" >
                                 <button @click="abrirModal()" class="btn btn-primary">...</button>
@@ -237,29 +256,29 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 text-center">
                         <div class="form-group">
-                            <label for="">Cantidad <span style="color:red;" v-show="cantidad==0">(*Ingrese la cantidad)</span></label>
+                            <label for=""><strong>Cantidad</strong> <span style="color:red;" v-show="cantidad==0">(*Ingrese la cantidad)</span></label>
                             <input type="number" min="0" value="0"  class="form-control" v-model="cantidad">
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 text-center">
                        <!--  <div class="form-group" v-if="moneda!='Peso Mexicano'">
                             <label for="">Precio m<sup>2</sup> {{moneda}} <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
                            <input type="number" readonly :value="cacularPrecioExtranjero" class="form-control"/>
                         </div> -->
                         <div class="form-group">
-                            <label for="">Precio m<sup>2</sup> <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
+                            <label for=""><strong>Precio m<sup>2</sup></strong> <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="precio">
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 text-center">
                         <div class="form-group">
-                            <label for="">Descuento (%)</label>
+                            <label for=""><strong>Descuento (%)</strong></label>
                             <input type="number" min="0" value="0" class="form-control" v-model="descuento">
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 text-center">
                         <div class="form-group">
                             <button @click="agregarDetalle()" class="btn btn-success form-control btnagregar"><i class="icon-plus"></i></button>
                         </div>
@@ -356,8 +375,8 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-4">
-                        <label for="exampleFormControlTextarea2">Observaciones</label>
+                    <div class="col-md-4 text-center">
+                        <label for="exampleFormControlTextarea2"><strong>Observaciones</strong></label>
                         <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
                     </div>&nbsp;
                 </div>
@@ -404,25 +423,19 @@
                             <p v-text="fecha_llegada"></p>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""><strong>Total:</strong></label>
-                            <p v-text="total"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <div class="form-group">
                             <label for=""><strong>Impuesto</strong></label>
                             <p v-text="impuesto"></p>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <div class="form-group">
                             <label for=""><strong>Moneda</strong></label>
                             <p v-text="moneda"></p>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <div class="form-group">
                             <label for=""><strong>Tipo de cambio</strong></label>
                             <p v-text="tipo_cambio"></p>
@@ -436,9 +449,21 @@
                     </div>
                     <div class="col-md-1">
                         <div class="form-group">
-                            <label for=""><strong>Entregado:</strong> </label>
+                            <label for=""><strong>Entregado 100%:</strong> </label>
                             <div v-if="pagado == 1">
                                 <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                            <div v-else-if="estadoVn == 'Registrado'">
+                                <span class="badge badge-danger">Pendiente de pago</span>
+                            </div>
+                            <div v-else></div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label for=""><strong>Entregado Parcial:</strong> </label>
+                            <div v-if="pagado == 1">
+                                <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
                             <div v-else-if="estadoVn == 'Registrado'">
                                 <span class="badge badge-danger">Pendiente de pago</span>
@@ -1120,6 +1145,7 @@ export default {
             lugar_entrega : "",
             precio: 0.0,
             entregado : 0,
+            entregado_parcial: 0,
             stock : 0,
             descripcion : "",
             tipo_facturacion : "",
@@ -1168,11 +1194,14 @@ export default {
             validatedB : 0,
             validatedA : 0,
             btnEntrega : false,
+            btnEntregaParcial : false,
             btnPagado : false,
             estadoVn : "",
             CodeDate : "",
             obsEditable : 0,
-            sigNum : 0
+            sigNum : 0,
+            rfc_cliente: "",
+            tipo_cliente : ""
         };
     },
     components: {
@@ -1302,6 +1331,8 @@ export default {
             let me = this;
             me.loading = true;
             me.idcliente = val1.id;
+            me.rfc_cliente = val1.rfc;
+            me.tipo_cliente = val1.tipo;
         },
         buscarArticulo(){
             let me = this;
@@ -1483,6 +1514,8 @@ export default {
                 me.ocultarDetalle();
                 me.listarVenta(1,'','num_comprobante');
                 me.idcliente = 0;
+                me.tipo_cliente = "";
+                me.rfc_cliente = "";
                 me.tipo_comprobante = "Presupuesto";
                 me.num_comprobante = 0;
                 me.impuesto = 0.16;
@@ -1498,6 +1531,7 @@ export default {
                 me.tiempo_entrega = "";
                 me.lugar_entrega = "";
                 me.entregado = 0;
+                me.entregado_parcial = 0;
                 me.moneda = "Peso Mexicano";
                 me.banco = "";
                 me.num_cheque = 0;
@@ -1628,9 +1662,14 @@ export default {
             this.errorMostrarMsjVenta = [];
             this.num_comprobante = 0;
             this.entregado = 0;
+            this.entregado_parcial = 0;
             this.btnEntrega =  false;
+            this.btnEntregaParcial = false;
             this.btnPagado = false;
             this.obsEditable = 0;
+            this.idcliente = 0;
+            this.rfc_cliente = "";
+            this.tipo_cliente = "";
             this.getLastNum();
         },
         verVenta(id){
@@ -1661,6 +1700,7 @@ export default {
                 me.lugar_entrega = arrayVentaT[0]['lugar_entrega'];
                 me.tiempo_entrega = arrayVentaT[0]['tiempo_entrega'];
                 me.entregado = arrayVentaT[0]['entregado'];
+                me.entregado_parcial = arrayVentaT[0]['entrega_parcial'];
                 me.moneda = arrayVentaT[0]['moneda'];
                 me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
                 me.observacion = arrayVentaT[0]['observacion'];
@@ -1679,6 +1719,12 @@ export default {
 
                 if(me.entregado ==1){
                     me.btnEntrega = true;
+                    me.btnEntregaParcial = false;
+                }
+
+                if(me.entregado_parcial ==1){
+                    me.btnEntregaParcial = true;
+                    me.btnEntrega = false;
                 }
 
                 if(me.pagado ==1){
@@ -2007,6 +2053,22 @@ export default {
             axios.post('/venta/cambiarEntrega',{
                 'id': id,
                 'entregado' : this.entregado
+            }).then(function (response) {
+                me.listarVenta(1,'','num_comprobante');
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        cambiarEstadoEntregaParcial(id){
+            let me = this;
+            if(me.btnEntregaParcial == true){
+                me.entregado_parcial = 1;
+            }else{
+                me.entregado_parcial = 0;
+            }
+            axios.post('/venta/cambiarEntregaParcial',{
+                'id': id,
+                'entrega_parcial' : this.entregado_parcial
             }).then(function (response) {
                 me.listarVenta(1,'','num_comprobante');
             }).catch(function (error) {
