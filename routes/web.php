@@ -92,6 +92,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/venta/cambiarPagado', 'VentaController@cambiarPagado');
         Route::post('/venta/actualizarObservacion', 'VentaController@actualizarObservacion');
         Route::get('/venta/nextNum','VentaController@getLastNum');
+        Route::put('/entrega/updDetalle', 'VentaController@updDetalle');
 
 
     });
@@ -165,6 +166,10 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/venta/cambiarPagado', 'VentaController@cambiarPagado');
         Route::post('/venta/actualizarObservacion', 'VentaController@actualizarObservacion');
         Route::get('/venta/nextNum','VentaController@getLastNum');
+        Route::get('/entrega', 'VentaController@indexEntregas');
+        Route::get('/entrega/pdf/{id}', 'VentaController@pdfEntrega')->name('entrega_pdf');
+        Route::put('/entrega/updDetalle', 'VentaController@updDetalle');
+        Route::get('/venta/obtenerDetallesEntrega', 'VentaController@obtenerDetallesEntrega');
 
         //COTIZACIONES
         Route::get('/cotizacion', 'CotizacionController@index');

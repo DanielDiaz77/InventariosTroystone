@@ -61,8 +61,8 @@
                                     <button type="button" class="btn btn-success btn-sm" @click="verCotizacion(cotizacion.id)">
                                         <i class="icon-eye"></i>
                                     </button>&nbsp;
-                                    <button type="button" class="btn btn-info btn-sm" @click="pdfCotizacion(cotizacion.id)">
-                                        <i class="icon-doc"></i>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfCotizacion(cotizacion.id)">
+                                        <i class="fa fa-file-pdf-o"></i>
                                     </button>&nbsp;
                                     <template v-if="cotizacion.estado=='Registrado'">
                                         <button type="button" class="btn btn-danger btn-sm" @click="desactivarCotizacion(cotizacion.id)">

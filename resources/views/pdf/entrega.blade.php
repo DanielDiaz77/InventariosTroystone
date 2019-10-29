@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <title>Cotizacion</title>
+    <title>Comprobante de entrega</title>
     <style>
         body {
         /*position: relative;*/
@@ -152,12 +152,12 @@
         }
     </style>
     <body>
-        @foreach ($cotizacion as $c)
+        @foreach ($venta as $v)
         <header>
             {{-- <div id="divIzq">aaaaaaa</div> --}}
             <div>
                 <img id="logo" src="img/LogoFactura2.png" alt="TroyStoneLogo" id="imagen">
-                <p style="float: right;"> <strong >{{ $c->tipo_comprobante }}</strong>  : {{$c->num_comprobante}}</p>
+                <p style="float: right;"> <strong >ENTREGA</strong>  : {{$v->num_comprobante}}</p>
             </div>
             <div id="divPiedra"> <b> La piedra de tus proyectos </b> </div><br><br><br><br><br>
             <div id="datos">
@@ -176,18 +176,31 @@
                 </p>
             </div>
             <div id="fact">
-                <p><strong>Estado: </strong>
-                        @php
-                        if ($c->aceptado){
-                            echo "Aceptada";
+                    <p><strong>Estado: </strong>
+                    @php
+                    if($v->estado == 'Anulada'){
+                        echo "Anulado";
+                    }else{
+                        if($v->pagado){
+                            echo "Pagado";
                         }else{
-                            if($c->estado == 'Anulada'){
-                                echo "Cotización cancelada";
-                            }else{
-                                echo "No aceptada";
-                            }
+                            echo "Pendiente de pago";
                         }
-                        @endphp
+                        if ($v->entregado){
+                            echo " y Entregado";
+                        }else{
+                            echo " y no entregado";
+                        }
+                    }
+                    @endphp
+                    {{-- <p><strong>Estado: </strong> {{ $v->pagado? "Pagado" : "Pendiente de pago" }} --}}
+                    {{-- @php
+                        if ($v->entregado){
+                            echo " y Entregado";
+                        }else{
+                            echo " y no entregado";
+                        }
+                    @endphp --}}
                 </p>
             </div>
         </header>
@@ -202,11 +215,11 @@
                     </thead>
                     <tbody>
                         <tr>
-                        <th><p id="cliente">{{$c->nombre}}<br>
-                            RFC: {{ $c->rfc }}<br>
-                            Domicilio: {{ $c->domicilio }} {{$c->ciudad}}<br>
-                            Teléfono: {{ $c->telefono }}<br>
-                            Correo-E: {{ $c->email  }}</p></th>
+                        <th><p id="cliente">{{$v->nombre}}<br>
+                            RFC: {{ $v->rfc }}<br>
+                            Domicilio: {{ $v->domicilio }} {{$v->ciudad}}<br>
+                            Teléfono: {{ $v->telefono }}<br>
+                            Correo-E: {{ $v->email  }}</p></th>
                         </tr>
                     </tbody>
                 </table>
@@ -221,12 +234,11 @@
                     <thead>
                         <tr id="fa">
                             <th>MATERIAL</th>
+                            <th>No° PLACA</th>
                             <th>MEDIDAS</th>
                             <th>P U</th>
                             <th>METROS <sup>2</sup></th>
                             <th>CANT.</th>
-                            <th>DESCUENTO</th>
-                            <th>SUBTOTAL</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -235,72 +247,43 @@
 
                         <tr>
                             <td class="td-b">{{ $det->articulo }}</td>
+                            <td class="td-b">{{ $det->codigo }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
                             <td class="td-b">{{ $det->precio }}</td>
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>
                             <td class="td-b">{{ $det->cantidad }}</td>
-                            <td class="td-b">{{ $det->descuento }}</td>
-                            <td class="td-b">{{ number_format(((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento),2) }}</td>
                         </tr>
                         @endforeach
                     </tbody>
-                    <tfoot>
-                        @foreach ($cotizacion as $c)
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th class="th-b">SUBTOTAL</th>
-                            <td class="th-b">{{ number_format(round($c->total/($c->impuesto + 1),2),2)}}</td>
-                        </tr>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th class="th-b">IVA</th>
-                            <td class="th-b">{{ number_format(round(($c->total/($c->impuesto + 1))*$c->impuesto,2),2) }}</td>
-                        </tr>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th class="th-b">TOTAL</th>
-                            <td class="th-b">{{ number_format($c->total,2) }}</td>
-                        </tr>
-                        @endforeach
-                    </tfoot>
 
                 </table>
-                @foreach ($cotizacion as $c)
+                @foreach ($venta as $v)
                 <p>
-                    <strong>Vigencia: </strong>
+                    <strong>Fecha de realizacion: </strong>
                     <?php
                         setlocale(LC_TIME, "spanish");
-                        $mi_fecha = $c->vigencia;
+                        $mi_fecha = $v->created_at;
                         $mi_fecha = str_replace("/", "-", $mi_fecha);
                         $Nueva_Fecha = date("d-m-Y", strtotime($mi_fecha));
                         $Mes_Anyo = strftime("%A, %d de %B de %Y", strtotime($Nueva_Fecha));
                         echo $Mes_Anyo;
                     ?> <br>
-                    <strong>Nota: </strong>{{ $c->observacion }} <br>
-                    <strong>Forma de pago: </strong>{{ $c->forma_pago }} <br>
-                    <strong>Tiempo de entrega:</strong>{{ $c->tiempo_entrega }}<br>
-                    <strong> Lugar de entrega: </strong>{{ $c->lugar_entrega }}
+                    <strong>Nota: </strong>{{ $v->observacion }} <br>
+                    <strong>Forma de pago: </strong>{{ $v->forma_pago }}
+                    {{-- <strong>
+                    @php
+                        if($v->forma_pago == 'Cheque'){
+                            echo "No° Cheque: ".$v->num_cheque;
+                            echo " Banco: ".$v->banco;
+                        }
+                    @endphp
+                    </strong> --}}
+                    <br>
+                    <strong>Tiempo de entrega:</strong>{{ $v->tiempo_entrega }}<br>
+                    <strong> Lugar de entrega: </strong>{{ $v->lugar_entrega }}
                 </p> <br>
             @endforeach
-            {{-- <p style="text-align:center";><strong>Atentamente, <br>
-                Lic. Andrés Pérez Arenzana</strong></p> --}}
-            <strong>Cuentas para depositar en pesos:</strong><br>
-            <strong>Beneficiario: TROYSTONE, S.A. DE C.V. RFC: TRO 120511 B35 </strong><br><hr>
-            <strong> - IXE / Banorte - Cuenta: 001750 8770 CLABE: <u> 07232 0000 1750 8770 5</u>  </strong><br>
-            <strong> - Banamex - Suc.: 7005 Cuenta: 3393 800 CLABE: <u> 00232 07005 3393 800 9 </u> </strong><br><hr>
-            <strong> - Santander - Cuenta: 6550 4375 654 CLABE: <u> 01432 06550 4375 654 2 </u> </strong><br><hr>
+
             <p style="font-size:7px;">*** SUGERIMOS A NUESTROS CLIENTES SELLAR SU MATERIAL CON PRODUCTOS LATICRETE
                     *** PRECIOS LAB EN BODEGA TROYSTONE ZMG *APLICA PARA VENTA DE MATERIAL*
                     *** TIEMPO DE ENTREGA SUJETO A DISPONIBILIDAD.

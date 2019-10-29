@@ -29,7 +29,11 @@
 
             <template v-if="menu==13">
                 <cotizacion></cotizacion>
-             </template>
+            </template>
+
+            <template v-if="menu==14">
+                <entrega></entrega>
+            </template>
 
             <template v-if="menu==6">
                 <cliente></cliente>
@@ -70,6 +74,10 @@
 
             <template v-if="menu==5">
                 <venta></venta>
+            </template>
+
+            <template v-if="menu==14">
+                <entrega></entrega>
             </template>
 
             <template v-if="menu==13">
@@ -116,6 +124,10 @@
 
             <template v-if="menu==9">
                 <consultaingreso></consultaingreso>
+            </template>
+
+            <template v-if="menu==14">
+                <entrega></entrega>
             </template>
 
             <template v-if="menu==11">

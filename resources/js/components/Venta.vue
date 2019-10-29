@@ -57,8 +57,8 @@
                                     <button type="button" class="btn btn-success btn-sm" @click="verVenta(venta.id)">
                                         <i class="icon-eye"></i>
                                     </button>&nbsp;
-                                    <button type="button" class="btn btn-info btn-sm" @click="pdfVenta(venta.id)">
-                                        <i class="icon-doc"></i>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfVenta(venta.id)">
+                                        <i class="fa fa-file-pdf-o"></i>
                                     </button>&nbsp;
                                     <template v-if="venta.estado=='Registrado'">
                                         <button type="button" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)">
