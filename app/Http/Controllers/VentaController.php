@@ -19,6 +19,15 @@ class VentaController extends Controller
         $buscar = $request->buscar;
         $criterio = $request->criterio;
 
+        if($criterio == 'entregado'){
+            $buscar = 1;
+        }
+
+        if($criterio == 'entrega_parcial'){
+            $buscar = 1;
+        }
+
+
         if ($buscar==''){
             $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
             ->join('users','ventas.idusuario','=','users.id')
@@ -261,6 +270,14 @@ class VentaController extends Controller
         $buscar = $request->buscar;
         $criterio = $request->criterio;
 
+        if($criterio == 'entregado'){
+            $buscar = 1;
+        }
+
+        if($criterio == 'entrega_parcial'){
+            $buscar = 1;
+        }
+
         if ($buscar==''){
             $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
             ->join('users','ventas.idusuario','=','users.id')
@@ -282,8 +299,9 @@ class VentaController extends Controller
             ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
             'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
             'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.num_cheque',
-            'ventas.banco','ventas.tipo_facturacion','ventas.pagado','personas.nombre','users.usuario')
+            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado',
+            'ventas.num_cheque','ventas.entrega_parcial','ventas.banco','users.usuario',
+            'ventas.tipo_facturacion','ventas.pagado','personas.nombre')
             ->where([
                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                 ['ventas.pagado',1],

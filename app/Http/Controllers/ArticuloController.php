@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Articulo;
+use App\Categoria;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ArticulosExport;
@@ -16,6 +17,12 @@ class ArticuloController extends Controller
 
         $buscar = $request->buscar;
         $criterio = $request->criterio;
+
+        if($criterio == 'idcategoria'){
+            $name = $request->buscar;
+            $category = Categoria::where('nombre','like','%'.$name.'%')->select('id')->first();
+            $buscar = $category->id;
+        }
 
         if($buscar==''){
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')

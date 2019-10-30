@@ -19,9 +19,9 @@
                         <select class="form-control col-md-3" v-model="criterio">
                         <option value="num_comprobante">No° Comprobante</option>
                         <option value="fecha_hora">Fecha</option>
-                        <option value="estado">Estado</option>
                         <option value="entregado">Entregado 100%</option>
-                        <option value="forma_pago">Forma de pago</option>
+                        <option value="entrega_parcial">Entrega Parcial</option>
+                        <!-- <option value="forma_pago">Forma de pago</option> -->
                         </select>
                         <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
                         <button type="submit" @click="listarVenta(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
@@ -829,6 +829,11 @@ export default {
     methods: {
         listarVenta (page,buscar,criterio){
             let me=this;
+
+            /* if(me.criterio == 'entregado'){
+                me.buscar = 1;
+            } */
+
             var url= '/entrega?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;

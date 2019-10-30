@@ -25,6 +25,7 @@
                   <option value="descripcion">Descripción</option>
                   <option value="sku">Código de material</option>
                   <option value="codigo">No° de placa</option>
+                  <option value="idcategoria">Material</option>
                 </select>
                 <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
                 <button type="submit" @click="listarArticulo(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
@@ -50,62 +51,69 @@
                     <th>Comprometido</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr v-for="articulo in arrayArticulo" :key="articulo.id">
-                    <td>
-                    <template v-if="articulo.condicion == 1">
-                        <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
-                            <i class="icon-pencil"></i>
+                <tbody v-if="arrayArticulo.length">
+                    <tr v-for="articulo in arrayArticulo" :key="articulo.id">
+                        <td>
+                        <template v-if="articulo.condicion == 1">
+                            <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
+                                <i class="icon-pencil"></i>
+                            </button> &nbsp;
+                        </template>
+                        <template v-else></template>
+                        <template v-if="articulo.condicion == 1">
+                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
+                            <i class="icon-trash"></i>
+                            </button>
+                        </template>
+                        <template v-else-if="articulo.condicion == 0">
+                            <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
+                            <i class="icon-check"></i>
+                            </button>
+                        </template>
+                        <template v-else>
+                        </template>&nbsp;
+                        <button type="button" @click="abrirModal2('articulo','visualizar',articulo)" class="btn btn-success btn-sm">
+                            <i class="icon-eye"></i>
                         </button> &nbsp;
-                    </template>
-                    <template v-else></template>
-                    <template v-if="articulo.condicion == 1">
-                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
-                        <i class="icon-trash"></i>
-                        </button>
-                    </template>
-                    <template v-else-if="articulo.condicion == 0">
-                        <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
-                        <i class="icon-check"></i>
-                        </button>
-                    </template>
-                    <template v-else>
-                    </template>&nbsp;
-                    <button type="button" @click="abrirModal2('articulo','visualizar',articulo)" class="btn btn-success btn-sm">
-                        <i class="icon-eye"></i>
-                    </button> &nbsp;
-                    </td>
-                    <td v-text="articulo.codigo"></td>
-                    <td v-text="articulo.sku"></td>
-                    <!-- <td v-text="articulo.nombre"></td> -->
-                    <td v-text="articulo.nombre_categoria"></td>
-                    <td v-text="articulo.descripcion"></td>
-                    <td v-text="articulo.largo"></td>
-                    <td v-text="articulo.alto"></td>
-                    <td v-text="articulo.metros_cuadrados"></td>
-                    <td v-text="articulo.precio_venta"></td>
-                    <td v-text="articulo.stock"></td>
-                    <td v-text="articulo.ubicacion"></td>
-                    <td>
-                        <div v-if="articulo.condicion == 1">
-                            <span class="badge badge-success">Activo</span>
-                        </div>
-                        <div v-else-if="articulo.condicion == 3">
-                            <span class="badge badge-warning">Cortado</span>
-                        </div>
-                        <div v-else>
-                            <span class="badge badge-danger">Desactivado</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div v-if="articulo.comprometido">
-                            <span class="badge badge-success">Si</span>
-                        </div>
-                        <div v-else>
-                            <span class="badge badge-danger">No</span>
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                        <td v-text="articulo.codigo"></td>
+                        <td v-text="articulo.sku"></td>
+                        <!-- <td v-text="articulo.nombre"></td> -->
+                        <td v-text="articulo.nombre_categoria"></td>
+                        <td v-text="articulo.descripcion"></td>
+                        <td v-text="articulo.largo"></td>
+                        <td v-text="articulo.alto"></td>
+                        <td v-text="articulo.metros_cuadrados"></td>
+                        <td v-text="articulo.precio_venta"></td>
+                        <td v-text="articulo.stock"></td>
+                        <td v-text="articulo.ubicacion"></td>
+                        <td>
+                            <div v-if="articulo.condicion == 1">
+                                <span class="badge badge-success">Activo</span>
+                            </div>
+                            <div v-else-if="articulo.condicion == 3">
+                                <span class="badge badge-warning">Cortado</span>
+                            </div>
+                            <div v-else>
+                                <span class="badge badge-danger">Desactivado</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div v-if="articulo.comprometido">
+                                <span class="badge badge-success">Si</span>
+                            </div>
+                            <div v-else>
+                                <span class="badge badge-danger">No</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody v-else>
+                    <tr>
+                        <td colspan="13" class="text-center">
+                            <strong>NO hay artículos con ese criterio...</strong>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
           </div>

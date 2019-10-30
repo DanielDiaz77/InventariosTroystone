@@ -2245,6 +2245,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -8254,6 +8262,10 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
   methods: {
     listarVenta: function listarVenta(page, buscar, criterio) {
       var me = this;
+      /* if(me.criterio == 'entregado'){
+          me.buscar = 1;
+      } */
+
       var url = '/entrega?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
@@ -11202,6 +11214,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
 //
 //
 //
@@ -77899,6 +77912,10 @@ var render = function() {
                     _vm._v(" "),
                     _c("option", { attrs: { value: "codigo" } }, [
                       _vm._v("No° de placa")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "idcategoria" } }, [
+                      _vm._v("Material")
                     ])
                   ]
                 ),
@@ -77961,185 +77978,195 @@ var render = function() {
               [
                 _vm._m(1),
                 _vm._v(" "),
-                _c(
-                  "tbody",
-                  _vm._l(_vm.arrayArticulo, function(articulo) {
-                    return _c("tr", { key: articulo.id }, [
-                      _c(
-                        "td",
-                        [
-                          articulo.condicion == 1
-                            ? [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-warning btn-sm",
-                                    attrs: { type: "button" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.abrirModal(
-                                          "articulo",
-                                          "actualizar",
-                                          articulo
-                                        )
-                                      }
-                                    }
-                                  },
-                                  [_c("i", { staticClass: "icon-pencil" })]
-                                ),
-                                _vm._v("  \n                  ")
-                              ]
-                            : void 0,
-                          _vm._v(" "),
-                          articulo.condicion == 1
-                            ? [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-danger btn-sm",
-                                    attrs: { type: "button" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.desactivarArticulo(
-                                          articulo.id
-                                        )
-                                      }
-                                    }
-                                  },
-                                  [_c("i", { staticClass: "icon-trash" })]
-                                )
-                              ]
-                            : articulo.condicion == 0
-                            ? [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-info btn-sm",
-                                    attrs: { type: "button" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.activarArticulo(articulo.id)
-                                      }
-                                    }
-                                  },
-                                  [_c("i", { staticClass: "icon-check" })]
-                                )
-                              ]
-                            : void 0,
-                          _vm._v(" \n                  "),
+                _vm.arrayArticulo.length
+                  ? _c(
+                      "tbody",
+                      _vm._l(_vm.arrayArticulo, function(articulo) {
+                        return _c("tr", { key: articulo.id }, [
                           _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-success btn-sm",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.abrirModal2(
-                                    "articulo",
-                                    "visualizar",
-                                    articulo
-                                  )
-                                }
-                              }
-                            },
-                            [_c("i", { staticClass: "icon-eye" })]
+                            "td",
+                            [
+                              articulo.condicion == 1
+                                ? [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-warning btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.abrirModal(
+                                              "articulo",
+                                              "actualizar",
+                                              articulo
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-pencil" })]
+                                    ),
+                                    _vm._v("  \n                      ")
+                                  ]
+                                : void 0,
+                              _vm._v(" "),
+                              articulo.condicion == 1
+                                ? [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.desactivarArticulo(
+                                              articulo.id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-trash" })]
+                                    )
+                                  ]
+                                : articulo.condicion == 0
+                                ? [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-info btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.activarArticulo(
+                                              articulo.id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-check" })]
+                                    )
+                                  ]
+                                : void 0,
+                              _vm._v(" \n                      "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-success btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.abrirModal2(
+                                        "articulo",
+                                        "visualizar",
+                                        articulo
+                                      )
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "icon-eye" })]
+                              ),
+                              _vm._v("  \n                      ")
+                            ],
+                            2
                           ),
-                          _vm._v("  \n                  ")
-                        ],
-                        2
-                      ),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(articulo.codigo) }
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(articulo.codigo) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(articulo.sku) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: {
+                              textContent: _vm._s(articulo.nombre_categoria)
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: {
+                              textContent: _vm._s(articulo.descripcion)
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(articulo.largo) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(articulo.alto) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: {
+                              textContent: _vm._s(articulo.metros_cuadrados)
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: {
+                              textContent: _vm._s(articulo.precio_venta)
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(articulo.stock) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: {
+                              textContent: _vm._s(articulo.ubicacion)
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("td", [
+                            articulo.condicion == 1
+                              ? _c("div", [
+                                  _c(
+                                    "span",
+                                    { staticClass: "badge badge-success" },
+                                    [_vm._v("Activo")]
+                                  )
+                                ])
+                              : articulo.condicion == 3
+                              ? _c("div", [
+                                  _c(
+                                    "span",
+                                    { staticClass: "badge badge-warning" },
+                                    [_vm._v("Cortado")]
+                                  )
+                                ])
+                              : _c("div", [
+                                  _c(
+                                    "span",
+                                    { staticClass: "badge badge-danger" },
+                                    [_vm._v("Desactivado")]
+                                  )
+                                ])
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            articulo.comprometido
+                              ? _c("div", [
+                                  _c(
+                                    "span",
+                                    { staticClass: "badge badge-success" },
+                                    [_vm._v("Si")]
+                                  )
+                                ])
+                              : _c("div", [
+                                  _c(
+                                    "span",
+                                    { staticClass: "badge badge-danger" },
+                                    [_vm._v("No")]
+                                  )
+                                ])
+                          ])
+                        ])
                       }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(articulo.sku) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: {
-                          textContent: _vm._s(articulo.nombre_categoria)
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(articulo.descripcion) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(articulo.largo) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(articulo.alto) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: {
-                          textContent: _vm._s(articulo.metros_cuadrados)
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(articulo.precio_venta) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(articulo.stock) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(articulo.ubicacion) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", [
-                        articulo.condicion == 1
-                          ? _c("div", [
-                              _c(
-                                "span",
-                                { staticClass: "badge badge-success" },
-                                [_vm._v("Activo")]
-                              )
-                            ])
-                          : articulo.condicion == 3
-                          ? _c("div", [
-                              _c(
-                                "span",
-                                { staticClass: "badge badge-warning" },
-                                [_vm._v("Cortado")]
-                              )
-                            ])
-                          : _c("div", [
-                              _c(
-                                "span",
-                                { staticClass: "badge badge-danger" },
-                                [_vm._v("Desactivado")]
-                              )
-                            ])
-                      ]),
-                      _vm._v(" "),
-                      _c("td", [
-                        articulo.comprometido
-                          ? _c("div", [
-                              _c(
-                                "span",
-                                { staticClass: "badge badge-success" },
-                                [_vm._v("Si")]
-                              )
-                            ])
-                          : _c("div", [
-                              _c(
-                                "span",
-                                { staticClass: "badge badge-danger" },
-                                [_vm._v("No")]
-                              )
-                            ])
-                      ])
-                    ])
-                  }),
-                  0
-                )
+                      0
+                    )
+                  : _c("tbody", [_vm._m(2)])
               ]
             )
           ]),
@@ -78647,7 +78674,7 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group row" }, [
-                      _vm._m(2),
+                      _vm._m(3),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
                         _c("input", {
@@ -78694,7 +78721,7 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group row" }, [
-                      _vm._m(3),
+                      _vm._m(4),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
                         _c("input", {
@@ -79229,11 +79256,11 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center table-hover"
                     },
                     [
-                      _vm._m(4),
+                      _vm._m(5),
                       _vm._v(" "),
                       _c("tbody", [
                         _c("tr", [
-                          _vm._m(5),
+                          _vm._m(6),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.sku) }
@@ -79241,7 +79268,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(6),
+                          _vm._m(7),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.terminado) }
@@ -79249,7 +79276,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(7),
+                          _vm._m(8),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.largo) }
@@ -79257,7 +79284,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(8),
+                          _vm._m(9),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.alto) }
@@ -79265,7 +79292,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(9),
+                          _vm._m(10),
                           _vm._v(" "),
                           _c("td", {
                             domProps: {
@@ -79275,18 +79302,10 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(10),
-                          _vm._v(" "),
-                          _c("td", {
-                            domProps: { textContent: _vm._s(_vm.espesor) }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
                           _vm._m(11),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.precio_venta) }
+                            domProps: { textContent: _vm._s(_vm.espesor) }
                           })
                         ]),
                         _vm._v(" "),
@@ -79294,7 +79313,7 @@ var render = function() {
                           _vm._m(12),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.ubicacion) }
+                            domProps: { textContent: _vm._s(_vm.precio_venta) }
                           })
                         ]),
                         _vm._v(" "),
@@ -79302,7 +79321,7 @@ var render = function() {
                           _vm._m(13),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.stock) }
+                            domProps: { textContent: _vm._s(_vm.ubicacion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -79310,7 +79329,7 @@ var render = function() {
                           _vm._m(14),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.descripcion) }
+                            domProps: { textContent: _vm._s(_vm.stock) }
                           })
                         ]),
                         _vm._v(" "),
@@ -79318,7 +79337,7 @@ var render = function() {
                           _vm._m(15),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.observacion) }
+                            domProps: { textContent: _vm._s(_vm.descripcion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -79326,7 +79345,7 @@ var render = function() {
                           _vm._m(16),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.contenedor) }
+                            domProps: { textContent: _vm._s(_vm.observacion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -79334,12 +79353,20 @@ var render = function() {
                           _vm._m(17),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.espesor) }
+                            domProps: { textContent: _vm._s(_vm.contenedor) }
                           })
                         ]),
                         _vm._v(" "),
                         _c("tr", [
                           _vm._m(18),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.espesor) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(19),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.fecha_llegada) }
@@ -79438,6 +79465,16 @@ var staticRenderFns = [
         _c("th", [_vm._v("Estado")]),
         _vm._v(" "),
         _c("th", [_vm._v("Comprometido")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", [
+      _c("td", { staticClass: "text-center", attrs: { colspan: "13" } }, [
+        _c("strong", [_vm._v("NO hay artículos con ese criterio...")])
       ])
     ])
   },
@@ -88887,17 +88924,15 @@ var render = function() {
                               _vm._v("Fecha")
                             ]),
                             _vm._v(" "),
-                            _c("option", { attrs: { value: "estado" } }, [
-                              _vm._v("Estado")
-                            ]),
-                            _vm._v(" "),
                             _c("option", { attrs: { value: "entregado" } }, [
                               _vm._v("Entregado 100%")
                             ]),
                             _vm._v(" "),
-                            _c("option", { attrs: { value: "forma_pago" } }, [
-                              _vm._v("Forma de pago")
-                            ])
+                            _c(
+                              "option",
+                              { attrs: { value: "entrega_parcial" } },
+                              [_vm._v("Entrega Parcial")]
+                            )
                           ]
                         ),
                         _vm._v(" "),
@@ -96985,8 +97020,14 @@ var render = function() {
                             ]),
                             _vm._v(" "),
                             _c("option", { attrs: { value: "entregado" } }, [
-                              _vm._v("Entregado")
+                              _vm._v("Entregado 100%")
                             ]),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "entrega_parcial" } },
+                              [_vm._v("Entrega Parcial")]
+                            ),
                             _vm._v(" "),
                             _c("option", { attrs: { value: "forma_pago" } }, [
                               _vm._v("Forma de pago")

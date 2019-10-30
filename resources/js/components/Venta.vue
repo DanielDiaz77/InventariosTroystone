@@ -23,7 +23,8 @@
                         <option value="num_comprobante">No° Comprobante</option>
                         <option value="fecha_hora">Fecha</option>
                         <option value="estado">Estado</option>
-                        <option value="entregado">Entregado</option>
+                        <option value="entregado">Entregado 100%</option>
+                        <option value="entrega_parcial">Entrega Parcial</option>
                         <option value="forma_pago">Forma de pago</option>
                         </select>
                         <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
