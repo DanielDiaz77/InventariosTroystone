@@ -11,8 +11,6 @@
 |
 */
 
-/* use Illuminate\Routing\Route; */
-
 Route::group(['middleware'=>['guest']],function(){
     //LOGIN
     Route::get('/', 'Auth\LoginController@showLoginForm');
@@ -51,7 +49,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/articulo/buscarArticulo', 'ArticuloController@buscarArticulo');
         Route::get('/articulo/listarArticulo', 'ArticuloController@listarArticulo');
         Route::post('/articulo/registrarDetalle', 'ArticuloController@storeDetalle');
-        Route::get('/articulo/listarPdf','ArticuloController@listarPdf')->name('articulos_pdf');
+        Route::get('/articulo/listarPdf','ArticuloController@listarPdf');
 
         //PROVEEDORES
         Route::get('/proveedor', 'ProveedorController@index');
@@ -87,7 +85,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/venta/obtenerCabecera', 'VentaController@obtenerCabecera');
         Route::get('/venta/obtenerDetalles', 'VentaController@obtenerDetalles');
         Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
-        Route::get('/venta/pdf/{id}', 'VentaController@pdf')->name('venta_pdf');
+        Route::get('/venta/pdf/{id}', 'VentaController@pdf');
         Route::post('/venta/cambiarEntrega', 'VentaController@cambiarEntrega');
         Route::post('/venta/cambiarEntregaParcial', 'VentaController@cambiarEntregaParcial');
         Route::post('/venta/cambiarPagado', 'VentaController@cambiarPagado');
@@ -122,8 +120,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/articulo/buscarArticuloVenta', 'ArticuloController@buscarArticuloVenta');
         Route::get('/articulo/listarArticuloVenta', 'ArticuloController@listarArticuloVenta');
         Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
-        Route::get('/articulo/listarPdf','ArticuloController@listarPdf')->name('articulos_pdf');
-        Route::get('/articulo/listarExcel','ArticuloController@listarExcel')->name('articulos_excel');
+        Route::get('/articulo/listarPdf','ArticuloController@listarPdf');
+        Route::get('/articulo/listarExcel','ArticuloController@listarExcel');
         Route::put('/articulo/cambiarComprometido', 'ArticuloController@cambiarComprometido');
         Route::get('/articulo/listarArticuloCotizado', 'ArticuloController@listarArticuloCotizado');
 
@@ -164,14 +162,14 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/venta/obtenerCabecera', 'VentaController@obtenerCabecera');
         Route::get('/venta/obtenerDetalles', 'VentaController@obtenerDetalles');
         Route::put('/articulo/actualizarCorte', 'ArticuloController@updateCortado');
-        Route::get('/venta/pdf/{id}', 'VentaController@pdf')->name('venta_pdf');
+        Route::get('/venta/pdf/{id}', 'VentaController@pdf');
         Route::post('/venta/cambiarEntrega', 'VentaController@cambiarEntrega');
         Route::post('/venta/cambiarEntregaParcial', 'VentaController@cambiarEntregaParcial');
         Route::post('/venta/cambiarPagado', 'VentaController@cambiarPagado');
         Route::post('/venta/actualizarObservacion', 'VentaController@actualizarObservacion');
         Route::get('/venta/nextNum','VentaController@getLastNum');
         Route::get('/entrega', 'VentaController@indexEntregas');
-        Route::get('/entrega/pdf/{id}', 'VentaController@pdfEntrega')->name('entrega_pdf');
+        Route::get('/entrega/pdf/{id}', 'VentaController@pdfEntrega');
         Route::put('/entrega/updDetalle', 'VentaController@updDetalle');
         Route::get('/venta/obtenerDetallesEntrega', 'VentaController@obtenerDetallesEntrega');
         Route::put('/entrega/updImagen', 'VentaController@updImage');
@@ -182,7 +180,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/cotizacion/desactivar', 'CotizacionController@desactivar');
         Route::get('/cotizacion/obtenerCabecera','CotizacionController@obtenerCabecera');
         Route::get('/cotizacion/obtenerDetalles','CotizacionController@obtenerDetalles');
-        Route::get('/cotizacion/pdf/{id}','CotizacionController@pdf')->name('cotizacion_pdf');
+        Route::get('/cotizacion/pdf/{id}','CotizacionController@pdf');
         Route::put('/cotizacion/aceptarCotizacion', 'CotizacionController@aceptarCotizacion');
         Route::get('/cotizacion/nextNum','CotizacionController@getLastNum');
         Route::post('/cotizacion/actualizarObservacion', 'CotizacionController@actualizarObservacion');
@@ -191,4 +189,3 @@ Route::group(['middleware'=>['auth']],function(){
     });
 });
 
-//Route::get('/home', 'HomeController@index')->name('home');

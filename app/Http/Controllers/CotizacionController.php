@@ -9,6 +9,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\PDF;
 
 class CotizacionController extends Controller
 {
@@ -202,6 +203,7 @@ class CotizacionController extends Controller
     }
 
     public function getLastNum(){
+
         $lastNum = Cotizacion::select('num_comprobante')->get()->last();
         $noComp = explode('"',$lastNum);
         $SigNum = explode("-",$noComp[3]);

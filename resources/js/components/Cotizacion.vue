@@ -2193,7 +2193,7 @@ export default {
             });
         },
         pdfCotizacion(id){
-            window.open('http://127.0.0.1:8000/cotizacion/pdf/'+id + ',' + '_blank');
+            window.open('/cotizacion/pdf/'+id);
         },
         getLastNum(){
             let me=this;

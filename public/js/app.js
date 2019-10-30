@@ -5061,7 +5061,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.ind = '';
     },
     pdfVenta: function pdfVenta(id) {
-      window.open('http://127.0.0.1:8000/venta/pdf/' + id + ',' + '_blank');
+      window.open('/venta/pdf/' + id);
     }
   },
   mounted: function mounted() {
@@ -7244,7 +7244,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       });
     },
     pdfCotizacion: function pdfCotizacion(id) {
-      window.open('http://127.0.0.1:8000/cotizacion/pdf/' + id + ',' + '_blank');
+      window.open('/cotizacion/pdf/' + id);
     },
     getLastNum: function getLastNum() {
       var me = this;
@@ -8525,7 +8525,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       });
     },
     pdfEntrega: function pdfEntrega(id) {
-      window.open('http://127.0.0.1:8000/entrega/pdf/' + id);
+      window.open('/entrega/pdf/' + id);
     },
     entregarVenta: function entregarVenta(id) {
       var me = this;
@@ -12349,6 +12349,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -13331,7 +13335,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       });
     },
     pdfVenta: function pdfVenta(id) {
-      window.open('http://127.0.0.1:8000/venta/pdf/' + id);
+      window.open('/venta/pdf/' + id);
     },
     getLastNum: function getLastNum() {
       var me = this;
@@ -90533,7 +90537,7 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/entregas/" + _vm.file
+                        src: "http://localhost:8000/images/" + _vm.file
                       }
                     },
                     [
@@ -90541,7 +90545,7 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/entregas/" + _vm.file
+                          src: "http://localhost:8000/images/" + _vm.file
                         }
                       })
                     ]
@@ -97613,33 +97617,37 @@ var render = function() {
                         _vm._m(6),
                         _vm._v(" "),
                         _c("div", { staticClass: "row" }, [
-                          _c("input", {
-                            staticClass: "form-control col-md",
-                            attrs: { type: "number", readonly: "" },
-                            domProps: { value: _vm.getFechaCode }
-                          }),
+                          _c("div", { staticClass: "col" }, [
+                            _c("input", {
+                              staticClass: "form-control col-md",
+                              attrs: { type: "number", readonly: "" },
+                              domProps: { value: _vm.getFechaCode }
+                            })
+                          ]),
                           _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.num_comprobante,
-                                expression: "num_comprobante"
-                              }
-                            ],
-                            staticClass: "form-control col-md",
-                            attrs: { type: "text", placeholder: "000xx" },
-                            domProps: { value: _vm.num_comprobante },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
+                          _c("div", { staticClass: "col" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.num_comprobante,
+                                  expression: "num_comprobante"
                                 }
-                                _vm.num_comprobante = $event.target.value
+                              ],
+                              staticClass: "form-control col-md",
+                              attrs: { type: "text", placeholder: "000xx" },
+                              domProps: { value: _vm.num_comprobante },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.num_comprobante = $event.target.value
+                                }
                               }
-                            }
-                          })
+                            })
+                          ])
                         ])
                       ])
                     ]),

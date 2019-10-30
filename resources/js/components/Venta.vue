@@ -155,8 +155,12 @@
                         <div class="form-group">
                             <label for=""><strong>Número de presupuesto (*)</strong></label>
                             <div class="row">
-                                <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
-                                <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                                <div class="col">
+                                    <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2110,7 +2114,7 @@ export default {
             });
         },
         pdfVenta(id){
-            window.open('http://127.0.0.1:8000/venta/pdf/'+id);
+            window.open('/venta/pdf/'+id);
         },
         getLastNum(){
             let me=this;

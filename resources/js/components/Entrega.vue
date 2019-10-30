@@ -517,8 +517,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/entregas/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/entregas/'+file">
+                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
                 </lightbox>&nbsp;
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
@@ -1065,7 +1065,7 @@ export default {
             });
         },
         pdfEntrega(id){
-            window.open('http://127.0.0.1:8000/entrega/pdf/'+id);
+            window.open('/entrega/pdf/'+id);
         },
         entregarVenta(id){
             let me = this;
