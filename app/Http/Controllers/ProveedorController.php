@@ -124,7 +124,8 @@ class ProveedorController extends Controller
         $proveedores = Proveedor::join('personas','proveedores.id','=','personas.id')
         ->where('personas.nombre','like','%'.$filtro.'%')
         ->orWhere('personas.rfc','like','%'.$filtro.'%')
-        ->select('personas.id','personas.nombre','personas.rfc')
+        ->select('personas.id','personas.nombre','personas.rfc','proveedores.contacto',
+        'proveedores.telefono_contacto')
         ->orderBy('personas.nombre','asc')->get();
 
         return ['proveedores' => $proveedores];

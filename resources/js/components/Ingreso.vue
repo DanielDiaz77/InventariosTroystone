@@ -89,27 +89,37 @@
         <template v-else-if="listado==0">
             <div class="card-body">
                 <div class="form-group row border">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="">Proveedor (*)</label>
-                                <v-select
-                                    :on-search="selectProveedor"
-                                    label="nombre"
-                                    :options="arrayProveedor"
-                                    placeholder="Buscar Proveedores..."
-                                    :onChange="getDatosProveedor"
-                                >
-
-                                </v-select>
+                            <label for=""><strong>Proveedor (*)</strong></label>
+                                <v-select :on-search="selectProveedor" label="nombre" :options="arrayProveedor"
+                                    placeholder="Buscar Proveedores..." :onChange="getDatosProveedor"></v-select>
+                        </div>
+                    </div>&nbsp;
+                     <div class="col-md-3 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>RFC</strong></label>
+                            <!-- <p v-text="tipo_cliente"></p> -->
+                            <input type="text" readonly :value="rfc_proveedor" class="form-control col-md">
                         </div>
                     </div>
+                     <div class="col-md-3 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Contacto</strong></label>
+                            <!-- <p v-text="rfc_cliente"></p> -->
+                            <input type="text" readonly :value="contacto_prov + '-' + tel_contacto" class="form-control col-md">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row border">
+
                     <!-- <div class="col-md-3">
                         <label for="">Impuesto (*)</label>
                         <input type="text" class="form-control" v-model="impuesto">
                     </div> -->
-                    <div class="col-md-4">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Tipo Comprobante (*) </label>
+                            <label for=""><strong>Tipo Comprobante (*)</strong> </label>
                             <select v-model="tipo_comprobante" class="form-control">
                                 <option value="">Seleccione</option>
                                 <option value="NOTA">Nota</option>
@@ -118,49 +128,18 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2 text-center">
                         <div class="form-group">
-                            <label for="">Número de ingreso (*)</label>
+                            <label for=""><strong>Número de ingreso (*)</strong></label>
                             <div class="row">
                                 <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
                                 <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div v-show="errorIngreso" class="form-group row div-error">
-                            <div class="text-center text-error">
-                                <div v-for="error in errorMostrarMsjIngreso" :key="error" v-text="error"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group row border">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for="">Consultar Artículos</label>
-                            <div class="form-inline">
-                                <!-- <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()"  placeholder="Ingrese el artículo" > -->
-                                <button @click="abrirModal()" class="btn btn-primary">...</button>
-                                <input type="text" readonly class="form-control" v-model="articulo">
-                            </div>
-                        </div>
-                    </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for="">Origen <span style="color:red;" v-show="origen==''">(*Ingrese el origen)</span></label>
-                            <input type="text" class="form-control" v-model="origen">
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <label for="">Contenedor<span style="color:red;" v-show="contenedor==''">(*Ingrese el contenedor)</span></label>
-                            <input type="text" class="form-control" v-model="contenedor">
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <label for="">Bodega de descarga <span style="color:red;" v-show="ubicacion==''">(*Seleccione)</span></label>
+                            <label for=""><strong>Bodega de descarga</strong><span style="color:red;" v-show="ubicacion==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="ubicacion">
                                 <option value='' disabled>Seleccione una bodega de descarga</option>
                                 <option value="Del Musico">Del Músico</option>
@@ -172,21 +151,36 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for="">Fecha de arribo <span style="color:red;" v-show="fecha_llegada==''">(*Ingrese la fecha de llegada)</span></label>
+                            <label for=""><strong>Fecha de arribo</strong> <span style="color:red;" v-show="fecha_llegada==''">(*Seleccione)</span></label>
                             <input type="date" v-model="fecha_llegada" class="form-control" placeholder="Fecha de llegada"/>
                         </div>
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for="">No° Placa <span style="color:red;" v-show="codigo==0">(*Ingrese el no° de placa)</span></label>
+                            <label for=""><strong>Origen</strong> <span style="color:red;" v-show="origen==''">(*Ingrese el origen)</span></label>
+                            <input type="text" class="form-control" v-model="origen">
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label for=""><strong>Contenedor</strong><span style="color:red;" v-show="contenedor==''">(*Ingrese el contenedor)</span></label>
+                            <input type="text" class="form-control" v-model="contenedor">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row border">
+
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label for=""><strong>No° Placa</strong> <span style="color:red;" v-show="codigo==0">(*Ingrese el no° de placa)</span></label>
                             <input type="text" class="form-control" v-model="codigo">
                         </div>
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for="">Material <span style="color:red;" v-show="idcategoria_r==0" >(*Seleccione un material)</span></label>
+                            <label for=""><strong>Material</strong><span style="color:red;" v-show="idcategoria_r==0" >(*Seleccione un material)</span></label>
                             <select class="form-control" v-model="idcategoria_r">
                                 <option value="0" disabled>Seleccione un material</option>
                                 <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
@@ -195,13 +189,13 @@
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for="">Código de material <span style="color:red;" v-show="sku==''">(*Ingrese)</span></label>
+                            <label for=""><strong>Código de material</strong><span style="color:red;" v-show="sku==''">(*Ingrese)</span></label>
                             <input type="text" class="form-control" v-model="sku">
                         </div>
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for="">Terminado <span style="color:red;" v-show="terminado==''">(*Ingrese el terminado)</span></label>
+                            <label for=""><strong>Terminado</strong> <span style="color:red;" v-show="terminado==''">(*Ingrese el terminado)</span></label>
                             <select class="form-control" v-model="terminado">
                                 <option value='' disabled>Seleccione un de terminado</option>
                                 <option value="Pulido">Pulido</option>
@@ -213,51 +207,70 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 text-center">
+                        <div class="form-group row">
+                            <label for="inputFile" class="text-center"><strong>Imagen </strong></label>&nbsp;
+                            <input id="inputFile" type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 mt-3">
                         <div class="form-group">
-                            <label for="">Espesor <sup>cm</sup> <span style="color:red;" v-show="espesor==0">(*Ingrese el espesor)</span></label>
+                            <label class="float-right" for=""><strong>Consultar Artículos</strong></label>
+                            <div class="form-inline float-right">
+                                <!-- <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()"  placeholder="Ingrese el artículo" > -->
+                                <button @click="abrirModal()" class="btn btn-primary">...</button>&nbsp;
+                                <!--  <input type="text" readonly class="form-control" v-model="articulo"> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="form-group">
+                            <label for=""><strong>Espesor <sup>cm</sup></strong> <span style="color:red;" v-show="espesor==0">(*Ingrese)</span></label>
                             <input type="number" value="2" min="0" class="form-control" v-model="espesor">
                         </div>
                     </div>
-                    <div class="col-sm-2">
-                        <div class="form-group row">
-                            <label for="">Imagen</label>
-                            <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-1">
                         <div class="form-group">
-                            <label for="">Largo <span style="color:red;" v-show="largo==0">(*Ingrese el largo)</span></label>
+                            <label for=""><strong>Largo</strong> <span style="color:red;" v-show="largo==0">(*Ingrese)</span></label>
                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="largo">
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-1">
                         <div class="form-group">
-                            <label for="">Alto <span style="color:red;" v-show="alto==0">(*Ingrese el alto)</span></label>
+                            <label for=""><strong>Alto </strong><span style="color:red;" v-show="alto==0">(*Ingrese)</span></label>
                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="alto">
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-1">
                         <div class="form-group">
-                            <label for="">Metros <sup>2</sup> <span style="color:red;" v-show="metros_cuadrados==0">(*Ingrese los metros)</span></label>
+                            <label for=""><strong>Metros<sup>2</sup></strong><span style="color:red;" v-show="metros_cuadrados==0">(*Ingrese)</span></label>
                             <input type="number" readonly :value="calcularMts" class="form-control"/>
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-1">
                         <div class="form-group">
-                            <label for="">Cantidad <span style="color:red;" v-show="cantidad==0">(*Ingrese la cantidad)</span></label>
+                            <label for=""><strong>Cantidad</strong> <span style="color:red;" v-show="cantidad==0">(*Ingrese)</span></label>
                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="cantidad">
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-1">
                         <div class="form-group">
-                            <label for="">Precio m <sup>2</sup> <span style="color:red;" v-show="precio_venta==0">(*Ingrese el precio)</span></label>
+                            <label for=""><strong>Preciom<sup>2</sup> </strong><span style="color:red;" v-show="precio_venta==0">(*Ingrese)</span></label>
                             <input type="number" min="0" value="0" class="form-control" v-model="precio_venta">
                         </div>
                     </div>
+
                     <div class="col-sm-2">
                         <div class="form-group">
                             <button @click="agregarDetalle()" class="btn btn-success form-control btnagregar"><i class="icon-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div v-show="errorIngreso" class="form-group row div-error">
+                            <div class="text-center text-error">
+                                <div v-for="error in errorMostrarMsjIngreso" :key="error" v-text="error"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -823,6 +836,9 @@ export default {
     data() {
         return {
             idproveedor: 0,
+            rfc_proveedor : "",
+            contacto_prov : "",
+            tel_contacto : "",
             proveedor: '',
             user: '',
             nombre: "",
@@ -970,9 +986,12 @@ export default {
             });
         },
         getDatosProveedor(val1){
-                let me = this;
-                me.loading = true;
-                me.idproveedor = val1.id;
+            let me = this;
+            me.loading = true;
+            me.idproveedor = val1.id;
+            me.rfc_proveedor = val1.rfc;
+            me.contacto_prov = val1.contacto;
+            me.tel_contacto = val1.telefono_contacto;
         },
         buscarArticulo(){
             let me = this;
