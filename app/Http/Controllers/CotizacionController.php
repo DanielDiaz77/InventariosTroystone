@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Articulo;
 use App\Cotizacion;
 use App\DetalleCotizacion;
 use App\User;
@@ -106,10 +107,29 @@ class CotizacionController extends Controller
 
     public function desactivar(Request $request){
         if (!$request->ajax()) return redirect('/');
-        $cotizacion = Cotizacion::findOrFail($request->id);
-        $cotizacion->estado = 'Anulada';
-        $cotizacion->aceptado = 0;
-        $cotizacion->save();
+        try{
+
+            DB::beginTransaction();
+
+            $cotizacion = Cotizacion::findOrFail($request->id);
+            $cotizacion->estado = 'Anulada';
+            $cotizacion->aceptado = 0;
+            $cotizacion->save();
+
+            $detalles = DetalleCotizacion::select('idarticulo')
+                    ->where('idcotizacion',$request->id)->get();
+
+            foreach($detalles as $ep=>$det){
+                $articulo = Articulo::findOrFail($det['idarticulo']);
+                $articulo->comprometido = 0;
+                $articulo->save();
+            }
+
+            DB::commit();
+
+        }catch(Exception $e){
+            DB::rollBack();
+        }
     }
 
     public function obtenerCabecera(Request $request){
@@ -186,5 +206,12 @@ class CotizacionController extends Controller
         $noComp = explode('"',$lastNum);
         $SigNum = explode("-",$noComp[3]);
         return ['SigNum' => $SigNum[2]];
+    }
+
+    public function actualizarObservacion(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $cotizacion = Cotizacion::findOrFail($request->id);
+        $cotizacion->observacion = $request->observacion;
+        $cotizacion->save();
     }
 }

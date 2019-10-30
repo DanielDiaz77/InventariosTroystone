@@ -6194,6 +6194,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6300,7 +6322,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       estadoVn: "",
       CodeDate: "",
       vig: "",
-      pastDays: 0
+      pastDays: 0,
+      obsEditable: 0
     };
   },
   components: {
@@ -6643,6 +6666,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         me.tipo_cambio = "";
         me.comprometido = 0;
         me.arrayDetalle = [];
+        me.obsEditable = 0;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -6671,7 +6695,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
             'id': id
           }).then(function (response) {
             me.listarCotizacion(1, '', 'num_comprobante');
-            swal('Anulado!', 'La cotizacion ha sido anulado con éxito.', 'success');
+            swal.fire('Anulado!', 'La cotizacion ha sido anulado con éxito.', 'success');
           })["catch"](function (error) {
             console.log(error);
           });
@@ -7228,6 +7252,21 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       axios.get(url).then(function (response) {
         var respuesta = response.data;
         me.sigNum = respuesta.SigNum;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    editObservacion: function editObservacion() {
+      var me = this;
+      me.obsEditable = 1;
+    },
+    actualizarObservacion: function actualizarObservacion(id) {
+      var me = this;
+      axios.post('/cotizacion/actualizarObservacion', {
+        'id': id,
+        'observacion': this.observacion
+      }).then(function (response) {
+        me.obsEditable = 0;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -85997,31 +86036,116 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group row" }, [
-                    _c("div", { staticClass: "col-md-4" }, [
-                      _vm._m(32),
-                      _vm._v(" "),
-                      _c("textarea", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.observacion,
-                            expression: "observacion"
-                          }
-                        ],
-                        staticClass: "form-control rounded-0",
-                        attrs: { rows: "3", maxlength: "256", readonly: "" },
-                        domProps: { value: _vm.observacion },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.observacion = $event.target.value
-                          }
-                        }
-                      })
-                    ]),
+                    _c(
+                      "div",
+                      { staticClass: "col-md-4" },
+                      [
+                        _c("div", { staticClass: "row" }, [
+                          _vm._m(32),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-2" },
+                            [
+                              _vm.obsEditable == 0
+                                ? [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass:
+                                          "btn btn-warning btn-sm float-right",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.editObservacion()
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-pencil" })]
+                                    )
+                                  ]
+                                : [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass:
+                                          "btn btn-primary btn-sm float-right",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.actualizarObservacion(
+                                              _vm.cotizacion_id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("i", {
+                                          staticClass: "fa fa-floppy-o"
+                                        })
+                                      ]
+                                    )
+                                  ],
+                              _vm._v(" \n\n                          ")
+                            ],
+                            2
+                          )
+                        ]),
+                        _vm._v(" \n                      "),
+                        _vm.obsEditable == 0
+                          ? [
+                              _c("textarea", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.observacion,
+                                    expression: "observacion"
+                                  }
+                                ],
+                                staticClass: "form-control rounded-0",
+                                attrs: {
+                                  rows: "3",
+                                  maxlength: "256",
+                                  readonly: ""
+                                },
+                                domProps: { value: _vm.observacion },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.observacion = $event.target.value
+                                  }
+                                }
+                              })
+                            ]
+                          : [
+                              _c("textarea", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.observacion,
+                                    expression: "observacion"
+                                  }
+                                ],
+                                staticClass: "form-control rounded-0",
+                                attrs: { rows: "3", maxlength: "256" },
+                                domProps: { value: _vm.observacion },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.observacion = $event.target.value
+                                  }
+                                }
+                              })
+                            ]
+                      ],
+                      2
+                    ),
                     _vm._v(" \n                  "),
                     _c("div", { staticClass: "col-md-2" }, [
                       _c("div", { staticClass: "form-group" }, [
@@ -88355,8 +88479,10 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("label", { attrs: { for: "exampleFormControlTextarea2" } }, [
-      _c("strong", [_vm._v("Observaciones")])
+    return _c("div", { staticClass: "col" }, [
+      _c("label", { attrs: { for: "exampleFormControlTextarea2" } }, [
+        _c("strong", [_vm._v("Observaciones")])
+      ])
     ])
   },
   function() {

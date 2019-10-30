@@ -185,6 +185,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/cotizacion/pdf/{id}','CotizacionController@pdf')->name('cotizacion_pdf');
         Route::put('/cotizacion/aceptarCotizacion', 'CotizacionController@aceptarCotizacion');
         Route::get('/cotizacion/nextNum','CotizacionController@getLastNum');
+        Route::post('/cotizacion/actualizarObservacion', 'CotizacionController@actualizarObservacion');
 
 
     });

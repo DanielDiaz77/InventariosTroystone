@@ -514,8 +514,30 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-4">
-                        <label for="exampleFormControlTextarea2"> <strong>Observaciones</strong></label>
-                        <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacion"></textarea>
+                        <div class="row">
+                            <div class="col">
+                                <label for="exampleFormControlTextarea2"><strong>Observaciones</strong></label>
+                            </div>
+                            <div class="col-2">
+                                <template v-if="obsEditable == 0">
+                                    <button type="button" class="btn btn-warning btn-sm float-right" @click="editObservacion()">
+                                        <i class="icon-pencil"></i>
+                                    </button>
+                                </template>
+                                <template v-else>
+                                    <button type="button" class="btn btn-primary btn-sm float-right" @click="actualizarObservacion(cotizacion_id)">
+                                        <i class="fa fa-floppy-o"></i>
+                                    </button>
+                                </template>&nbsp;
+
+                            </div>
+                        </div>&nbsp;
+                        <template v-if="obsEditable == 0">
+                            <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacion"></textarea>
+                        </template>
+                        <template v-else>
+                            <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
+                        </template>
                     </div>&nbsp;
                     <div class="col-md-2">
                         <div class="form-group">
@@ -1208,7 +1230,8 @@ export default {
             estadoVn : "",
             CodeDate : "",
             vig : "",
-            pastDays : 0
+            pastDays : 0,
+            obsEditable : 0
         };
     },
     components: {
@@ -1559,6 +1582,7 @@ export default {
                 me.tipo_cambio = "";
                 me.comprometido = 0;
                 me.arrayDetalle = [];
+                me.obsEditable = 0;
 
             })
             .catch(function(error) {
@@ -1566,6 +1590,7 @@ export default {
             });
         },
         desactivarCotizacion(id) {
+
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                 confirmButton: "btn btn-success",
@@ -1589,7 +1614,7 @@ export default {
                         'id': id
                     }).then(function (response) {
                         me.listarCotizacion(1,'','num_comprobante');
-                        swal(
+                        swal.fire(
                         'Anulado!',
                         'La cotizacion ha sido anulado con éxito.',
                         'success'
@@ -2178,6 +2203,21 @@ export default {
                 me.sigNum = respuesta.SigNum;
             })
             .catch(function (error) {
+                console.log(error);
+            });
+        },
+        editObservacion(){
+            let me = this;
+            me.obsEditable = 1;
+        },
+        actualizarObservacion(id){
+            let me = this;
+            axios.post('/cotizacion/actualizarObservacion',{
+                'id': id,
+                'observacion' : this.observacion
+            }).then(function (response) {
+                me.obsEditable = 0;
+            }).catch(function (error) {
                 console.log(error);
             });
         }
