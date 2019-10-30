@@ -277,9 +277,11 @@
 
                     </div>
                 </div>
-                <figure>
-                    <img width="300" height="200" class="img-responsive imgcenter" :src="imagen" alt="Foto del artículo">
-                </figure>
+                <lightbox class="m-0" album="" :src="imagen">
+                    <figure>
+                        <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
+                    </figure>
+                </lightbox>&nbsp;
                 <div v-show="errorArticulo" class="form-group row div-error">
                     <div class="text-center text-error">
                     <div v-for="error in errorMostrarMsjArticulo" :key="error" v-text="error"></div>
@@ -312,11 +314,8 @@
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
                 <lightbox class="m-0" album="" :src="'http://127.0.0.1:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://127.0.0.1:8000/images/'+file">
+                    <img class="img-responsive img-fluid imgcenter" width="500px" :src="'http://127.0.0.1:8000/images/'+file">
                 </lightbox>&nbsp;
-                <!-- <figure>
-                    <img width="500" height="230" class="img-responsive imgcenter" :src="'http://localhost:8000/'+file" alt="Foto del artículo">
-                </figure> -->
                 <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
                         <tr class="text-center">
@@ -789,7 +788,7 @@ export default {
                             this.origen = data['origen'];
                             this.contenedor = data['contenedor'];
                             this.fecha_llegada = data['fecha_llegada'];
-                            this.imagenMinatura = data['file'];
+                            this.imagenMinatura = 'http://127.0.0.1:8000/images/' + data['file'];
                             this.estado = data['condicion'];
                             this.comprometido = data['comprometido'];
                             this.usuario = data['usuario'];

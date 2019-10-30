@@ -279,6 +279,10 @@
                             <label for=""><strong>Tiempo de entrega</strong></label>
                             <p v-text="tiempo_entrega"></p>
                         </div>
+                    </div><div class="col-md-2">
+                        <lightbox class="m-0" album="" :src="'http://127.0.0.1:8000/entregas/'+fileventa">
+                            <img alt="Sin imagen" class="img-responsive img-fluid imgcenter" width="800px" height="300px" :src="'http://127.0.0.1:8000/entregas/'+fileventa">
+                        </lightbox>
                     </div>&nbsp;
                 </div>
                 <div class="form-group row">
@@ -470,11 +474,27 @@
                             <p v-text="tiempo_entrega"></p>
                         </div>
                     </div>&nbsp;
+                    <div class="col-md-2">
+                        <lightbox class="m-0" album="" :src="imagen">
+                            <figure>
+                                <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
+                            </figure>
+                        </lightbox>&nbsp;
+                    </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-md-12">
                         <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
                         <button type="button" class="btn btn-primary" @click="actualizarDetalle()">Actualizar</button>
+                        <div class="form-group row float-right mr-2">
+                            <label class="col-md-3 form-control-label" for="text-input"> <strong>Actualizar Imagen</strong></label>
+                            <div class="col-md-7">
+                                <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-primary" @click="updImage()">Guardar</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -497,8 +517,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://localhost:8000/entregas/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/entregas/'+file">
                 </lightbox>&nbsp;
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
@@ -716,7 +736,8 @@ export default {
             por_entregar : 0,
             entregadas : 0,
             pendientes : 0,
-            entregasComp : 0
+            entregasComp : 0,
+            fileventa: ""
         };
     },
     components: {
@@ -800,6 +821,9 @@ export default {
                 date = moment().format('YYMMDD');
                 me.CodeDate = moment().format('YYMMDD');
                 return date;
+            },
+            imagen(){
+                return this.imagenMinatura;
             }
         },
     methods: {
@@ -858,7 +882,8 @@ export default {
             this.btnPagado = false;
             this.obsEditable = 0;
             this.entregasComp = 0;
-            this.getLastNum();
+            this.fileventa = "";
+            this.imagenMinatura = "";
         },
         verVenta(id){
 
@@ -897,6 +922,7 @@ export default {
                 me.banco = arrayVentaT[0]['banco'];
                 me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
                 me.pagado = arrayVentaT[0]['pagado'];
+                me.fileventa = arrayVentaT[0]['file'];
 
 
                 moment.locale('es');
@@ -1072,6 +1098,8 @@ export default {
                 me.banco = arrayVentaT[0]['banco'];
                 me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
                 me.pagado = arrayVentaT[0]['pagado'];
+                me.fileventa = arrayVentaT[0]['file'];
+                me.imagenMinatura = 'http://127.0.0.1:8000/entregas/'+ arrayVentaT[0]['file'];
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
@@ -1139,6 +1167,38 @@ export default {
                 me.tipo_cambio = "";
                 me.arrayDetalle = [];
 
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        obtenerImagen(e){
+            let img = e.target.files[0];
+           /*  console.log(img); */
+            this.fileventa = img;
+            this.cargarImagen(img);
+        },
+        cargarImagen(img){
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.imagenMinatura = e.target.result;
+                this.fileventa =  e.target.result;
+            }
+            reader.readAsDataURL(img);
+        },
+        updImage(){
+             let me = this;
+            axios.put('/entrega/updImagen',{
+                'file': this.fileventa,
+                'id' : this.venta_id
+            }).then(function(response) {
+                Swal.fire({
+                    type: 'success',
+                    title: 'Completado...',
+                    text: 'La imagen ha sido actualizada!',
+                })
+                me.ocultarDetalle();
+                me.listarVenta(1,'','num_comprobante');
             })
             .catch(function(error) {
                 console.log(error);

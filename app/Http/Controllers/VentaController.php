@@ -171,7 +171,7 @@ class VentaController extends Controller
         'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
         'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
-        'ventas.num_cheque','personas.nombre')
+        'ventas.num_cheque','personas.nombre','ventas.file')
         ->where('ventas.id','=',$id)
         ->orderBy('ventas.id', 'desc')->take(1)->get();
 
@@ -380,5 +380,59 @@ class VentaController extends Controller
             DB::rollBack();
         }
     }
+    public function updImage(Request $request){
 
+        if(!$request->ajax()) return redirect('/');
+
+        try{
+            DB::beginTransaction();
+
+            $fileName ="";
+
+            if($request->file != ""){
+
+                //The name of the directory that we need to create.
+                $directoryName = 'entregas';
+
+                if(!is_dir($directoryName)){
+                    //Directory does not exist, so lets create it.
+                    mkdir($directoryName, 0777);
+                }
+
+                $vent= Venta::findOrFail($request->id);
+                $img = $vent->file;
+
+                if($img != null){
+                    $image_path = public_path($directoryName).'/'.$img;
+
+                    if(file_exists($image_path)){
+                        unlink($image_path);
+                    }
+                }
+
+                $exploded = explode(',', $request->file);
+                $decoded = base64_decode($exploded[1]);
+
+                if(str_contains($exploded[0],'jpeg'))
+                    $extension = 'jpg';
+                else
+                    $extension = 'png';
+
+                $fileName = str_random().'.'.$extension;
+
+                $path = public_path($directoryName).'/'.$fileName;
+
+                file_put_contents($path,$decoded);
+            }
+
+            $venta = Venta::findOrFail($request->id);
+            $venta->file = $fileName;
+            $venta->save();
+
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollBack();
+        }
+
+    }
 }

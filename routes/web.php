@@ -94,6 +94,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/venta/actualizarObservacion', 'VentaController@actualizarObservacion');
         Route::get('/venta/nextNum','VentaController@getLastNum');
         Route::put('/entrega/updDetalle', 'VentaController@updDetalle');
+        Route::get('/venta/obtenerDetallesEntrega', 'VentaController@obtenerDetallesEntrega');
+        Route::put('/entrega/updImagen', 'VentaController@updImage');
 
 
     });
@@ -172,6 +174,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/entrega/pdf/{id}', 'VentaController@pdfEntrega')->name('entrega_pdf');
         Route::put('/entrega/updDetalle', 'VentaController@updDetalle');
         Route::get('/venta/obtenerDetallesEntrega', 'VentaController@obtenerDetallesEntrega');
+        Route::put('/entrega/updImagen', 'VentaController@updImage');
 
         //COTIZACIONES
         Route::get('/cotizacion', 'CotizacionController@index');

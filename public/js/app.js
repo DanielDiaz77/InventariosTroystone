@@ -2245,7 +2245,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 
@@ -2630,7 +2629,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
                   this.origen = data['origen'];
                   this.contenedor = data['contenedor'];
                   this.fecha_llegada = data['fecha_llegada'];
-                  this.imagenMinatura = data['file'];
+                  this.imagenMinatura = 'http://127.0.0.1:8000/images/' + data['file'];
                   this.estado = data['condicion'];
                   this.comprometido = data['comprometido'];
                   this.usuario = data['usuario'];
@@ -7423,6 +7422,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-js-toggle-button */ "./node_modules/vue-js-toggle-button/dist/index.js");
 /* harmony import */ var vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -8140,14 +8161,15 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       por_entregar: 0,
       entregadas: 0,
       pendientes: 0,
-      entregasComp: 0
+      entregasComp: 0,
+      fileventa: ""
     };
   },
   components: {
     vSelect: vue_select__WEBPACK_IMPORTED_MODULE_0___default.a,
     'barcode': vue_barcode__WEBPACK_IMPORTED_MODULE_1___default.a
   },
-  computed: {
+  computed: _defineProperty({
     isActived: function isActived() {
       return this.pagination.current_page;
     },
@@ -8226,7 +8248,9 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       me.CodeDate = moment__WEBPACK_IMPORTED_MODULE_3___default()().format('YYMMDD');
       return date;
     }
-  },
+  }, "imagen", function imagen() {
+    return this.imagenMinatura;
+  }),
   methods: {
     listarVenta: function listarVenta(page, buscar, criterio) {
       var me = this;
@@ -8282,7 +8306,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.btnPagado = false;
       this.obsEditable = 0;
       this.entregasComp = 0;
-      this.getLastNum();
+      this.fileventa = "";
+      this.imagenMinatura = "";
     },
     verVenta: function verVenta(id) {
       var me = this;
@@ -8315,6 +8340,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         me.banco = arrayVentaT[0]['banco'];
         me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
         me.pagado = arrayVentaT[0]['pagado'];
+        me.fileventa = arrayVentaT[0]['file'];
         moment__WEBPACK_IMPORTED_MODULE_3___default.a.locale('es');
         me.fecha_llegada = moment__WEBPACK_IMPORTED_MODULE_3___default()(fechaform).format('llll');
         var imp = parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
@@ -8481,6 +8507,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         me.banco = arrayVentaT[0]['banco'];
         me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
         me.pagado = arrayVentaT[0]['pagado'];
+        me.fileventa = arrayVentaT[0]['file'];
+        me.imagenMinatura = 'http://127.0.0.1:8000/entregas/' + arrayVentaT[0]['file'];
         moment__WEBPACK_IMPORTED_MODULE_3___default.a.locale('es');
         me.fecha_llegada = moment__WEBPACK_IMPORTED_MODULE_3___default()(fechaform).format('llll');
         var imp = parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
@@ -8541,6 +8569,42 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         me.tipo_facturacion = "";
         me.tipo_cambio = "";
         me.arrayDetalle = [];
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    obtenerImagen: function obtenerImagen(e) {
+      var img = e.target.files[0];
+      /*  console.log(img); */
+
+      this.fileventa = img;
+      this.cargarImagen(img);
+    },
+    cargarImagen: function cargarImagen(img) {
+      var _this = this;
+
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        _this.imagenMinatura = e.target.result;
+        _this.fileventa = e.target.result;
+      };
+
+      reader.readAsDataURL(img);
+    },
+    updImage: function updImage() {
+      var me = this;
+      axios.put('/entrega/updImagen', {
+        'file': this.fileventa,
+        'id': this.venta_id
+      }).then(function (response) {
+        Swal.fire({
+          type: 'success',
+          title: 'Completado...',
+          text: 'La imagen ha sido actualizada!'
+        });
+        me.ocultarDetalle();
+        me.listarVenta(1, '', 'num_comprobante');
       })["catch"](function (error) {
         console.log(error);
       });
@@ -78975,18 +79039,27 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
-                    _c("figure", [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: {
-                          width: "300",
-                          height: "200",
-                          src: _vm.imagen,
-                          alt: "Foto del artículo"
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
+                    _c(
+                      "lightbox",
+                      {
+                        staticClass: "m-0",
+                        attrs: { album: "", src: _vm.imagen }
+                      },
+                      [
+                        _c("figure", [
+                          _c("img", {
+                            staticClass: "img-responsive img-fluid imgcenter",
+                            attrs: {
+                              width: "300",
+                              height: "200",
+                              src: _vm.imagen,
+                              alt: "Foto del artículo"
+                            }
+                          })
+                        ])
+                      ]
+                    ),
+                    _vm._v(" \n              "),
                     _c(
                       "div",
                       {
@@ -79014,7 +79087,8 @@ var render = function() {
                         )
                       ]
                     )
-                  ]
+                  ],
+                  1
                 )
               ]),
               _vm._v(" "),
@@ -79139,7 +79213,7 @@ var render = function() {
                     },
                     [
                       _c("img", {
-                        staticClass: "img-responsive imgcenter",
+                        staticClass: "img-responsive img-fluid imgcenter",
                         attrs: {
                           width: "500px",
                           src: "http://127.0.0.1:8000/images/" + _vm.file
@@ -79148,7 +79222,6 @@ var render = function() {
                     ]
                   ),
                   _vm._v(" \n              "),
-                  _vm._v(" "),
                   _c(
                     "table",
                     {
@@ -89590,6 +89663,38 @@ var render = function() {
                         })
                       ])
                     ]),
+                    _c(
+                      "div",
+                      { staticClass: "col-md-2" },
+                      [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: {
+                              album: "",
+                              src:
+                                "http://127.0.0.1:8000/entregas/" +
+                                _vm.fileventa
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive img-fluid imgcenter",
+                              attrs: {
+                                alt: "Sin imagen",
+                                width: "800px",
+                                height: "300px",
+                                src:
+                                  "http://127.0.0.1:8000/entregas/" +
+                                  _vm.fileventa
+                              }
+                            })
+                          ]
+                        )
+                      ],
+                      1
+                    ),
                     _vm._v(" \n              ")
                   ]),
                   _vm._v(" "),
@@ -90101,7 +90206,36 @@ var render = function() {
                         })
                       ])
                     ]),
-                    _vm._v(" \n              ")
+                    _vm._v(" \n                  "),
+                    _c(
+                      "div",
+                      { staticClass: "col-md-2" },
+                      [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: { album: "", src: _vm.imagen }
+                          },
+                          [
+                            _c("figure", [
+                              _c("img", {
+                                staticClass:
+                                  "img-responsive img-fluid imgcenter",
+                                attrs: {
+                                  width: "300",
+                                  height: "200",
+                                  src: _vm.imagen,
+                                  alt: "Foto del artículo"
+                                }
+                              })
+                            ])
+                          ]
+                        ),
+                        _vm._v(" \n                  ")
+                      ],
+                      1
+                    )
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group row" }, [
@@ -90132,6 +90266,38 @@ var render = function() {
                           }
                         },
                         [_vm._v("Actualizar")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "form-group row float-right mr-2" },
+                        [
+                          _vm._m(37),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-md-7" }, [
+                            _c("input", {
+                              staticClass: "form-control-file",
+                              attrs: { type: "file", src: _vm.imagen },
+                              on: { change: _vm.obtenerImagen }
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-md-2" }, [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-primary",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.updImage()
+                                  }
+                                }
+                              },
+                              [_vm._v("Guardar")]
+                            )
+                          ])
+                        ]
                       )
                     ])
                   ])
@@ -90206,7 +90372,7 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/images/" + _vm.file
+                        src: "http://localhost:8000/entregas/" + _vm.file
                       }
                     },
                     [
@@ -90214,7 +90380,7 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/images/" + _vm.file
+                          src: "http://localhost:8000/entregas/" + _vm.file
                         }
                       })
                     ]
@@ -90245,11 +90411,11 @@ var render = function() {
                         "table table-bordered table-striped table-sm text-center table-hover"
                     },
                     [
-                      _vm._m(37),
+                      _vm._m(38),
                       _vm._v(" "),
                       _c("tbody", [
                         _c("tr", [
-                          _vm._m(38),
+                          _vm._m(39),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.codigo) }
@@ -90257,7 +90423,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(39),
+                          _vm._m(40),
                           _vm._v(" "),
                           _c(
                             "select",
@@ -90312,7 +90478,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(40),
+                          _vm._m(41),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.sku) }
@@ -90320,7 +90486,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(41),
+                          _vm._m(42),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.terminado) }
@@ -90328,7 +90494,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(42),
+                          _vm._m(43),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.largo) }
@@ -90336,7 +90502,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(43),
+                          _vm._m(44),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.alto) }
@@ -90344,7 +90510,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(44),
+                          _vm._m(45),
                           _vm._v(" "),
                           _c("td", {
                             domProps: {
@@ -90354,18 +90520,10 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("tr", [
-                          _vm._m(45),
-                          _vm._v(" "),
-                          _c("td", {
-                            domProps: { textContent: _vm._s(_vm.espesor) }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
                           _vm._m(46),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.precio) }
+                            domProps: { textContent: _vm._s(_vm.espesor) }
                           })
                         ]),
                         _vm._v(" "),
@@ -90373,7 +90531,7 @@ var render = function() {
                           _vm._m(47),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.ubicacion) }
+                            domProps: { textContent: _vm._s(_vm.precio) }
                           })
                         ]),
                         _vm._v(" "),
@@ -90381,7 +90539,7 @@ var render = function() {
                           _vm._m(48),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.cantidad) }
+                            domProps: { textContent: _vm._s(_vm.ubicacion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -90389,7 +90547,7 @@ var render = function() {
                           _vm._m(49),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.descripcion) }
+                            domProps: { textContent: _vm._s(_vm.cantidad) }
                           })
                         ]),
                         _vm._v(" "),
@@ -90397,7 +90555,7 @@ var render = function() {
                           _vm._m(50),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.observacion) }
+                            domProps: { textContent: _vm._s(_vm.descripcion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -90405,7 +90563,7 @@ var render = function() {
                           _vm._m(51),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.origen) }
+                            domProps: { textContent: _vm._s(_vm.observacion) }
                           })
                         ]),
                         _vm._v(" "),
@@ -90413,7 +90571,7 @@ var render = function() {
                           _vm._m(52),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.contenedor) }
+                            domProps: { textContent: _vm._s(_vm.origen) }
                           })
                         ]),
                         _vm._v(" "),
@@ -90421,12 +90579,20 @@ var render = function() {
                           _vm._m(53),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(_vm.espesor) }
+                            domProps: { textContent: _vm._s(_vm.contenedor) }
                           })
                         ]),
                         _vm._v(" "),
                         _c("tr", [
                           _vm._m(54),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(_vm.espesor) }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("tr", [
+                          _vm._m(55),
                           _vm._v(" "),
                           _c("td", {
                             domProps: { textContent: _vm._s(_vm.fecha_llegada) }
@@ -90860,6 +91026,19 @@ var staticRenderFns = [
     return _c("label", { attrs: { for: "" } }, [
       _c("strong", [_vm._v("Tiempo de entrega")])
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_c("strong", [_vm._v("Actualizar Imagen")])]
+    )
   },
   function() {
     var _vm = this
