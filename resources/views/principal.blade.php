@@ -34,12 +34,12 @@
                     <a class="nav-link" href="#">Configuraciones</a>
                 </li>
             </ul> --}}
-            <ul class="nav navbar-nav ml-auto">
+            <ul class="nav navbar-nav ml-auto mr-4">
                 <notification :notifications ="notifications" ></notification>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button"
                         aria-haspopup="true" aria-expanded="false">
-                        {{-- <img src="img/avatars/6.jpg" class="img-avatar" alt="admin@bootstrapmaster.com"> --}}
+                        {{-- <img src="img/favicon.png" class="img-avatar" alt="admin@bootstrapmaster.com"> --}}
                         <span class="d-md-down-none">{{Auth::user()->usuario}} </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">

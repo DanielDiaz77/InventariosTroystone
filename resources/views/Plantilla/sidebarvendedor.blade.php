@@ -30,6 +30,14 @@
                 </ul>
             </li>
             <li class="nav-item nav-dropdown">
+                <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-truck"></i> Entregas</a>
+                <ul class="nav-dropdown-items">
+                    <li @click="menu=14" class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa fa-truck"></i> Entrega</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item nav-dropdown">
                 <a class="nav-link nav-dropdown-toggle" href="#"><i class="icon-pie-chart"></i> Consultas</a>
                 <ul class="nav-dropdown-items">
                     <li @click="menu=10" class="nav-item">
