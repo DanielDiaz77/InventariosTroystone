@@ -10,6 +10,7 @@ use App\Notifications\NotifyAdmin;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\PDF;
 
 class VentaController extends Controller
 {
@@ -51,8 +52,6 @@ class VentaController extends Controller
             ->where('ventas.'.$criterio, 'like', '%'. $buscar . '%')
             ->orderBy('ventas.id', 'desc')->paginate(12);
         }
-
-
         return [
             'pagination' => [
                 'total'        => $ventas->total(),
@@ -65,6 +64,7 @@ class VentaController extends Controller
             'ventas' => $ventas
         ];
     }
+
     public function store(Request $request){
         if(!$request->ajax()) return redirect('/');
 
@@ -141,7 +141,9 @@ class VentaController extends Controller
 
         }
     }
+
     public function desactivar(Request $request){
+
         if (!$request->ajax()) return redirect('/');
         try{
             DB::beginTransaction();
@@ -169,6 +171,7 @@ class VentaController extends Controller
             DB::rollBack();
         }
     }
+
     public function obtenerCabecera(Request $request){
         if (!$request->ajax()) return redirect('/');
 
@@ -186,6 +189,7 @@ class VentaController extends Controller
 
         return ['venta' => $venta];
     }
+
     public function obtenerDetalles(Request $request){
 
         if (!$request->ajax()) return redirect('/');
@@ -204,6 +208,7 @@ class VentaController extends Controller
 
         return ['detalles' => $detalles];
     }
+
     public function pdf(Request $request,$id){
 
         $venta =  Venta::join('personas','ventas.idcliente','=','personas.id')
@@ -232,6 +237,7 @@ class VentaController extends Controller
 
         return $pdf->stream('venta-'.$numventa[0]->num_comprobante.'.pdf');
     }
+
     public function cambiarEntrega(Request $request){
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);
@@ -239,6 +245,7 @@ class VentaController extends Controller
         $venta->entrega_parcial = 0;
         $venta->save();
     }
+
     public function cambiarEntregaParcial(Request $request){
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);
@@ -246,24 +253,28 @@ class VentaController extends Controller
         $venta->entregado = 0;
         $venta->save();
     }
+
     public function cambiarPagado(Request $request){
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);
         $venta->pagado = $request->pagado;
         $venta->save();
     }
+
     public function actualizarObservacion(Request $request){
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);
         $venta->observacion = $request->observacion;
         $venta->save();
     }
+
     public function getLastNum(){
         $lastNum = Venta::select('num_comprobante')->get()->last();
         $noComp = explode('"',$lastNum);
         $SigNum = explode("-",$noComp[3]);
         return ['SigNum' => $SigNum[2]];
     }
+
     public function indexEntregas(Request $request){
         if (!$request->ajax()) return redirect('/');
 
@@ -323,6 +334,7 @@ class VentaController extends Controller
             'ventas' => $ventas
         ];
     }
+
     public function obtenerDetallesEntrega(Request $request){
 
         if (!$request->ajax()) return redirect('/');
@@ -344,6 +356,7 @@ class VentaController extends Controller
 
         return ['detalles' => $detalles];
     }
+
     public function pdfEntrega(Request $request,$id){
 
         $venta =  Venta::join('personas','ventas.idcliente','=','personas.id')
@@ -372,6 +385,7 @@ class VentaController extends Controller
 
         return $pdf->stream('entrega-'.$numventa[0]->num_comprobante.'.pdf');
     }
+
     public function updDetalle(Request $request){
         try{
             DB::beginTransaction();
@@ -398,6 +412,7 @@ class VentaController extends Controller
             DB::rollBack();
         }
     }
+
     public function updImage(Request $request){
 
         if(!$request->ajax()) return redirect('/');

@@ -36,7 +36,6 @@
                                 <th>Tipo Comprobante</th>
                                 <th>No° Comprobante</th>
                                 <th>Fecha Hora</th>
-                                <!-- <th>Impuesto</th> -->
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -189,8 +188,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
                 </lightbox>&nbsp;
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>

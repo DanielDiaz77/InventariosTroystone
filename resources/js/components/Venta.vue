@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-sm table-hover">
+                    <table class="table table-bordered table-striped table-sm table-hover table-responsive-xl">
                         <thead>
                             <tr>
                                 <th>Opciones</th>
@@ -127,14 +127,12 @@
                      <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>Tipo de cliente</strong></label>
-                            <!-- <p v-text="tipo_cliente"></p> -->
                             <input type="text" readonly :value="tipo_cliente" class="form-control col-md">
                         </div>
                     </div>
                      <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>RFC</strong></label>
-                            <!-- <p v-text="rfc_cliente"></p> -->
                             <input type="text" readonly :value="rfc_cliente" class="form-control col-md">
                         </div>
                     </div>
@@ -145,9 +143,7 @@
                             <label for=""><strong>Tipo Comprobante (*)</strong></label>
                             <select v-model="tipo_comprobante" class="form-control">
                                 <option value="">Seleccione</option>
-                                <!-- <option value="NOTA">Nota</option> -->
                                 <option value="PRESUPUESTO">PRESUPUESTO</option>
-                                <!-- <option value="TICKET">Ticket</option> -->
                             </select>
                         </div>
                     </div>
@@ -172,8 +168,6 @@
                                 <option value="Efectivo">Efectivo</option>
                                 <option value="Tarjeta">Tarjeta</option>
                                 <option value="Cheque">Cheque</option>
-                                <!-- <option value="Dolar USA">Dolar USA</option>
-                                <option value="EURO">EURO</option> -->
                             </select>
                         </div>
                     </div>
@@ -199,17 +193,9 @@
                             <select class="form-control" v-model="moneda">
                                 <option value='' disabled>Seleccione la moneda del cobro</option>
                                 <option value="Peso Mexicano">Peso Mexicano</option>
-                                <!-- <option value="Dolar USA">Dolar USA</option>
-                                <option value="EURO">EURO</option> -->
                             </select>
                         </div>
                     </div>
-                    <!-- <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="">Tipo cambio<span style="color:red;" v-show="moneda!='Peso Mexicano'">(*Ingrese el tipo de cambio)</span> </label>
-                            <input type="text" class="form-control" v-model="tipo_cambio" placeholder="000xx">
-                        </div>
-                    </div> -->
                     <div class="col-md-2 text-center">
                         <div class="form-group">
                             <label for=""><strong>Tiempo de entrega</strong><span style="color:red;" v-show="tiempo_entrega==''">(*Seleccione)</span></label>
@@ -255,7 +241,7 @@
                         <div class="form-group">
                             <label for=""><strong>Articulo</strong> <span style="color:red;" v-show="articulo==''">(*Seleccione)</span> </label>
                             <div class="form-inline">
-                                <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()"  placeholder="Ingrese el artículo" >
+                                <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()"  placeholder="Ingrese el no° de placa" >
                                 <button @click="abrirModal()" class="btn btn-primary">...</button>
                                 <input type="text" readonly class="form-control" v-model="articulo">
                             </div>
@@ -268,10 +254,6 @@
                         </div>
                     </div>
                     <div class="col-sm-2 text-center">
-                       <!--  <div class="form-group" v-if="moneda!='Peso Mexicano'">
-                            <label for="">Precio m<sup>2</sup> {{moneda}} <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
-                           <input type="number" readonly :value="cacularPrecioExtranjero" class="form-control"/>
-                        </div> -->
                         <div class="form-group">
                             <label for=""><strong>Precio m<sup>2</sup></strong> <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="precio">
@@ -345,8 +327,6 @@
                                    <td>
                                         <input v-model="detalle.precio" min="0" step="any" type="number" class="form-control">
                                    </td>
-                                    <!-- <td v-if="moneda!='Peso Mexicano'">$ {{ precio=cacularPrecioExtranjero }} </td> -->
-                                    <!-- <td v-else>{{detalle.precio}}</td> -->
                                     <td>
                                         <span style="color:red" v-show="detalle.descuento>(detalle.precio * detalle.cantidad)">Descuento superior al subtotal!</span>
                                         <input v-model="detalle.descuento" min="0" step="any" type="number" class="form-control">
@@ -640,8 +620,8 @@
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
                                 </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
-                                <button type="submit" @click="listarArticulo(buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
+                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
                             </div>
                         </div>
                     </div>
@@ -691,6 +671,20 @@
                             </tbody>
                         </table>
                     </div>
+                    <!-- Paginacion MODAL -->
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item" v-if="paginationart.current_page > 1">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA)">Ant</a>
+                            </li>
+                            <li class="page-item" v-for="page in pagesNumberArt" :key="page" :class="[page == isActivedArt ? 'active' : '']">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA)" v-text="page"></a>
+                            </li>
+                            <li class="page-item" v-if="paginationart.current_page < paginationart.last_page">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA)">Sig</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
@@ -716,10 +710,10 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
                 </lightbox>&nbsp;
-                <table class="table table-bordered table-striped table-sm text-center table-hover">
+                <table class="table table-bordered table-striped table-sm text-center table-hover table-responsive-sm">
                     <thead>
                         <tr class="text-center">
                             <th class="text-center" colspan="2">Detalle del artículo</th>
@@ -824,8 +818,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
                 </lightbox>&nbsp;
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
@@ -948,8 +942,8 @@
                     <div class="form-group row">
                         <div class="col-md">
                             <h1 class="text-center" v-text="sku"></h1>
-                            <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                                <img class="img-responsive imgcenter" width="250px" :src="'http://localhost:8000/images/'+file">
+                            <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                                <img class="img-responsive imgcenter" width="250px" :src="'http://inventariostroystone.com/images/'+file">
                             </lightbox>&nbsp;
                         </div>
                     </div>
@@ -1179,6 +1173,14 @@ export default {
                 'from'         : 0,
                 'to'           : 0,
             },
+            paginationart : {
+                'total'        : 0,
+                'current_page' : 0,
+                'per_page'     : 0,
+                'last_page'    : 0,
+                'from'         : 0,
+                'to'           : 0,
+            },
             offset : 3,
             criterio : 'num_comprobante',
             buscar : '',
@@ -1240,6 +1242,31 @@ export default {
                 }
                 return pagesArray;
             },
+            isActivedArt: function(){
+                return this.paginationart.current_page;
+            },
+            pagesNumberArt: function() {
+                if(!this.paginationart.to) {
+                    return [];
+                }
+
+                var from = this.paginationart.current_page - this.offset;
+                if(from < 1) {
+                    from = 1;
+                }
+
+                var to = from + (this.offset * 2);
+                if(to >= this.paginationart.last_page){
+                    to = this.paginationart.last_page;
+                }
+
+                var pagesArray = [];
+                while(from <= to) {
+                    pagesArray.push(from);
+                    from++;
+                }
+                return pagesArray;
+            },
             calcularTotal : function(){
                 let me=this;
                 let resultado = 0;
@@ -1291,19 +1318,6 @@ export default {
                 me.CodeDate = moment().format('YYMMDD');
                 return date;
             }
-            /*  cacularPrecioExtranjero : function(){
-                    let me=this;
-                    let precioExt = 0;
-
-                    if(me.moneda != 'Peso Mexicano'){
-                        precioExt = (precioExt + (me.precio / me.tipo_cambio));
-                        me.precio = Math.ceil(precioExt);
-                    }else{
-                        precioExt = me.precio;
-                    }
-                    return Math.ceil(precioExt);
-                }, */
-
         },
     methods: {
         listarVenta (page,buscar,criterio){
@@ -1383,6 +1397,13 @@ export default {
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
                 me.listarVenta(page,buscar,criterio);
+        },
+        cambiarPaginaArt(page,buscar,criterio){
+            let me = this;
+                //Actualiza la página actual
+                me.paginationart.current_page = page;
+                //Envia la petición para visualizar la data de esa página
+                me.listarArticulo(page,buscar,criterio);
         },
         encuentra(id){
             var sw=0;
@@ -1757,13 +1778,15 @@ export default {
             this.arrayArticulo=[];
             this.modal = 1;
             this.tituloModal = "Seleccionar Artículos";
+            this.listarArticulo(1,'','sku');
         },
-        listarArticulo (buscar,criterio){
+        listarArticulo (page,buscar,criterio){
             let me=this;
-            var url= '/articulo/listarArticuloVenta?buscar=' + buscar + '&criterio='+ criterio;
+            var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayArticulo = respuesta.articulos.data;
+                me.paginationart= respuesta.pagination;
             })
             .catch(function (error) {
                 console.log(error);
@@ -1782,7 +1805,6 @@ export default {
                 me.arrayDetalle.push({
                     idarticulo       : data['id'],
                     articulo         : data['sku'],
-                    /* sku              : data['sku'], */
                     codigo           : data['codigo'],
                     idcategoria      : data['idcategoria'],
                     categoria        : data['nombre_categoria'],
@@ -1928,7 +1950,6 @@ export default {
             this.ind = '';
             this.fecha_llegada = '';
         },
-        /* modal-cortar */
         abrirModal4(index) {
             let me = this;
             me.ind = index;
@@ -2037,7 +2058,7 @@ export default {
                 'id': this.idarticulo
             })
             .then(function(response) {
-                me.listarArticulo(me.codigoA,'codigo');
+                me.listarArticulo(1,me.codigoA,'codigo');
                 me.cerrarModal4();
                 me.abrirModal();
                 me.validatedA = 0;
@@ -2163,5 +2184,11 @@ export default {
         border: none;
         text-align: center;
 
-  }
+    }
+    input[type="number"]
+    {
+        -webkit-appearance: textfield !important;
+        margin: 0;
+       /*  -moz-appearance:textfield !important; */
+    }
 </style>

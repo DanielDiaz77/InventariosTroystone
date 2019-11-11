@@ -410,7 +410,18 @@ class ArticuloController extends Controller
             ])
             ->orderBy('articulos.id', 'desc')->paginate(10);
         }
-        return ['articulos' => $articulos];
+
+        return [
+            'pagination' => [
+                'total'         => $articulos->total(),
+                'current_page'  => $articulos->currentPage(),
+                'per_page'      => $articulos->perPage(),
+                'last_page'     => $articulos->lastPage(),
+                'from'          => $articulos->firstItem(),
+                'to'            => $articulos->lastItem(),
+            ],
+            'articulos' => $articulos
+        ];
     }
 
     public function listarArticuloCotizado(Request $request){

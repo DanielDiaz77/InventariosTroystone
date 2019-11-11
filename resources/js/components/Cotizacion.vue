@@ -47,11 +47,7 @@
                                 <th>Vigencia</th>
                                 <th>Impuesto</th>
                                 <th>Total</th>
-                                <!-- <th>Moneda</th>
-                                <th>Tipo Cambio</th> -->
                                 <th>Estado</th>
-                                <!-- <th>Aceptado</th> -->
-
                             </tr>
                         </thead>
                         <tbody>
@@ -77,15 +73,7 @@
                                 <td v-text="cotizacion.vigencia"></td>
                                 <td v-text="cotizacion.impuesto"></td>
                                 <td v-text="cotizacion.total"></td>
-                                <!-- <td v-text="cotizacion.moneda"></td>
-                                <td v-text="cotizacion.tipo_cambio"></td> -->
                                 <td v-text="cotizacion.estado "></td>
-                                <!-- <td v-if="cotizacion.aceptado">
-                                    <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
-                                </td>
-                                <td v-else>
-                                    <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
-                                </td> -->
                             </tr>
                         </tbody>
                     </table>
@@ -121,14 +109,12 @@
                      <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>Tipo de cliente</strong></label>
-                            <!-- <p v-text="tipo_cliente"></p> -->
                             <input type="text" readonly :value="tipo_cliente" class="form-control col-md">
                         </div>
                     </div>
                      <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>RFC</strong></label>
-                            <!-- <p v-text="rfc_cliente"></p> -->
                             <input type="text" readonly :value="rfc_cliente" class="form-control col-md">
                         </div>
                     </div>
@@ -139,9 +125,7 @@
                             <label for=""><strong>Tipo de documento (*) </strong></label>
                             <select v-model="tipo_comprobante" class="form-control">
                                 <option value="">Seleccione</option>
-                                <!-- <option value="NOTA">Nota</option> -->
                                 <option value="COTIZACION">COTIZACION</option>
-                                <!-- <option value="TICKET">Ticket</option> -->
                             </select>
                         </div>
                     </div>
@@ -150,8 +134,12 @@
                         <div class="form-group">
                             <label for=""><strong>Número de cotizacion (*)</strong></label>
                             <div class="row">
-                                <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
-                                <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                                <div class="col">
+                                    <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -160,31 +148,12 @@
                         <label for=""><strong>Impuesto (*)</strong></label>
                         <input type="text" class="form-control" v-model="impuesto">
                     </div>
-                    <!-- <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="">Moneda<span style="color:red;" v-show="moneda==''">(*Seleccione)</span></label>
-                            <select class="form-control" v-model="moneda">
-                                <option value='' disabled>Seleccione la moneda del cobro</option>
-                                <option value="Peso Mexicano">Peso Mexicano</option>
-                                <option value="Dolar USA">Dolar USA</option>
-                                <option value="EURO">EURO</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="">Tipo cambio<span style="color:red;" v-show="moneda!='Peso Mexicano'">(*Ingrese el tipo de cambio)</span> </label>
-                            <input type="text" class="form-control" v-model="tipo_cambio" placeholder="000xx">
-                        </div>
-                    </div> -->
                     <div class="col-md-2 text-center">
                         <div class="form-group">
                             <label for=""><strong>Forma de pago</strong><span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="forma_pago">
                                 <option value='' disabled>Seleccione la forma de pago</option>
                                 <option value="De contado">De contado</option>
-                                <!-- <option value="Dolar USA">Dolar USA</option>
-                                <option value="EURO">EURO</option> -->
                             </select>
                         </div>
                     </div>
@@ -319,8 +288,6 @@
                                    <td>
                                        <input v-model="detalle.precio" min="0" step="any" type="number" class="form-control">
                                    </td>
-                                    <!-- <td v-if="moneda!='Peso Mexicano'">$ {{ precio=cacularPrecioExtranjero }} </td> -->
-                                    <!-- <td v-else>{{detalle.precio}}</td> -->
                                     <td>
                                         <span style="color:red" v-show="detalle.descuento>(detalle.precio * detalle.cantidad)">Descuento superior al subtotal!</span>
                                         <input v-model="detalle.descuento" min="0" step="any" type="number" class="form-control">
@@ -441,10 +408,6 @@
                             <div v-else>
                                 <span class="badge badge-danger">Cotizacion cancelada</span>
                             </div>
-                            <!-- <div v-if="aceptado">
-                                <span class="badge badge-success">Aceptado</span>
-                            </div> -->
-
                         </div>
                     </div>
                 </div>
@@ -628,9 +591,6 @@
                                 <div v-if="articulo.comprometido">
                                     <span class="badge badge-success">SI</span>
                                 </div>
-                                <!-- <div v-else-if="articulo.condicion == 3">
-                                    <span class="badge badge-warning">Cortado</span>
-                                </div> -->
                                 <div v-else>
                                     <span class="badge badge-danger">NO</span>
                                 </div>
@@ -664,8 +624,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
                 </lightbox>&nbsp;
                 <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
@@ -772,8 +732,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
                 </lightbox>&nbsp;
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
@@ -896,8 +856,8 @@
                     <div class="form-group row">
                         <div class="col-md">
                             <h1 class="text-center" v-text="sku"></h1>
-                            <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                                <img class="img-responsive imgcenter" width="250px" :src="'http://localhost:8000/images/'+file">
+                            <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                                <img class="img-responsive imgcenter" width="250px" :src="'http://inventariostroystone.com/images/'+file">
                             </lightbox>&nbsp;
                         </div>
                     </div>
@@ -1075,8 +1035,6 @@
                                 <th>No° Placa</th>
                                 <th>Código de material</th>
                                 <th>Material</th>
-                                <!-- <th>Largo</th>
-                                <th>Alto</th> -->
                                 <th>Metros<sup>2</sup></th>
                                 <th>Stock</th>
                                 <th>Ubicacion</th>
@@ -1090,8 +1048,6 @@
                                 <td v-text="articulo.codigo"></td>
                                 <td v-text="articulo.sku"></td>
                                 <td v-text="articulo.nombre_categoria"></td>
-                                <!-- <td v-text="articulo.largo"></td>
-                                <td v-text="articulo.alto"></td> -->
                                 <td v-text="articulo.metros_cuadrados"></td>
                                 <td v-text="articulo.stock"></td>
                                 <td v-text="articulo.ubicacion"></td>
@@ -1210,8 +1166,6 @@ export default {
             buscar : '',
             buscarA : '',
             criterioA : 'sku',
-
-            //Variables Corte de placa
             codigoA : "",
             codigoB : "",
             largoA : 0,
@@ -1681,7 +1635,6 @@ export default {
             if (!me.num_comprobante) me.errorMostrarMsjCotizacion.push("Ingrese el numero de cotizacion");
             if (!me.impuesto) me.errorMostrarMsjCotizacion.push("Ingrese el impuesto de la cotizacion");
             if (me.arrayDetalle.length<=0) me.errorMostrarMsjCotizacion.push("Introdusca articulos para la cotizacion");
-            /* if (me.moneda != 'Peso Mexicano') me.errorMostrarMsjCotizacion.push("Seleccione el tipo de cambio de la moneda"); */
             if (me.vigencia == '') me.errorMostrarMsjCotizacion.push("Seleccione la vigencia de la cotizacion");
 
             if (me.errorMostrarMsjCotizacion.length) me.errorCotizacion = 1;
@@ -1878,7 +1831,6 @@ export default {
                     me.arrayDetalle.push({
                         idarticulo       : data['id'],
                         articulo         : data['sku'],
-                        /* sku              : data['sku'], */
                         codigo           : data['codigo'],
                         idcategoria      : data['idcategoria'],
                         categoria        : data['nombre_categoria'],
@@ -2037,7 +1989,6 @@ export default {
             this.ind = '';
             this.fecha_llegada = '';
         },
-        /* modal-cortar */
         abrirModal4(index) {
             let me = this;
             me.ind = index;
@@ -2193,7 +2144,7 @@ export default {
             });
         },
         pdfCotizacion(id){
-            window.open('/cotizacion/pdf/'+id);
+            window.open('/cotizacion/pdf/'+id,'_blank');
         },
         getLastNum(){
             let me=this;
@@ -2257,5 +2208,11 @@ export default {
         border: none;
         text-align: center;
 
-  }
+    }
+    input[type="number"]
+    {
+        -webkit-appearance: textfield !important;
+        margin: 0;
+        /* -moz-appearance:textfield !important; */
+    }
 </style>

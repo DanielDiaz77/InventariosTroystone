@@ -280,8 +280,8 @@
                             <p v-text="tiempo_entrega"></p>
                         </div>
                     </div><div class="col-md-2">
-                        <lightbox class="m-0" album="" :src="'http://127.0.0.1:8000/entregas/'+fileventa">
-                            <img alt="Sin imagen" class="img-responsive img-fluid imgcenter" width="800px" height="300px" :src="'http://127.0.0.1:8000/entregas/'+fileventa">
+                        <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/entregas/'+fileventa">
+                            <img alt="Sin imagen" class="img-responsive img-fluid imgcenter" width="800px" height="300px" :src="'http://inventariostroystone.com/entregas/'+fileventa">
                         </lightbox>
                     </div>&nbsp;
                 </div>
@@ -517,8 +517,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
                 </lightbox>&nbsp;
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
@@ -1065,7 +1065,7 @@ export default {
             });
         },
         pdfEntrega(id){
-            window.open('/entrega/pdf/'+id);
+            window.open('/entrega/pdf/'+id,'_blank');
         },
         entregarVenta(id){
             let me = this;
@@ -1104,7 +1104,7 @@ export default {
                 me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
                 me.pagado = arrayVentaT[0]['pagado'];
                 me.fileventa = arrayVentaT[0]['file'];
-                me.imagenMinatura = 'http://127.0.0.1:8000/entregas/'+ arrayVentaT[0]['file'];
+                me.imagenMinatura = 'http://inventariostroystone.com/entregas/'+ arrayVentaT[0]['file'];
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
@@ -1179,7 +1179,6 @@ export default {
         },
         obtenerImagen(e){
             let img = e.target.files[0];
-           /*  console.log(img); */
             this.fileventa = img;
             this.cargarImagen(img);
         },

@@ -2250,9 +2250,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 
 
 
@@ -2273,7 +2270,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       espesor: 0,
       precio_venta: 0,
       ubicacion: '',
-      stock: 0,
+      stock: 1,
       comprometido: 0,
       usuario: '',
       descripcion: '',
@@ -2364,9 +2361,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
         console.log(error);
       });
     },
-    cargarExcel: function cargarExcel() {
-      window.open('http://127.0.0.1:8000/articulo/listarExcel', '_blank');
-    },
     selectCategoria: function selectCategoria() {
       var me = this;
       var url = '/categoria/selectCategoria';
@@ -2413,8 +2407,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
         'idcategoria': this.idcategoria,
         'codigo': this.codigo,
         'sku': this.sku,
-
-        /* 'nombre': this.nombre, */
         'terminado': this.terminado,
         'largo': this.largo,
         'alto': this.alto,
@@ -2430,7 +2422,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
         'fecha_llegada': this.fecha_llegada,
         'file': this.file
       }).then(function (response) {
-        /* console.log(response.data); */
         me.cerrarModal();
         me.listarArticulo(1, '', 'sku');
       })["catch"](function (error) {
@@ -2447,8 +2438,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
         'idcategoria': this.idcategoria,
         'codigo': this.codigo,
         'sku': this.sku,
-
-        /* 'nombre': this.nombre, */
         'terminado': this.terminado,
         'largo': this.largo,
         'alto': this.alto,
@@ -2537,8 +2526,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.errorArticulo = 0;
       this.errorMostrarMsjArticulo = [];
       if (this.idcategoria == 0) this.errorMostrarMsjArticulo.push("Selecciona una categoría.");
-      /* if (!this.nombre) this.errorMostrarMsjArticulo.push("El nombre del artículo no puede estar vacío."); */
-
       if (!this.sku) this.errorMostrarMsjArticulo.push("El código del material no puede estar vacío.");
       if (!this.terminado) this.errorMostrarMsjArticulo.push("El terminado del artículo no puede estar vacío.");
       if (!this.largo) this.errorMostrarMsjArticulo.push("El largo del artículo no puede estar vacío.");
@@ -2546,9 +2533,11 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
       if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
       if (!this.ubicacion) this.errorMostrarMsjArticulo.push("Seleccione una bodega de descarga");
-      if (!this.contenedor) this.errorMostrarMsjArticulo.push("Ingrese el contenedor de origen de la placa");
+      /*  if (!this.contenedor) this.errorMostrarMsjArticulo.push("Ingrese el contenedor de origen de la placa"); */
+
       if (!this.stock) this.errorMostrarMsjArticulo.push("El stock del artículo debe ser un número y no puede estar vacío.");
-      if (!this.origen) this.errorMostrarMsjArticulo.push("El origen  del artículo no puede estar vacío.");
+      /* if (!this.origen) this.errorMostrarMsjArticulo.push("El origen  del artículo no puede estar vacío."); */
+
       if (this.errorMostrarMsjArticulo.length) this.errorArticulo = 1;
       return this.errorArticulo;
     },
@@ -2565,7 +2554,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.espesor = 0;
       this.precio_venta = 0;
       this.ubicacion = '';
-      this.stock = 0;
+      this.stock = 1;
       this.descripcion = '';
       this.observacion = '';
       this.origen = '';
@@ -2594,8 +2583,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
                   this.idcategoria = 0;
                   this.codigo = '';
                   this.sku = '';
-                  /* this.nombre = ''; */
-
                   this.terminado = '';
                   this.largo = 0;
                   this.alto = 0;
@@ -2603,7 +2590,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
                   this.espesor = 0;
                   this.precio_venta = 0;
                   this.ubicacion = '';
-                  this.stock = 0;
+                  this.stock = 1;
                   this.descripcion = '';
                   this.observacion = '';
                   this.origen = '';
@@ -2637,7 +2624,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
                   this.origen = data['origen'];
                   this.contenedor = data['contenedor'];
                   this.fecha_llegada = data['fecha_llegada'];
-                  this.imagenMinatura = 'http://127.0.0.1:8000/images/' + data['file'];
+                  this.imagenMinatura = 'http://inventariostroystone.com/images/' + data['file'];
                   this.estado = data['condicion'];
                   this.comprometido = data['comprometido'];
                   this.usuario = data['usuario'];
@@ -2671,7 +2658,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
         'comprometido': this.comprometido
       }).then(function (response) {
         me.listarArticulo(1, '', 'sku');
-        /* location.reload(); */
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2685,18 +2671,11 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
             switch (accion) {
               case "visualizar":
                 {
-                  //console.log(data);
                   this.modal2 = 1;
                   this.tituloModal = "Detalle de artículo ";
-                  /* this.tipoAccion = 2; */
-
-                  /* this.articulo_id = data['id']; */
-
                   this.idcategoria = data['idcategoria'];
                   this.codigo = data['codigo'];
                   this.sku = data['sku'];
-                  /* this.nombre = data['nombre']; */
-
                   this.terminado = data['terminado'];
                   this.largo = data['largo'];
                   this.alto = data['alto'];
@@ -2725,15 +2704,13 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.idcategoria = 0;
       this.codigo = '';
       this.sku = '';
-      /* this.nombre = ''; */
-
       this.terminado = '';
       this.largo = 0;
       this.alto = 0;
       this.metros_cuadrados = 0;
       this.espesor = 0;
       this.ubicacion = '';
-      this.stock = 0;
+      this.stock = 1;
       this.descripcion = '';
       this.observacion = '';
       this.origen = '';
@@ -3129,7 +3106,6 @@ __webpack_require__.r(__webpack_exports__);
 
               case "actualizar":
                 {
-                  //console.log(data);
                   this.modal = 1;
                   this.tituloModal = "Actualizar categoría";
                   this.tipoAccion = 2;
@@ -3159,27 +3135,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -3534,7 +3489,6 @@ __webpack_require__.r(__webpack_exports__);
 
               case "actualizar":
                 {
-                  //console.log(data);
                   this.modal = 1;
                   this.tituloModal = "Actualizar Cliente";
                   this.tipoAccion = 2;
@@ -3581,7 +3535,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_lightbox__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
-//
 //
 //
 //
@@ -6172,50 +6125,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -6303,7 +6212,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       buscar: '',
       buscarA: '',
       criterioA: 'sku',
-      //Variables Corte de placa
       codigoA: "",
       codigoB: "",
       largoA: 0,
@@ -6749,8 +6657,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       if (!me.num_comprobante) me.errorMostrarMsjCotizacion.push("Ingrese el numero de cotizacion");
       if (!me.impuesto) me.errorMostrarMsjCotizacion.push("Ingrese el impuesto de la cotizacion");
       if (me.arrayDetalle.length <= 0) me.errorMostrarMsjCotizacion.push("Introdusca articulos para la cotizacion");
-      /* if (me.moneda != 'Peso Mexicano') me.errorMostrarMsjCotizacion.push("Seleccione el tipo de cambio de la moneda"); */
-
       if (me.vigencia == '') me.errorMostrarMsjCotizacion.push("Seleccione la vigencia de la cotizacion");
       if (me.errorMostrarMsjCotizacion.length) me.errorCotizacion = 1;
       return me.errorCotizacion;
@@ -6934,8 +6840,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
           me.arrayDetalle.push((_me$arrayDetalle$push = {
             idarticulo: data['id'],
             articulo: data['sku'],
-
-            /* sku              : data['sku'], */
             codigo: data['codigo'],
             idcategoria: data['idcategoria'],
             categoria: data['nombre_categoria'],
@@ -7088,8 +6992,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.ind = '';
       this.fecha_llegada = '';
     },
-
-    /* modal-cortar */
     abrirModal4: function abrirModal4(index) {
       var me = this;
       me.ind = index;
@@ -7244,7 +7146,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       });
     },
     pdfCotizacion: function pdfCotizacion(id) {
-      window.open('/cotizacion/pdf/' + id);
+      window.open('/cotizacion/pdf/' + id, '_blank');
     },
     getLastNum: function getLastNum() {
       var me = this;
@@ -8525,7 +8427,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       });
     },
     pdfEntrega: function pdfEntrega(id) {
-      window.open('/entrega/pdf/' + id);
+      window.open('/entrega/pdf/' + id, '_blank');
     },
     entregarVenta: function entregarVenta(id) {
       var me = this;
@@ -8559,7 +8461,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
         me.pagado = arrayVentaT[0]['pagado'];
         me.fileventa = arrayVentaT[0]['file'];
-        me.imagenMinatura = 'http://127.0.0.1:8000/entregas/' + arrayVentaT[0]['file'];
+        me.imagenMinatura = 'http://inventariostroystone.com/entregas/' + arrayVentaT[0]['file'];
         moment__WEBPACK_IMPORTED_MODULE_3___default.a.locale('es');
         me.fecha_llegada = moment__WEBPACK_IMPORTED_MODULE_3___default()(fechaform).format('llll');
         var imp = parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
@@ -8626,8 +8528,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
     },
     obtenerImagen: function obtenerImagen(e) {
       var img = e.target.files[0];
-      /*  console.log(img); */
-
       this.fileventa = img;
       this.cargarImagen(img);
     },
@@ -8685,6 +8585,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_lightbox__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
+//
+//
+//
+//
+//
 //
 //
 //
@@ -10330,27 +10235,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -10916,27 +10800,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -11201,7 +11064,6 @@ __webpack_require__.r(__webpack_exports__);
 
               case "actualizar":
                 {
-                  //console.log(data);
                   this.modal = 1;
                   this.tituloModal = "Actualizar Usuario";
                   this.tipoAccion = 2;
@@ -11253,12 +11115,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -12433,6 +12289,14 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         'from': 0,
         'to': 0
       },
+      paginationart: {
+        'total': 0,
+        'current_page': 0,
+        'per_page': 0,
+        'last_page': 0,
+        'from': 0,
+        'to': 0
+      },
       offset: 3,
       criterio: 'num_comprobante',
       buscar: '',
@@ -12498,6 +12362,35 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
 
       return pagesArray;
     },
+    isActivedArt: function isActivedArt() {
+      return this.paginationart.current_page;
+    },
+    pagesNumberArt: function pagesNumberArt() {
+      if (!this.paginationart.to) {
+        return [];
+      }
+
+      var from = this.paginationart.current_page - this.offset;
+
+      if (from < 1) {
+        from = 1;
+      }
+
+      var to = from + this.offset * 2;
+
+      if (to >= this.paginationart.last_page) {
+        to = this.paginationart.last_page;
+      }
+
+      var pagesArray = [];
+
+      while (from <= to) {
+        pagesArray.push(from);
+        from++;
+      }
+
+      return pagesArray;
+    },
     calcularTotal: function calcularTotal() {
       var me = this;
       var resultado = 0;
@@ -12546,18 +12439,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       me.CodeDate = moment__WEBPACK_IMPORTED_MODULE_3___default()().format('YYMMDD');
       return date;
     }
-    /*  cacularPrecioExtranjero : function(){
-            let me=this;
-            let precioExt = 0;
-             if(me.moneda != 'Peso Mexicano'){
-                precioExt = (precioExt + (me.precio / me.tipo_cambio));
-                me.precio = Math.ceil(precioExt);
-            }else{
-                precioExt = me.precio;
-            }
-            return Math.ceil(precioExt);
-        }, */
-
   },
   methods: {
     listarVenta: function listarVenta(page, buscar, criterio) {
@@ -12633,6 +12514,13 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       me.pagination.current_page = page; //Envia la petición para visualizar la data de esa página
 
       me.listarVenta(page, buscar, criterio);
+    },
+    cambiarPaginaArt: function cambiarPaginaArt(page, buscar, criterio) {
+      var me = this; //Actualiza la página actual
+
+      me.paginationart.current_page = page; //Envia la petición para visualizar la data de esa página
+
+      me.listarArticulo(page, buscar, criterio);
     },
     encuentra: function encuentra(id) {
       var sw = 0;
@@ -12981,13 +12869,15 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.arrayArticulo = [];
       this.modal = 1;
       this.tituloModal = "Seleccionar Artículos";
+      this.listarArticulo(1, '', 'sku');
     },
-    listarArticulo: function listarArticulo(buscar, criterio) {
+    listarArticulo: function listarArticulo(page, buscar, criterio) {
       var me = this;
-      var url = '/articulo/listarArticuloVenta?buscar=' + buscar + '&criterio=' + criterio;
+      var url = '/articulo/listarArticuloVenta?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
         me.arrayArticulo = respuesta.articulos.data;
+        me.paginationart = respuesta.pagination;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -13008,8 +12898,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         me.arrayDetalle.push((_me$arrayDetalle$push = {
           idarticulo: data['id'],
           articulo: data['sku'],
-
-          /* sku              : data['sku'], */
           codigo: data['codigo'],
           idcategoria: data['idcategoria'],
           categoria: data['nombre_categoria'],
@@ -13144,8 +13032,6 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.ind = '';
       this.fecha_llegada = '';
     },
-
-    /* modal-cortar */
     abrirModal4: function abrirModal4(index) {
       var me = this;
       me.ind = index;
@@ -13254,7 +13140,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         'stock': this.stock,
         'id': this.idarticulo
       }).then(function (response) {
-        me.listarArticulo(me.codigoA, 'codigo');
+        me.listarArticulo(1, me.codigoA, 'codigo');
         me.cerrarModal4();
         me.abrirModal();
         me.validatedA = 0;
@@ -15334,7 +15220,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  position: absolute !important;\n}\n.mostrar {\n  display: list-item !important;\n  opacity: 1 !important;\n  position: absolute !important;\n  background-color: #3c29297a !important;\n}\n.div-error {\n  display: flex;\n  justify-content: center;\n}\n.text-error {\n  color: red !important;\n  font-weight: bold;\n}\n.imgcenter {\n    display:flex;\n    margin:0 auto;\n}\n.modal-body{\n    height: 500px;\n    width: 100%;\n    overflow-y: auto;\n}\n\n", ""]);
+exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  position: absolute !important;\n}\n.mostrar {\n  display: list-item !important;\n  opacity: 1 !important;\n  position: absolute !important;\n  background-color: #3c29297a !important;\n}\n.div-error {\n  display: flex;\n  justify-content: center;\n}\n.text-error {\n  color: red !important;\n  font-weight: bold;\n}\n.imgcenter {\n    display:flex;\n    margin:0 auto;\n}\n.modal-body{\n    height: 500px;\n    width: 100%;\n    overflow-y: auto;\n}\n", ""]);
 
 // exports
 
@@ -15429,7 +15315,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-content {\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar {\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error {\n    display: flex;\n    justify-content: center;\n}\n.text-error {\n    color: red !important;\n    font-weight: bold;\n}\n@media (min-width: 600px){\n.btnagregar{\n          margin-top: 2rem;\n}\n}\n.selectDetalle {\n      background: white;\n      border: none;\n      text-align: center;\n}\n", ""]);
+exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  position: absolute !important;\n}\n.mostrar {\n  display: list-item !important;\n  opacity: 1 !important;\n  position: absolute !important;\n  background-color: #3c29297a !important;\n}\n.div-error {\n  display: flex;\n  justify-content: center;\n}\n.text-error {\n  color: red !important;\n  font-weight: bold;\n}\n@media (min-width: 600px){\n.btnagregar{\n        margin-top: 2rem;\n}\n}\n.selectDetalle {\n    background: white;\n    border: none;\n    text-align: center;\n}\ninput[type=\"number\"]\n{\n    -webkit-appearance: textfield !important;\n    margin: 0;\n    /* -moz-appearance:textfield !important; */\n}\n", ""]);
 
 // exports
 
@@ -15467,7 +15353,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-content {\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar {\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error {\n    display: flex;\n    justify-content: center;\n}\n.text-error {\n    color: red !important;\n    font-weight: bold;\n}\n@media (min-width: 600px){\n.btnagregar{\n          margin-top: 2rem;\n}\n}\n.selectDetalle {\n      background: white;\n      border: none;\n      text-align: center;\n}\n", ""]);
+exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  position: absolute !important;\n}\n.mostrar {\n  display: list-item !important;\n  opacity: 1 !important;\n  position: absolute !important;\n  background-color: #3c29297a !important;\n}\n.div-error {\n  display: flex;\n  justify-content: center;\n}\n.text-error {\n  color: red !important;\n  font-weight: bold;\n}\n@media (min-width: 600px){\n.btnagregar{\n        margin-top: 2rem;\n}\n}\n.selectDetalle {\n    background: white;\n    border: none;\n    text-align: center;\n}\ninput[type=\"number\"]\n{\n    -webkit-appearance: textfield !important;\n    margin: 0;\n    /* -moz-appearance:textfield !important; */\n}\n", ""]);
 
 // exports
 
@@ -15524,7 +15410,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-content {\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar {\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error {\n    display: flex;\n    justify-content: center;\n}\n.text-error {\n    color: red !important;\n    font-weight: bold;\n}\n@media (min-width: 600px){\n.btnagregar{\n          margin-top: 2rem;\n}\n}\n.selectDetalle {\n      background: white;\n      border: none;\n      text-align: center;\n}\n", ""]);
+exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  position: absolute !important;\n}\n.mostrar {\n  display: list-item !important;\n  opacity: 1 !important;\n  position: absolute !important;\n  background-color: #3c29297a !important;\n}\n.div-error {\n  display: flex;\n  justify-content: center;\n}\n.text-error {\n  color: red !important;\n  font-weight: bold;\n}\n@media (min-width: 600px){\n.btnagregar{\n        margin-top: 2rem;\n}\n}\n.selectDetalle {\n    background: white;\n    border: none;\n    text-align: center;\n}\ninput[type=\"number\"]\n{\n    -webkit-appearance: textfield !important;\n    margin: 0;\n   /*  -moz-appearance:textfield !important; */\n}\n", ""]);
 
 // exports
 
@@ -77892,23 +77778,6 @@ var render = function() {
               _c("i", { staticClass: "icon-plus" }),
               _vm._v(" Nuevo\n          ")
             ]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-info",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  return _vm.cargarExcel()
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "icon-doc" }),
-              _vm._v(" Articulos Excel\n          ")
-            ]
           )
         ]),
         _vm._v(" "),
@@ -77997,7 +77866,7 @@ var render = function() {
                 _c(
                   "button",
                   {
-                    staticClass: "btn btn-primary",
+                    staticClass: "btn btn-sm btn-primary",
                     attrs: { type: "submit" },
                     on: {
                       click: function($event) {
@@ -78005,7 +77874,7 @@ var render = function() {
                       }
                     }
                   },
-                  [_c("i", { staticClass: "fa fa-search" }), _vm._v(" Buscar")]
+                  [_c("i", { staticClass: "fa fa-search" })]
                 )
               ])
             ])
@@ -78048,7 +77917,7 @@ var render = function() {
                                       },
                                       [_c("i", { staticClass: "icon-pencil" })]
                                     ),
-                                    _vm._v("  \n                      ")
+                                    _vm._v("  \n                          ")
                                   ]
                                 : void 0,
                               _vm._v(" "),
@@ -78089,7 +77958,7 @@ var render = function() {
                                     )
                                   ]
                                 : void 0,
-                              _vm._v(" \n                      "),
+                              _vm._v(" \n                          "),
                               _c(
                                 "button",
                                 {
@@ -78147,13 +78016,13 @@ var render = function() {
                           }),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: {
-                              textContent: _vm._s(articulo.precio_venta)
-                            }
+                            domProps: { textContent: _vm._s(articulo.espesor) }
                           }),
                           _vm._v(" "),
                           _c("td", {
-                            domProps: { textContent: _vm._s(articulo.stock) }
+                            domProps: {
+                              textContent: _vm._s(articulo.terminado)
+                            }
                           }),
                           _vm._v(" "),
                           _c("td", {
@@ -78847,11 +78716,11 @@ var render = function() {
                               _vm._v("Del Músico")
                             ]),
                             _vm._v(" "),
-                            _c("option", { attrs: { value: "Del Escultor" } }, [
+                            _c("option", { attrs: { value: "Escultores" } }, [
                               _vm._v("Escultor")
                             ]),
                             _vm._v(" "),
-                            _c("option", { attrs: { value: "Del Sastre" } }, [
+                            _c("option", { attrs: { value: "Sastres" } }, [
                               _vm._v("Sastre")
                             ]),
                             _vm._v(" "),
@@ -78861,6 +78730,10 @@ var render = function() {
                             _vm._v(" "),
                             _c("option", { attrs: { value: "Tractorista" } }, [
                               _vm._v("Tractorista")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "Maquinistas" } }, [
+                              _vm._v("Maquinistas")
                             ]),
                             _vm._v(" "),
                             _c("option", { attrs: { value: "San Luis" } }, [
@@ -79159,55 +79032,57 @@ var render = function() {
                     )
                   ],
                   1
-                )
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-footer" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-secondary",
-                    attrs: { type: "button" },
-                    on: {
-                      click: function($event) {
-                        return _vm.cerrarModal()
-                      }
-                    }
-                  },
-                  [_vm._v("Cerrar")]
                 ),
                 _vm._v(" "),
-                _vm.tipoAccion == 1
-                  ? _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-primary",
-                        attrs: { type: "button" },
-                        on: {
-                          click: function($event) {
-                            return _vm.registrarArticulo()
-                          }
-                        }
-                      },
-                      [_vm._v("Guardar")]
-                    )
-                  : _vm._e(),
+                _c("hr"),
                 _vm._v(" "),
-                _vm.tipoAccion == 2
-                  ? _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-primary",
-                        attrs: { type: "button" },
-                        on: {
-                          click: function($event) {
-                            return _vm.actualizarArticulo()
-                          }
+                _c("div", { staticClass: "float-right" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          return _vm.cerrarModal()
                         }
-                      },
-                      [_vm._v("Actualizar")]
-                    )
-                  : _vm._e()
+                      }
+                    },
+                    [_vm._v("Cerrar")]
+                  ),
+                  _vm._v(" "),
+                  _vm.tipoAccion == 1
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.registrarArticulo()
+                            }
+                          }
+                        },
+                        [_vm._v("Guardar")]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.tipoAccion == 2
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.actualizarArticulo()
+                            }
+                          }
+                        },
+                        [_vm._v("Actualizar")]
+                      )
+                    : _vm._e()
+                ])
               ])
             ])
           ]
@@ -79278,7 +79153,8 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://127.0.0.1:8000/images/" + _vm.file
+                        src:
+                          "http://inventariostroystone.com/images/" + _vm.file
                       }
                     },
                     [
@@ -79286,7 +79162,8 @@ var render = function() {
                         staticClass: "img-responsive img-fluid imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://127.0.0.1:8000/images/" + _vm.file
+                          src:
+                            "http://inventariostroystone.com/images/" + _vm.file
                         }
                       })
                     ]
@@ -79439,26 +79316,26 @@ var render = function() {
                       )
                     ],
                     1
+                  ),
+                  _vm._v(" "),
+                  _c("hr"),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary float-right",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          return _vm.cerrarModal2()
+                        }
+                      }
+                    },
+                    [_vm._v("Cerrar")]
                   )
                 ],
                 1
-              ),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-footer" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-secondary",
-                    attrs: { type: "button" },
-                    on: {
-                      click: function($event) {
-                        return _vm.cerrarModal2()
-                      }
-                    }
-                  },
-                  [_vm._v("Cerrar")]
-                )
-              ])
+              )
             ])
           ]
         )
@@ -79499,9 +79376,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Metros"), _c("sup", [_vm._v("2")])]),
         _vm._v(" "),
-        _c("th", [_vm._v("Precio")]),
+        _c("th", [_vm._v("Espesor")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Stock")]),
+        _c("th", [_vm._v("Terminado")]),
         _vm._v(" "),
         _c("th", [_vm._v("Bodega de descarga")]),
         _vm._v(" "),
@@ -81712,7 +81589,8 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/images/" + _vm.file
+                        src:
+                          "http://inventariostroystone.com/images/" + _vm.file
                       }
                     },
                     [
@@ -81720,7 +81598,8 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/images/" + _vm.file
+                          src:
+                            "http://inventariostroystone.com/images/" + _vm.file
                         }
                       })
                     ]
@@ -84608,33 +84487,37 @@ var render = function() {
                         _vm._m(6),
                         _vm._v(" "),
                         _c("div", { staticClass: "row" }, [
-                          _c("input", {
-                            staticClass: "form-control col-md",
-                            attrs: { type: "number", readonly: "" },
-                            domProps: { value: _vm.getFechaCode }
-                          }),
+                          _c("div", { staticClass: "col" }, [
+                            _c("input", {
+                              staticClass: "form-control col-md",
+                              attrs: { type: "number", readonly: "" },
+                              domProps: { value: _vm.getFechaCode }
+                            })
+                          ]),
                           _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.num_comprobante,
-                                expression: "num_comprobante"
-                              }
-                            ],
-                            staticClass: "form-control col-md",
-                            attrs: { type: "text", placeholder: "000xx" },
-                            domProps: { value: _vm.num_comprobante },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
+                          _c("div", { staticClass: "col" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.num_comprobante,
+                                  expression: "num_comprobante"
                                 }
-                                _vm.num_comprobante = $event.target.value
+                              ],
+                              staticClass: "form-control col-md",
+                              attrs: { type: "text", placeholder: "000xx" },
+                              domProps: { value: _vm.num_comprobante },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.num_comprobante = $event.target.value
+                                }
                               }
-                            }
-                          })
+                            })
+                          ])
                         ])
                       ])
                     ]),
@@ -86576,7 +86459,8 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/images/" + _vm.file
+                        src:
+                          "http://inventariostroystone.com/images/" + _vm.file
                       }
                     },
                     [
@@ -86584,7 +86468,8 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/images/" + _vm.file
+                          src:
+                            "http://inventariostroystone.com/images/" + _vm.file
                         }
                       })
                     ]
@@ -86848,7 +86733,8 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/images/" + _vm.file
+                        src:
+                          "http://inventariostroystone.com/images/" + _vm.file
                       }
                     },
                     [
@@ -86856,7 +86742,8 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/images/" + _vm.file
+                          src:
+                            "http://inventariostroystone.com/images/" + _vm.file
                         }
                       })
                     ]
@@ -87190,7 +87077,9 @@ var render = function() {
                           staticClass: "m-0",
                           attrs: {
                             album: "",
-                            src: "http://localhost:8000/images/" + _vm.file
+                            src:
+                              "http://inventariostroystone.com/images/" +
+                              _vm.file
                           }
                         },
                         [
@@ -87198,7 +87087,9 @@ var render = function() {
                             staticClass: "img-responsive imgcenter",
                             attrs: {
                               width: "250px",
-                              src: "http://localhost:8000/images/" + _vm.file
+                              src:
+                                "http://inventariostroystone.com/images/" +
+                                _vm.file
                             }
                           })
                         ]
@@ -89839,7 +89730,7 @@ var render = function() {
                             attrs: {
                               album: "",
                               src:
-                                "http://127.0.0.1:8000/entregas/" +
+                                "http://inventariostroystone.com/entregas/" +
                                 _vm.fileventa
                             }
                           },
@@ -89851,7 +89742,7 @@ var render = function() {
                                 width: "800px",
                                 height: "300px",
                                 src:
-                                  "http://127.0.0.1:8000/entregas/" +
+                                  "http://inventariostroystone.com/entregas/" +
                                   _vm.fileventa
                               }
                             })
@@ -90537,7 +90428,8 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/images/" + _vm.file
+                        src:
+                          "http://inventariostroystone.com/images/" + _vm.file
                       }
                     },
                     [
@@ -90545,7 +90437,8 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/images/" + _vm.file
+                          src:
+                            "http://inventariostroystone.com/images/" + _vm.file
                         }
                       })
                     ]
@@ -91790,33 +91683,37 @@ var render = function() {
                         _vm._m(6),
                         _vm._v(" "),
                         _c("div", { staticClass: "row" }, [
-                          _c("input", {
-                            staticClass: "form-control col-md",
-                            attrs: { type: "number", readonly: "" },
-                            domProps: { value: _vm.getFechaCode }
-                          }),
+                          _c("div", { staticClass: "col" }, [
+                            _c("input", {
+                              staticClass: "form-control col-md",
+                              attrs: { type: "number", readonly: "" },
+                              domProps: { value: _vm.getFechaCode }
+                            })
+                          ]),
                           _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.num_comprobante,
-                                expression: "num_comprobante"
-                              }
-                            ],
-                            staticClass: "form-control col-md",
-                            attrs: { type: "text", placeholder: "000xx" },
-                            domProps: { value: _vm.num_comprobante },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
+                          _c("div", { staticClass: "col" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.num_comprobante,
+                                  expression: "num_comprobante"
                                 }
-                                _vm.num_comprobante = $event.target.value
+                              ],
+                              staticClass: "form-control col-md",
+                              attrs: { type: "text", placeholder: "000xx" },
+                              domProps: { value: _vm.num_comprobante },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.num_comprobante = $event.target.value
+                                }
                               }
-                            }
-                          })
+                            })
+                          ])
                         ])
                       ])
                     ]),
@@ -93878,15 +93775,13 @@ var render = function() {
                                 _vm._v(" "),
                                 _c(
                                   "option",
-                                  { attrs: { value: "Del Escultor" } },
+                                  { attrs: { value: "Escultores" } },
                                   [_vm._v("Escultor")]
                                 ),
                                 _vm._v(" "),
-                                _c(
-                                  "option",
-                                  { attrs: { value: "Del Sastre" } },
-                                  [_vm._v("Sastre")]
-                                ),
+                                _c("option", { attrs: { value: "Sastres" } }, [
+                                  _vm._v("Sastre")
+                                ]),
                                 _vm._v(" "),
                                 _c(
                                   "option",
@@ -93898,6 +93793,12 @@ var render = function() {
                                   "option",
                                   { attrs: { value: "Tractorista" } },
                                   [_vm._v("Tractorista")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "option",
+                                  { attrs: { value: "Maquinistas" } },
+                                  [_vm._v("Maquinistas")]
                                 ),
                                 _vm._v(" "),
                                 _c("option", { attrs: { value: "San Luis" } }, [
@@ -97238,7 +97139,7 @@ var render = function() {
                       "table",
                       {
                         staticClass:
-                          "table table-bordered table-striped table-sm table-hover"
+                          "table table-bordered table-striped table-sm table-hover table-responsive-xl"
                       },
                       [
                         _vm._m(1),
@@ -98208,7 +98109,7 @@ var render = function() {
                             staticClass: "form-control",
                             attrs: {
                               type: "text",
-                              placeholder: "Ingrese el artículo"
+                              placeholder: "Ingrese el no° de placa"
                             },
                             domProps: { value: _vm.codigo },
                             on: {
@@ -99630,6 +99531,7 @@ var render = function() {
                               return null
                             }
                             return _vm.listarArticulo(
+                              1,
                               _vm.buscarA,
                               _vm.criterioA
                             )
@@ -99651,6 +99553,7 @@ var render = function() {
                           on: {
                             click: function($event) {
                               return _vm.listarArticulo(
+                                1,
                                 _vm.buscarA,
                                 _vm.criterioA
                               )
@@ -99765,6 +99668,90 @@ var render = function() {
                         0
                       )
                     ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("nav", [
+                  _c(
+                    "ul",
+                    { staticClass: "pagination" },
+                    [
+                      _vm.paginationart.current_page > 1
+                        ? _c("li", { staticClass: "page-item" }, [
+                            _c(
+                              "a",
+                              {
+                                staticClass: "page-link",
+                                attrs: { href: "#" },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.cambiarPaginaArt(
+                                      _vm.paginationart.current_page - 1,
+                                      _vm.buscarA,
+                                      _vm.criterioA
+                                    )
+                                  }
+                                }
+                              },
+                              [_vm._v("Ant")]
+                            )
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm._l(_vm.pagesNumberArt, function(page) {
+                        return _c(
+                          "li",
+                          {
+                            key: page,
+                            staticClass: "page-item",
+                            class: [page == _vm.isActivedArt ? "active" : ""]
+                          },
+                          [
+                            _c("a", {
+                              staticClass: "page-link",
+                              attrs: { href: "#" },
+                              domProps: { textContent: _vm._s(page) },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.cambiarPaginaArt(
+                                    page,
+                                    _vm.buscarA,
+                                    _vm.criterioA
+                                  )
+                                }
+                              }
+                            })
+                          ]
+                        )
+                      }),
+                      _vm._v(" "),
+                      _vm.paginationart.current_page <
+                      _vm.paginationart.last_page
+                        ? _c("li", { staticClass: "page-item" }, [
+                            _c(
+                              "a",
+                              {
+                                staticClass: "page-link",
+                                attrs: { href: "#" },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.cambiarPaginaArt(
+                                      _vm.paginationart.current_page + 1,
+                                      _vm.buscarA,
+                                      _vm.criterioA
+                                    )
+                                  }
+                                }
+                              },
+                              [_vm._v("Sig")]
+                            )
+                          ])
+                        : _vm._e()
+                    ],
+                    2
                   )
                 ])
               ]),
@@ -99885,7 +99872,8 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/images/" + _vm.file
+                        src:
+                          "http://inventariostroystone.com/images/" + _vm.file
                       }
                     },
                     [
@@ -99893,7 +99881,8 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/images/" + _vm.file
+                          src:
+                            "http://inventariostroystone.com/images/" + _vm.file
                         }
                       })
                     ]
@@ -99903,7 +99892,7 @@ var render = function() {
                     "table",
                     {
                       staticClass:
-                        "table table-bordered table-striped table-sm text-center table-hover"
+                        "table table-bordered table-striped table-sm text-center table-hover table-responsive-sm"
                     },
                     [
                       _vm._m(40),
@@ -100157,7 +100146,8 @@ var render = function() {
                       staticClass: "m-0",
                       attrs: {
                         album: "",
-                        src: "http://localhost:8000/images/" + _vm.file
+                        src:
+                          "http://inventariostroystone.com/images/" + _vm.file
                       }
                     },
                     [
@@ -100165,7 +100155,8 @@ var render = function() {
                         staticClass: "img-responsive imgcenter",
                         attrs: {
                           width: "500px",
-                          src: "http://localhost:8000/images/" + _vm.file
+                          src:
+                            "http://inventariostroystone.com/images/" + _vm.file
                         }
                       })
                     ]
@@ -100499,7 +100490,9 @@ var render = function() {
                           staticClass: "m-0",
                           attrs: {
                             album: "",
-                            src: "http://localhost:8000/images/" + _vm.file
+                            src:
+                              "http://inventariostroystone.com/images/" +
+                              _vm.file
                           }
                         },
                         [
@@ -100507,7 +100500,9 @@ var render = function() {
                             staticClass: "img-responsive imgcenter",
                             attrs: {
                               width: "250px",
-                              src: "http://localhost:8000/images/" + _vm.file
+                              src:
+                                "http://inventariostroystone.com/images/" +
+                                _vm.file
                             }
                           })
                         ]
@@ -115498,7 +115493,7 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\TroyStoneInventarios\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\TroyStoneInventariosProduction\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })

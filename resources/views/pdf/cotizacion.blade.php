@@ -177,17 +177,13 @@
             </div>
             <div id="fact">
                 <p><strong>Estado: </strong>
-                        @php
-                        if ($c->aceptado){
-                            echo "Aceptada";
-                        }else{
-                            if($c->estado == 'Anulada'){
-                                echo "Cotización cancelada";
-                            }else{
-                                echo "No aceptada";
-                            }
-                        }
-                        @endphp
+                    @php
+                    if($c->estado == 'Anulada'){
+                        echo "Vencida";
+                    }else{
+                        echo "Vigente";
+                    }
+                    @endphp
                 </p>
             </div>
         </header>

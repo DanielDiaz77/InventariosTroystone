@@ -12,9 +12,6 @@
             <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary">
                 <i class="icon-plus"></i>&nbsp;Nuevo
             </button>
-            <button type="button" @click="cargarExcel()" class="btn btn-info">
-                <i class="icon-doc"></i>&nbsp;Articulos Excel
-            </button>
         </div>
         <div class="card-body">
           <div class="form-group row">
@@ -28,7 +25,7 @@
                   <option value="idcategoria">Material</option>
                 </select>
                 <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                <button type="submit" @click="listarArticulo(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                <button type="submit" @click="listarArticulo(1,buscar,criterio)" class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
               </div>
             </div>
           </div>
@@ -44,8 +41,8 @@
                     <th>Largo</th>
                     <th>Alto</th>
                     <th>Metros<sup>2</sup></th>
-                    <th>Precio</th>
-                    <th>Stock</th>
+                    <th>Espesor</th>
+                    <th>Terminado</th>
                     <th>Bodega de descarga</th>
                     <th>Estado</th>
                     <th>Comprometido</th>
@@ -54,38 +51,37 @@
                 <tbody v-if="arrayArticulo.length">
                     <tr v-for="articulo in arrayArticulo" :key="articulo.id">
                         <td>
-                        <template v-if="articulo.condicion == 1">
-                            <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
-                                <i class="icon-pencil"></i>
+                            <template v-if="articulo.condicion == 1">
+                                <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
+                                    <i class="icon-pencil"></i>
+                                </button> &nbsp;
+                            </template>
+                            <template v-else></template>
+                            <template v-if="articulo.condicion == 1">
+                                <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
+                                <i class="icon-trash"></i>
+                                </button>
+                            </template>
+                            <template v-else-if="articulo.condicion == 0">
+                                <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
+                                <i class="icon-check"></i>
+                                </button>
+                            </template>
+                            <template v-else>
+                            </template>&nbsp;
+                            <button type="button" @click="abrirModal2('articulo','visualizar',articulo)" class="btn btn-success btn-sm">
+                                <i class="icon-eye"></i>
                             </button> &nbsp;
-                        </template>
-                        <template v-else></template>
-                        <template v-if="articulo.condicion == 1">
-                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
-                            <i class="icon-trash"></i>
-                            </button>
-                        </template>
-                        <template v-else-if="articulo.condicion == 0">
-                            <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
-                            <i class="icon-check"></i>
-                            </button>
-                        </template>
-                        <template v-else>
-                        </template>&nbsp;
-                        <button type="button" @click="abrirModal2('articulo','visualizar',articulo)" class="btn btn-success btn-sm">
-                            <i class="icon-eye"></i>
-                        </button> &nbsp;
                         </td>
                         <td v-text="articulo.codigo"></td>
                         <td v-text="articulo.sku"></td>
-                        <!-- <td v-text="articulo.nombre"></td> -->
                         <td v-text="articulo.nombre_categoria"></td>
                         <td v-text="articulo.descripcion"></td>
                         <td v-text="articulo.largo"></td>
                         <td v-text="articulo.alto"></td>
                         <td v-text="articulo.metros_cuadrados"></td>
-                        <td v-text="articulo.precio_venta"></td>
-                        <td v-text="articulo.stock"></td>
+                        <td v-text="articulo.espesor"></td>
+                        <td v-text="articulo.terminado"></td>
                         <td v-text="articulo.ubicacion"></td>
                         <td>
                             <div v-if="articulo.condicion == 1">
@@ -178,12 +174,6 @@
                         <input type="text" v-model="sku" class="form-control" placeholder="Código de material"/>
                     </div>
                 </div>
-                <!-- <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del artículo"/>
-                    </div>
-                </div> -->
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Terminado</label>
                     <div class="col-md-9">
@@ -234,10 +224,11 @@
                     <select class="form-control" v-model="ubicacion">
                         <option value="" disabled>Seleccione una bodega de descarga</option>
                         <option value="Del Musico">Del Músico</option>
-                        <option value="Del Escultor">Escultor</option>
-                        <option value="Del Sastre">Sastre</option>
+                        <option value="Escultores">Escultor</option>
+                        <option value="Sastres">Sastre</option>
                         <option value="Mecanicos">Mecánicos</option>
                         <option value="Tractorista">Tractorista</option>
+                         <option value="Maquinistas">Maquinistas</option>
                         <option value="San Luis">San Luis</option>
                     </select>
                     </div>
@@ -296,12 +287,16 @@
                     </div>
                 </div>
             </form>
+            <hr>
+            <div class="float-right">
+                <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarArticulo()">Guardar</button>
+                <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarArticulo()">Actualizar</button>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-            <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarArticulo()">Guardar</button>
-            <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarArticulo()">Actualizar</button>
-          </div>
+          <!-- <div class="modal-footer">
+
+          </div> -->
         </div>
         <!-- /.modal-content -->
       </div>
@@ -321,8 +316,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://127.0.0.1:8000/images/'+file">
-                    <img class="img-responsive img-fluid imgcenter" width="500px" :src="'http://127.0.0.1:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                    <img class="img-responsive img-fluid imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
                 </lightbox>&nbsp;
                 <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
@@ -394,10 +389,12 @@
                             Sin código de barras.
                     </barcode>
                 </div>
+                <hr>
+                <button type="button" class="btn btn-secondary float-right" @click="cerrarModal2()">Cerrar</button>
           </div>
-          <div class="modal-footer">
+          <!-- <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
-          </div>
+          </div> -->
         </div>
         <!-- /.modal-content -->
       </div>
@@ -429,7 +426,7 @@ export default {
             espesor : 0,
             precio_venta : 0,
             ubicacion : '',
-            stock : 0,
+            stock : 1,
             comprometido : 0,
             usuario : '',
             descripcion: '',
@@ -520,9 +517,6 @@ export default {
                 console.log(error);
             });
         },
-        cargarExcel(){
-            window.open('http://127.0.0.1:8000/articulo/listarExcel','_blank');
-        },
         selectCategoria(){
             let me=this;
             var url= '/categoria/selectCategoria';
@@ -567,7 +561,6 @@ export default {
                     'idcategoria': this.idcategoria,
                     'codigo': this.codigo,
                     'sku' : this.sku,
-                    /* 'nombre': this.nombre, */
                     'terminado' : this.terminado,
                     'largo' : this.largo,
                     'alto' : this.alto,
@@ -583,7 +576,6 @@ export default {
                     'fecha_llegada' : this.fecha_llegada,
                     'file' : this.file
                 }).then(function (response) {
-                    /* console.log(response.data); */
                     me.cerrarModal();
                     me.listarArticulo(1,'','sku');
                 }).catch(function (error) {
@@ -599,7 +591,6 @@ export default {
                 'idcategoria': this.idcategoria,
                 'codigo': this.codigo,
                 'sku' : this.sku,
-                /* 'nombre': this.nombre, */
                 'terminado' : this.terminado,
                 'largo' : this.largo,
                 'alto' : this.alto,
@@ -701,7 +692,6 @@ export default {
             this.errorMostrarMsjArticulo = [];
 
             if (this.idcategoria==0) this.errorMostrarMsjArticulo.push("Selecciona una categoría.");
-            /* if (!this.nombre) this.errorMostrarMsjArticulo.push("El nombre del artículo no puede estar vacío."); */
             if (!this.sku) this.errorMostrarMsjArticulo.push("El código del material no puede estar vacío.");
             if (!this.terminado) this.errorMostrarMsjArticulo.push("El terminado del artículo no puede estar vacío.");
             if (!this.largo) this.errorMostrarMsjArticulo.push("El largo del artículo no puede estar vacío.");
@@ -709,9 +699,9 @@ export default {
             if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
             if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
             if (!this.ubicacion) this.errorMostrarMsjArticulo.push("Seleccione una bodega de descarga");
-            if (!this.contenedor) this.errorMostrarMsjArticulo.push("Ingrese el contenedor de origen de la placa");
+           /*  if (!this.contenedor) this.errorMostrarMsjArticulo.push("Ingrese el contenedor de origen de la placa"); */
             if (!this.stock) this.errorMostrarMsjArticulo.push("El stock del artículo debe ser un número y no puede estar vacío.");
-            if (!this.origen) this.errorMostrarMsjArticulo.push("El origen  del artículo no puede estar vacío.");
+            /* if (!this.origen) this.errorMostrarMsjArticulo.push("El origen  del artículo no puede estar vacío."); */
 
             if (this.errorMostrarMsjArticulo.length) this.errorArticulo = 1;
 
@@ -730,7 +720,7 @@ export default {
             this.espesor = 0;
             this.precio_venta  = 0;
             this.ubicacion = '';
-            this.stock = 0;
+            this.stock = 1;
             this.descripcion= '';
             this.observacion = '';
             this.origen = '';
@@ -756,7 +746,6 @@ export default {
                             this.idcategoria = 0;
                             this.codigo = '';
                             this.sku = '';
-                            /* this.nombre = ''; */
                             this.terminado = '';
                             this.largo = 0;
                             this.alto = 0;
@@ -764,7 +753,7 @@ export default {
                             this.espesor = 0;
                             this.precio_venta = 0;
                             this.ubicacion = '';
-                            this.stock = 0;
+                            this.stock = 1;
                             this.descripcion= '';
                             this.observacion = '';
                             this.origen = '';
@@ -796,7 +785,7 @@ export default {
                             this.origen = data['origen'];
                             this.contenedor = data['contenedor'];
                             this.fecha_llegada = data['fecha_llegada'];
-                            this.imagenMinatura = 'http://127.0.0.1:8000/images/' + data['file'];
+                            this.imagenMinatura = 'http://inventariostroystone.com/images/' + data['file'];
                             this.estado = data['condicion'];
                             this.comprometido = data['comprometido'];
                             this.usuario = data['usuario'];
@@ -827,7 +816,6 @@ export default {
                 'comprometido' : this.comprometido
             }).then(function (response) {
                 me.listarArticulo(1,'','sku');
-                /* location.reload(); */
             }).catch(function (error) {
                 console.log(error);
             });
@@ -837,15 +825,11 @@ export default {
                 case "articulo": {
                     switch (accion) {
                         case "visualizar": {
-                            //console.log(data);
                             this.modal2 = 1;
                             this.tituloModal = "Detalle de artículo ";
-                            /* this.tipoAccion = 2; */
-                            /* this.articulo_id = data['id']; */
                             this.idcategoria = data['idcategoria'];
                             this.codigo = data['codigo'];
                             this.sku = data['sku'];
-                            /* this.nombre = data['nombre']; */
                             this.terminado = data['terminado'];
                             this.largo = data['largo'];
                             this.alto = data['alto'];
@@ -873,14 +857,13 @@ export default {
             this.idcategoria = 0;
             this.codigo = '';
             this.sku = '';
-            /* this.nombre = ''; */
             this.terminado = '';
             this.largo = 0;
             this.alto = 0;
             this.metros_cuadrados = 0;
             this.espesor = 0;
             this.ubicacion = '';
-            this.stock = 0;
+            this.stock = 1;
             this.descripcion= '';
             this.observacion = '';
             this.origen = '';
@@ -923,5 +906,4 @@ export default {
         width: 100%;
         overflow-y: auto;
     }
-
 </style>

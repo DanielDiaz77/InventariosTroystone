@@ -132,8 +132,12 @@
                         <div class="form-group">
                             <label for=""><strong>Número de ingreso (*)</strong></label>
                             <div class="row">
-                                <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
-                                <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                                <div class="col">
+                                    <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -634,10 +638,11 @@
                             <select class="form-control" v-model="ubicacion">
                                 <option value='' disabled>Seleccione una bodega de descarga</option>
                                 <option value="Del Musico">Del Músico</option>
-                                <option value="Del Escultor">Escultor</option>
-                                <option value="Del Sastre">Sastre</option>
+                                <option value="Escultores">Escultor</option>
+                                <option value="Sastres">Sastre</option>
                                 <option value="Mecanicos">Mecánicos</option>
                                 <option value="Tractorista">Tractorista</option>
+                                <option value="Maquinistas">Maquinistas</option>
                                 <option value="San Luis">San Luis</option>
                             </select>
                         </td>
@@ -1450,5 +1455,11 @@ export default {
         border: none;
         text-align: center;
 
-  }
+    }
+    input[type="number"]
+    {
+        -webkit-appearance: textfield !important;
+        margin: 0;
+        /* -moz-appearance:textfield !important; */
+    }
 </style>
