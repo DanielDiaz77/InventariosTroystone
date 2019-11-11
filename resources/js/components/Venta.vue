@@ -325,6 +325,7 @@
                                         <input v-model="detalle.cantidad" min="1" type="number" class="form-control">
                                     </td>
                                    <td>
+                                        <span style="color:red;" v-show="detalle.precio<=0">Ingrese el precio</span>
                                         <input v-model="detalle.precio" min="0" step="any" type="number" class="form-control">
                                    </td>
                                     <td>
@@ -364,6 +365,10 @@
                         <label for="exampleFormControlTextarea2"><strong>Observaciones</strong></label>
                         <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
                     </div>&nbsp;
+                    <div class="col-md-4 text-center float-right">
+                        <label for="exampleFormControlTextarea2"><strong>Observaciones Internas</strong></label>
+                        <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacionpriv"></textarea>
+                    </div>&nbsp;
                 </div>
                 <div class="form-group row">
                     <div class="col-md-12">
@@ -374,7 +379,7 @@
             </div>
         </template>
         <!-- Fin detalle -->
-         <!-- Ver ingreso -->
+         <!-- Ver Venta -->
         <template v-else-if="listado==2">
             <div class="card-body">
                 <div class="form-group row border">
@@ -577,7 +582,7 @@
                             <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
                         </template>
                     </div>&nbsp;
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <div class="form-group">
                             <label for=""><strong>Lugar de entrega</strong></label>
                             <p v-text="lugar_entrega"></p>
@@ -588,6 +593,31 @@
                             <label for=""><strong>Tiempo de entrega</strong></label>
                             <p v-text="tiempo_entrega"></p>
                         </div>
+                    </div>&nbsp;
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col">
+                                <label for="exampleFormControlTextarea2"><strong>Observaciones Internas</strong></label>
+                            </div>
+                            <div class="col-2">
+                                <template v-if="obsprivEditable == 0">
+                                    <button type="button" class="btn btn-warning btn-sm float-right" @click="editObservacionPriv()">
+                                        <i class="icon-pencil"></i>
+                                    </button>
+                                </template>
+                                <template v-else>
+                                    <button type="button" class="btn btn-primary btn-sm float-right" @click="actualizarObservacionPriv(venta_id)">
+                                        <i class="fa fa-floppy-o"></i>
+                                    </button>
+                                </template>&nbsp;
+                            </div>
+                        </div>&nbsp;
+                        <template v-if="obsprivEditable == 0">
+                            <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacionpriv"></textarea>
+                        </template>
+                        <template v-else>
+                            <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacionpriv"></textarea>
+                        </template>
                     </div>&nbsp;
                 </div>
                 <div class="form-group row">
@@ -619,6 +649,7 @@
                                     <option value="sku">Código de material</option>
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
+                                    <option value="ubicacion">Ubicacion</option>
                                 </select>
                                 <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
                                 <button type="submit" @click="listarArticulo(1,buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
@@ -1114,6 +1145,7 @@ export default {
             moneda : 'Peso Mexicano',
             tipo_cambio : 0,
             observacion : '',
+            observacionpriv : '',
             categoria : '',
             idarticulo : 0,
             articulo : "",
@@ -1206,6 +1238,7 @@ export default {
             estadoVn : "",
             CodeDate : "",
             obsEditable : 0,
+            obsprivEditable : 0,
             sigNum : 0,
             rfc_cliente: "",
             tipo_cliente : ""
@@ -1498,8 +1531,7 @@ export default {
                         me.origen = "";
                         me.contenedor  = "";
                         me.file  = "";
-                        me.observaciondescripcion   = "";
-                        me.observacion = "";
+                        me.descripcion   = "";
                         me.fecha_llegada = "";
                     }
                 }
@@ -1532,6 +1564,7 @@ export default {
                 'moneda' : this.moneda,
                 'tipo_cambio' : this.tipo_cambio,
                 'observacion' : this.observacion,
+                'observacionpriv' : this.observacionpriv,
                 'num_cheque'  : this.num_cheque,
                 'banco'       : this.banco,
                 'tipo_facturacion' : this.tipo_facturacion,
@@ -1552,6 +1585,7 @@ export default {
                 me.precio = 0;
                 me.stock = 0;
                 me.observacion = "";
+                me.observacionpriv = "";
                 me.descuento = 0;
                 me.forma_pago = "Efectivo";
                 me.tiempo_entrega = "";
@@ -1683,6 +1717,7 @@ export default {
             this.cliente = 0;
             this.categoria = 0;
             this.observacion = "";
+            this.observacionpriv = "";
             this.arrayDetalle = [];
             this.errorVenta =0;
             this.errorMostrarMsjVenta = [];
@@ -1693,6 +1728,7 @@ export default {
             this.btnEntregaParcial = false;
             this.btnPagado = false;
             this.obsEditable = 0;
+            this.obsprivEditable = 0;
             this.idcliente = 0;
             this.rfc_cliente = "";
             this.tipo_cliente = "";
@@ -1730,6 +1766,7 @@ export default {
                 me.moneda = arrayVentaT[0]['moneda'];
                 me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
                 me.observacion = arrayVentaT[0]['observacion'];
+                me.observacionpriv = arrayVentaT[0]['observacionpriv'];
                 me.estadoVn = arrayVentaT[0]['estado'];
                 me.num_cheque = arrayVentaT[0]['num_cheque'];
                 me.banco = arrayVentaT[0]['banco'];
@@ -2123,6 +2160,10 @@ export default {
             let me = this;
             me.obsEditable = 1;
         },
+        editObservacionPriv(){
+            let me = this;
+            me.obsprivEditable = 1;
+        },
         actualizarObservacion(id){
             let me = this;
             axios.post('/venta/actualizarObservacion',{
@@ -2130,6 +2171,17 @@ export default {
                 'observacion' : this.observacion
             }).then(function (response) {
                 me.obsEditable = 0;
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        actualizarObservacionPriv(id){
+            let me = this;
+            axios.post('/venta/actualizarObservacionPriv',{
+                'id': id,
+                'observacionpriv' : this.observacionpriv
+            }).then(function (response) {
+                me.obsprivEditable = 0;
             }).catch(function (error) {
                 console.log(error);
             });

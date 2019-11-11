@@ -37,7 +37,7 @@ class VentaController extends Controller
             'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-            'ventas.tipo_facturacion','users.usuario')
+            'ventas.tipo_facturacion','users.usuario','observacionpriv')
             ->orderBy('ventas.id', 'desc')->paginate(12);
         }
         else{
@@ -48,7 +48,7 @@ class VentaController extends Controller
             'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-            'ventas.tipo_facturacion','users.usuario')
+            'ventas.tipo_facturacion','users.usuario','observacionpriv')
             ->where('ventas.'.$criterio, 'like', '%'. $buscar . '%')
             ->orderBy('ventas.id', 'desc')->paginate(12);
         }
@@ -90,6 +90,7 @@ class VentaController extends Controller
             $venta->moneda = $request->moneda;
             $venta->tipo_cambio = $request->tipo_cambio;
             $venta->observacion = $request->observacion;
+            $venta->observacionpriv = $request->observacionpriv;
             $venta->num_cheque = $request->num_cheque;
             $venta->banco = $request->banco;
             $venta->tipo_facturacion = $request->tipo_facturacion;
@@ -183,7 +184,7 @@ class VentaController extends Controller
         'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
         'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
-        'ventas.num_cheque','personas.nombre','ventas.file')
+        'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv')
         ->where('ventas.id','=',$id)
         ->orderBy('ventas.id', 'desc')->take(1)->get();
 
@@ -219,7 +220,8 @@ class VentaController extends Controller
             'ventas.entregado','ventas.moneda','ventas.tipo_cambio', 'ventas.observacion',
             'ventas.num_cheque','ventas.banco','ventas.tipo_facturacion','ventas.pagado',
             'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
-            'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial',)
+            'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial',
+            'ventas.observacionpriv')
         ->where('ventas.id',$id)->take(1)->get();
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
@@ -267,6 +269,12 @@ class VentaController extends Controller
         $venta->observacion = $request->observacion;
         $venta->save();
     }
+    public function actualizarObservacionPriv(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $venta = Venta::findOrFail($request->id);
+        $venta->observacionpriv = $request->observacionpriv;
+        $venta->save();
+    }
 
     public function getLastNum(){
         $lastNum = Venta::select('num_comprobante')->get()->last();
@@ -297,7 +305,7 @@ class VentaController extends Controller
             'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
             'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-            'ventas.entrega_parcial','users.usuario')
+            'ventas.entrega_parcial','users.usuario','ventas.observacionpriv')
             ->where([
                 ['ventas.pagado',1],
                 ['ventas.estado','!=','Anulada']
@@ -312,7 +320,7 @@ class VentaController extends Controller
             'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado',
             'ventas.num_cheque','ventas.entrega_parcial','ventas.banco','users.usuario',
-            'ventas.tipo_facturacion','ventas.pagado','personas.nombre')
+            'ventas.tipo_facturacion','ventas.pagado','personas.nombre','ventas.observacionpriv')
             ->where([
                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                 ['ventas.pagado',1],

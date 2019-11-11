@@ -11,7 +11,7 @@ class Venta extends Model
         'fecha_hora','impuesto','total','forma_pago','tiempo_entrega',
         'lugar_entrega','entregado','estado','moneda','tipo_cambio',
         'observacion','num_cheque','banco','tipo_facturacion','pagado',
-        'entrega_parcial','file'
+        'entrega_parcial','file', 'observacionpriv'
     ];
 
     public function usuario(){

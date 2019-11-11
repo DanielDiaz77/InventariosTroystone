@@ -133,6 +133,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/venta/cambiarEntregaParcial','VentaController@cambiarEntregaParcial');
         Route::post('/venta/cambiarPagado','VentaController@cambiarPagado');
         Route::post('/venta/actualizarObservacion','VentaController@actualizarObservacion');
+        Route::post('/venta/actualizarObservacionPriv','VentaController@actualizarObservacionPriv');
         Route::get('/venta/nextNum','VentaController@getLastNum');
 
         Route::get('/entrega','VentaController@indexEntregas');
