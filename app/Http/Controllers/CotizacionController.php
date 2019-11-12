@@ -157,11 +157,12 @@ class CotizacionController extends Controller
         $id =  $request->id;
 
         $detalles = DetalleCotizacion::join('articulos','detalle_cotizaciones.idarticulo','=','articulos.id')
+        ->leftJoin('categorias','articulos.idcategoria','=','categorias.id')
         ->select('detalle_cotizaciones.cantidad','detalle_cotizaciones.precio','detalle_cotizaciones.descuento',
             'articulos.sku','articulos.codigo','articulos.espesor','articulos.largo','articulos.alto',
             'articulos.metros_cuadrados','articulos.descripcion','articulos.idcategoria','articulos.terminado',
             'articulos.ubicacion','articulos.file','articulos.origen','articulos.contenedor','articulos.fecha_llegada',
-            'articulos.observacion','articulos.condicion')
+            'articulos.observacion','articulos.condicion','categorias.nombre as categoria')
         ->where('detalle_cotizaciones.idcotizacion',$id)
         ->orderBy('detalle_cotizaciones.id','desc')->get();
 

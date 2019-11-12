@@ -23,7 +23,8 @@ class UserController extends Controller
             ->select('personas.id','personas.nombre','personas.tipo_documento',
             'personas.num_documento','personas.domicilio','personas.telefono',
             'personas.ciudad','personas.rfc','personas.email','users.usuario',
-            'users.password','users.condicion','users.idrol','roles.nombre as rol')
+            'users.password','users.condicion','users.idrol','roles.nombre as rol',
+            'users.area')
             ->orderBy('personas.id', 'desc')->paginate(12);
         }
         else{
@@ -32,7 +33,8 @@ class UserController extends Controller
             ->select('personas.id','personas.nombre','personas.tipo_documento',
             'personas.num_documento','personas.domicilio','personas.telefono',
             'personas.ciudad','personas.rfc','personas.email','users.usuario',
-            'users.password','users.condicion','users.idrol','roles.nombre as rol')
+            'users.password','users.condicion','users.idrol','roles.nombre as rol',
+            'users.area')
             ->where('personas.'.$criterio, 'like', '%'. $buscar . '%')
             ->orderBy('personas.id', 'desc')->paginate(12);
         }
@@ -73,6 +75,7 @@ class UserController extends Controller
             $user->condicion = '1';
             $user->idrol = $request->idrol;
             $user->id = $persona->id;
+            $user->area = $request->area;
             $user->save();
             DB::commit();
 
@@ -118,6 +121,7 @@ class UserController extends Controller
             $user->password = bcrypt($request->password);
             $user->condicion = '1';
             $user->idrol = $request->idrol;
+            $user->area = $request->area;
             $user->save();
 
             DB::commit();

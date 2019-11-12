@@ -551,8 +551,20 @@
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
                                 </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
-                                <button type="submit" @click="listarArticulo(buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodega)" class="form-control" placeholder="Texto a buscar">
+                                <template v-if="areaUs == 'GDL'">
+                                    <select class="form-control" v-model="bodega">
+                                        <option value="" disabled>Ubicacion</option>
+                                        <option value="">Todas</option>
+                                        <option value="Del Musico">Del Músico</option>
+                                        <option value="Escultores">Escultor</option>
+                                        <option value="Sastres">Sastre</option>
+                                        <option value="Mecanicos">Mecánicos</option>
+                                        <option value="Tractorista">Tractorista</option>
+                                        <option value="San Luis">San Luis</option>
+                                    </select>
+                                </template>
+                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
                             </div>
                         </div>
                     </div>
@@ -572,7 +584,7 @@
                                 <th>Comprometido</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody v-if="arrayArticulo.length">
                             <tr v-for="articulo in arrayArticulo" :key="articulo.id">
                                 <td>
                                     <button type="button" @click="agregarDetalleModal(articulo)" class="btn btn-success btn-sm">
@@ -597,8 +609,29 @@
                                 </td>
                             </tr>
                             </tbody>
+                            <tbody v-else>
+                                <tr>
+                                    <td colspan="10" class="text-center">
+                                        <strong>NO hay artículos con ese criterio...</strong>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
+                    <!-- Paginacion MODAL -->
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item" v-if="paginationart.current_page > 1">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA,bodega)">Ant</a>
+                            </li>
+                            <li class="page-item" v-for="page in pagesNumberArt" :key="page" :class="[page == isActivedArt ? 'active' : '']">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA,bodega)" v-text="page"></a>
+                            </li>
+                            <li class="page-item" v-if="paginationart.current_page < paginationart.last_page">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA,bodega)">Sig</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
@@ -757,11 +790,11 @@
                     </tr>
                     <tr>
                         <td><strong>MATERIAL</strong></td>
-
-                        <select disabled class="form-control selectDetalle" v-model="idcategoria">
+                        <td v-text="categoria"></td>
+                        <!-- <select disabled class="form-control selectDetalle" v-model="idcategoria">
                             <option value="0" disabled>Seleccione un material</option>
                             <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                        </select>
+                        </select> -->
 
                     </tr>
                     <tr >
@@ -1023,8 +1056,8 @@
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
                                 </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticuloCotizado(buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
-                                <button type="submit" @click="listarArticuloCotizado(buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticuloCotizado(1,buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
+                                <button type="submit" @click="listarArticuloCotizado(1,buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
                             </div>
                         </div>
                     </div>
@@ -1043,28 +1076,49 @@
                                 <th>Comprometido</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr v-for="articulo in arrayArticulo" :key="articulo.id">
-                                <td v-text="articulo.codigo"></td>
-                                <td v-text="articulo.sku"></td>
-                                <td v-text="articulo.nombre_categoria"></td>
-                                <td v-text="articulo.metros_cuadrados"></td>
-                                <td v-text="articulo.stock"></td>
-                                <td v-text="articulo.ubicacion"></td>
-                                <td v-text="articulo.cotizacion"></td>
-                                <td v-text="articulo.cliente"></td>
-                                <td>
-                                <div v-if="articulo.comprometido">
-                                    <span class="badge badge-success">SI</span>
-                                </div>
-                                <div v-else>
-                                    <span class="badge badge-danger">NO</span>
-                                </div>
-                                </td>
-                            </tr>
+                            <tbody v-if="arrayArticulo.length">
+                                <tr v-for="articulo in arrayArticulo" :key="articulo.id">
+                                    <td v-text="articulo.codigo"></td>
+                                    <td v-text="articulo.sku"></td>
+                                    <td v-text="articulo.nombre_categoria"></td>
+                                    <td v-text="articulo.metros_cuadrados"></td>
+                                    <td v-text="articulo.stock"></td>
+                                    <td v-text="articulo.ubicacion"></td>
+                                    <td v-text="articulo.cotizacion"></td>
+                                    <td v-text="articulo.cliente"></td>
+                                    <td>
+                                    <div v-if="articulo.comprometido">
+                                        <span class="badge badge-success">SI</span>
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-danger">NO</span>
+                                    </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody v-else>
+                                <tr>
+                                    <td colspan="9" class="text-center">
+                                        <strong>NO hay artículos cotizados o con ese criterio...</strong>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
+                    <!-- Paginacion MODAL Cotizados -->
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item" v-if="paginationartcot.current_page > 1">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArtCot(paginationartcot.current_page - 1,buscarA,criterioA)">Ant</a>
+                            </li>
+                            <li class="page-item" v-for="page in pagesNumberArtCot" :key="page" :class="[page == isActivedArtCot ? 'active' : '']">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArtCot(page,buscarA,criterioA)" v-text="page"></a>
+                            </li>
+                            <li class="page-item" v-if="paginationartcot.current_page < paginationartcot.last_page">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArtCot(paginationartcot.current_page + 1,buscarA,criterioA)">Sig</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="cerrarModal5()">Cerrar</button>
@@ -1161,11 +1215,30 @@ export default {
                 'from'         : 0,
                 'to'           : 0,
             },
+            paginationart : {
+                'total'        : 0,
+                'current_page' : 0,
+                'per_page'     : 0,
+                'last_page'    : 0,
+                'from'         : 0,
+                'to'           : 0,
+            },
+            paginationartcot : {
+                'total'        : 0,
+                'current_page' : 0,
+                'per_page'     : 0,
+                'last_page'    : 0,
+                'from'         : 0,
+                'to'           : 0,
+            },
             offset : 3,
             criterio : 'num_comprobante',
             buscar : '',
             buscarA : '',
             criterioA : 'sku',
+            bodega : '',
+            areaUs : "",
+            areaUsC : "",
             codigoA : "",
             codigoB : "",
             largoA : 0,
@@ -1210,6 +1283,56 @@ export default {
             var to = from + (this.offset * 2);
             if(to >= this.pagination.last_page){
                 to = this.pagination.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+        isActivedArt: function(){
+            return this.paginationart.current_page;
+        },
+        pagesNumberArt: function() {
+            if(!this.paginationart.to) {
+                return [];
+            }
+
+            var from = this.paginationart.current_page - this.offset;
+            if(from < 1) {
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.paginationart.last_page){
+                to = this.paginationart.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+        isActivedArtCot: function(){
+            return this.paginationartcot.current_page;
+        },
+        pagesNumberArtCot: function() {
+            if(!this.paginationartcot.to) {
+                return [];
+            }
+
+            var from = this.paginationartcot.current_page - this.offset;
+            if(from < 1) {
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.paginationartcot.last_page){
+                to = this.paginationartcot.last_page;
             }
 
             var pagesArray = [];
@@ -1363,6 +1486,20 @@ export default {
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
                 me.listarCotizacion(page,buscar,criterio);
+        },
+        cambiarPaginaArt(page,buscar,criterio,bodega){
+            let me = this;
+            //Actualiza la página actual
+            me.paginationart.current_page = page;
+            //Envia la petición para visualizar la data de esa página
+            me.listarArticulo(page,buscar,criterio,bodega);
+        },
+        cambiarPaginaArtCot(page,buscar,criterio){
+            let me = this;
+            //Actualiza la página actual
+            me.paginationartcot.current_page = page;
+            //Envia la petición para visualizar la data de esa página
+            me.listarArticuloCotizado(page,buscar,criterio);
         },
         encuentra(id){
             var sw=0;
@@ -1794,18 +1931,22 @@ export default {
         },
         cerrarModal() {
             this.modal = 0;
+            this.buscarA = "";
         },
         abrirModal() {
             this.arrayArticulo=[];
             this.modal = 1;
             this.tituloModal = "Seleccionar Artículos";
+            this.listarArticulo(1,'','sku','');
         },
-        listarArticulo (buscar,criterio){
+        listarArticulo (page,buscar,criterio,bodega){
             let me=this;
-            var url= '/articulo/listarArticuloVenta?buscar=' + buscar + '&criterio='+ criterio;
+            var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayArticulo = respuesta.articulos.data;
+                me.paginationart= respuesta.pagination;
+                me.areaUs = respuesta.userarea;
             })
             .catch(function (error) {
                 console.log(error);
@@ -1934,6 +2075,7 @@ export default {
             me.sku              = me.arrayDetalle[index]['sku'];
             me.codigo           = me.arrayDetalle[index]['codigo'];
             me.idcategoria      = me.arrayDetalle[index]['idcategoria'];
+            me.categoria        = me.arrayDetalle[index]['categoria'];
             me.largo            = me.arrayDetalle[index]['largo'];
             me.alto             = me.arrayDetalle[index]['alto'];
             me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
@@ -1966,6 +2108,7 @@ export default {
             this.file = '';
             this.descripcion = '';
             this.ind = '';
+            this.categoria = '';
         },
         cerrarModal4() {
             this.modal4 = 0;
@@ -2033,13 +2176,16 @@ export default {
             this.arrayArticulo=[];
             this.modal5 = 1;
             this.tituloModal = "Artículos Cotizados";
+            this.listarArticuloCotizado(1,'','sku');
         },
-        listarArticuloCotizado (buscar,criterio){
+        listarArticuloCotizado(page,buscar,criterio){
             let me=this;
-            var url= '/articulo/listarArticuloCotizado?buscar=' + buscar + '&criterio='+ criterio;
+            var url= '/articulo/listarArticuloCotizado?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayArticulo = respuesta.articulos.data;
+                me.paginationartcot= respuesta.pagination;
+                me.areaUsC = respuesta.userarea;
             })
             .catch(function (error) {
                 console.log(error);
@@ -2116,7 +2262,7 @@ export default {
                 'id': this.idarticulo
             })
             .then(function(response) {
-                me.listarArticulo(me.codigoA,'codigo');
+                me.listarArticulo(1,me.codigoA,'codigo',bodega);
                 me.cerrarModal4();
                 me.abrirModal();
                 me.validatedA = 0;

@@ -642,7 +642,6 @@
                                 <option value="Sastres">Sastre</option>
                                 <option value="Mecanicos">Mecánicos</option>
                                 <option value="Tractorista">Tractorista</option>
-                                <option value="Maquinistas">Maquinistas</option>
                                 <option value="San Luis">San Luis</option>
                             </select>
                         </td>

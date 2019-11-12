@@ -40,6 +40,7 @@
                         <th>RFC</th>
                         <th>Usuario</th>
                         <th>Rol</th>
+                        <th>Area</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,6 +68,13 @@
                         <td v-text="persona.rfc"></td>
                         <td v-text="persona.usuario"></td>
                         <td v-text="persona.rol"></td>
+                        <td v-if="persona.area == 'GDL'">
+                            Guadalajara
+                        </td>
+                        <td v-else-if="persona.area == 'SLP'">
+                            San Luis
+                        </td>
+                        <td v-else>N/A</td>
                     </tr>
                 </tbody>
             </table>
@@ -159,6 +167,16 @@
                         <input type="password" v-model="password" class="form-control" placeholder="Contraseña de acceso al sistema"/>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label for="text-input" class="col-md-3 form-control-label">Area</label>
+                    <div class="col-md-9">
+                        <select class="form-control" v-model="area">
+                            <option value="" disabled>Seleccione un area para el usuario</option>
+                            <option value="GDL">Guadalajara</option>
+                            <option value="SLP">San Luis</option>
+                        </select>
+                    </div>
+                </div>
 
               <div v-show="errorPersona" class="form-group row div-error">
                 <div class="text-center text-error">
@@ -197,6 +215,7 @@ export default {
             usuario: "",
             password: "",
             idrol: 0,
+            area : "",
             arrayPersona: [],
             arrayRol: [],
             modal: 0,
@@ -261,7 +280,6 @@ export default {
                 console.log(error);
             });
         },
-
         selectRol(){
 
             let me=this;
@@ -299,7 +317,8 @@ export default {
                 'rfc': this.rfc,
                 'usuario' : this.usuario,
                 'password' : this.password,
-                'idrol' : this.idrol
+                'idrol' : this.idrol,
+                'area' : this.area
             })
             .then(function(response) {
                 me.cerrarModal();
@@ -326,7 +345,8 @@ export default {
                 'usuario' : this.usuario,
                 'password' : this.password,
                 'idrol' : this.idrol,
-                'id': this.persona_id
+                'id': this.persona_id,
+                'area' : this.area
             })
             .then(function(response) {
                 me.cerrarModal();
@@ -416,7 +436,6 @@ export default {
             if (!this.usuario) this.errorMostrarMsjPersona.push("El nombre de usuario no puede estar vacío.");
             if (!this.password) this.errorMostrarMsjPersona.push("La contraseña del usuario no puede estar vacía.");
             if (this.idrol == 0 ) this.errorMostrarMsjPersona.push("Debe seleccionar un rol de usuario");
-
             if (this.errorMostrarMsjPersona.length) this.errorPersona = 1;
 
             return this.errorPersona;
@@ -436,6 +455,7 @@ export default {
             this.password ="";
             this.idrol =0;
             this.errorPersona = 0;
+            this.area = 0;
         },
         abrirModal(modelo, accion, data = []) {
             this.selectRol();
@@ -457,6 +477,7 @@ export default {
                             this.password ="";
                             this.idrol =0;
                             this.tipoAccion = 1;
+                            this.area = "";
                             break;
                         }
                         case "actualizar": {
@@ -475,6 +496,7 @@ export default {
                             this.usuario = data["usuario"];
                             this.password = data["password"];
                             this.idrol = data["idrol"];
+                            this.area = data["area"];
                             break;
                         }
                     }

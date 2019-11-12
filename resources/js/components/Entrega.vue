@@ -542,11 +542,11 @@
                     </tr>
                     <tr>
                         <td><strong>MATERIAL</strong></td>
-
-                        <select disabled class="form-control selectDetalle" v-model="idcategoria">
+                        <td v-text="categoria"></td>
+                       <!--  <select disabled class="form-control selectDetalle" v-model="idcategoria">
                             <option value="0" disabled>Seleccione un material</option>
                             <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                        </select>
+                        </select> -->
 
                     </tr>
                     <tr >
@@ -984,6 +984,7 @@ export default {
             me.sku              = me.arrayDetalle[index]['sku'];
             me.codigo           = me.arrayDetalle[index]['codigo'];
             me.idcategoria      = me.arrayDetalle[index]['idcategoria'];
+            me.categoria        = me.arrayDetalle[index]['categoria'];
             me.largo            = me.arrayDetalle[index]['largo'];
             me.alto             = me.arrayDetalle[index]['alto'];
             me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
@@ -1016,6 +1017,7 @@ export default {
             this.file = '';
             this.descripcion = '';
             this.ind = '';
+            this.categoria = '';
         },
         cambiarEstadoEntrega(id){
             let me = this;

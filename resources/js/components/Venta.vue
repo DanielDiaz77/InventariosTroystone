@@ -167,6 +167,7 @@
                                 <option value='' disabled>Seleccione la forma de pago</option>
                                 <option value="Efectivo">Efectivo</option>
                                 <option value="Tarjeta">Tarjeta</option>
+                                <option value="Cheque">Mixto</option>
                                 <option value="Cheque">Cheque</option>
                             </select>
                         </div>
@@ -649,10 +650,21 @@
                                     <option value="sku">Código de material</option>
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
-                                    <option value="ubicacion">Ubicacion</option>
                                 </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
-                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodega)" class="form-control" placeholder="Texto a buscar">
+                                <template v-if="areaUs == 'GDL'">
+                                    <select class="form-control" v-model="bodega">
+                                        <option value="" disabled>Ubicacion</option>
+                                        <option value="">Todas</option>
+                                        <option value="Del Musico">Del Músico</option>
+                                        <option value="Escultores">Escultor</option>
+                                        <option value="Sastres">Sastre</option>
+                                        <option value="Mecanicos">Mecánicos</option>
+                                        <option value="Tractorista">Tractorista</option>
+                                        <option value="San Luis">San Luis</option>
+                                    </select>
+                                </template>
+                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega)" class="btn btn-primary"><i class="fa fa-search"></i></button>&nbsp;
                             </div>
                         </div>
                     </div>
@@ -706,13 +718,13 @@
                     <nav>
                         <ul class="pagination">
                             <li class="page-item" v-if="paginationart.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA)">Ant</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA,bodega)">Ant</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumberArt" :key="page" :class="[page == isActivedArt ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA,bodega)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="paginationart.current_page < paginationart.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA)">Sig</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA,bodega)">Sig</a>
                             </li>
                         </ul>
                     </nav>
@@ -874,12 +886,11 @@
                     </tr>
                     <tr>
                         <td><strong>MATERIAL</strong></td>
-
-                        <select disabled class="form-control selectDetalle" v-model="idcategoria">
+                        <td v-text="categoria"></td>
+                        <!-- <select disabled class="form-control selectDetalle" v-model="idcategoria">
                             <option value="0" disabled>Seleccione un material</option>
                             <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                        </select>
-
+                        </select> -->
                     </tr>
                     <tr >
                         <td><strong>CODIGO DE MATERIAL</strong></td>
@@ -959,7 +970,7 @@
     </div>
     <!--Fin del modal-->
 
-        <!--Inicio del modal-cortar placa articulos-->
+    <!--Inicio del modal-cortar placa articulos-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal4}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-warning modal-lg" role="document">
             <div class="modal-content">
@@ -1241,7 +1252,9 @@ export default {
             obsprivEditable : 0,
             sigNum : 0,
             rfc_cliente: "",
-            tipo_cliente : ""
+            tipo_cliente : "",
+            bodega : "",
+            areaUs : ""
         };
     },
     components: {
@@ -1431,12 +1444,12 @@ export default {
                 //Envia la petición para visualizar la data de esa página
                 me.listarVenta(page,buscar,criterio);
         },
-        cambiarPaginaArt(page,buscar,criterio){
+        cambiarPaginaArt(page,buscar,criterio,bodega){
             let me = this;
-                //Actualiza la página actual
-                me.paginationart.current_page = page;
-                //Envia la petición para visualizar la data de esa página
-                me.listarArticulo(page,buscar,criterio);
+            //Actualiza la página actual
+            me.paginationart.current_page = page;
+            //Envia la petición para visualizar la data de esa página
+            me.listarArticulo(page,buscar,criterio,bodega);
         },
         encuentra(id){
             var sw=0;
@@ -1810,20 +1823,22 @@ export default {
         },
         cerrarModal() {
             this.modal = 0;
+            this.buscarA = "";
         },
         abrirModal() {
             this.arrayArticulo=[];
             this.modal = 1;
             this.tituloModal = "Seleccionar Artículos";
-            this.listarArticulo(1,'','sku');
+            this.listarArticulo(1,'','sku','');
         },
-        listarArticulo (page,buscar,criterio){
+        listarArticulo (page,buscar,criterio,bodega){
             let me=this;
-            var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayArticulo = respuesta.articulos.data;
                 me.paginationart= respuesta.pagination;
+                me.areaUs = respuesta.userarea;
             })
             .catch(function (error) {
                 console.log(error);
@@ -1932,6 +1947,7 @@ export default {
             me.sku              = me.arrayDetalle[index]['sku'];
             me.codigo           = me.arrayDetalle[index]['codigo'];
             me.idcategoria      = me.arrayDetalle[index]['idcategoria'];
+            me.categoria        = me.arrayDetalle[index]['categoria'];
             me.largo            = me.arrayDetalle[index]['largo'];
             me.alto             = me.arrayDetalle[index]['alto'];
             me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
@@ -1964,6 +1980,7 @@ export default {
             this.file = '';
             this.descripcion = '';
             this.ind = '';
+            this.categoria = '';
         },
         cerrarModal4() {
             this.modal4 = 0;
@@ -2095,7 +2112,7 @@ export default {
                 'id': this.idarticulo
             })
             .then(function(response) {
-                me.listarArticulo(1,me.codigoA,'codigo');
+                me.listarArticulo(1,me.codigoA,'codigo',bodega);
                 me.cerrarModal4();
                 me.abrirModal();
                 me.validatedA = 0;

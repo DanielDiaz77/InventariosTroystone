@@ -15,19 +15,35 @@
         </div>
         <div class="card-body">
           <div class="form-group row">
-            <div class="col-md-6">
+            <div class="col-md-8">
               <div class="input-group">
                 <select class="form-control col-md-3" v-model="criterio">
-                  <!-- <option value="nombre">Nombre</option> -->
                   <option value="descripcion">Descripción</option>
                   <option value="sku">Código de material</option>
                   <option value="codigo">No° de placa</option>
                   <option value="idcategoria">Material</option>
                 </select>
-                <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                <button type="submit" @click="listarArticulo(1,buscar,criterio)" class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio,bodega)" class="form-control" placeholder="Texto a buscar">
+                <select class="form-control" v-model="bodega">
+                    <option value="" disabled>Ubicacion</option>
+                    <option value="">Todas</option>
+                    <option value="Del Musico">Del Músico</option>
+                    <option value="Escultores">Escultores</option>
+                    <option value="Sastres">Sastres</option>
+                    <option value="Mecanicos">Mecánicos</option>
+                    <option value="Tractorista">Tractorista</option>
+                    <option value="San Luis">San Luis</option>
+                </select>
+                <button type="submit" @click="listarArticulo(1,buscar,criterio,bodega)" class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                &nbsp;<label for=""><strong>Total:</strong></label>
+                &nbsp;<p v-text="totres"></p>
               </div>
             </div>
+           <!--  <div class="col-md-6 row">
+                <div class="col-md-3">
+
+                </div>
+            </div> -->
           </div>
           <div class="table-responsive col-md-12">
             <table class="table table-bordered table-striped table-sm text-center table-hover">
@@ -116,13 +132,13 @@
           <nav>
             <ul class="pagination">
                 <li class="page-item" v-if="pagination.current_page > 1">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
+                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,bodega)">Ant</a>
                 </li>
                 <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
+                    <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,bodega)" v-text="page"></a>
                 </li>
                 <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
+                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,bodega)">Sig</a>
                 </li>
             </ul>
           </nav>
@@ -224,11 +240,10 @@
                     <select class="form-control" v-model="ubicacion">
                         <option value="" disabled>Seleccione una bodega de descarga</option>
                         <option value="Del Musico">Del Músico</option>
-                        <option value="Escultores">Escultor</option>
-                        <option value="Sastres">Sastre</option>
+                        <option value="Escultores">Escultores</option>
+                        <option value="Sastres">Sastres</option>
                         <option value="Mecanicos">Mecánicos</option>
                         <option value="Tractorista">Tractorista</option>
-                         <option value="Maquinistas">Maquinistas</option>
                         <option value="San Luis">San Luis</option>
                     </select>
                     </div>
@@ -423,7 +438,7 @@ export default {
             largo : 0,
             alto : 0,
             metros_cuadrados : 0,
-            espesor : 0,
+            espesor : 2,
             precio_venta : 0,
             ubicacion : '',
             stock : 1,
@@ -453,7 +468,9 @@ export default {
                 'to'           : 0,
             },
             offset : 3,
-            criterio : 'codigo',
+            criterio : 'sku',
+            bodega : '',
+            totres : 0,
             buscar : '',
             arrayCategoria : [],
             btnComprometido : '',
@@ -463,7 +480,6 @@ export default {
     components: {
         'barcode': VueBarcode
     },
-
     computed:{
             isActived: function(){
                 return this.pagination.current_page;
@@ -505,13 +521,14 @@ export default {
             }
         },
     methods: {
-        listarArticulo (page,buscar,criterio){
+        listarArticulo (page,buscar,criterio,bodega){
             let me=this;
-            var url= '/articulo?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/articulo?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayArticulo = respuesta.articulos.data;
                 me.pagination= respuesta.pagination;
+                me.totres = respuesta.total;
             })
             .catch(function (error) {
                 console.log(error);
@@ -529,12 +546,12 @@ export default {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio){
+        cambiarPagina(page,buscar,criterio,bodega){
             let me = this;
             //Actualiza la página actual
             me.pagination.current_page = page;
             //Envia la petición para visualizar la data de esa página
-            me.listarArticulo(page,buscar,criterio);
+            me.listarArticulo(page,buscar,criterio,bodega);
         },
         obtenerImagen(e){
             let img = e.target.files[0];
@@ -577,12 +594,18 @@ export default {
                     'file' : this.file
                 }).then(function (response) {
                     me.cerrarModal();
-                    me.listarArticulo(1,'','sku');
+                    me.listarArticulo(1,'','sku','');
                 }).catch(function (error) {
                     console.log(error);
                 });
         },
         actualizarArticulo() {
+
+            var page = this.pagination.current_page;
+            var crit =  this.criterio;
+            var busc = this.buscar;
+            var bod = this.bodega;
+
             if (this.validarArticulo()) {
                 return;
             }
@@ -609,7 +632,7 @@ export default {
             })
             .then(function(response) {
                 me.cerrarModal();
-                me.listarArticulo(1,'','sku');
+                me.listarArticulo(page,busc,crit,bod);
             })
             .catch(function(error) {
                 console.log(error);
@@ -638,7 +661,7 @@ export default {
                     axios.put('/articulo/desactivar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarArticulo(1,'','sku');
+                        me.listarArticulo(1,'','sku','');
                         swalWithBootstrapButtons.fire(
                             "Desactivado!",
                             "La categoría ha sido desactivada con éxito.",
@@ -674,7 +697,7 @@ export default {
                     axios.put('/articulo/activar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarArticulo(1,'','sku');
+                        me.listarArticulo(1,'','sku','');
                         swalWithBootstrapButtons.fire(
                             "Activado!",
                             "Artículo activado con éxito.",
@@ -699,10 +722,7 @@ export default {
             if (!this.metros_cuadrados) this.errorMostrarMsjArticulo.push("Los metros cuadrados del artículo no pueden estar vacíos.");
             if (!this.espesor) this.errorMostrarMsjArticulo.push("El espesor del artículo no puede estar vacío.");
             if (!this.ubicacion) this.errorMostrarMsjArticulo.push("Seleccione una bodega de descarga");
-           /*  if (!this.contenedor) this.errorMostrarMsjArticulo.push("Ingrese el contenedor de origen de la placa"); */
             if (!this.stock) this.errorMostrarMsjArticulo.push("El stock del artículo debe ser un número y no puede estar vacío.");
-            /* if (!this.origen) this.errorMostrarMsjArticulo.push("El origen  del artículo no puede estar vacío."); */
-
             if (this.errorMostrarMsjArticulo.length) this.errorArticulo = 1;
 
             return this.errorArticulo;
@@ -733,7 +753,7 @@ export default {
             this.comprometido = 0;
             this.usuario = '';
             this.isEdition = false;
-            this.listarArticulo(1,'','sku');
+            this.listarArticulo(1,'','sku','');
 
         },
         abrirModal(modelo, accion, data = []) {
@@ -750,7 +770,7 @@ export default {
                             this.largo = 0;
                             this.alto = 0;
                             this.metros_cuadrados = 0;
-                            this.espesor = 0;
+                            this.espesor = 2;
                             this.precio_venta = 0;
                             this.ubicacion = '';
                             this.stock = 1;
@@ -815,7 +835,7 @@ export default {
                 'id': id,
                 'comprometido' : this.comprometido
             }).then(function (response) {
-                me.listarArticulo(1,'','sku');
+                me.listarArticulo(1,'','sku','');
             }).catch(function (error) {
                 console.log(error);
             });
@@ -874,7 +894,7 @@ export default {
         }
     },
     mounted() {
-        this.listarArticulo(1,this.buscar, this.criterio);
+        this.listarArticulo(1,this.buscar, this.criterio,this.bodega);
     }
 };
 </script>
@@ -902,7 +922,7 @@ export default {
         margin:0 auto;
     }
     .modal-body{
-        height: 500px;
+        height: 550px;
         width: 100%;
         overflow-y: auto;
     }

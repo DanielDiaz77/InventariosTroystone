@@ -198,11 +198,13 @@ class VentaController extends Controller
         $id =  $request->id;
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
+        ->leftJoin('categorias','articulos.idcategoria','=','categorias.id')
         ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
             'detalle_ventas.por_entregar','detalle_ventas.pendientes','detalle_ventas.entregadas',
             'detalle_ventas.id','articulos.sku','articulos.codigo','articulos.espesor','articulos.largo',
             'articulos.alto','articulos.metros_cuadrados','articulos.descripcion','articulos.idcategoria',
             'articulos.terminado','articulos.ubicacion','articulos.file','articulos.origen',
+            'categorias.nombre as categoria',
             'articulos.contenedor','articulos.fecha_llegada','articulos.observacion','articulos.condicion')
         ->where('detalle_ventas.idventa',$id)
         ->orderBy('detalle_ventas.id','desc')->get();
@@ -350,11 +352,12 @@ class VentaController extends Controller
         $id =  $request->id;
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
+        ->leftJoin('categorias','articulos.idcategoria','=','categorias.id')
         ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
             'detalle_ventas.por_entregar','detalle_ventas.pendientes','detalle_ventas.entregadas',
             'detalle_ventas.id','articulos.sku','articulos.codigo','articulos.espesor','articulos.largo',
             'articulos.alto','articulos.metros_cuadrados','articulos.descripcion','articulos.idcategoria',
-            'articulos.terminado','articulos.ubicacion','articulos.file','articulos.origen',
+            'articulos.terminado','articulos.ubicacion','articulos.file','articulos.origen','categorias.nombre as categoria',
             'articulos.contenedor','articulos.fecha_llegada','articulos.observacion','articulos.condicion')
         ->where([
             ['detalle_ventas.idventa',$id],

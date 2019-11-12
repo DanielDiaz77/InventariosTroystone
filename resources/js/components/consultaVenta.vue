@@ -280,7 +280,7 @@
                         <label for="exampleFormControlTextarea2">Observaciones</label>
                         <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacion"></textarea>
                     </div>&nbsp;
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <div class="form-group">
                             <label for="">Lugar de entrega</label>
                             <p v-text="lugar_entrega"></p>
@@ -291,6 +291,10 @@
                             <label for="">Tiempo de entrega</label>
                             <p v-text="tiempo_entrega"></p>
                         </div>
+                    </div>&nbsp;
+                    <div class="col-md-4">
+                        <label for="exampleFormControlTextarea2">Observaciones Internas</label>
+                        <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacionpriv"></textarea>
                     </div>&nbsp;
                 </div>
                 <div class="form-group row">
@@ -317,8 +321,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
                 </lightbox>&nbsp;
                 <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
@@ -425,8 +429,8 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
                 </lightbox>&nbsp;
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
@@ -450,12 +454,7 @@
                     </tr>
                     <tr>
                         <td><strong>MATERIAL</strong></td>
-
-                        <select disabled class="form-control selectDetalle" v-model="idcategoria">
-                            <option value="0" disabled>Seleccione un material</option>
-                            <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                        </select>
-
+                        <td v-text="categoria"></td>
                     </tr>
                     <tr >
                         <td><strong>CODIGO DE MATERIAL</strong></td>
@@ -558,6 +557,7 @@ export default {
             moneda : 'Peso Mexicano',
             tipo_cambio : 0,
             observacion : '',
+            observacionpriv : '',
             categoria : '',
             idarticulo : 0,
             articulo : "",
@@ -737,6 +737,7 @@ export default {
             this.cliente = 0;
             this.categoria = 0;
             this.observacion = "";
+            this.observacionpriv = "";
             this.arrayDetalle = [];
             this.num_comprobante = 0;
             this.entregado = 0;
@@ -780,6 +781,7 @@ export default {
                 me.moneda = arrayVentaT[0]['moneda'];
                 me.tipo_cambio = arrayVentaT[0]['tipo_cambio'];
                 me.observacion = arrayVentaT[0]['observacion'];
+                me.observacionpriv = arrayVentaT[0]['observacionpriv'];
                 me.estadoVn = arrayVentaT[0]['estado'];
                 me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
                 me.num_cheque = arrayVentaT[0]['num_cheque'];
@@ -881,6 +883,7 @@ export default {
             me.sku              = me.arrayDetalle[index]['sku'];
             me.codigo           = me.arrayDetalle[index]['codigo'];
             me.idcategoria      = me.arrayDetalle[index]['idcategoria'];
+            me.categoria        = me.arrayDetalle[index]['categoria'];
             me.largo            = me.arrayDetalle[index]['largo'];
             me.alto             = me.arrayDetalle[index]['alto'];
             me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
@@ -913,6 +916,7 @@ export default {
             this.file = '';
             this.descripcion = '';
             this.ind = '';
+            this.categoria =  '';
         },
         pdfVenta(id){
             window.open('/venta/pdf/'+id);
