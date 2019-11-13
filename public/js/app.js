@@ -3326,6 +3326,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -3340,6 +3349,7 @@ __webpack_require__.r(__webpack_exports__);
       rfc: "",
       tipo: "",
       observacion: "",
+      userid: "",
       arrayPersona: [],
       modal: 0,
       tituloModal: "",
@@ -3399,6 +3409,7 @@ __webpack_require__.r(__webpack_exports__);
         var respuesta = response.data;
         me.arrayPersona = respuesta.personas.data;
         me.pagination = respuesta.pagination;
+        /* console.log(respuesta.rol); */
       })["catch"](function (error) {
         console.log(error);
       });
@@ -80655,65 +80666,73 @@ var render = function() {
               [
                 _vm._m(1),
                 _vm._v(" "),
-                _c(
-                  "tbody",
-                  _vm._l(_vm.arrayPersona, function(persona) {
-                    return _c("tr", { key: persona.id }, [
-                      _c("td", [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-warning btn-sm",
-                            attrs: { type: "button" },
-                            on: {
-                              click: function($event) {
-                                return _vm.abrirModal(
-                                  "persona",
-                                  "actualizar",
-                                  persona
-                                )
-                              }
+                _vm.arrayPersona.length
+                  ? _c(
+                      "tbody",
+                      _vm._l(_vm.arrayPersona, function(persona) {
+                        return _c("tr", { key: persona.id }, [
+                          _c("td", [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-warning btn-sm",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.abrirModal(
+                                      "persona",
+                                      "actualizar",
+                                      persona
+                                    )
+                                  }
+                                }
+                              },
+                              [_c("i", { staticClass: "icon-pencil" })]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(persona.nombre) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(persona.ciudad) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(persona.domicilio) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(persona.telefono) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(persona.email) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(persona.rfc) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(persona.tipo) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: {
+                              textContent: _vm._s(persona.observacion)
                             }
-                          },
-                          [_c("i", { staticClass: "icon-pencil" })]
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.nombre) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(persona.vendedor) }
+                          })
+                        ])
                       }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.ciudad) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.domicilio) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.telefono) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.email) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.rfc) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.tipo) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(persona.observacion) }
-                      })
-                    ])
-                  }),
-                  0
-                )
+                      0
+                    )
+                  : _c("tbody", [_vm._m(2)])
               ]
             )
           ]),
@@ -81338,7 +81357,21 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Tipo")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Observaciones")])
+        _c("th", [_vm._v("Observaciones")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Vendedor")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", [
+      _c("td", { staticClass: "text-center", attrs: { colspan: "10" } }, [
+        _c("strong", [
+          _vm._v("NO hay clientes agregados o con ese criterio...")
+        ])
       ])
     ])
   }

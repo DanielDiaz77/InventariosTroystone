@@ -40,9 +40,10 @@
                         <th>RFC</th>
                         <th>Tipo</th>
                         <th>Observaciones</th>
+                        <th>Vendedor</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody v-if="arrayPersona.length">
                     <tr v-for="persona in arrayPersona" :key="persona.id">
                         <td>
                         <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
@@ -57,6 +58,14 @@
                         <td v-text="persona.rfc"></td>
                         <td v-text="persona.tipo"></td>
                         <td v-text="persona.observacion"></td>
+                        <td v-text="persona.vendedor"></td>
+                    </tr>
+                </tbody>
+                <tbody v-else>
+                    <tr>
+                        <td colspan="10" class="text-center">
+                            <strong>NO hay clientes agregados o con ese criterio...</strong>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -185,6 +194,7 @@ export default {
             rfc: "",
             tipo: "",
             observacion: "",
+            userid : "",
             arrayPersona: [],
             modal: 0,
             tituloModal: "",
@@ -243,6 +253,7 @@ export default {
                 var respuesta= response.data;
                 me.arrayPersona = respuesta.personas.data;
                 me.pagination= respuesta.pagination;
+                /* console.log(respuesta.rol); */
             })
             .catch(function (error) {
                 console.log(error);
