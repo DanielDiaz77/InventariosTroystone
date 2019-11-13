@@ -15,16 +15,21 @@
         </div>
         <div class="card-body">
           <div class="form-group row">
-            <div class="col-md-8">
-              <div class="input-group">
+            <div class="col-md-6">
+              <div class="input-group row">
                 <select class="form-control col-md-3" v-model="criterio">
                   <option value="descripcion">Descripción</option>
                   <option value="sku">Código de material</option>
                   <option value="codigo">No° de placa</option>
                   <option value="idcategoria">Material</option>
                 </select>
-                <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio,bodega)" class="form-control" placeholder="Texto a buscar">
-                <select class="form-control" v-model="bodega">
+                <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado)" class="form-control col-md-4" placeholder="Texto a buscar">
+                <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado)" class="form-control col-md-4" placeholder="Terminado">
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="input-group row">
+                <select class="form-control col-md-3" v-model="bodega">
                     <option value="" disabled>Ubicacion</option>
                     <option value="">Todas</option>
                     <option value="Del Musico">Del Músico</option>
@@ -34,16 +39,16 @@
                     <option value="Tractorista">Tractorista</option>
                     <option value="San Luis">San Luis</option>
                 </select>
-                <button type="submit" @click="listarArticulo(1,buscar,criterio,bodega)" class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
-                &nbsp;<label for=""><strong>Total:</strong></label>
-                &nbsp;<p v-text="totres"></p>
+                <button type="submit" @click="listarArticulo(1,buscar,criterio,bodega,acabado)" class="btn btn-sm btn-primary"><i class="fa fa-search"></i>Buscar</button>
+
               </div>
             </div>
-           <!--  <div class="col-md-6 row">
-                <div class="col-md-3">
-
+            <div class="col-md-1">
+                <div class="input-group row">
+                    <label class="float-right" for=""><strong>Total:</strong></label>
+                    <p class="float-right" v-text="totres"></p>
                 </div>
-            </div> -->
+            </div>
           </div>
           <div class="table-responsive col-md-12">
             <table class="table table-bordered table-striped table-sm text-center table-hover">
@@ -132,13 +137,13 @@
           <nav>
             <ul class="pagination">
                 <li class="page-item" v-if="pagination.current_page > 1">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,bodega)">Ant</a>
+                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,bodega,acabado)">Ant</a>
                 </li>
                 <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,bodega)" v-text="page"></a>
+                    <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,bodega,acabado)" v-text="page"></a>
                 </li>
                 <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,bodega)">Sig</a>
+                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,bodega,acabado)">Sig</a>
                 </li>
             </ul>
           </nav>
@@ -470,6 +475,7 @@ export default {
             offset : 3,
             criterio : 'sku',
             bodega : '',
+            acabado : '',
             totres : 0,
             buscar : '',
             arrayCategoria : [],
@@ -521,9 +527,9 @@ export default {
             }
         },
     methods: {
-        listarArticulo (page,buscar,criterio,bodega){
+        listarArticulo (page,buscar,criterio,bodega,acabado){
             let me=this;
-            var url= '/articulo?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega;
+            var url= '/articulo?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega + '&acabado=' + acabado;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayArticulo = respuesta.articulos.data;
@@ -546,12 +552,12 @@ export default {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio,bodega){
+        cambiarPagina(page,buscar,criterio,bodega,acabado){
             let me = this;
             //Actualiza la página actual
             me.pagination.current_page = page;
             //Envia la petición para visualizar la data de esa página
-            me.listarArticulo(page,buscar,criterio,bodega);
+            me.listarArticulo(page,buscar,criterio,bodega,acabado);
         },
         obtenerImagen(e){
             let img = e.target.files[0];
@@ -594,7 +600,7 @@ export default {
                     'file' : this.file
                 }).then(function (response) {
                     me.cerrarModal();
-                    me.listarArticulo(1,'','sku','');
+                    me.listarArticulo(1,'','sku','','');
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -605,6 +611,7 @@ export default {
             var crit =  this.criterio;
             var busc = this.buscar;
             var bod = this.bodega;
+            var aca = this.acabado;
 
             if (this.validarArticulo()) {
                 return;
@@ -632,7 +639,7 @@ export default {
             })
             .then(function(response) {
                 me.cerrarModal();
-                me.listarArticulo(page,busc,crit,bod);
+                me.listarArticulo(page,busc,crit,bod,aca);
             })
             .catch(function(error) {
                 console.log(error);
@@ -661,7 +668,7 @@ export default {
                     axios.put('/articulo/desactivar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarArticulo(1,'','sku','');
+                        me.listarArticulo(1,'','sku','','');
                         swalWithBootstrapButtons.fire(
                             "Desactivado!",
                             "La categoría ha sido desactivada con éxito.",
@@ -697,7 +704,7 @@ export default {
                     axios.put('/articulo/activar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarArticulo(1,'','sku','');
+                        me.listarArticulo(1,'','sku','','');
                         swalWithBootstrapButtons.fire(
                             "Activado!",
                             "Artículo activado con éxito.",
@@ -753,7 +760,7 @@ export default {
             this.comprometido = 0;
             this.usuario = '';
             this.isEdition = false;
-            this.listarArticulo(1,'','sku','');
+            this.listarArticulo(1,'','sku','','');
 
         },
         abrirModal(modelo, accion, data = []) {
@@ -835,7 +842,7 @@ export default {
                 'id': id,
                 'comprometido' : this.comprometido
             }).then(function (response) {
-                me.listarArticulo(1,'','sku','');
+                me.listarArticulo(1,'','sku','','');
             }).catch(function (error) {
                 console.log(error);
             });
@@ -894,7 +901,7 @@ export default {
         }
     },
     mounted() {
-        this.listarArticulo(1,this.buscar, this.criterio,this.bodega);
+        this.listarArticulo(1,this.buscar, this.criterio,this.bodega,this.acabado);
     }
 };
 </script>

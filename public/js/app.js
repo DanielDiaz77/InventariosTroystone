@@ -2265,6 +2265,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -2314,6 +2319,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       offset: 3,
       criterio: 'sku',
       bodega: '',
+      acabado: '',
       totres: 0,
       buscar: '',
       arrayCategoria: [],
@@ -2367,9 +2373,9 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
     }
   },
   methods: {
-    listarArticulo: function listarArticulo(page, buscar, criterio, bodega) {
+    listarArticulo: function listarArticulo(page, buscar, criterio, bodega, acabado) {
       var me = this;
-      var url = '/articulo?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio + '&bodega=' + bodega;
+      var url = '/articulo?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio + '&bodega=' + bodega + '&acabado=' + acabado;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
         me.arrayArticulo = respuesta.articulos.data;
@@ -2389,12 +2395,12 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
         console.log(error);
       });
     },
-    cambiarPagina: function cambiarPagina(page, buscar, criterio, bodega) {
+    cambiarPagina: function cambiarPagina(page, buscar, criterio, bodega, acabado) {
       var me = this; //Actualiza la página actual
 
       me.pagination.current_page = page; //Envia la petición para visualizar la data de esa página
 
-      me.listarArticulo(page, buscar, criterio, bodega);
+      me.listarArticulo(page, buscar, criterio, bodega, acabado);
     },
     obtenerImagen: function obtenerImagen(e) {
       var img = e.target.files[0];
@@ -2441,7 +2447,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
         'file': this.file
       }).then(function (response) {
         me.cerrarModal();
-        me.listarArticulo(1, '', 'sku', '');
+        me.listarArticulo(1, '', 'sku', '', '');
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2451,6 +2457,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       var crit = this.criterio;
       var busc = this.buscar;
       var bod = this.bodega;
+      var aca = this.acabado;
 
       if (this.validarArticulo()) {
         return;
@@ -2478,7 +2485,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
         'id': this.articulo_id
       }).then(function (response) {
         me.cerrarModal();
-        me.listarArticulo(page, busc, crit, bod);
+        me.listarArticulo(page, busc, crit, bod, aca);
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2506,7 +2513,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
           axios.put('/articulo/desactivar', {
             'id': id
           }).then(function (response) {
-            me.listarArticulo(1, '', 'sku', '');
+            me.listarArticulo(1, '', 'sku', '', '');
             swalWithBootstrapButtons.fire("Desactivado!", "La categoría ha sido desactivada con éxito.", "success");
           })["catch"](function (error) {
             console.log(error);
@@ -2537,7 +2544,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
           axios.put('/articulo/activar', {
             'id': id
           }).then(function (response) {
-            me.listarArticulo(1, '', 'sku', '');
+            me.listarArticulo(1, '', 'sku', '', '');
             swalWithBootstrapButtons.fire("Activado!", "Artículo activado con éxito.", "success");
           })["catch"](function (error) {
             console.log(error);
@@ -2586,7 +2593,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.comprometido = 0;
       this.usuario = '';
       this.isEdition = false;
-      this.listarArticulo(1, '', 'sku', '');
+      this.listarArticulo(1, '', 'sku', '', '');
     },
     abrirModal: function abrirModal(modelo, accion) {
       var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
@@ -2676,7 +2683,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
         'id': id,
         'comprometido': this.comprometido
       }).then(function (response) {
-        me.listarArticulo(1, '', 'sku', '');
+        me.listarArticulo(1, '', 'sku', '', '');
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2740,7 +2747,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
     }
   },
   mounted: function mounted() {
-    this.listarArticulo(1, this.buscar, this.criterio, this.bodega);
+    this.listarArticulo(1, this.buscar, this.criterio, this.bodega, this.acabado);
   }
 });
 
@@ -78065,8 +78072,8 @@ var render = function() {
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c("div", { staticClass: "form-group row" }, [
-            _c("div", { staticClass: "col-md-8" }, [
-              _c("div", { staticClass: "input-group" }, [
+            _c("div", { staticClass: "col-md-6" }, [
+              _c("div", { staticClass: "input-group row" }, [
                 _c(
                   "select",
                   {
@@ -78123,7 +78130,7 @@ var render = function() {
                       expression: "buscar"
                     }
                   ],
-                  staticClass: "form-control",
+                  staticClass: "form-control col-md-4",
                   attrs: { type: "text", placeholder: "Texto a buscar" },
                   domProps: { value: _vm.buscar },
                   on: {
@@ -78138,7 +78145,8 @@ var render = function() {
                         1,
                         _vm.buscar,
                         _vm.criterio,
-                        _vm.bodega
+                        _vm.bodega,
+                        _vm.acabado
                       )
                     },
                     input: function($event) {
@@ -78150,6 +78158,47 @@ var render = function() {
                   }
                 }),
                 _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.acabado,
+                      expression: "acabado"
+                    }
+                  ],
+                  staticClass: "form-control col-md-4",
+                  attrs: { type: "text", placeholder: "Terminado" },
+                  domProps: { value: _vm.acabado },
+                  on: {
+                    keyup: function($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.listarArticulo(
+                        1,
+                        _vm.buscar,
+                        _vm.criterio,
+                        _vm.bodega,
+                        _vm.acabado
+                      )
+                    },
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.acabado = $event.target.value
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-5" }, [
+              _c("div", { staticClass: "input-group row" }, [
                 _c(
                   "select",
                   {
@@ -78161,7 +78210,7 @@ var render = function() {
                         expression: "bodega"
                       }
                     ],
-                    staticClass: "form-control",
+                    staticClass: "form-control col-md-3",
                     on: {
                       change: function($event) {
                         var $$selectedVal = Array.prototype.filter
@@ -78222,17 +78271,25 @@ var render = function() {
                           1,
                           _vm.buscar,
                           _vm.criterio,
-                          _vm.bodega
+                          _vm.bodega,
+                          _vm.acabado
                         )
                       }
                     }
                   },
-                  [_c("i", { staticClass: "fa fa-search" })]
-                ),
-                _vm._v("\n               "),
+                  [_c("i", { staticClass: "fa fa-search" }), _vm._v("Buscar")]
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-1" }, [
+              _c("div", { staticClass: "input-group row" }, [
                 _vm._m(1),
-                _vm._v("\n               "),
-                _c("p", { domProps: { textContent: _vm._s(_vm.totres) } })
+                _vm._v(" "),
+                _c("p", {
+                  staticClass: "float-right",
+                  domProps: { textContent: _vm._s(_vm.totres) }
+                })
               ])
             ])
           ]),
@@ -78459,7 +78516,8 @@ var render = function() {
                                 _vm.pagination.current_page - 1,
                                 _vm.buscar,
                                 _vm.criterio,
-                                _vm.bodega
+                                _vm.bodega,
+                                _vm.acabado
                               )
                             }
                           }
@@ -78489,7 +78547,8 @@ var render = function() {
                               page,
                               _vm.buscar,
                               _vm.criterio,
-                              _vm.bodega
+                              _vm.bodega,
+                              _vm.acabado
                             )
                           }
                         }
@@ -78512,7 +78571,8 @@ var render = function() {
                                 _vm.pagination.current_page + 1,
                                 _vm.buscar,
                                 _vm.criterio,
-                                _vm.bodega
+                                _vm.bodega,
+                                _vm.acabado
                               )
                             }
                           }
@@ -79714,7 +79774,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("label", { attrs: { for: "" } }, [
+    return _c("label", { staticClass: "float-right", attrs: { for: "" } }, [
       _c("strong", [_vm._v("Total:")])
     ])
   },
