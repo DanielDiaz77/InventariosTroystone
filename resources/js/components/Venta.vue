@@ -651,7 +651,12 @@
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
                                 </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodega)" class="form-control" placeholder="Texto a buscar">
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,buscarA,bodega,acabado)" class="form-control" placeholder="Texto a buscar">
+                                <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscarA,buscarA,bodega,acabado)" class="form-control" placeholder="Terminado">
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="input-group">
                                 <template v-if="areaUs == 'GDL'">
                                     <select class="form-control" v-model="bodega">
                                         <option value="" disabled>Ubicacion</option>
@@ -664,7 +669,7 @@
                                         <option value="San Luis">San Luis</option>
                                     </select>
                                 </template>
-                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega)" class="btn btn-primary"><i class="fa fa-search"></i></button>&nbsp;
+                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="btn btn-primary"><i class="fa fa-search"></i>Buscar</button>&nbsp;
                             </div>
                         </div>
                     </div>
@@ -681,10 +686,11 @@
                                 <th>Metros<sup>2</sup></th>
                                 <th>Stock</th>
                                 <th>Ubicacion</th>
+                                <th>Terminado</th>
                                 <th>Estado</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody v-if="arrayArticulo.length">
                             <tr v-for="articulo in arrayArticulo" :key="articulo.id">
                                 <td>
                                     <button type="button" @click="agregarDetalleModal(articulo)" class="btn btn-success btn-sm">
@@ -699,6 +705,7 @@
                                 <td v-text="articulo.metros_cuadrados"></td>
                                 <td v-text="articulo.stock"></td>
                                 <td v-text="articulo.ubicacion"></td>
+                                <td v-text="articulo.terminado"></td>
                                 <td>
                                 <div v-if="articulo.condicion == 1">
                                     <span class="badge badge-success">Activo</span>
@@ -712,19 +719,26 @@
                                 </td>
                             </tr>
                             </tbody>
+                            <tbody v-else>
+                                <tr>
+                                    <td colspan="11" class="text-center">
+                                        <strong>NO hay artículos con ese criterio...</strong>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                     <!-- Paginacion MODAL -->
                     <nav>
                         <ul class="pagination">
                             <li class="page-item" v-if="paginationart.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA,bodega)">Ant</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA,bodega,acabado)">Ant</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumberArt" :key="page" :class="[page == isActivedArt ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA,bodega)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA,bodega,acabado)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="paginationart.current_page < paginationart.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA,bodega)">Sig</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA,bodega,acabado)">Sig</a>
                             </li>
                         </ul>
                     </nav>
@@ -1254,7 +1268,8 @@ export default {
             rfc_cliente: "",
             tipo_cliente : "",
             bodega : "",
-            areaUs : ""
+            areaUs : "",
+            acabado : "",
         };
     },
     components: {
@@ -1444,12 +1459,12 @@ export default {
                 //Envia la petición para visualizar la data de esa página
                 me.listarVenta(page,buscar,criterio);
         },
-        cambiarPaginaArt(page,buscar,criterio,bodega){
+        cambiarPaginaArt(page,buscar,criterio,bodega,acabado){
             let me = this;
             //Actualiza la página actual
             me.paginationart.current_page = page;
             //Envia la petición para visualizar la data de esa página
-            me.listarArticulo(page,buscar,criterio,bodega);
+            me.listarArticulo(page,buscar,criterio,bodega,acabado);
         },
         encuentra(id){
             var sw=0;
@@ -1824,16 +1839,18 @@ export default {
         cerrarModal() {
             this.modal = 0;
             this.buscarA = "";
+            this.bodega = "";
+            this.acabado = "";
         },
         abrirModal() {
             this.arrayArticulo=[];
             this.modal = 1;
             this.tituloModal = "Seleccionar Artículos";
-            this.listarArticulo(1,'','sku','');
+            this.listarArticulo(1,'','sku','','');
         },
-        listarArticulo (page,buscar,criterio,bodega){
+        listarArticulo(page,buscar,criterio,bodega,acabado){
             let me=this;
-            var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega;
+            var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega + '&acabado=' + acabado;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayArticulo = respuesta.articulos.data;
@@ -2112,7 +2129,7 @@ export default {
                 'id': this.idarticulo
             })
             .then(function(response) {
-                me.listarArticulo(1,me.codigoA,'codigo',bodega);
+                me.listarArticulo(1,me.codigoA,'codigo',bodega,acabado);
                 me.cerrarModal4();
                 me.abrirModal();
                 me.validatedA = 0;
