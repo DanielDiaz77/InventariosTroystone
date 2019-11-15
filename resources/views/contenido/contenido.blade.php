@@ -35,6 +35,10 @@
                 <entrega></entrega>
             </template>
 
+            <template v-if="menu==15">
+                <tarea></tarea>
+            </template>
+
             <template v-if="menu==6">
                 <cliente></cliente>
             </template>
@@ -82,6 +86,10 @@
 
             <template v-if="menu==13">
                 <cotizacion></cotizacion>
+            </template>
+
+            <template v-if="menu==15">
+                <tarea></tarea>
             </template>
 
             <template v-if="menu==6">

@@ -37,6 +37,7 @@ Vue.component('cotizacion', require('./components/Cotizacion.vue').default);
 Vue.component('entrega', require('./components/Entrega.vue').default);
 Vue.component('ayuda', require('./components/Ayuda.vue').default);
 Vue.component('acerca', require('./components/Acerca.vue').default);
+Vue.component('tarea', require('./components/Tarea.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

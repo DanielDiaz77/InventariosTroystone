@@ -152,6 +152,12 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/cotizacion/nextNum','CotizacionController@getLastNum');
         Route::post('/cotizacion/actualizarObservacion', 'CotizacionController@actualizarObservacion');
 
+        Route::get('/tarea', 'TareaController@index');
+        Route::post('/tarea/registrar', 'TareaController@store');
+        Route::put('/tarea/actualizar', 'TareaController@update');
+        Route::put('/tarea/desactivar', 'TareaController@desactivar');
+        Route::put('/tarea/completar', 'TareaController@completar');
+
     });
 });
 
