@@ -128,13 +128,13 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/venta/obtenerDetalles','VentaController@obtenerDetalles');
         Route::put('/articulo/actualizarCorte','ArticuloController@updateCortado');
         Route::get('/venta/pdf/{id}','VentaController@pdf');
-
         Route::post('/venta/cambiarEntrega','VentaController@cambiarEntrega');
         Route::post('/venta/cambiarEntregaParcial','VentaController@cambiarEntregaParcial');
         Route::post('/venta/cambiarPagado','VentaController@cambiarPagado');
         Route::post('/venta/actualizarObservacion','VentaController@actualizarObservacion');
         Route::post('/venta/actualizarObservacionPriv','VentaController@actualizarObservacionPriv');
         Route::get('/venta/nextNum','VentaController@getLastNum');
+        Route::get('/venta/obtenerVentasCliente','VentaController@obtenerVentasCliente');
 
         Route::get('/entrega','VentaController@indexEntregas');
         Route::get('/entrega/pdf/{id}','VentaController@pdfEntrega');
@@ -157,6 +157,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/tarea/actualizar', 'TareaController@update');
         Route::put('/tarea/desactivar', 'TareaController@desactivar');
         Route::put('/tarea/completar', 'TareaController@completar');
+        Route::get('/tarea/obtenerTareas','TareaController@obtenerTareasCliente');
 
     });
 });

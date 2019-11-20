@@ -71,7 +71,7 @@
                                 <td v-text="venta.nombre"></td>
                                 <td v-text="venta.tipo_comprobante"></td>
                                 <td v-text="venta.num_comprobante"></td>
-                                <td v-text="venta.fecha_hora"></td>
+                                <td>{{ convertDateVenta(venta.fecha_hora) }}</td>
                                 <td v-text="venta.impuesto"></td>
                                 <td v-text="venta.total"></td>
                                 <td v-text="venta.forma_pago"></td>
@@ -2233,7 +2233,13 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
-        }
+        },
+        convertDateVenta(date){
+            let me=this;
+            var datec = moment(date).format('MMM DD YYYY HH:mm:ss');
+            /* console.log(datec); */
+            return datec;
+        },
     },
     mounted() {
         this.listarVenta(1,this.buscar, this.criterio);

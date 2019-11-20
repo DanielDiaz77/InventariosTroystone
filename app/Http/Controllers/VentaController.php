@@ -271,6 +271,7 @@ class VentaController extends Controller
         $venta->observacion = $request->observacion;
         $venta->save();
     }
+
     public function actualizarObservacionPriv(Request $request){
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);
@@ -478,5 +479,24 @@ class VentaController extends Controller
             DB::rollBack();
         }
 
+    }
+
+    public function obtenerVentasCliente(Request $request){
+
+        //if (!$request->ajax()) return redirect('/');
+        $idcliente = $request->idcliente;
+
+        $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+        ->join('users','ventas.idusuario','=','users.id')
+        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+        'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
+        'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv')
+        ->where('ventas.idcliente','=',$idcliente)
+        ->orderBy('ventas.fecha_hora','desc')->paginate(5);
+
+        return ['ventas' => $ventas];
     }
 }

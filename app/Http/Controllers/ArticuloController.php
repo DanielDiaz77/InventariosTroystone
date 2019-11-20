@@ -22,9 +22,11 @@ class ArticuloController extends Controller
         $acabado = $request->acabado;
 
         if($criterio == 'idcategoria'){
-            $name = $request->buscar;
-            $category = Categoria::where('nombre','like','%'.$name.'%')->select('id')->first();
-            $buscar = $category->id;
+            if($buscar != ''){
+                $name = $request->buscar;
+                $category = Categoria::where('nombre','like','%'.$name.'%')->select('id')->first();
+                $buscar = $category->id;
+            }
         }
 
         if($bodega == ''){

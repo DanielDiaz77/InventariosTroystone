@@ -9,9 +9,10 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> CRM
-          <button type="button" @click="mostrarDetalle()" class="btn btn-secondary">
-            <i class="icon-plus"></i>&nbsp;Nuevo
+          <button v-if="btnNewTask" type="button" @click="abrirModal('registrar')" class="btn btn-sm btn-secondary">
+            <i class="icon-plus"></i>&nbsp;Nueva Tarea
           </button>
+
         </div>
         <!-- Listado -->
         <template v-if="listado==1">
@@ -20,17 +21,23 @@
                     <div class="col-md-6">
                         <div class="input-group">
                             <select class="form-control col-md-3" v-model="criterio">
-                            <option value="num_comprobante">No° Comprobante</option>
-                            <option value="fecha_hora">Fecha</option>
-                            <option value="estado">Estado</option>
+                            <option value="fecha">Fecha</option>
+                            <option value="idcliente">Cliente</option>
+                            <option value="clase">Tipo</option>
                             </select>
-                            <input type="text" v-model="buscar" @keyup.enter="listarCotizacion(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                            <button type="submit" @click="listarCotizacion(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                            <input type="text" v-model="buscar" @keyup.enter="listarTarea(1,buscar,criterio,estadoTask)" class="form-control" placeholder="Texto a buscar">
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-inline">
-                            <button @click="abrirModal5()" class="btn btn-primary">...</button>&nbsp;<strong>Buscar Articulos cotizados</strong>
+                    <div class="col-md-5">
+                        <div class="input-group row">
+                            <select class="form-control col-md-3" v-model="estadoTask">
+                                <option value="" disabled>Estado</option>
+                                <option value="">Todos</option>
+                                <option value="0">Pendiente</option>
+                                <option value="1">Completado</option>
+                                <option value="2">Cancelado</option>
+                            </select>
+                            <button type="submit" @click="listarTarea(1,buscar,criterio,estadoTask)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
                         </div>
                     </div>
                 </div>
@@ -39,41 +46,70 @@
                         <thead>
                             <tr>
                                 <th>Opciones</th>
-                                <th>Usuario</th>
                                 <th>Cliente</th>
-                                <th>Tipo de documento</th>
-                                <th>No° Documento</th>
-                                <th>Fecha de creacion</th>
-                                <th>Vigencia</th>
-                                <th>Impuesto</th>
-                                <th>Total</th>
+                                <th>Teléfono</th>
+                                <th>Fecha</th>
+                                <th>Tarea</th>
+                                <th>Tipo de cliente</th>
                                 <th>Estado</th>
+                                <th>Vendedor</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr v-for="cotizacion in arrayCotizacion" :key="cotizacion.id">
+                        <tbody v-if="arrayTarea.length" class="text-center">
+                            <tr v-for="tarea in arrayTarea" :key="tarea.id">
                                 <td>
-                                    <button type="button" class="btn btn-success btn-sm" @click="verCotizacion(cotizacion.id)">
+                                    <button type="button" class="btn btn-success btn-sm" @click="verTarea(tarea.idcliente)">
                                         <i class="icon-eye"></i>
                                     </button>&nbsp;
-                                    <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfCotizacion(cotizacion.id)">
-                                        <i class="fa fa-file-pdf-o"></i>
-                                    </button>&nbsp;
-                                    <template v-if="cotizacion.estado=='Registrado'">
-                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarCotizacion(cotizacion.id)">
+
+                                    <template v-if="tarea.estado != 2">
+                                        <button type="button" @click="abrirModal('actualizar',tarea)" class="btn btn-warning btn-sm">
+                                            <i class="icon-pencil"></i>
+                                        </button> &nbsp;
+                                    </template>
+
+                                    <template v-if="tarea.estado == 0 ">
+                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarTarea(tarea.id)">
                                             <i class="icon-trash"></i>
                                         </button>
                                     </template>
+                                    <!-- <template v-else>
+                                    </template> -->
                                 </td>
-                                <td v-text="cotizacion.usuario"></td>
-                                <td v-text="cotizacion.nombre"></td>
-                                <td v-text="cotizacion.tipo_comprobante"></td>
-                                <td v-text="cotizacion.num_comprobante"></td>
-                                <td v-text="cotizacion.fecha_hora"></td>
-                                <td v-text="cotizacion.vigencia"></td>
-                                <td v-text="cotizacion.impuesto"></td>
-                                <td v-text="cotizacion.total"></td>
-                                <td v-text="cotizacion.estado "></td>
+                                <td v-text="tarea.cliente"></td>
+                                <td v-text="tarea.telefono"></td>
+                                <td>
+                                    <div v-if="tarea.fecha < dateAct">
+                                        <span class="badge badge-pill badge-danger">{{ convertDate(tarea.fecha) }}</span>
+                                    </div>
+                                    <div v-else-if="tarea.fecha == dateAct">
+                                        <span class="badge badge-pill badge-warning">{{ convertDate(tarea.fecha) }}</span>
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-pill badge-secondary">{{ convertDate(tarea.fecha) }}</span>
+                                    </div>
+                                </td>
+                                <td v-text="tarea.descripcion"></td>
+                                <td v-text="tarea.tipo"></td>
+                                <td>
+                                    <div v-if="tarea.estado == 1">
+                                        <span class="badge badge-pill badge-success">Completado</span>
+                                    </div>
+                                    <div v-else-if="tarea.estado == 0">
+                                        <span class="badge badge-pill badge-warning">Pendiente</span>
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-pill badge-danger">Cancelado</span>
+                                    </div>
+                                </td>
+                                <td v-text="tarea.usuario"></td>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <strong>Aún no tienes tareas dadas de alta...</strong>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -81,13 +117,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoTask)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoTask)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoTask)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -98,444 +134,338 @@
         <!-- Detalle -->
         <template v-else-if="listado==0">
             <div class="card-body">
-                <div class="form-group row border">
+                <!-- INF CLIENTE -->
+                <div class="form-group row">
                     <div class="col-md-3 text-center">
                         <div class="form-group">
-                            <label for=""><strong>Cliente (*)</strong></label>
-                                <v-select :on-search="selectCliente" label="nombre" :options="arrayCliente" placeholder="Buscar clientes..." :onChange="getDatosCliente">
-                                </v-select>
+                            <h1 for="" class="float-left"><strong v-text="cliente"></strong></h1>
                         </div>
                     </div>&nbsp;
-                     <div class="col-md-3 text-center">
+                    <div class="col-md-2 text-center sinpadding" v-if="telefono_cliente">
+                        <div class="form-group">
+                            <label for=""><strong>Teléfono</strong></label>
+                            <h6 for=""><strong v-text="telefono_cliente"></strong></h6>
+                        </div>
+                    </div>&nbsp;
+                     <div class="col-md-2 text-center sinpadding" v-if="tipo_cliente">
                         <div class="form-group">
                             <label for=""><strong>Tipo de cliente</strong></label>
-                            <input type="text" readonly :value="tipo_cliente" class="form-control col-md">
+                            <h6 for=""><strong v-text="tipo_cliente"></strong></h6>
                         </div>
-                    </div>
-                     <div class="col-md-3 text-center">
+                    </div>&nbsp;
+                    <div class="col-md-2 text-center sinpadding" v-if="rfc_cliente">
                         <div class="form-group">
                             <label for=""><strong>RFC</strong></label>
-                            <input type="text" readonly :value="rfc_cliente" class="form-control col-md">
+                            <h6 for=""><strong v-text="rfc_cliente"></strong></h6>
                         </div>
-                    </div>
-                </div>
-                <div class="form-group row border">
-                    <div class="col-md-2 text-center">
+                    </div>&nbsp;
+                    <div class="col-md-2 text-center sinpadding" v-if="contacto_cliente">
                         <div class="form-group">
-                            <label for=""><strong>Tipo de documento (*) </strong></label>
-                            <select v-model="tipo_comprobante" class="form-control">
-                                <option value="">Seleccione</option>
-                                <option value="COTIZACION">COTIZACION</option>
-                            </select>
+                            <label for=""><strong>Contacto</strong></label>
+                            <h6 for=""><strong> {{contacto_cliente}} | {{telcontacto_cliente}}</strong></h6>
                         </div>
-                    </div>
+                    </div>&nbsp;
 
-                    <div class="col-md-2 text-center">
+                    <div class="col-md-3 text-center sinpadding">
                         <div class="form-group">
-                            <label for=""><strong>Número de cotizacion (*)</strong></label>
-                            <div class="row">
-                                <div class="col">
-                                    <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
-                                </div>
-                            </div>
+                            <label for=""><strong>Observaciones</strong></label>
+                            <h6 for=""><strong> {{obs_cliente}}</strong></h6>
                         </div>
-                    </div>
-
-                    <div class="col-md-1 text-center">
-                        <label for=""><strong>Impuesto (*)</strong></label>
-                        <input type="text" class="form-control" v-model="impuesto">
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <div class="form-group">
-                            <label for=""><strong>Forma de pago</strong><span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
-                            <select class="form-control" v-model="forma_pago">
-                                <option value='' disabled>Seleccione la forma de pago</option>
-                                <option value="De contado">De contado</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <div class="form-group">
-                            <label for=""><strong>Tiempo de entrega</strong><span style="color:red;" v-show="tiempo_entrega==''"> (*Seleccione)</span></label>
-                            <select class="form-control" v-model="tiempo_entrega">
-                                <option value='' disabled>Seleccione el tiempo de entrega</option>
-                                <option value="Inmediata">Inmediata</option>
-                                <option value="de 2 a 10 dias">de 2 a 10 dias</option>
-                                <option value="de 10 a 20 dias">de 10 a 20 dias</option>
-                                <option value="de 21 a 40 dias">de 10 a 20 dias</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <div class="form-group">
-                            <label for=""><strong>Lugar de entrega</strong><span style="color:red;" v-show="lugar_entrega==''">(*Seleccione)</span></label>
-                            <select class="form-control" v-model="lugar_entrega">
-                                <option value='' disabled>Seleccione el lugar de entrega</option>
-                                <option value="LAB TROYSTONE">LAB TROYSTONE</option>
-                                <option value="LAB TROYSTONE S.L.P.">LAB TROYSTONE S.L.P.</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <div class="form-group">
-                            <label for=""><strong>Vigencia</strong><span style="color:red;" v-show="vigencia==''">(*Seleccione)</span> </label>
-                             <input type="date" v-model="vigencia" class="form-control"/>
-                        </div>
-                    </div>
-                    <div class="col-md-12 text-center">
-                        <div v-show="errorCotizacion" class="form-group row div-error">
-                            <div class="text-center text-error">
-                                <div v-for="error in errorMostrarMsjCotizacion" :key="error" v-text="error"></div>
-                            </div>
-                        </div>
-                    </div>
+                    </div>&nbsp;
                 </div>
-                <div class="form-group row border">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for=""><strong>Articulo</strong> <span style="color:red;" v-show="articulo==''">(*Seleccione)</span> </label>
-                            <div class="form-inline">
-                                <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()"  placeholder="Ingrese el artículo" >
-                                <button @click="abrirModal()" class="btn btn-primary">...</button>
-                                <input type="text" readonly class="form-control" v-model="articulo">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-2 text-center">
-                        <div class="form-group">
-                            <label for=""><strong>Cantidad</strong> <span style="color:red;" v-show="cantidad==0">(*Ingrese la cantidad)</span></label>
-                            <input type="number" min="0" value="0"  class="form-control" v-model="cantidad">
-                        </div>
-                    </div>
-                    <div class="col-sm-2 text-center">
-                        <div class="form-group" v-if="moneda!='Peso Mexicano'">
-                            <label for=""><strong>Precio m<sup>2</sup> {{moneda}} </strong><span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
-                           <input type="number" readonly :value="cacularPrecioExtranjero" class="form-control"/>
-                        </div>
-                        <div class="form-group" v-else>
-                            <label for=""><strong>Precio m<sup>2</sup></strong> <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
-                            <input type="number" min="0" value="0" step="any" class="form-control" v-model="precio">
-                        </div>
-                    </div>
-                    <div class="col-sm-2 text-center">
-                        <div class="form-group">
-                            <label for=""><strong>Descuento (%)</strong></label>
-                            <input type="number" min="0" value="0" class="form-control" v-model="descuento">
-                        </div>
-                    </div>
-                    <div class="col-sm-2 text-center">
-                        <div class="form-group">
-                            <button @click="agregarDetalle()" class="btn btn-success form-control btnagregar"><i class="icon-plus"></i></button>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="form-group row border">
-                    <div class="table-responsive col-md-12">
-                        <table class="table table-bordered table-striped table-sm table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Opciones</th>
-                                    <th>Material</th>
-                                    <th>Código de material</th>
-                                    <th>No° Placa</th>
-                                    <th>Terminado</th>
-                                    <th>Espesor</th>
-                                    <th>largo</th>
-                                    <th>Alto</th>
-                                    <th>Metros <sup>2</sup></th>
-                                    <th>Cantidad</th>
-                                    <th v-if="moneda!='Peso Mexicano'">
-                                        Precio m<sup>2</sup> {{moneda}}
-                                    </th>
-                                    <th v-else>
-                                        Precio m<sup>2</sup>
-                                    </th>
-                                    <th>Descuento </th>
-                                    <th>Ubicacion</th>
-                                    <th>SubTotal</th>
-                                </tr>
-                            </thead>
-                            <tbody v-if="arrayDetalle.length">
-                                <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
-                                    <td>
-                                        <button @click="eliminarDetalle(index)" type="button" class="btn btn-danger btn-sm">
-                                            <i class="icon-close"></i>
-                                        </button>&nbsp;
-                                        <button type="button" @click="abrirModal2(index)" class="btn btn-success btn-sm">
-                                            <i class="icon-eye"></i>
-                                        </button> &nbsp;
-                                        <button type="button" class="btn btn-warning btn-sm" @click="abrirModal4(index)">
-                                            <i class="icon-crop"></i>
-                                        </button>
-                                    </td>
-                                    <td v-text="detalle.categoria"></td>
-                                    <td v-text="detalle.articulo"></td>
-                                    <td v-text="detalle.codigo"></td>
-                                    <td v-text="detalle.terminado"></td>
-                                    <td v-text="detalle.espesor"></td>
-                                    <td v-text="detalle.largo"></td>
-                                    <td v-text="detalle.alto"></td>
-                                    <td v-text="detalle.metros_cuadrados"></td>
-                                    <td>
-                                        <span style="color:red;" v-show="detalle.cantidad>detalle.stock">Solo hay: {{detalle.stock}} disponibles</span>
-                                        <input v-model="detalle.cantidad" min="1" type="number" class="form-control">
-                                    </td>
-                                   <td>
-                                       <input v-model="detalle.precio" min="0" step="any" type="number" class="form-control">
-                                   </td>
-                                    <td>
-                                        <span style="color:red" v-show="detalle.descuento>(detalle.precio * detalle.cantidad)">Descuento superior al subtotal!</span>
-                                        <input v-model="detalle.descuento" min="0" step="any" type="number" class="form-control">
-                                    </td>
-                                    <td v-text="detalle.ubicacion"></td>
-                                    <td>
-                                       {{ (( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento) }}
-                                    </td>
-                                </tr>
-                                <tr style="background-color: #CEECF5;">
-                                    <td colspan="13" align="right"><strong>Total Parcial:</strong></td>
-                                    <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
-                                </tr>
-                                <tr style="background-color: #CEECF5;">
-                                    <td colspan="13" align="right"><strong>Total IVA:</strong></td>
-                                    <td>$ {{total_impuesto=((total * impuesto)/(1+impuesto)).toFixed(2)}}</td>
-                                </tr>
-                                <tr style="background-color: #CEECF5;">
-                                    <td colspan="13" align="right"><strong>Total Neto:</strong></td>
-                                    <td>$ {{total=(calcularTotal.toFixed(2))}}</td>
-                                </tr>
-                            </tbody>
-                            <tbody v-else>
-                                <tr>
-                                    <td colspan="14" class="text-center">
-                                        <strong>NO hay artículos agregados...</strong>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <hr>
                 <div class="form-group row">
-                    <div class="col-md-4 text-center">
-                        <label for="exampleFormControlTextarea2"><strong>Observaciones</strong></label>
-                        <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
+                    <div class="col-md-5 order-1 order-md-1">
+                        <h4>Siguiente Tarea</h4>&nbsp;
+                    </div>
+                    <div class="col-md-5 order-3 order-md-2">
+                        <h4 class="ml-2">Ultimas Ventas: </h4>
+                    </div>&nbsp;
+                    <div class="col-md-5 order-2 order-md-3 ml-3 pt-3 caja2" v-if="nextTask.length">
+                        <div class="row" v-for="nexttask in nextTask" :key="nexttask.id">
+                            <div class="col-md">
+                                <h4 v-text="nexttask.clase"></h4>
+                                <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(nexttask.fecha) }}</small></p>
+                            </div>
+                            <div class="col-md">
+                                <button type="button" class="btn btn-sm btntask float-right" @click="UpdateTask('nextTask',nexttask)">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>&nbsp;
+                                <template v-if="nexttask.estado == 0 ">
+                                    <button type="button" class="btn btn-sm btntask float-right" @click="desactivarTareaDet(nexttask.id)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>&nbsp;
+                                </template>
+                            </div>
+                            <div class="col-md-12">
+                                <p v-text="nexttask.descripcion"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5 ml-3 pt-3 caja2 order-2 order-md-3" v-else>
+                        <div class="row">
+                            <div class="col-md">
+                                <h4>Sin tareas pendientes o asignadas...</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md text-center order-4 order-md-4">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-sm table-hover table-responsive-xl">
+                                <thead>
+                                    <tr>
+                                        <th>Comprobante</th>
+                                        <th>Atendió</th>
+                                        <th>Cliente</th>
+                                        <th>No° Comprobante</th>
+                                        <th>Fecha Hora</th>
+                                        <th>Total</th>
+                                        <th>100% Pagado</th>
+                                    </tr>
+                                </thead>
+                                <tbody v-if="arrayVentasT.length">
+                                    <tr v-for="venta in arrayVentasT" :key="venta.id">
+                                        <td>
+                                            <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfVenta(venta.id)">
+                                                <i class="fa fa-file-pdf-o"></i>
+                                            </button>&nbsp;
+                                        </td>
+                                        <td v-text="venta.usuario"></td>
+                                        <td v-text="venta.nombre"></td>
+                                        <td v-text="venta.num_comprobante"></td>
+                                        <td>{{ convertDateVenta(venta.fecha_hora) }}</td>
+                                        <td v-text="venta.total"></td>
+                                        <td v-if="venta.pagado">
+                                            <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                        </td>
+                                        <td v-else>
+                                            <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody v-else>
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                            <strong>Aún no tienes ventas con este cliente...</strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>&nbsp;
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-12">
+                    <!-- Comentarios -->
+                    <div class="col-md-6">
+                        <div class="page-header">
+                            <h3 id="timeline">Comentarios de {{ cliente }} &nbsp;
+                                <button type="button" class="btn btn-primary btn-circle" @click="UpdateTask('newComment')">
+                                    <i class="fa fa-plus-circle"></i>
+                                </button>&nbsp;
+                            </h3>
+                            <hr>
+                        </div>
+                        <div class="divtask" v-if="arrayCommentT.length">
+                            <ul class="row" v-for="comment in arrayCommentT" :key="comment.id">
+                                <li class="col-md-6" style="list-style:none;">
+                                    <div class="form-group">
+                                        <div class="col-md my-3 pt-3 caja">
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <h4 v-text="comment.clase"></h4>
+                                                    <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(comment.fecha) }}</small></p>
+                                                </div>
+                                                <div class="col-md">
+                                                    <button type="button" class="btn btn-sm btntask float-right" @click="UpdateTask('comment',comment)">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </button>&nbsp;
+                                                    <template v-if="comment.estado == 0 ">
+                                                        <button type="button" class="btn btn-sm btntask float-right" @click="desactivarComentario(comment.id)">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>&nbsp;
+                                                    </template>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <p v-text="comment.descripcion"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-else>
+                            <h5>Sin Comentaríos...</h5>
+                        </div>
+                    </div>
+                    <!-- Historial -->
+                    <div class="col-md-6">
+                        <div class="page-header">
+                            <h3 id="timeline">Historial de tareas {{ cliente }}
+                                &nbsp;
+                                <button type="button" class="btn btn-primary btn-circle" @click="UpdateTask('newTask')">
+                                    <i class="fa fa-plus-circle"></i>
+                                </button>&nbsp;
+                            </h3>
+                            <hr>
+                        </div>
+                        <div class="divtask">
+                            <ul class="timeline">
+                                <li v-for="tarea in arrayTareaT" :key="tarea.id">
+                                    <template v-if="tarea.estado == 0 && tarea.clase == 'Llamada'">
+                                        <div class="timeline-badge warning"><i class="fa fa-phone"></i></div>
+                                        <div class="timeline-panel">
+                                            <div class="timeline-heading">
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <h4 class="timeline-title">{{ tarea.clase }}</h4>
+                                                        <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(tarea.fecha) }}</small></p>
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <button type="button" class="btn btn-sm btntask float-right">
+                                                            <i class="fa fa-pencil" @click="UpdateTask('arrayTareaT',tarea)"></i>
+                                                        </button>&nbsp;
+                                                        <template v-if="tarea.estado == 0 ">
+                                                            <button type="button" class="btn btn-sm btntask float-right" @click="desactivarTareaDet(tarea.id)">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>&nbsp;
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="timeline-body">
+                                                <p v-text="tarea.descripcion"></p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else-if="tarea.estado == 1 && tarea.clase == 'Llamada'">
+                                        <div class="timeline-badge success"><i class="fa fa-phone"></i></div>
+                                        <div class="timeline-panel">
+                                            <div class="timeline-heading">
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <h4 class="timeline-title">{{ tarea.clase }}</h4>
+                                                        <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(tarea.fecha) }}</small></p>
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <button type="button" class="btn btn-sm btntask float-right">
+                                                            <i class="fa fa-pencil" @click="UpdateTask('arrayTareaT',tarea)"></i>
+                                                        </button>&nbsp;
+                                                        <template v-if="tarea.estado == 0 ">
+                                                            <button type="button" class="btn btn-sm btntask float-right" @click="desactivarTareaDet(tarea.id)">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>&nbsp;
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="timeline-body">
+                                                <p v-text="tarea.descripcion"></p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else-if="tarea.estado == 2 && tarea.clase == 'Llamada'">
+                                        <div class="timeline-badge danger"><i class="fa fa-phone"></i></div>
+                                        <div class="timeline-panel">
+                                            <div class="timeline-heading">
+                                                <h4 class="timeline-title"><del>{{ tarea.clase }}</del></h4>
+                                                <p><small class="text-muted"><i class="fa fa-clock-o"></i><del> {{ convertDate(tarea.fecha) }}</del></small>
+                                                <span class="badge badge-pill badge-danger float-right">CANCELADO</span></p>
+                                            </div>
+                                            <div class="timeline-body">
+                                                <p><del>{{tarea.descripcion}}</del></p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else-if="tarea.estado == 0 && tarea.clase == 'Nota'">
+                                        <div class="timeline-badge warning"><i class="fa fa-comment"></i></div>
+                                        <div class="timeline-panel">
+                                            <div class="timeline-heading">
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <h4 class="timeline-title">{{ tarea.clase }}</h4>
+                                                        <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(tarea.fecha) }}</small></p>
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <button type="button" class="btn btn-sm btntask float-right">
+                                                            <i class="fa fa-pencil" @click="UpdateTask('arrayTareaT',tarea)"></i>
+                                                        </button>&nbsp;
+                                                        <template v-if="tarea.estado == 0 ">
+                                                            <button type="button" class="btn btn-sm btntask float-right" @click="desactivarTareaDet(tarea.id)">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>&nbsp;
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="timeline-body">
+                                                <p v-text="tarea.descripcion"></p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else-if="tarea.estado == 1 && tarea.clase == 'Nota'">
+                                        <div class="timeline-badge success"><i class="fa fa-comment"></i></div>
+                                        <div class="timeline-panel">
+                                            <div class="timeline-heading">
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <h4 class="timeline-title">{{ tarea.clase }}</h4>
+                                                        <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(tarea.fecha) }}</small></p>
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <button type="button" class="btn btn-sm btntask float-right">
+                                                            <i class="fa fa-pencil" @click="UpdateTask('arrayTareaT',tarea)"></i>
+                                                        </button>&nbsp;
+                                                        <template v-if="tarea.estado == 0 ">
+                                                            <button type="button" class="btn btn-sm btntask float-right" @click="desactivarTareaDet(tarea.id)">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>&nbsp;
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="timeline-body">
+                                                <p v-text="tarea.descripcion"></p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else-if="tarea.estado == 2 && tarea.clase == 'Nota'">
+                                        <div class="timeline-badge danger"><i class="fa fa-comment"></i></div>
+                                        <div class="timeline-panel">
+                                            <div class="timeline-heading">
+                                                <h4 class="timeline-title"><del>{{ tarea.clase }}</del></h4>
+                                                <p><small class="text-muted"><i class="fa fa-clock-o"></i><del> {{ convertDate(tarea.fecha) }}</del></small>
+                                                <span class="badge badge-pill badge-danger float-right">CANCELADO</span></p>
+                                            </div>
+                                            <div class="timeline-body">
+                                                <p><del>{{tarea.descripcion}}</del></p>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="form-group row border">
+
+                </div> -->
+                <div class="form-group row">
+                    <div class="col-md-12 float-right">
                         <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
-                        <button type="button" class="btn btn-primary" @click="registrarCotizacion()">Registrar Cotizacion</button>
                     </div>
                 </div>
             </div>
         </template>
         <!-- Fin detalle -->
-         <!-- Ver Cotizacion -->
-        <template v-else-if="listado==2">
-            <div class="card-body">
-                <div class="form-group row border">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for=""><strong>Cliente</strong></label>
-                            <p v-text="cliente"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""><strong>Tipo Comprobante</strong></label>
-                            <p v-text="tipo_comprobante"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for=""><strong>Número de Comprobante</strong></label>
-                            <p v-text="num_comprobante"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""><strong>Registrado por:</strong></label>
-                            <p v-text="user"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""> <strong>Fecha:</strong></label>
-                            <p v-text="fecha_llegada"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""><strong> Total:</strong></label>
-                            <p v-text="total"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""><strong> Impuesto </strong></label>
-                            <p v-text="impuesto"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""> <strong>Moneda</strong></label>
-                            <p v-text="moneda"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""><strong> Tipo de cambio</strong></label>
-                            <p v-text="tipo_cambio"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""> <strong>Forma de pago </strong></label>
-                            <p v-text="forma_pago"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""> <strong>Estado: </strong></label>
-                            <div v-if="estadoVn == 'Registrado'">
-                                <span class="badge badge-success">Registrado</span>
-                            </div>
-                            <div v-else>
-                                <span class="badge badge-danger">Cotizacion cancelada</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group row border">
-                    <div class="table-responsive col-md-12">
-                        <table class="table table-bordered table-striped table-sm table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Detalles</th>
-                                    <th>Código de material</th>
-                                    <th>No° Placa</th>
-                                    <th>Terminado</th>
-                                    <th>Espesor</th>
-                                    <th>largo</th>
-                                    <th>Alto</th>
-                                    <th>Metros <sup>2</sup></th>
-                                    <th>Cantidad</th>
-                                    <th>Precio m<sup>2</sup></th>
-                                    <th>Descuento </th>
-                                    <th>Ubicacion</th>
-                                    <th>SubTotal</th>
-
-                                </tr>
-                            </thead>
-                            <tbody v-if="arrayDetalle.length">
-                                <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
-                                    <td>
-                                        <button type="button" @click="abrirModal3(index)" class="btn btn-success btn-sm">
-                                            <i class="icon-eye"></i>
-                                        </button> &nbsp;
-                                    </td>
-                                    <td v-text="detalle.sku"></td>
-                                    <td v-text="detalle.codigo"></td>
-                                    <td v-text="detalle.terminado"></td>
-                                    <td v-text="detalle.espesor"></td>
-                                    <td v-text="detalle.largo"></td>
-                                    <td v-text="detalle.alto"></td>
-                                    <td v-text="detalle.metros_cuadrados"></td>
-                                    <td v-text="detalle.cantidad"></td>
-                                    <td v-text="detalle.precio"></td>
-                                    <td v-text="detalle.descuento"></td>
-                                    <td v-text="detalle.ubicacion"></td>
-                                    <td>{{ (( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento) }}</td>
-                                </tr>
-                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="12" align="right"><strong>Total Parcial:</strong></td>
-                                    <td>$ {{total_parcial = (total / divImp).toFixed(2) }}</td>
-                                </tr>
-                                <tr style="background-color: #CEECF5;">
-                                    <td colspan="12" align="right"><strong>Total Impuesto:</strong></td>
-                                    <td>$ {{total_impuesto=((total * impuesto)/(divImp)).toFixed(2)}}</td>
-                                </tr>
-                                <tr style="background-color: #CEECF5;">
-                                    <td colspan="12" align="right"><strong>Total Neto:</strong></td>
-                                    <td>$ {{ total}} </td>
-                                </tr>
-                            </tbody>
-                            <tbody v-else>
-                                <tr>
-                                    <td colspan="13" class="text-center">
-                                        <strong>NO hay artículos en este detalle...</strong>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-md-4">
-                        <div class="row">
-                            <div class="col">
-                                <label for="exampleFormControlTextarea2"><strong>Observaciones</strong></label>
-                            </div>
-                            <div class="col-2">
-                                <template v-if="obsEditable == 0">
-                                    <button type="button" class="btn btn-warning btn-sm float-right" @click="editObservacion()">
-                                        <i class="icon-pencil"></i>
-                                    </button>
-                                </template>
-                                <template v-else>
-                                    <button type="button" class="btn btn-primary btn-sm float-right" @click="actualizarObservacion(cotizacion_id)">
-                                        <i class="fa fa-floppy-o"></i>
-                                    </button>
-                                </template>&nbsp;
-
-                            </div>
-                        </div>&nbsp;
-                        <template v-if="obsEditable == 0">
-                            <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacion"></textarea>
-                        </template>
-                        <template v-else>
-                            <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
-                        </template>
-                    </div>&nbsp;
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""><strong>Lugar de entrega</strong></label>
-                            <p v-text="lugar_entrega"></p>
-                        </div>
-                    </div>&nbsp;
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""> <strong>Tiempo de entrega </strong></label>
-                            <p v-text="tiempo_entrega"></p>
-                        </div>
-                    </div>&nbsp;
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for=""> <strong>Vigencia:</strong></label>
-                            <p v-text="vigencia"></p>
-                        </div>
-                    </div>&nbsp;
-                </div>
-                <div class="form-group row">
-                    <div class="col-md-12">
-                        <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
-                    </div>
-                </div>
-            </div>
-        </template>
-        <!-- Fin ver ingreso-->
       </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
     <!--Inicio del modal listar articulos-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-primary modal-lg" role="document">
-            <div class="modal-content">
+            <div class="modal-content content-task">
                 <div class="modal-header">
                     <h4 class="modal-title" v-text="tituloModal"></h4>
                     <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
@@ -544,584 +474,116 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group row">
-                        <div class="col-md">
-                            <div class="input-group">
-                                <select class="form-control col-md-3" v-model="criterioA">
-                                    <option value="sku">Código de material</option>
-                                    <option value="codigo">No° de placa</option>
-                                    <option value="descripcion">Descripción</option>
-                                </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodega)" class="form-control" placeholder="Texto a buscar">
-                                <template v-if="areaUs == 'GDL'">
-                                    <select class="form-control" v-model="bodega">
-                                        <option value="" disabled>Ubicacion</option>
-                                        <option value="">Todas</option>
-                                        <option value="Del Musico">Del Músico</option>
-                                        <option value="Escultores">Escultor</option>
-                                        <option value="Sastres">Sastre</option>
-                                        <option value="Mecanicos">Mecánicos</option>
-                                        <option value="Tractorista">Tractorista</option>
-                                        <option value="San Luis">San Luis</option>
+                        <div class="col-md-5 text-center">
+                            <div class="form-group" v-if="isEdition == false">
+                                <label for=""><strong>Cliente (*)</strong></label>
+                                    <v-select :on-search="selectCliente" label="nombre" :options="arrayCliente" placeholder="Buscar clientes..." :onChange="getDatosCliente">
+                                    </v-select>
+                            </div>
+                            <div class="form-group"  v-else>
+                                <label for=""><strong>Cliente</strong></label>
+                                <h4 for=""><strong v-text="cliente"></strong></h4>
+                            </div>
+                        </div>&nbsp;
+                        <template v-if="idcliente">
+                            <div class="col-md-3 text-center">
+                                <div class="form-group">
+                                    <label for=""><strong>Tipo de cliente</strong></label>
+                                    <h6 for=""><strong v-text="tipo_cliente"></strong></h6>
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <div class="form-group">
+                                    <label for=""><strong>RFC</strong></label>
+                                    <h6 for=""><strong v-text="rfc_cliente"></strong></h6>
+                                </div>
+                            </div>
+                        </template>
+                        <input type="number" hidden :value="getFechaCode" class="form-control col-md"/>
+                    </div>
+                    <div class="form-group row">
+                        <template v-if="tipo == 'Llamada'">
+                            <div class="col-md-3 text-center">
+                                <div class="form-group">
+                                    <label for=""><strong>Teléfono</strong></label>
+                                    <h6 for=""><strong v-text="telefono_cliente"></strong></h6>
+                                </div>
+                            </div>
+                            <template v-if="contacto_cliente">
+                                <div class="col-md-3 text-center">
+                                    <div class="form-group">
+                                        <label for=""><strong>Contacto</strong></label>
+                                        <h6 for=""><strong v-text="contacto_cliente"></strong></h6>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="form-group">
+                                        <label for=""><strong>Teléfono de Contacto</strong></label>
+                                        <h6 for=""><strong v-text="telcontacto_cliente"></strong></h6>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else>
+                            </template>
+                        </template>
+                        <div class="col-md-3 text-center">
+                            <div class="form-group">
+                                <label class="form-control-label" for="text-input"><strong>Fecha</strong></label>
+                                <input type="date" v-model="fecha" class="form-control col-md" placeholder="Fecha para realizar"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <template v-if="isComment">
+
+                        </template>
+                        <template v-else>
+                            <div class="col-md-2 text-center">
+                                <div class="form-group">
+                                    <label for=""><strong>Tipo</strong></label>
+                                    <select class="form-control col-md" v-model="tipo">
+                                        <option value='' disabled>Seleccione(*)</option>
+                                        <option value="Nota">Nota</option>
+                                        <option value="Llamada">Llamada</option>
                                     </select>
+                                </div>
+                            </div>
+                        </template>
+
+                        <div class="col-md-8 text-center">
+                            <label for=""><strong>Notas:</strong></label>
+                            <textarea class="form-control rounded-0" rows="3" maxlength="254" v-model="descripcion"></textarea>
+                        </div>
+                        <template v-if="isEdition && isComment==0">
+                            <div class="col-md-2 text-center">
+                                <label for=""><strong>Tarea Completada:</strong></label>&nbsp;
+                                <template v-if="tipoAccion == 2">
+                                    <toggle-button @change="cambiarEstadoTarea(id)" v-model="btnComp" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                                 </template>
-                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                                <template v-else>
+                                    <toggle-button @change="cambiarEstadoTareaDet(id)" v-model="btnComp" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                </template>
                             </div>
-                        </div>
+                        </template>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm text-center table-hover">
-                            <thead>
-                            <tr class="text-center">
-                                <th>Opciones</th>
-                                <th>No° Placa</th>
-                                <th>Código de material</th>
-                                <th>Material</th>
-                                <th>Largo</th>
-                                <th>Alto</th>
-                                <th>Metros<sup>2</sup></th>
-                                <th>Stock</th>
-                                <th>Ubicacion</th>
-                                <th>Comprometido</th>
-                            </tr>
-                            </thead>
-                            <tbody v-if="arrayArticulo.length">
-                            <tr v-for="articulo in arrayArticulo" :key="articulo.id">
-                                <td>
-                                    <button type="button" @click="agregarDetalleModal(articulo)" class="btn btn-success btn-sm">
-                                    <i class="icon-check"></i>
-                                    </button>
-                                </td>
-                                <td v-text="articulo.codigo"></td>
-                                <td v-text="articulo.sku"></td>
-                                <td v-text="articulo.nombre_categoria"></td>
-                                <td v-text="articulo.largo"></td>
-                                <td v-text="articulo.alto"></td>
-                                <td v-text="articulo.metros_cuadrados"></td>
-                                <td v-text="articulo.stock"></td>
-                                <td v-text="articulo.ubicacion"></td>
-                                <td>
-                                <div v-if="articulo.comprometido">
-                                    <span class="badge badge-success">SI</span>
-                                </div>
-                                <div v-else>
-                                    <span class="badge badge-danger">NO</span>
-                                </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                            <tbody v-else>
-                                <tr>
-                                    <td colspan="10" class="text-center">
-                                        <strong>NO hay artículos con ese criterio...</strong>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Paginacion MODAL -->
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item" v-if="paginationart.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA,bodega)">Ant</a>
-                            </li>
-                            <li class="page-item" v-for="page in pagesNumberArt" :key="page" :class="[page == isActivedArt ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA,bodega)" v-text="page"></a>
-                            </li>
-                            <li class="page-item" v-if="paginationart.current_page < paginationart.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA,bodega)">Sig</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                    <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
-                <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
-                </div>
-            </div>
-        <!-- /.modal-content -->
-        </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!--Fin del modal-->
-
-    <!--Inicio del modal Visualizar articulo Insertado-->
-    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal2}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-info modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal + sku"></h4>
-            <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-              <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                </lightbox>&nbsp;
-                <table class="table table-bordered table-striped table-sm text-center table-hover">
-                    <thead>
-                        <tr class="text-center">
-                            <th class="text-center" colspan="2">Detalle del artículo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>NO° DE PLACA</strong></td>
-                            <td v-text="codigo"></td>
-                        </tr>
-                        <tr>
-                            <td><strong>MATERIAL</strong></td>
-                            <td v-text="categoria"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>CODIGO DE MATERIAL</strong></td>
-                            <td v-text="sku"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>TERMINADO</strong></td>
-                            <td v-text="terminado"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>LARGO</strong></td>
-                            <td v-text="largo"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>ALTO</strong></td>
-                            <td v-text="alto"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>METROS<sup>2</sup> </strong></td>
-                            <td v-text="calcularMts"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>ESPESOR</strong></td>
-                            <td v-text="espesor"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>PRECIO</strong></td>
-                            <td v-text="precio"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>BODEGA DE DESCARGA</strong></td>
-                            <td v-text="ubicacion"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>Stock</strong></td>
-                            <td v-text="stock"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>DESCRIPCION</strong></td>
-                            <td v-text="descripcion"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>OBSERVACIONES</strong></td>
-                            <td v-text="observacion"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>ORIGEN</strong></td>
-                            <td v-text="origen"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>CONTENEDOR</strong></td>
-                            <td v-text="contenedor"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>ESPESOR</strong></td>
-                            <td v-text="espesor"></td>
-                        </tr>
-                        <tr >
-                            <td><strong>FECHA DE LLEGADA</strong></td>
-                            <td v-text="fecha_llegada"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                            Sin código de barras.
-                    </barcode>
-                </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
-          </div>
-        </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!--Fin del modal-->
-
-    <!--Inicio del modal Visualizar articulo detalle listado==2-->
-    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal3}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-info modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal + sku"></h4>
-            <button type="button" class="close" @click="cerrarModal3()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-              <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                </lightbox>&nbsp;
-                <div v-if="condicion == 1" class="text-center">
-                    <span class="badge badge-success">Activo</span>
-                </div>
-                <div v-else-if="condicion == 3" class="text-center">
-                    <span class="badge badge-warning">Cortado</span>
-                </div>
-                <div v-else class="text-center">
-                    <span class="badge badge-danger">Desactivado</span>
-                </div>&nbsp;
-                <table class="table table-bordered table-striped table-sm text-center table-hover">
-                    <thead>
-                        <tr class="text-center">
-                            <th class="text-center" colspan="2">Detalle del artículo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><strong>NO° DE PLACA</strong></td>
-                        <td v-text="codigo"></td>
-                    </tr>
-                    <tr>
-                        <td><strong>MATERIAL</strong></td>
-                        <td v-text="categoria"></td>
-                        <!-- <select disabled class="form-control selectDetalle" v-model="idcategoria">
-                            <option value="0" disabled>Seleccione un material</option>
-                            <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                        </select> -->
-
-                    </tr>
-                    <tr >
-                        <td><strong>CODIGO DE MATERIAL</strong></td>
-                        <td v-text="sku"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>TERMINADO</strong></td>
-                        <td v-text="terminado"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>LARGO</strong></td>
-                        <td v-text="largo"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ALTO</strong></td>
-                        <td v-text="alto"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>METROS<sup>2</sup> </strong></td>
-                        <td v-text="metros_cuadrados"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td v-text="espesor"> </td>
-                    </tr>
-                    <tr >
-                        <td><strong>PRECIO</strong></td>
-                        <td v-text="precio"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>BODEGA DE DESCARGA</strong></td>
-                        <td v-text="ubicacion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>Cantidad</strong></td>
-                        <td v-text="cantidad"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>DESCRIPCION</strong></td>
-                        <td v-text="descripcion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>OBSERVACIONES</strong></td>
-                        <td v-text="observacion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ORIGEN</strong></td>
-                        <td v-text="origen"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>CONTENEDOR</strong></td>
-                        <td v-text="contenedor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td v-text="espesor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>FECHA DE LLEGADA</strong></td>
-                        <td v-text="fecha_llegada"></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                            Sin código de barras.
-                    </barcode>
-                </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
-          </div>
-        </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!--Fin del modal-->
-
-        <!--Inicio del modal-cortar placa articulos-->
-    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal4}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-warning modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" v-text="tituloModal + sku"></h4>
-                    <button type="button" v-if="validatedA==0 && validatedB==0" class="close" @click="cerrarModal4()" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-                </div>
-                <div class="modal-body">
                     <div class="form-group row">
-                        <div class="col-md">
-                            <h1 class="text-center" v-text="sku"></h1>
-                            <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                                <img class="img-responsive imgcenter" width="250px" :src="'http://inventariostroystone.com/images/'+file">
-                            </lightbox>&nbsp;
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm text-center table-hover">
-                            <thead>
-                            <tr class="text-center">
-                                <th>No° Placa</th>
-                                <th>Código de material</th>
-                                <th>Material</th>
-                                <th>Largo</th>
-                                <th>Alto</th>
-                                <th>Metros<sup>2</sup></th>
-                                <th>Espesor</th>
-                                <th>Terminado</th>
-                                <th>Stock</th>
-                                <th>Precio m<sup>2</sup></th>
-                                <th>Ubicacion</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td v-text="codigo"></td>
-                                <td v-text="sku"></td>
-                                <td v-text="categoria"></td>
-                                <td v-text="largo"></td>
-                                <td v-text="alto"></td>
-                                <td v-text="metros_cuadrados"></td>
-                                <td v-text="espesor"></td>
-                                <td v-text="terminado"></td>
-                                <td v-text="stock"></td>
-                                <td v-text="precio"></td>
-                                <td v-text="ubicacion"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="container">
-                        <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-                            <div class="form-group row">
-
-                                <label class="col-md-4 form-control-label" for="text-input">Metros <sup> 2</sup> Restantes</label>
-                                <div class="col-md-4">
-                                    <input type="number" readonly :value="calcularMtsRestantes" class="form-control"/>
-                                </div>&nbsp;
-
-                                <span class="col-md-12 text-center" style="color:red;" v-show="metros_cuadradosA+metros_cuadradosB<metros_cuadrados">
-                                    <strong>(*La distrubucion de medidas no completa el tamaño original de la placa)</strong>
-                                </span>
-                                <span class="col-md-12 text-center" style="color:red;" v-show="metros_cuadradosA+metros_cuadradosB>metros_cuadrados">
-                                    <strong>(*La distrubucion de medidas supera el tamaño original de la placa)</strong>
-                                </span>
-                            <!-- ArticuloA -->
-                                <div class="col-md-6 border">
-                                    <h3 class="text-center" v-text="sku + ' A'"></h3>
-                                    <div class="form-group row">
-                                        <span class="col-md-12" style="color:red;" v-show="codigoA==''">(*Ingrese el código, recuerde debe ser único)</span>
-
-                                        <label class="col-md-4 form-control-label" for="text-input">No° de placa</label>
-                                        <div class="col-md-8">
-                                            <input type="text" v-model="codigoA" :disabled="validatedA == 1" class="form-control" placeholder="Código de barras"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <span class="col-md-12" style="color:red;" v-show="largoA==0">(*Ingrese el largo de la mitad A)</span>
-                                        <label class="col-md-4 form-control-label" for="text-input">Largo</label>
-                                        <div class="col-md-8">
-                                            <input type="number" v-model="largoA" :disabled="validatedA == 1" min="1" class="form-control" placeholder=""/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <span class="col-md-12" style="color:red;" v-show="altoA==0">(*Ingrese el alto de la mitad A)</span>
-                                        <label class="col-md-4 form-control-label" for="text-input">Alto</label>
-                                        <div class="col-md-8">
-                                            <input type="number" v-model="altoA" :disabled="validatedA == 1" min="1" class="form-control" placeholder=""/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-md-4 form-control-label" for="text-input">Metros<sup>2</sup></label>
-                                        <div class="col-md-8">
-                                            <input type="number" readonly :value="calcularMtsA" class="form-control"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <span class="col-md-12" style="color:red;" v-show="precioA==0">(*Ingrese el precio de la mitad A)</span>
-                                        <label class="col-md-4 form-control-label" for="text-input">Precio m<sup>2</sup></label>
-                                        <div class="col-md-8">
-                                            <input type="number" v-model="precioA" :disabled="validatedA == 1"  min="1" class="form-control" placeholder=""/>
-                                        </div>
-                                    </div>
-                                    <button type="button" v-if="validatedA==0" class="btn btn-primary float-right" @click="registrarArticuloA()">Guardar</button>&nbsp;
+                        <div class="col-md-12 text-center">
+                            <div v-show="errorTarea" class="form-group row div-error">
+                                <div class="text-center text-error">
+                                    <div v-for="error in errorMostrarMsjTarea" :key="error" v-text="error"></div>
                                 </div>
-                            <!-- ArticuloB -->
-                                <div class="col-md-6 border">
-                                    <h3 class="text-center" v-text="sku + ' B'"></h3>
-                                    <div class="form-group row">
-                                        <span class="col-md-12" style="color:red;" v-show="codigoB==''">(*Ingrese el código, recuerde debe ser único)</span>
-                                        <label class="col-md-4 form-control-label"  for="text-input">No° de placa</label>
-                                        <div class="col-md-8">
-                                            <input type="text" v-model="codigoB" :disabled="validatedB == 1" class="form-control" placeholder="Código de barras"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <span class="col-md-12" style="color:red;" v-show="largoB==0">(*Ingrese el largo de la mitad B)</span>
-                                        <label class="col-md-4 form-control-label" for="text-input">Largo</label>
-                                        <div class="col-md-8">
-                                            <input type="number" v-model="largoB" :disabled="validatedB == 1" min="1" class="form-control" placeholder=""/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <span class="col-md-12" style="color:red;" v-show="altoB==0">(*Ingrese el alto de la mitad B)</span>
-                                        <label class="col-md-4 form-control-label" for="text-input">Alto</label>
-                                        <div class="col-md-8">
-                                            <input type="number" v-model="altoB" :disabled="validatedB == 1" min="1" class="form-control" placeholder=""/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-md-4 form-control-label" for="text-input">Metros<sup>2</sup></label>
-                                        <div class="col-md-8">
-                                            <input type="number" readonly :value="calcularMtsB" class="form-control"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <span class="col-md-12" style="color:red;" v-show="precioB==0">(*Ingrese el precio de la mitad B)</span>
-                                        <label class="col-md-4 form-control-label" for="text-input">Precio m <sup>2</sup></label>
-                                        <div class="col-md-8">
-                                            <input type="number" v-model="precioB" :disabled="validatedB == 1" min="1" class="form-control" placeholder=""/>
-                                        </div>
-                                    </div>
-                                    <button type="button" v-if="validatedB==0" class="btn btn-primary float-right" @click="registrarArticuloB()">Guardar</button>&nbsp;&nbsp;
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" v-if="validatedA==0 && validatedB==0" class="btn btn-secondary" @click="cerrarModal4()">Cerrar</button>
-                <button type="button" v-if="validatedA==1 || validatedB==1" class="btn btn-primary" @click="actualizarArticulo(),eliminarDetalle(ind)">Actualizar</button>
-                </div>
-            </div>
-        <!-- /.modal-content -->
-        </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!--Fin del modal-->
-
-    <!--Inicio del modal listar articulos-cotizados-->
-    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal5}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-primary modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" v-text="tituloModal"></h4>
-                    <button type="button" class="close" @click="cerrarModal5()" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group row">
-                        <div class="col-md">
-                            <div class="input-group">
-                                <select class="form-control col-md-3" v-model="criterioA">
-                                    <option value="sku">Código de material</option>
-                                    <option value="codigo">No° de placa</option>
-                                    <option value="descripcion">Descripción</option>
-                                </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticuloCotizado(1,buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
-                                <button type="submit" @click="listarArticuloCotizado(1,buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm text-center table-hover">
-                            <thead>
-                            <tr class="text-center">
-                                <th>No° Placa</th>
-                                <th>Código de material</th>
-                                <th>Material</th>
-                                <th>Metros<sup>2</sup></th>
-                                <th>Stock</th>
-                                <th>Ubicacion</th>
-                                <th>No° Cotización</th>
-                                <th>Cliente</th>
-                                <th>Comprometido</th>
-                            </tr>
-                            </thead>
-                            <tbody v-if="arrayArticulo.length">
-                                <tr v-for="articulo in arrayArticulo" :key="articulo.id">
-                                    <td v-text="articulo.codigo"></td>
-                                    <td v-text="articulo.sku"></td>
-                                    <td v-text="articulo.nombre_categoria"></td>
-                                    <td v-text="articulo.metros_cuadrados"></td>
-                                    <td v-text="articulo.stock"></td>
-                                    <td v-text="articulo.ubicacion"></td>
-                                    <td v-text="articulo.cotizacion"></td>
-                                    <td v-text="articulo.cliente"></td>
-                                    <td>
-                                    <div v-if="articulo.comprometido">
-                                        <span class="badge badge-success">SI</span>
-                                    </div>
-                                    <div v-else>
-                                        <span class="badge badge-danger">NO</span>
-                                    </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tbody v-else>
-                                <tr>
-                                    <td colspan="9" class="text-center">
-                                        <strong>NO hay artículos cotizados o con ese criterio...</strong>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <hr>
+                    <div class="float-right">
+                        <button type="button" v-if="cerrarDet!=1" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                        <button type="button" v-if="cerrarDet==1" class="btn btn-secondary" @click="cerrarModalDet()">Cerrar</button>
+                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarTarea()">Guardar</button>
+                        <button type="button" v-if="tipoAccion==4" class="btn btn-primary" @click="registrarTareaDet()">Guardar</button>
+                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarTarea()">Actualizar</button>
+                        <button type="button" v-if="tipoAccion==3" class="btn btn-primary" @click="actualizarTareaDet()">Actualizar</button>
                     </div>
-                    <!-- Paginacion MODAL Cotizados -->
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item" v-if="paginationartcot.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArtCot(paginationartcot.current_page - 1,buscarA,criterioA)">Ant</a>
-                            </li>
-                            <li class="page-item" v-for="page in pagesNumberArtCot" :key="page" :class="[page == isActivedArtCot ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArtCot(page,buscarA,criterioA)" v-text="page"></a>
-                            </li>
-                            <li class="page-item" v-if="paginationartcot.current_page < paginationartcot.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArtCot(paginationartcot.current_page + 1,buscarA,criterioA)">Sig</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="cerrarModal5()">Cerrar</button>
                 </div>
             </div>
         <!-- /.modal-content -->
@@ -1143,70 +605,31 @@ Vue.use(ToggleButton);
 export default {
     data() {
         return {
-            cotizacion_id: 0,
+            tarea_id: 0,
+            nombre : "",
+            descripcion : "",
+            tipo : "",
+            fecha : "",
+            estado : 0,
+            user: '',
             idcliente: 0,
+            cliente: '',
             rfc_cliente : "",
             tipo_cliente : "",
-            cliente: '',
-            user: '',
-            tipo_comprobante: "COTIZACION",
-            num_comprobante: "",
-            impuesto: 0.16,
-            totalImpuesto : 0,
-            totalParcial : 0,
-            descuento : 0,
-            moneda : 'Peso Mexicano',
-            tipo_cambio : 0,
-            observacion : '',
-            categoria : '',
-            idarticulo : 0,
-            articulo : "",
-            codigo: "",
-            idcategoria :0,
-            sku : '',
-            terminado : '',
-            largo : 0,
-            alto : 0,
-            metros_cuadrados : 0,
-            espesor : 0,
-            ubicacion : '',
-            origen : '',
-            contenedor : '',
-            fecha_llegada : '',
-            vigencia : '',
-            file : '',
-            imagenMinatura : '',
-            arrayCategoria : [],
-            condicion : 0,
-            precio_venta : 0,
-            cantidad : 0,
-            total_impuesto : 0.0,
-            total_parcial : 0.0,
-            divImp: 0.0,
-            total: 0.0,
-            forma_pago : "De contado",
-            tiempo_entrega : "",
-            lugar_entrega : "",
-            precio: 0.0,
-            aceptado : 0,
-            stock : 0,
-            comprometido : 0,
-            descripcion : "",
-            arrayArticulo : [],
-            arrayCotizacion : [],
-            arrayDetalle : [],
+            telefono_cliente : "",
+            contacto_cliente : "",
+            telcontacto_cliente : "",
+            obs_cliente: "",
+            arrayTarea : [],
             arrayCliente : [],
             listado : 1,
             modal: 0,
             modal2: 0,
-            modal3: 0,
-            modal4: 0,
-            modal5: 0,
             ind : '',
             tituloModal: "",
             tipoAccion: 0,
-            errorCotizacion: 0,
-            errorMostrarMsjCotizacion: [],
+            errorTarea: 0,
+            errorMostrarMsjTarea: [],
             pagination : {
                 'total'        : 0,
                 'current_page' : 0,
@@ -1215,50 +638,25 @@ export default {
                 'from'         : 0,
                 'to'           : 0,
             },
-            paginationart : {
-                'total'        : 0,
-                'current_page' : 0,
-                'per_page'     : 0,
-                'last_page'    : 0,
-                'from'         : 0,
-                'to'           : 0,
-            },
-            paginationartcot : {
-                'total'        : 0,
-                'current_page' : 0,
-                'per_page'     : 0,
-                'last_page'    : 0,
-                'from'         : 0,
-                'to'           : 0,
-            },
             offset : 3,
-            criterio : 'num_comprobante',
+            criterio : 'fecha',
             buscar : '',
-            buscarA : '',
-            criterioA : 'sku',
-            bodega : '',
             areaUs : "",
-            areaUsC : "",
-            codigoA : "",
-            codigoB : "",
-            largoA : 0,
-            largoB : 0,
-            altoA : 0,
-            altoB : 0,
-            metros_cuadradosA : 0,
-            metros_cuadradosB : 0,
-            precioA : 0,
-            precioB : 0,
-            ubicacionA : "",
-            ubicacionB : "",
-            validatedB : 0,
-            validatedA : 0,
-            btnEntrega : false,
             estadoVn : "",
             CodeDate : "",
             vig : "",
-            pastDays : 0,
-            obsEditable : 0
+            obsEditable : 0,
+            dateAct : "",
+            btnComp : false,
+            isEdition : false,
+            estadoTask : '',
+            arrayTareaT : [],
+            arrayVentasT : [],
+            btnNewTask : 1,
+            nextTask : [],
+            cerrarDet : 0,
+            isComment : 0,
+            arrayCommentT : []
         };
     },
     components: {
@@ -1269,7 +667,6 @@ export default {
         isActived: function(){
             return this.pagination.current_page;
         },
-        //Calcula los elementos de la paginación
         pagesNumber: function() {
             if(!this.pagination.to) {
                 return [];
@@ -1292,133 +689,43 @@ export default {
             }
             return pagesArray;
         },
-        isActivedArt: function(){
-            return this.paginationart.current_page;
-        },
-        pagesNumberArt: function() {
-            if(!this.paginationart.to) {
-                return [];
-            }
-
-            var from = this.paginationart.current_page - this.offset;
-            if(from < 1) {
-                from = 1;
-            }
-
-            var to = from + (this.offset * 2);
-            if(to >= this.paginationart.last_page){
-                to = this.paginationart.last_page;
-            }
-
-            var pagesArray = [];
-            while(from <= to) {
-                pagesArray.push(from);
-                from++;
-            }
-            return pagesArray;
-        },
-        isActivedArtCot: function(){
-            return this.paginationartcot.current_page;
-        },
-        pagesNumberArtCot: function() {
-            if(!this.paginationartcot.to) {
-                return [];
-            }
-
-            var from = this.paginationartcot.current_page - this.offset;
-            if(from < 1) {
-                from = 1;
-            }
-
-            var to = from + (this.offset * 2);
-            if(to >= this.paginationartcot.last_page){
-                to = this.paginationartcot.last_page;
-            }
-
-            var pagesArray = [];
-            while(from <= to) {
-                pagesArray.push(from);
-                from++;
-            }
-            return pagesArray;
-        },
-        calcularTotal : function(){
-            let me=this;
-            let resultado = 0;
-            for(var i=0;i<me.arrayDetalle.length;i++){
-                resultado = resultado + (
-                    (
-
-                        ((((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)) - me.arrayDetalle[i].descuento) * (me.impuesto + 1))
-
-                    )
-            }
-            return resultado;
-        },
-        imagen(){
-            return this.imagenMinatura;
-        },
-        calcularMts : function(){
-            let me=this;
-            let resultado = 0;
-            resultado = resultado + (me.alto * me.largo);
-            me.metros_cuadrados = resultado;
-            return resultado;
-        },
-        calcularMtsA : function(){
-            let me=this;
-            let resultado = 0;
-            resultado = resultado + (me.altoA * me.largoA);
-            me.metros_cuadradosA = resultado;
-            return resultado;
-        },
-        calcularMtsB : function(){
-            let me=this;
-            let resultado = 0;
-            resultado = resultado + (me.altoB * me.largoB);
-            me.metros_cuadradosB = resultado;
-            return resultado;
-        },
-        cacularPrecioExtranjero : function(){
-            let me=this;
-            let precioExt = 0;
-
-            if(me.moneda != 'Peso Mexicano'){
-                precioExt = (precioExt + (me.precio / me.tipo_cambio));
-                me.precio = Math.ceil(precioExt);
-            }else{
-                precioExt = me.precio;
-            }
-            return Math.ceil(precioExt);
-        },
-        calcularMtsRestantes : function(){
-            let me=this;
-            let resultado = 0;
-            resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
-            return resultado;
-        },
         getFechaCode : function(){
             let me = this;
             let date = "";
             moment.locale('es');
             date = moment().format('YYMMDD');
             me.CodeDate = moment().format('YYMMDD');
-            return date;
-        }
+            me.dateAct = moment().format('YYYY-MM-DD');
 
+            return date;
         },
+    },
     methods: {
-        listarCotizacion (page,buscar,criterio){
+        listarTarea(page,buscar,criterio,estado){
             let me=this;
-            var url= '/cotizacion?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            me.btnNewTask = 1;
+            var url= '/tarea?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estado;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
-                me.arrayCotizacion = respuesta.cotizaciones.data;
+                me.arrayTarea = respuesta.tareas.data;
                 me.pagination= respuesta.pagination;
+                /* console.log(me.arrayTarea); */
             })
             .catch(function (error) {
                 console.log(error);
             });
+        },
+        convertDate(date){
+            let me=this;
+            var datec = moment(date).format('MMM DD YY');
+            /* console.log(datec); */
+            return datec;
+        },
+        convertDateVenta(date){
+            let me=this;
+            var datec = moment(date).format('MMM DD YYYY HH:mm:ss');
+            /* console.log(datec); */
+            return datec;
         },
         selectCliente(search,loading){
             let me=this;
@@ -1437,891 +744,516 @@ export default {
         getDatosCliente(val1){
             let me = this;
             me.loading = true;
-            me.idcliente = val1.id;
+            me.idcliente = val1.id
             me.rfc_cliente =  val1.rfc;
             me.tipo_cliente = val1.tipo;
+            me.telefono_cliente = val1.telefono;
+            me.contacto_cliente = val1.company;
+            me.telcontacto_cliente = val1.tel_company;
+            me.obs_cliente = val1.observacion;
         },
-        buscarArticulo(){
-            let me = this;
-            var url= '/articulo/buscarArticuloVenta?filtro='+ me.codigo;
-
-            axios.get(url).then(function (response) {
-                let respuesta = response.data;
-                me.arrayArticulo=respuesta.articulos;
-
-                if(me.arrayArticulo.length > 0){
-                    me.articulo = me.arrayArticulo[0]['sku'];
-                    me.idarticulo = me.arrayArticulo[0]['id'];
-                    me.precio = me.arrayArticulo[0]['precio_venta'];
-                    me.stock = me.arrayArticulo[0]['stock'];
-                    me.espesor = me.arrayArticulo[0]['espesor'];
-                    me.largo = me.arrayArticulo[0]['largo'];
-                    me.alto = me.arrayArticulo[0]['alto'];
-                    me.metros_cuadrados = me.arrayArticulo[0]['metros_cuadrados'];
-                    me.terminado =  me.arrayArticulo[0]['terminado'];
-                    me.ubicacion =  me.arrayArticulo[0]['ubicacion'];
-                    me.idcategoria = me.arrayArticulo[0]['idcategoria'];
-                    me.categoria = me.arrayArticulo[0]['nombre_categoria'];
-                    me.origen = me.arrayArticulo[0]['origen'];
-                    me.contenedor = me.arrayArticulo[0]['contenedor'];
-                    me.descripcion =  me.arrayArticulo[0]['descripcion'];
-                    me.observacion = me.arrayArticulo[0]['observacion'];
-                    me.file = me.arrayArticulo[0]['file'];
-                    me.fecha_llegada = me.arrayArticulo[0]['fecha_llegada'];
-                    me.comprometido = me.arrayArticulo[0]['comprometido'];
-                }else{
-                    me.articulo = 'No existe este artículo';
-                    me.idarticulo = 0;
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-
-
-        },
-        cambiarPagina(page,buscar,criterio){
-            let me = this;
-                //Actualiza la página actual
-                me.pagination.current_page = page;
-                //Envia la petición para visualizar la data de esa página
-                me.listarCotizacion(page,buscar,criterio);
-        },
-        cambiarPaginaArt(page,buscar,criterio,bodega){
+        cambiarPagina(page,buscar,criterio,estado){
             let me = this;
             //Actualiza la página actual
-            me.paginationart.current_page = page;
+            me.pagination.current_page = page;
             //Envia la petición para visualizar la data de esa página
-            me.listarArticulo(page,buscar,criterio,bodega);
+            me.listarTarea(page,buscar,criterio,estado);
         },
-        cambiarPaginaArtCot(page,buscar,criterio){
-            let me = this;
-            //Actualiza la página actual
-            me.paginationartcot.current_page = page;
-            //Envia la petición para visualizar la data de esa página
-            me.listarArticuloCotizado(page,buscar,criterio);
+        cerrarModal(){
+            this.modal = 0;
+            this.buscar = "";
+            this.idcliente = "";
+            this.cliente = "";
+            this.descripcion = "";
+            this.fecha = "";
+            this.nombre = "";
+            this.tipo_cliente = "";
+            this.rfc_cliente = "";
+            this.telefono_cliente = "";
+            this.contacto_cliente = "";
+            this.telcontacto_cliente = "";
+            this.obs_cliente = "";
+            this.tipo = "";
+            this.estado = 0;
+            this.btnComp = false;
+            this.isEdition = false;
         },
-        encuentra(id){
-            var sw=0;
-            for(var i=0;i<this.arrayDetalle.length;i++){
-                if(this.arrayDetalle[i].idarticulo==id){
-                    sw=true;
+        cerrarModalDet(){
+            this.modal = 0;
+            this.cerrarDet = 0;
+            this.btnComp = false;
+            this.isComment = 0;
+            this.verTarea(this.idcliente);
+        },
+        abrirModal(accion, data = []){
+            this.listado = 1;
+            switch (accion) {
+                case "registrar": {
+                    this.modal = 1;
+                    this.tituloModal = "Tarea Nueva";
+                    this.tipoAccion = 1;
+                    break;
                 }
-            }
-            return sw;
-        },
-        eliminarDetalle(index){
-            let me = this;
-            me.arrayDetalle.splice(index,1);
-        },
-        agregarDetalle(){
-            let me = this;
-            if(me.idarticulo == 0 || me.precio == 0 || me.cantidad == 0){
-            }else{
-                if(me.encuentra(me.idarticulo)){
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Error...',
-                        text: 'Este No° de placa ya esta en el listado!',
-                    })
-                    me.codigo = "";
-                    me.sku = "";
-                    me.idarticulo = "";
-                    me.articulo="";
-                    me.cantidad = 0;
-                    me.precio = 0;
-                    me.descuento = 0;
-                    me.idcategoria = 0;
-                    me.largo = 0;
-                    me.alto = 0;
-                    me.metros_cuadrados = 0;
-                    me.terminado = 0;
-                    me.espesor = 0;
-                    me.stock = 0;
-                    me.ubicacion = "";
-                    me.categoria = "";
-                    me.idcategoria = 0;
-                    me.comprometido = 0;
+                case "actualizar": {
+                    this.modal = 1;
+                    this.id = data['id'];
+                    this.cliente = data['cliente'];
+                    this.tituloModal = "Modificar Tarea Para " + this.cliente;
+                    this.tipoAccion = 2;
+                    this.idcliente = data['idcliente'];
+                    this.rfc_cliente = data['rfc'];
+                    this.tipo_cliente = data['tipo'];
+                    this.contacto_cliente = data['company'];
+                    this.telcontacto_cliente = data['tel_company'];
+                    this.telefono_cliente = data['telefono'];
+                    this.obs_cliente = data['observacion'];
+                    this.nombre = data['nombre'];
+                    this.descripcion = data['descripcion'];
+                    this.tipo = data['clase'];
+                    this.fecha = data['fecha'];
+                    this.estado =data['estado'];
+                    this.isEdition = true;
 
-                }else{
-                    if(me.cantidad > me.stock){
-                        Swal.fire({
-                            type: 'error',
-                            title: 'Error...',
-                            text: 'La cantidad excede las placas disponibles de este material!',
-                        });
-                    }else{
-                        if(me.comprometido == 1){
-                            Swal.fire({
-                                type: 'error',
-                                title: 'Error...',
-                                text: 'Este articulo esta comprometido!',
-                            });
-                        }else{
-                            me.arrayDetalle.push({
-                                idarticulo       : me.idarticulo,
-                                articulo         : me.articulo,
-                                sku              : me.sku,
-                                codigo           : me.codigo,
-                                idcategoria      : me.idcategoria,
-                                largo            : me.largo,
-                                alto             : me.alto,
-                                metros_cuadrados : me.metros_cuadrados,
-                                terminado        : me.terminado,
-                                espesor          : me.espesor,
-                                precio           : me.precio,
-                                cantidad         : me.cantidad,
-                                stock            : me.stock,
-                                ubicacion        : me.ubicacion,
-                                descuento        : me.descuento,
-                                categoria        : me.categoria,
-                                origen           : me.origen,
-                                contenedor       : me.contenedor,
-                                file             : me.file,
-                                descripcion      : me.descripcion,
-                                observacion      : me.observacion,
-                                fecha_llegada    : me.fecha_llegada
-                            });
-                            me.codigo = "";
-                            me.sku = "";
-                            me.idarticulo = "";
-                            me.articulo="";
-                            me.cantidad = 0;
-                            me.precio = 0;
-                            me.descuento = 0;
-                            me.idcategoria = 0;
-                            me.largo = 0;
-                            me.alto = 0;
-                            me.metros_cuadrados = 0;
-                            me.terminado = 0;
-                            me.espesor = 0;
-                            me.stock = 0;
-                            me.ubicacion = "";
-                            me.categoria = "";
-                            me.observacion = "";
-                            me.origen = "";
-                            me.contenedor  = "";
-                            me.file  = "";
-                            me.observaciondescripcion   = "";
-                            me.observacion = "";
-                            me.fecha_llegada = "";
-                            me.comprometido = 0;
-
-                        }
+                    if(this.estado){
+                        this.btnComp = true;
                     }
+
+                    break;
                 }
             }
         },
-        registrarArticulos() {
-            let me = this;
-
-            axios.post("/articulo/registrarDetalle", {
-                'data' : this.arrayDetalle
-            })
-            .then(function(response) {
-                me.registrarIngreso();
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
-        },
-        registrarCotizacion(){
-
-            if (this.validarCotizacion()) {
-                return;
-            }
-            let me = this;
-
-            var numcomp = "C-".concat(me.CodeDate,"-",me.num_comprobante);
-
-            axios.post('/cotizacion/registrar',{
-                'idcliente': this.idcliente,
-                'tipo_comprobante': this.tipo_comprobante,
-                'num_comprobante' : numcomp,
-                'impuesto' : this.impuesto,
-                'total' : this.total,
-                'forma_pago' : this.forma_pago,
-                'vigencia'   : this.vigencia,
-                'tiempo_entrega' : this.tiempo_entrega,
-                'lugar_entrega' : this.lugar_entrega,
-                'moneda' : this.moneda,
-                'tipo_cambio' : this.tipo_cambio,
-                'observacion' : this.observacion,
-                'data': this.arrayDetalle
-            }).then(function(response) {
-                me.ocultarDetalle();
-                me.listarCotizacion(1,'','num_comprobante');
-                me.idcliente = 0;
-                me.tipo_comprobante = "Presupuesto";
-                me.num_comprobante = 0;
-                me.impuesto = 0.16;
-                me.total = 0.0;
-                me.idarticulo = 0;
-                me.articulo = "";
-                me.cantidad = 0;
-                me.vigencia = "";
-                me.precio = 0;
-                me.stock = 0;
-                me.observacion = "";
-                me.descuento = 0;
-                me.vigencia = "";
-                me.forma_pago = "De contado";
-                me.tiempo_entrega = "";
-                me.lugar_entrega = "";
-                me.aceptado = 0;
-                me.moneda = "Peso Mexicano";
-                me.tipo_cambio = "";
-                me.comprometido = 0;
-                me.arrayDetalle = [];
-                me.obsEditable = 0;
-
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
-        },
-        desactivarCotizacion(id) {
-
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-
-            swalWithBootstrapButtons.fire({
-                title: "¿Esta seguro de anular esta cotizacion?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Aceptar!",
-                cancelButtonText: "Cancelar!",
-                reverseButtons: true
-            })
-            .then(result => {
-                if (result.value) {
-                    let me = this;
-                    axios.put('/cotizacion/desactivar',{
-                        'id': id
-                    }).then(function (response) {
-                        me.listarCotizacion(1,'','num_comprobante');
-                        swal.fire(
-                        'Anulado!',
-                        'La cotizacion ha sido anulado con éxito.',
-                        'success'
-                        )
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                }else if (result.dismiss === swal.DismissReason.cancel){
-                }
-            })
-        },
-        desactivarCotizacionAnulada(id) {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-
-            swalWithBootstrapButtons.fire({
-                title: "Esta cotizacion ya se vencio favor de anular",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Aceptar!",
-                cancelButtonText: "Cancelar!",
-                reverseButtons: true
-            })
-            .then(result => {
-                if (result.value) {
-                    let me = this;
-                    axios.put('/cotizacion/desactivar',{
-                        'id': id
-                    }).then(function (response) {
-                        me.listarCotizacion(1,'','num_comprobante');
-                        swal(
-                        'Anulado!',
-                        'La cotizacion ha sido anulado con éxito.',
-                        'success'
-                        )
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                }else if (result.dismiss === swal.DismissReason.cancel){
-                }
-            })
-        },
-        validarCotizacion() {
+        validarTarea() {
             let me = this;
             var art;
 
-            me.errorCotizacion = 0;
-            me.errorMostrarMsjCotizacion = [];
+            me.errorTarea = 0;
+            me.errorMostrarMsjTarea = [];
 
-            me.arrayDetalle.map(function(x){
-                if(x.cantidad > x.stock){
-                    art ="La cantidad del articulo " + x.codigo + " supera las cantidades disponibles.";
-                    me.errorMostrarMsjCotizacion.push(art);
-                }
-            });
 
-            if (me.idcliente==0) me.errorMostrarMsjCotizacion.push("Seleccione un cliente");
-            if (me.tipo_comprobante==0) me.errorMostrarMsjCotizacion.push("Seleccione un tipo de documento.");
-            if (!me.num_comprobante) me.errorMostrarMsjCotizacion.push("Ingrese el numero de cotizacion");
-            if (!me.impuesto) me.errorMostrarMsjCotizacion.push("Ingrese el impuesto de la cotizacion");
-            if (me.arrayDetalle.length<=0) me.errorMostrarMsjCotizacion.push("Introdusca articulos para la cotizacion");
-            if (me.vigencia == '') me.errorMostrarMsjCotizacion.push("Seleccione la vigencia de la cotizacion");
+            if (me.idcliente==0) me.errorMostrarMsjTarea.push("Seleccione un cliente");
+            if (me.fecha == '') me.errorMostrarMsjTarea.push("Seleccione la fecha para la tarea");
+            if(me.fecha < me.dateAct) me.errorMostrarMsjTarea.push("La fecha de la tarea no puede ser menos a la fecha actual");
+            if (me.errorMostrarMsjTarea.length) me.errorTarea = 1;
 
-            if (me.errorMostrarMsjCotizacion.length) me.errorCotizacion = 1;
-
-            return me.errorCotizacion;
+            return me.errorTarea;
         },
-        mostrarDetalle(){
-            this.getLastNum();
-            this.listado = 0;
-            this.codigo = "";
-            this.idarticulo = 0;
-            this.articulo = "";
-            this.sku = "";
-            this.idcategoria = 0;
-            this.largo = 0;
-            this.alto = 0;
-            this.metros_cuadrados = 0;
-            this.terminado = '';
-            this.espesor = 0;
-            this.precio_venta = 0;
-            this.cantidad = 0;
-            this.file = '';
-            this.origen = '';
-            this.contenedor = '';
-            this.fecha_llegada = '';
-            this.ubicacion = '';
-            this.arrayDetalle = [];
-            this.idproveedor = 0;
-            this.num_comprobante = (parseInt(this.sigNum)+1);
-            this.comprometido = 0;
-            this.selectCategoria();
-        },
-        ocultarDetalle(){
-            this.listado = 1;
-            this.codigo = "";
-            this.idarticulo = 0;
-            this.articulo = "";
-            this.sku = "";
-            this.idcategoria = 0;
-            this.largo = 0;
-            this.alto = 0;
-            this.metros_cuadrados = 0;
-            this.terminado = '';
-            this.espesor = 0;
-            this.precio_venta = 0;
-            this.precio = 0;
-            this.vigencia = "";
-            this.cantidad = 0;
-            this.file = '';
-            this.origen = '';
-            this.contenedor = '';
-            this.fecha_llegada = '';
-            this.vigencia = '';
-            this.ubicacion = '';
-            this.moneda = 'Peso Mexicano';
-            this.tipo_cambio = '0';
-            this.stock = 0;
-            this.cliente = 0;
-            this.categoria = 0;
-            this.observacion = "";
-            this.arrayDetalle = [];
-            this.errorCotizacion =0;
-            this.errorMostrarMsjCotizacion = [];
-            this.num_comprobante = 0;
-            this.aceptado = 0;
-            this.comprometido = 0;
-            this.btnEntrega =  false;
-            this.getLastNum();
-        },
-        verCotizacion(id){
-
-            let me = this;
-            me.listado = 2;
-
-            //Obtener los datos del ingreso
-            var arrayCotizacionT=[];
-            var url= '/cotizacion/obtenerCabecera?id=' + id;
-
-            axios.get(url).then(function (response) {
-                var respuesta= response.data;
-                arrayCotizacionT = respuesta.cotizacion;
-
-                var fechaform  = arrayCotizacionT[0]['fecha_hora'];
-                var vigeformt  = arrayCotizacionT[0]['vigencia'];
-                var total_parcial = 0;
-
-                me.cotizacion_id = arrayCotizacionT[0]['id'];
-                me.cliente = arrayCotizacionT[0]['nombre'];
-                me.tipo_comprobante=arrayCotizacionT[0]['tipo_comprobante'];
-                me.num_comprobante=arrayCotizacionT[0]['num_comprobante'];
-                me.user=arrayCotizacionT[0]['usuario'];
-                me.impuesto = arrayCotizacionT[0]['impuesto'];
-                me.total = arrayCotizacionT[0]['total'];
-                me.forma_pago = arrayCotizacionT[0]['forma_pago'];
-                me.lugar_entrega = arrayCotizacionT[0]['lugar_entrega'];
-                me.tiempo_entrega = arrayCotizacionT[0]['tiempo_entrega'];
-                me.aceptado = arrayCotizacionT[0]['aceptado'];
-                me.moneda = arrayCotizacionT[0]['moneda'];
-                me.tipo_cambio = arrayCotizacionT[0]['tipo_cambio'];
-                me.observacion = arrayCotizacionT[0]['observacion'];
-                me.estadoVn = arrayCotizacionT[0]['estado'];
-
-                moment.locale('es');
-                me.fecha_llegada=moment(fechaform).format('llll');
-                me.vigencia=moment(vigeformt).format('llll');
-                me.vig = moment(vigeformt).format('YY-MM-DD');
-
-                me.getPastDays(me.vig,me.cotizacion_id,me.estadoVn);
-
-                var imp =   parseFloat(me.impuesto = arrayCotizacionT[0]['impuesto']);
-
-                me.divImp = imp + 1;
-
-                if(me.aceptado ==1){
-                    me.btnEntrega = true;
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-
-            //Obtener los detalles del ingreso
-            var url= '/cotizacion/obtenerDetalles?id=' + id;
-            axios.get(url).then(function (response) {
-                var respuesta= response.data;
-                me.arrayDetalle = respuesta.detalles;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-        },
-        getPastDays(dateVig,id,estado){
-            let me = this;
-            let vdate = dateVig;
-            let date = "";
-            moment.locale('es');
-            date = moment().format('YY-MM-DD');
-
-            if(date > vdate){
-                console.log("Cotizacion vencida");
-                if(estado == 'Registrado'){
-                    me.desactivarCotizacionAnulada(id);
-                }else{
-                    Swal.fire({
-                    type: 'error',
-                    title: 'Atención!...',
-                    text: 'Esta cotizacion esta vencida!!',
-                })
-                }
-
-            }else if(date == vdate){
-                console.log("La cotizacion vence hoy!");
-            }else{
-                console.log("Disponible");
-            }
-
-        },
-        cerrarModal() {
-            this.modal = 0;
-            this.buscarA = "";
-        },
-        abrirModal() {
-            this.arrayArticulo=[];
-            this.modal = 1;
-            this.tituloModal = "Seleccionar Artículos";
-            this.listarArticulo(1,'','sku','');
-        },
-        listarArticulo (page,buscar,criterio,bodega){
-            let me=this;
-            var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega;
-            axios.get(url).then(function (response) {
-                var respuesta= response.data;
-                me.arrayArticulo = respuesta.articulos.data;
-                me.paginationart= respuesta.pagination;
-                me.areaUs = respuesta.userarea;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-        },
-        agregarDetalleModal(data =[]){
-            let me=this;
-            if(me.encuentra(data['id'])){
-                Swal.fire({
-                    type: 'error',
-                    title: 'Lo siento...',
-                    text: 'Este No° de placa ya esta en el listado!!',
-                })
-            }
-            else{
-                if(data['comprometido'] ==1){
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Lo siento...',
-                        text: 'Esta placa esta comprometida!',
-                    })
-                }else{
-                    me.arrayDetalle.push({
-                        idarticulo       : data['id'],
-                        articulo         : data['sku'],
-                        codigo           : data['codigo'],
-                        idcategoria      : data['idcategoria'],
-                        categoria        : data['nombre_categoria'],
-                        largo            : data['largo'],
-                        alto             : data['alto'],
-                        metros_cuadrados : data['metros_cuadrados'],
-                        terminado        : data['terminado'],
-                        espesor          : data['espesor'],
-                        precio           : data['precio_venta'],
-                        stock            : data['stock'],
-                        ubicacion        : data['ubicacion'],
-                        categoria        : data['nombre_categoria'],
-                        origen           : data['origen'],
-                        contenedor       : data['contenedor'],
-                        file             : data['file'],
-                        descripcion      : data['descripcion'],
-                        observacion      : data['observacion'],
-                        fecha_llegada    : data['fecha_llegada'],
-                        cantidad: 1,
-                        descuento : 0
-                    });
-                }
-            }
-        },
-        abrirModal2(index){
-            let me = this;
-            me.ind = index;
-            me.modal2 = 1;
-            me.tituloModal      = "Detalles Artículo ";
-            me.sku              = me.arrayDetalle[index]['articulo'];
-            me.codigo           = me.arrayDetalle[index]['codigo'];
-            me.categoria        = me.arrayDetalle[index]['categoria'];
-            me.largo            = me.arrayDetalle[index]['largo'];
-            me.alto             = me.arrayDetalle[index]['alto'];
-            me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
-            me.terminado        = me.arrayDetalle[index]['terminado'];
-            me.espesor          = me.arrayDetalle[index]['espesor'];
-            me.precio_venta     = me.arrayDetalle[index]['precio_venta'];
-            me.metros_cuadrados = me.arrayDetalle[index]['metros_cuadrados'];
-            me.contenedor       = me.arrayDetalle[index]['contenedor'];
-            me.fecha_llegada    = me.arrayDetalle[index]['fecha_llegada'];
-            me.origen           = me.arrayDetalle[index]['origen'];
-            me.stock            = me.arrayDetalle[index]['stock'];
-            me.file             = me.arrayDetalle[index]['file'];
-            me.origen           = me.arrayDetalle[index]['origen'];
-            me.contenedor       = me.arrayDetalle[index]['contenedor'];
-            me.descripcion      = me.arrayDetalle[index]['descripcion'];
-            me.observacion      = me.arrayDetalle[index]['observacion'];
-            me.selectCategoria();
-        },
-        cerrarModal2() {
-            this.modal2 = 0;
-            this.sku = '';
-            this.codigo = '';
-            this.categoria = 0;
-            this.largo = 0;
-            this.alto = 0;
-            this.terminado = '';
-            this.espesor = 0;
-            this.ubicacion = '';
-            this.precio_venta = 0;
-            this.metros_cuadrados = 0;
-            this.stock = 0;
-            this.file = '';
-            this.origen = '';
-            this.observacion = '';
-            this.contenedor = '';
-            this.descripcion = '';
-            this.ind = '';
-            this.fecha_llegada = '';
-        },
-        selectCategoria(){
-            let me=this;
-            var url= '/categoria/selectCategoria';
-            axios.get(url).then(function (response) {
-                var respuesta= response.data;
-                me.arrayCategoria = respuesta.categorias;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-        },
-        obtenerImagen(e){
-            let img = e.target.files[0];
-            this.file = img;
-            this.cargarImagen(img);
-        },
-        cargarImagen(img){
-            let reader = new FileReader();
-            reader.onload = (e) => {
-                this.imagenMinatura = e.target.result;
-                this.file =  e.target.result;
-            }
-            reader.readAsDataURL(img);
-        },
-        abrirModal3(index){
-            let me = this;
-            me.ind = index;
-            me.modal3 = 1;
-            me.tituloModal      = "Artículo ";
-            me.sku              = me.arrayDetalle[index]['sku'];
-            me.codigo           = me.arrayDetalle[index]['codigo'];
-            me.idcategoria      = me.arrayDetalle[index]['idcategoria'];
-            me.categoria        = me.arrayDetalle[index]['categoria'];
-            me.largo            = me.arrayDetalle[index]['largo'];
-            me.alto             = me.arrayDetalle[index]['alto'];
-            me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
-            me.terminado        = me.arrayDetalle[index]['terminado'];
-            me.espesor          = me.arrayDetalle[index]['espesor'];
-            me.precio           = me.arrayDetalle[index]['precio'];
-            me.metros_cuadrados = me.arrayDetalle[index]['metros_cuadrados'];
-            me.contenedor       = me.arrayDetalle[index]['contenedor'];
-            me.fecha_llegada    = me.arrayDetalle[index]['fecha_llegada'];
-            me.origen           = me.arrayDetalle[index]['origen'];
-            me.cantidad         = me.arrayDetalle[index]['cantidad'];
-            me.file             = me.arrayDetalle[index]['file'];
-            me.descripcion      = me.arrayDetalle[index]['descripcion'];
-            me.observacion      = me.arrayDetalle[index]['observacion'];
-            me.condicion        = me.arrayDetalle[index]['condicion'];
-            me.selectCategoria();
-        },
-        cerrarModal3() {
-            this.modal3 = 0;
-            this.sku = '';
-            this.codigo = '';
-            this.idcategoria = 0;
-            this.largo = 0;
-            this.alto = 0;
-            this.terminado = '';
-            this.espesor = 0;
-            this.precio_venta = 0;
-            this.metros_cuadrados = 0;
-            this.stock = 0;
-            this.file = '';
-            this.descripcion = '';
-            this.ind = '';
-            this.categoria = '';
-        },
-        cerrarModal4() {
-            this.modal4 = 0;
-            this.idarticulo = 0;
-            this.sku = '';
-            this.codigo = '';
-            this.categoria = 0;
-            this.largo = 0;
-            this.alto = 0;
-            this.terminado = '';
-            this.espesor = 0;
-            this.ubicacion = '';
-            this.precio_venta = 0;
-            this.metros_cuadrados = 0;
-            this.stock = 0;
-            this.file = '';
-            this.origen = '';
-            this.observacion = '';
-            this.contenedor = '';
-            this.descripcion = '';
-            this.ind = '';
-            this.fecha_llegada = '';
-        },
-        abrirModal4(index) {
-            let me = this;
-            me.ind = index;
-            me.arrayArticulo=[];
-            me.modal4 = 1;
-            me.tituloModal      = "Dividir Placa ";
-            me.idarticulo       = me.arrayDetalle[index]['idarticulo'];
-            me.sku              = me.arrayDetalle[index]['articulo'];
-            me.codigo           = me.arrayDetalle[index]['codigo'];
-            me.idcategoria      = me.arrayDetalle[index]['idcategoria'];
-            me.categoria        = me.arrayDetalle[index]['categoria'];
-            me.largo            = me.arrayDetalle[index]['largo'];
-            me.alto             = me.arrayDetalle[index]['alto'];
-            me.ubicacion        = me.arrayDetalle[index]['ubicacion'];
-            me.terminado        = me.arrayDetalle[index]['terminado'];
-            me.espesor          = me.arrayDetalle[index]['espesor'];
-            me.precio           = me.arrayDetalle[index]['precio'];
-            me.metros_cuadrados = me.arrayDetalle[index]['metros_cuadrados'];
-            me.contenedor       = me.arrayDetalle[index]['contenedor'];
-            me.fecha_llegada    = me.arrayDetalle[index]['fecha_llegada'];
-            me.origen           = me.arrayDetalle[index]['origen'];
-            me.stock            = me.arrayDetalle[index]['stock'];
-            me.file             = me.arrayDetalle[index]['file'];
-            me.origen           = me.arrayDetalle[index]['origen'];
-            me.contenedor       = me.arrayDetalle[index]['contenedor'];
-            me.descripcion      = me.arrayDetalle[index]['descripcion'];
-            me.observacion      = me.arrayDetalle[index]['observacion'];
-            me.codigoA          = me.codigo + '-A';
-            me.codigoB          = me.codigo + '-B';
-            me.largoA           = me.largo;
-            me.largoB           = me.largo;
-            me.altoA            = me.alto / 2;
-            me.altoB            = me.alto / 2;
-            me.precioA          = me.precio / 2;
-            me.precioB          = me.precio / 2;
-            me.selectCategoria();
-        },
-        cerrarModal5() {
-            this.modal5 = 0;
-        },
-        abrirModal5() {
-            this.arrayArticulo=[];
-            this.modal5 = 1;
-            this.tituloModal = "Artículos Cotizados";
-            this.listarArticuloCotizado(1,'','sku');
-        },
-        listarArticuloCotizado(page,buscar,criterio){
-            let me=this;
-            var url= '/articulo/listarArticuloCotizado?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
-            axios.get(url).then(function (response) {
-                var respuesta= response.data;
-                me.arrayArticulo = respuesta.articulos.data;
-                me.paginationartcot= respuesta.pagination;
-                me.areaUsC = respuesta.userarea;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-        },
-        registrarArticuloA(){
-            let me = this;
-            if(me.largoA == 0 || me.altoA == 0 || me.precioA == 0 || me.codigoA == ""){
-            }else{
-                axios.post("/articulo/registrar",{
-                    'idcategoria': this.idcategoria,
-                    'codigo': this.codigoA,
-                    'sku' : this.sku,
-                    'terminado' : this.terminado,
-                    'largo' : this.largoA,
-                    'alto' : this.altoA,
-                    'metros_cuadrados' : this.metros_cuadradosA,
-                    'espesor' : this.espesor,
-                    'precio_venta' : this.precioA,
-                    'ubicacion' : this.ubicacion,
-                    'stock': this.stock,
-                    'descripcion': this.descripcion,
-                    'observacion' : this.observacion,
-                    'origen' : this.origen,
-                    'contenedor' : this.contenedor,
-                    'fecha_llegada' : this.fecha_llegada
-                }).then(function (response) {
-                    me.validatedA = 1;
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            }
-        },
-        registrarArticuloB(){
-            let me = this;
-            if(me.largoB == 0 || me.altoB == 0 || me.precioB == 0 || me.codigoB == ""){
-            }else{
-                axios.post("/articulo/registrar",{
-                    'idcategoria': this.idcategoria,
-                    'codigo': this.codigoB,
-                    'sku' : this.sku,
-                    'terminado' : this.terminado,
-                    'largo' : this.largoB,
-                    'alto' : this.altoB,
-                    'metros_cuadrados' : this.metros_cuadradosB,
-                    'espesor' : this.espesor,
-                    'precio_venta' : this.precioB,
-                    'ubicacion' : this.ubicacion,
-                    'stock': this.stock,
-                    'descripcion': this.descripcion,
-                    'observacion' : this.observacion,
-                    'origen' : this.origen,
-                    'contenedor' : this.contenedor,
-                    'fecha_llegada' : this.fecha_llegada
-                }).then(function (response) {
-                    me.validatedB = 1;
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            }
-        },
-        actualizarArticulo() {
-            if (this.validatedA == 0 || this.validatedB == 0) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Error...',
-                    text: 'Se deben guardar cambios en la placa A Y B!',
-                })
+        registrarTarea(){
+            if (this.validarTarea()) {
                 return;
             }
             let me = this;
-            axios.put("/articulo/actualizarCorte", {
-                'stock': this.stock,
-                'id': this.idarticulo
-            })
-            .then(function(response) {
-                me.listarArticulo(1,me.codigoA,'codigo',bodega);
-                me.cerrarModal4();
-                me.abrirModal();
-                me.validatedA = 0;
-                me.validatedB = 0;
-
+            var name = "T-".concat(me.CodeDate,"-",me.tipo);
+            /* console.log(name); */
+            me.nombre = name;
+            axios.post('/tarea/registrar',{
+                'idcliente': this.idcliente,
+                'nombre': this.nombre,
+                'descripcion' : this.descripcion,
+                'tipo' : this.tipo,
+                'fecha' : this.fecha
+            }).then(function(response) {
+                me.cerrarModal();
+                me.listarTarea(1,'','fecha','');
+                me.idcliente = 0;
+                me.nombre = "";
+                me.descripcion ="";
+                me.fecha = "";
+                me.tipo = "";
             })
             .catch(function(error) {
                 console.log(error);
             });
         },
-        aceptarCotizacion(id){
-          let me = this;
-            if(me.btnEntrega == true){
-                me.aceptado = 1;
-            }else{
-                me.aceptado = 0;
+        registrarTareaDet(){
+            if (this.validarTarea()) {
+                return;
             }
-            axios.put('/cotizacion/aceptarCotizacion',{
+            let me = this;
+            var name = "T-".concat(me.CodeDate,"-",me.tipo);
+            /* console.log(name); */
+            me.nombre = name;
+            axios.post('/tarea/registrar',{
+                'idcliente': this.idcliente,
+                'nombre': this.nombre,
+                'descripcion' : this.descripcion,
+                'tipo' : this.tipo,
+                'fecha' : this.fecha
+            }).then(function(response) {
+                me.verTarea(me.idcliente);
+                me.cerrarModalDet();
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        actualizarTarea(){
+            if (this.validarTarea()) {
+                return;
+            }
+            let me = this;
+            axios.put('/tarea/actualizar',{
+                'id' : this.id,
+                'nombre' : this.nombre,
+                'idcliente': this.idcliente,
+                'nombre': this.nombre,
+                'descripcion' : this.descripcion,
+                'tipo' : this.tipo,
+                'fecha' : this.fecha
+            }).then(function(response) {
+                me.cerrarModal();
+                me.listarTarea(1,'','fecha','');
+                me.idcliente = 0;
+                me.nombre = "";
+                me.descripcion ="";
+                me.fecha = "";
+                me.tipo = "";
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        actualizarTareaDet(){
+            if (this.validarTarea()) {
+                return;
+            }
+            let me = this;
+            axios.put('/tarea/actualizar',{
+                'id' : this.id,
+                'nombre' : this.nombre,
+                'idcliente': this.idcliente,
+                'nombre': this.nombre,
+                'descripcion' : this.descripcion,
+                'tipo' : this.tipo,
+                'fecha' : this.fecha
+            }).then(function(response) {
+                me.verTarea(me.idcliente);
+                me.cerrarModalDet();
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        cambiarEstadoTarea(id){
+            let me = this;
+            if(me.btnComp == true){
+                me.estado = 1;
+            }else{
+                me.estado = 0;
+            }
+            axios.put('/tarea/completar',{
                 'id': id,
-                'aceptado' : this.aceptado
+                'estado' : this.estado
             }).then(function (response) {
-                me.listarCotizacion(1,'','num_comprobante');
+                me.listarTarea(1,'','fecha','');
             }).catch(function (error) {
                 console.log(error);
             });
         },
-        pdfCotizacion(id){
-            window.open('/cotizacion/pdf/'+id,'_blank');
+        cambiarEstadoTareaDet(id){
+            let me = this;
+            if(me.btnComp == true){
+                me.estado = 1;
+            }else{
+                me.estado = 0;
+            }
+            axios.put('/tarea/completar',{
+                'id': id,
+                'estado' : this.estado
+            }).then(function (response) {
+                me.verTarea(me.idcliente);
+            }).catch(function (error) {
+                console.log(error);
+            });
         },
-        getLastNum(){
-            let me=this;
-            var url= '/cotizacion/nextNum';
-            axios.get(url).then(function (response) {
+        desactivarTarea(id) {
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro de anular esta tarea?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/tarea/desactivar',{
+                        'id': id
+                    }).then(function (response) {
+                        me.listarTarea(1,'','fecha','');
+                        swal.fire(
+                        'Anulado!',
+                        'La tarea ha sido anulado con éxito.',
+                        'success'
+                        )
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
+        },
+        desactivarTareaDet(id) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro de anular esta tarea?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/tarea/desactivar',{
+                        'id': id
+                    }).then(function (response) {
+                        me.verTarea(me.idcliente);
+                        swal.fire(
+                            'Anulado!',
+                            'La tarea ha sido anulado con éxito.',
+                            'success'
+                        )
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
+        },
+        desactivarComentario(id) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro de eliminar esta comentario?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/tarea/desactivar',{
+                        'id': id
+                    }).then(function (response) {
+                        me.verTarea(me.idcliente);
+                        swal.fire(
+                            'Eliminado!',
+                            'El comentario ha sido eliminado con éxito.',
+                            'success'
+                        )
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
+        },
+        ocultarDetalle(){
+            this.listado = 1;
+            this.cliente = 0;
+            this.errorTarea =0;
+            this.errorMostrarMsjTarea = [];
+            this.arrayTareaT = [];
+            this.nextTask = [];
+            this.arrayVentasT = [];
+            this.arrayCommentT = [];
+            this.idcliente = '';
+            this.cliente = '';
+            this.rfc_cliente = '';
+            this.tipo_cliente = '';
+            this.telefono_cliente = '';
+            this.contacto_cliente = '';
+            this.telcontacto_cliente ='';
+            this.obs_cliente = '';
+            this.btnNewTask = 1;
+            this.cerrarDet = 0;
+            this.isEdition = false;
+            this.nombre = "";
+            this.descripcion = "";
+            this.tipo = "";
+            this.fecha = "";
+            this.listarTarea(1,'','fecha','');
+            this.isComment = 0;
+        },
+        verTarea(idcliente){
+            let me = this;
+            me.listado = 0;
+            me.btnNewTask = 0;
+            var url= '/tarea/obtenerTareas?idcliente=' + idcliente;
+            axios.get(url).then(function (response){
                 var respuesta= response.data;
-                me.sigNum = respuesta.SigNum;
+                me.arrayTareaT = respuesta.tareas.data;
+                me.nextTask = respuesta.siguiente.data;
+                me.arrayCommentT = respuesta.comentarios.data;
+                me.idcliente = me.arrayTareaT[0]['idcliente'];
+                me.cliente = me.arrayTareaT[0]['cliente'];
+                me.rfc_cliente = me.arrayTareaT[0]['rfc'];
+                me.tipo_cliente = me.arrayTareaT[0]['tipo'];
+                me.telefono_cliente = me.arrayTareaT[0]['telefono'];
+                me.contacto_cliente = me.arrayTareaT[0]['company'];
+                me.telcontacto_cliente = me.arrayTareaT[0]['tel_company'];
+                me.obs_cliente = me.arrayTareaT[0]['observacion'];
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+            var url= '/venta/obtenerVentasCliente?idcliente=' + idcliente;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.arrayVentasT = respuesta.ventas.data;
+               /*  console.log(me.arrayVentasT); */
             })
             .catch(function (error) {
                 console.log(error);
             });
         },
-        editObservacion(){
-            let me = this;
-            me.obsEditable = 1;
+        pdfVenta(id){
+            window.open('/venta/pdf/'+id);
         },
-        actualizarObservacion(id){
-            let me = this;
-            axios.post('/cotizacion/actualizarObservacion',{
-                'id': id,
-                'observacion' : this.observacion
-            }).then(function (response) {
-                me.obsEditable = 0;
-            }).catch(function (error) {
-                console.log(error);
-            });
+        UpdateTask(accion, data = []){
+            switch (accion) {
+                case "nextTask": {
+                    this.modal = 1;
+                    this.id = data['id'];
+                    this.cliente = data['cliente'];
+                    this.tituloModal = "Modificar Tarea Para " + this.cliente;
+                    this.tipoAccion = 3;
+                    this.idcliente = data['idcliente'];
+                    this.rfc_cliente = data['rfc'];
+                    this.tipo_cliente = data['tipo'];
+                    this.contacto_cliente = data['company'];
+                    this.telcontacto_cliente = data['tel_company'];
+                    this.telefono_cliente = data['telefono'];
+                    this.obs_cliente = data['observacion'];
+                    this.nombre = data['nombre'];
+                    this.descripcion = data['descripcion'];
+                    this.tipo = data['clase'];
+                    this.fecha = data['fecha'];
+                    this.estado =data['estado'];
+                    this.isEdition = true;
+                    this.cerrarDet = 1;
+                    this.isComment = 0;
+
+                    if(this.estado){
+                        this.btnComp = true;
+                    }
+
+                    break;
+                }
+                case "arrayTareaT": {
+                    this.modal = 1;
+                    this.id = data['id'];
+                    this.cliente = data['cliente'];
+                    this.tituloModal = "Modificar Tarea Para " + this.cliente;
+                    this.tipoAccion = 3;
+                    this.idcliente = data['idcliente'];
+                    this.rfc_cliente = data['rfc'];
+                    this.tipo_cliente = data['tipo'];
+                    this.contacto_cliente = data['company'];
+                    this.telcontacto_cliente = data['tel_company'];
+                    this.telefono_cliente = data['telefono'];
+                    this.obs_cliente = data['observacion'];
+                    this.nombre = data['nombre'];
+                    this.descripcion = data['descripcion'];
+                    this.tipo = data['clase'];
+                    this.fecha = data['fecha'];
+                    this.estado =data['estado'];
+                    this.isEdition = true;
+                    this.cerrarDet = 1;
+
+                    if(this.estado){
+                        this.btnComp = true;
+                    }
+
+                    break;
+                }
+                case "newTask" : {
+                    this.modal = 1;
+                    this.tipoAccion = 4;
+                    this.cerrarDet = 1;
+                    this.tituloModal = "Nueva Tarea Para " + this.cliente;
+                    this.isEdition = true;
+                    this.nombre = "";
+                    this.descripcion = "";
+                    this.tipo = "";
+                    this.fecha = "";
+                    this.isComment = 0;
+                    break;
+                }
+                case "newComment" : {
+                    this.modal = 1;
+                    this.tipoAccion = 4;
+                    this.cerrarDet = 1;
+                    this.tituloModal = "Nuevo Comentario Para " + this.cliente;
+                    this.isEdition = true;
+                    this.nombre = "";
+                    this.descripcion = "";
+                    this.tipo = "Comentario";
+                    this.fecha = "";
+                    this.isComment = 1;
+                    break;
+                }
+                case "comment": {
+                    this.modal = 1;
+                    this.id = data['id'];
+                    this.cliente = data['cliente'];
+                    this.tituloModal = "Modificar comentario de " + this.cliente;
+                    this.tipoAccion = 3;
+                    this.idcliente = data['idcliente'];
+                    this.rfc_cliente = data['rfc'];
+                    this.tipo_cliente = data['tipo'];
+                    this.contacto_cliente = data['company'];
+                    this.telcontacto_cliente = data['tel_company'];
+                    this.telefono_cliente = data['telefono'];
+                    this.obs_cliente = data['observacion'];
+                    this.nombre = data['nombre'];
+                    this.descripcion = data['descripcion'];
+                    this.tipo = data['clase'];
+                    this.fecha = data['fecha'];
+                    this.estado =data['estado'];
+                    this.isEdition = true;
+                    this.cerrarDet = 1;
+                    this.isComment = 1;
+
+                    if(this.estado){
+                        this.btnComp = true;
+                    }
+
+                    break;
+                }
+            }
+        },
+        mostrarDetalle(){
+            this.listado = 0;
         }
     },
     mounted() {
-        this.listarCotizacion(1,this.buscar, this.criterio);
-        this.getLastNum();
+        this.listarTarea(1,this.buscar, this.criterio,this.estadoTask);
     }
 };
 </script>
@@ -2359,6 +1291,207 @@ export default {
     {
         -webkit-appearance: textfield !important;
         margin: 0;
-        /* -moz-appearance:textfield !important; */
+    }
+    .content-task{
+        height: 480px !important;
+    }
+    .sinpadding [class*="col-"] {
+        padding: 0;
+    }
+    .timeline {
+        list-style: none;
+        padding: 20px 0 20px;
+        position: relative;
+    }
+    .timeline:before {
+        top: 0;
+        bottom: 0;
+        position: absolute;
+        content: " ";
+        width: 3px;
+        background-color: #eeeeee;
+        left: 50%;
+        margin-left: -1.5px;
+    }
+    .timeline > li {
+        margin-bottom: 20px;
+        position: relative;
+    }
+    .timeline > li:before,
+    .timeline > li:after {
+        content: " ";
+        display: table;
+    }
+    .timeline > li:after {
+        clear: both;
+    }
+    .timeline > li:before,
+    .timeline > li:after {
+        content: " ";
+        display: table;
+    }
+    .timeline > li:after {
+        clear: both;
+    }
+    .timeline > li > .timeline-panel {
+        width: 46%;
+        float: left;
+        border: 1px solid #d4d4d4;
+        border-radius: 2px;
+        padding: 20px;
+        position: relative;
+        -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+    }
+    .timeline > li > .timeline-panel:before {
+        position: absolute;
+        top: 26px;
+        right: -15px;
+        display: inline-block;
+        border-top: 15px solid transparent;
+        border-left: 15px solid #ccc;
+        border-right: 0 solid #ccc;
+        border-bottom: 15px solid transparent;
+        content: " ";
+    }
+    .timeline > li > .timeline-panel:after {
+        position: absolute;
+        top: 27px;
+        right: -14px;
+        display: inline-block;
+        border-top: 14px solid transparent;
+        border-left: 14px solid #fff;
+        border-right: 0 solid #fff;
+        border-bottom: 14px solid transparent;
+        content: " ";
+    }
+    .timeline > li > .timeline-badge {
+        color: #fff;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        font-size: 1.4em;
+        text-align: center;
+        position: absolute;
+        top: 16px;
+        left: 50%;
+        margin-left: -25px;
+        background-color: #999999;
+        z-index: 100;
+        border-top-right-radius: 50%;
+        border-top-left-radius: 50%;
+        border-bottom-right-radius: 50%;
+        border-bottom-left-radius: 50%;
+    }
+    .timeline > li.timeline-inverted > .timeline-panel {
+        float: right;
+    }
+    .timeline > li.timeline-inverted > .timeline-panel:before {
+        border-left-width: 0;
+        border-right-width: 15px;
+        left: -15px;
+        right: auto;
+    }
+    .timeline > li.timeline-inverted > .timeline-panel:after {
+        border-left-width: 0;
+        border-right-width: 14px;
+        left: -14px;
+        right: auto;
+    }
+    .timeline-badge.primary {
+        background-color: #2e6da4 !important;
+    }
+    .timeline-badge.success {
+        background-color: #3f903f !important;
+    }
+    .timeline-badge.warning {
+        background-color: #f0ad4e !important;
+    }
+    .timeline-badge.danger {
+        background-color: #d9534f !important;
+    }
+    .timeline-badge.info {
+        background-color: #5bc0de !important;
+    }
+    .timeline-title {
+        margin-top: 0;
+        color: inherit;
+    }
+    .timeline-body > p,
+    .timeline-body > ul {
+        margin-bottom: 0;
+    }
+    .timeline-body > p + p {
+        margin-top: 5px;
+    }
+    @media (max-width: 767px) {
+        ul.timeline:before {
+            left: 40px;
+        }
+
+        ul.timeline > li > .timeline-panel {
+            width: calc(100% - 90px);
+            width: -moz-calc(100% - 90px);
+            width: -webkit-calc(100% - 90px);
+        }
+
+        ul.timeline > li > .timeline-badge {
+            left: 15px;
+            margin-left: 0;
+            top: 16px;
+        }
+
+        ul.timeline > li > .timeline-panel {
+            float: right;
+        }
+
+        ul.timeline > li > .timeline-panel:before {
+            border-left-width: 0;
+            border-right-width: 15px;
+            left: -15px;
+            right: auto;
+        }
+
+        ul.timeline > li > .timeline-panel:after {
+            border-left-width: 0;
+            border-right-width: 14px;
+            left: -14px;
+            right: auto;
+        }
+    }
+    div.divtask{
+        height: 400px;
+        width: 100% !important;
+        overflow-y: scroll;
+        scrollbar-width: none;
+    }
+    .divtask::-webkit-scrollbar {
+        display: none;
+    }
+    div.caja{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+        height: auto !important;
+
+    }
+    div.caja2{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+        height: 150px;
+
+    }
+    button.btntask{
+        background-color: transparent;
+    }
+    .btn-circle {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 13px;
+        line-height: 1.42857;
     }
 </style>

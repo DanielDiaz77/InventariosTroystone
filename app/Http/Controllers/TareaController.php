@@ -2,25 +2,149 @@
 
 namespace App\Http\Controllers;
 
+use App\Persona;
 use App\Tarea;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class TareaController extends Controller
 {
     public function index(Request $request){
         if (!$request->ajax()) return redirect('/');
 
-        $buscar = $request->buscar;
-        $criterio = $request->criterio;
+        $usrol = \Auth::user()->idrol;
 
-        $tareas = Tarea::join('personas','personas.id','=','tareas.idcliente')
-            ->join('users','users.id','=','tareas.idusuario')
-            ->select('personas.id','personas.nombre as cliente','personas.domicilio','personas.telefono',
-            'personas.ciudad','personas.rfc','personas.email','users.usuario',
-            'users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
-            'tareas.fecha','tareas.estado')
-            ->orderBy('personas.id', 'desc')->paginate(12);
+        if($usrol == 2){
+            $usvend = \Auth::user()->id;
+            $buscar = $request->buscar;
+            $criterio = $request->criterio;
+            $estadoT =  $request->estado;
 
+            if($criterio == 'idcliente'){
+                if($buscar != ''){
+                    $name = $request->buscar;
+                    $cliente = Persona::where('nombre','like','%'.$name.'%')->select('id')->first();
+                    $buscar = $cliente->id;
+                }
+            }
+
+            if($estadoT == ''){
+                if($buscar==''){
+                    $tareas = Tarea::join('personas','personas.id','=','tareas.idcliente')
+                    ->join('users','users.id','=','tareas.idusuario')
+                    ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+                    'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+                    'personas.tel_company','users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
+                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+                    ->where([['tareas.idusuario',$usvend],['tareas.estado',0],['tareas.tipo','!=','Comentario']])
+                    ->orderBy('tareas.fecha', 'asc')->paginate(12);
+                }else{
+                    $tareas = Tarea::join('personas','personas.id','=','tareas.idcliente')
+                    ->join('users','users.id','=','tareas.idusuario')
+                    ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+                    'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+                    'personas.tel_company','users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
+                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+                    ->where([
+                        [$criterio, 'like', '%'. $buscar . '%'],
+                        ['tareas.idusuario',$usvend],
+                        ['tareas.estado',0],
+                        ['tareas.tipo','!=','Comentario']
+                    ])
+                    ->orderBy('tareas.fecha', 'asc')->paginate(12);
+                }
+            }else{
+                if($buscar==''){
+                    $tareas = Tarea::join('personas','personas.id','=','tareas.idcliente')
+                    ->join('users','users.id','=','tareas.idusuario')
+                    ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+                    'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+                    'personas.tel_company','users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
+                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+                    ->where([
+                        ['tareas.estado',$estadoT],
+                        ['tareas.idusuario',$usvend],
+                        ['tareas.tipo','!=','Comentario']
+                    ])
+                    ->orderBy('tareas.fecha', 'asc')->paginate(12);
+                }else{
+                    $tareas = Tarea::join('personas','personas.id','=','tareas.idcliente')
+                    ->join('users','users.id','=','tareas.idusuario')
+                    ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+                    'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+                    'personas.tel_company','users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
+                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+                    ->where([
+                        [$criterio, 'like', '%'. $buscar . '%'],
+                        ['tareas.estado',$estadoT],
+                        ['tareas.idusuario',$usvend],
+                        ['tareas.tipo','!=','Comentario']
+                    ])
+                    ->orderBy('tareas.fecha', 'asc')->paginate(12);
+                }
+            }
+        }else{
+
+            $buscar = $request->buscar;
+            $criterio = $request->criterio;
+            $estadoT =  $request->estado;
+
+            if($criterio == 'idcliente'){
+                if($buscar != ''){
+                    $name = $request->buscar;
+                    $cliente = Persona::where('nombre','like','%'.$name.'%')->select('id')->first();
+                    $buscar = $cliente->id;
+                }
+            }
+
+            if($estadoT == ''){
+                if($buscar==''){
+                    $tareas = Tarea::join('personas','personas.id','=','tareas.idcliente')
+                    ->join('users','users.id','=','tareas.idusuario')
+                    ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+                    'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+                    'personas.tel_company','users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
+                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+                    ->where([['tareas.estado',0],['tareas.tipo','!=','Comentario']])
+                    ->orderBy('tareas.fecha', 'asc')->paginate(12);
+                }else{
+                    $tareas = Tarea::join('personas','personas.id','=','tareas.idcliente')
+                    ->join('users','users.id','=','tareas.idusuario')
+                    ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+                    'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+                    'personas.tel_company','users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
+                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+                    ->where([[$criterio, 'like', '%'. $buscar . '%'],['tareas.estado',0],['tareas.tipo','!=','Comentario']])
+                    ->orderBy('tareas.fecha', 'asc')->paginate(12);
+                }
+            }else{
+                if($buscar==''){
+                    $tareas = Tarea::join('personas','personas.id','=','tareas.idcliente')
+                    ->join('users','users.id','=','tareas.idusuario')
+                    ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+                    'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+                    'personas.tel_company','users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
+                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+                    ->where([['tareas.estado',$estadoT],['tareas.tipo','!=','Comentario']])
+                    ->orderBy('tareas.fecha', 'asc')->paginate(12);
+                }else{
+                    $tareas = Tarea::join('personas','personas.id','=','tareas.idcliente')
+                    ->join('users','users.id','=','tareas.idusuario')
+                    ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+                    'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+                    'personas.tel_company','users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
+                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+                    ->where([
+                        [$criterio, 'like', '%'. $buscar . '%'],
+                        ['tareas.estado',$estadoT],
+                        ['tareas.tipo','!=','Comentario']
+                    ])
+                    ->orderBy('tareas.fecha', 'asc')->paginate(12);
+                }
+            }
+        }
         return [
             'pagination' => [
                 'total'        => $tareas->total(),
@@ -39,15 +163,17 @@ class TareaController extends Controller
 
         try{
             DB::beginTransaction();
+
             $tarea = new Tarea();
             $tarea->nombre = $request->nombre;
             $tarea->descripcion = $request->descripcion;
             $tarea->tipo = $request->tipo;
             $tarea->fecha = $request->fecha;
-            $tarea->estado        =   '0';
+            $tarea->estado = '0';
             $tarea->idusuario = \Auth::user()->id;
             $tarea->idcliente = $request->idcliente;
             $tarea->save();
+
             DB::commit();
 
         }catch(Exception $e){
@@ -59,12 +185,12 @@ class TareaController extends Controller
 
         try{
             DB::beginTransaction();
-            $tarea = new Tarea();
+            $tarea = Tarea::findOrFail($request->id);
             $tarea->nombre = $request->nombre;
             $tarea->descripcion = $request->descripcion;
             $tarea->tipo = $request->tipo;
             $tarea->fecha = $request->fecha;
-            $tarea->estado        =   '0';
+            $tarea->estado = '0';
             $tarea->idusuario = \Auth::user()->id;
             $tarea->idcliente = $request->idcliente;
             $tarea->save();
@@ -85,7 +211,58 @@ class TareaController extends Controller
     public function completar(Request $request){
         if(!$request->ajax()) return redirect('/');
         $tarea = Tarea::findOrFail($request->id);
-        $tarea->estado = '1';
+        $tarea->estado = $request->estado;
         $tarea->save();
+    }
+    public function obtenerTareasCliente(Request $request){
+
+        if (!$request->ajax()) return redirect('/');
+
+        $idcliente = $request->idcliente;
+
+        $tareas = Tarea::join('personas','personas.id','=','tareas.idcliente')
+        ->join('users','users.id','=','tareas.idusuario')
+        ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+            'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+            'personas.tel_company','personas.observacion','users.idrol','users.area','tareas.id','tareas.nombre',
+            'tareas.descripcion','tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+        ->where([
+            ['tareas.idcliente',$idcliente],
+            ['tareas.tipo','!=','Comentario']
+        ])
+        ->orderBy('tareas.fecha', 'desc')->paginate(7);
+
+        $siguiente = Tarea::join('personas','personas.id','=','tareas.idcliente')
+        ->join('users','users.id','=','tareas.idusuario')
+        ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+            'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+            'personas.tel_company','personas.observacion','users.idrol','users.area','tareas.id','tareas.nombre',
+            'tareas.descripcion','tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+        ->where([
+            ['tareas.idcliente',$idcliente],
+            ['tareas.tipo','!=','Comentario'],
+            ['tareas.estado',0]
+        ])
+        ->orderBy('tareas.fecha','asc')->paginate(1);
+
+        $comentarios = Tarea::join('personas','personas.id','=','tareas.idcliente')
+        ->join('users','users.id','=','tareas.idusuario')
+        ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
+            'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
+            'personas.tel_company','personas.observacion','users.idrol','users.area','tareas.id','tareas.nombre',
+            'tareas.descripcion','tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+        ->where([
+            ['tareas.idcliente',$idcliente],
+            ['tareas.tipo','Comentario'],
+            ['tareas.estado',0]
+        ])
+        ->orderBy('tareas.fecha', 'desc')->paginate(4);
+
+        return [
+            'tareas' => $tareas,
+            'siguiente' => $siguiente,
+            'comentarios' => $comentarios
+        ];
+
     }
 }

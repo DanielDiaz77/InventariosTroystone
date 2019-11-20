@@ -33,9 +33,9 @@
                     <tr>
                         <th>Opciones</th>
                         <th>Nombre</th>
-                        <th>Ciudad y estado</th>
                         <th>Domicilio</th>
                         <th>Teléfono</th>
+                        <th>Contacto</th>
                         <th>Correo electrónico</th>
                         <th>RFC</th>
                         <th>Tipo</th>
@@ -51,9 +51,10 @@
                         </button>
                         </td>
                         <td v-text="persona.nombre"></td>
-                        <td v-text="persona.ciudad"></td>
-                        <td v-text="persona.domicilio"></td>
+                        <td> {{ persona.ciudad}} {{persona.domicilio}}  </td>
                         <td v-text="persona.telefono"></td>
+                        <td v-if="persona.company">{{persona.company}} - {{persona.tel_company}}</td>
+                        <td v-else></td>
                         <td v-text="persona.email"></td>
                         <td v-text="persona.rfc"></td>
                         <td v-text="persona.tipo"></td>
@@ -102,37 +103,49 @@
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
                     <div class="col-md-9">
-                    <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de la persona"/>
+                    <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del cliente"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 form-control-label" for="text-input">Dirección</label>
+                    <div class="col-md-9">
+                        <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio del cliente"/>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Ciudad y estado</label>
                     <div class="col-md-9">
-                        <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado donde habita persona"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Domicilio</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio de la persona"/>
+                        <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado del cliente"/>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Teléfono</label>
                     <div class="col-md-9">
-                        <input type="text" v-model="telefono" class="form-control" placeholder="Teléfono de la persona"/>
+                        <input type="text" v-model="telefono" class="form-control" placeholder="Teléfono del cliente"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 form-control-label" for="text-input">Contacto</label>
+                    <div class="col-md-9">
+                        <input type="text" v-model="company" class="form-control" placeholder="Contacto de cliente"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 form-control-label" for="text-input">Telefono de contacto</label>
+                    <div class="col-md-9">
+                        <input type="text" v-model="tel_company" class="form-control" placeholder="Teléfono de contacto de cliente"/>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">Correo electrónico</label>
                     <div class="col-md-9">
-                        <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico de la persona"/>
+                        <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico del cliente"/>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label" for="text-input">RFC</label>
                     <div class="col-md-9">
-                        <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC de la persona"/>
+                        <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC del cliente o compañia"/>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -195,6 +208,8 @@ export default {
             tipo: "",
             observacion: "",
             userid : "",
+            company : "",
+            tel_company : "",
             arrayPersona: [],
             modal: 0,
             tituloModal: "",
@@ -245,7 +260,6 @@ export default {
             }
         },
     methods: {
-
         listarPersona (page,buscar,criterio){
             let me=this;
             var url= '/cliente?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
@@ -259,7 +273,6 @@ export default {
                 console.log(error);
             });
         },
-
         cambiarPagina(page,buscar,criterio){
             let me = this;
                 //Actualiza la página actual
@@ -281,6 +294,8 @@ export default {
                 'ciudad': this.ciudad,
                 'domicilio': this.domicilio,
                 'telefono': this.telefono,
+                'company' : this.company,
+                'tel_company' : this.tel_company,
                 'email': this.email,
                 'rfc': this.rfc,
                 'tipo': this.tipo,
@@ -306,6 +321,8 @@ export default {
                 'ciudad': this.ciudad,
                 'domicilio': this.domicilio,
                 'telefono': this.telefono,
+                'company' : this.company,
+                'tel_company' : this.tel_company,
                 'email': this.email,
                 'rfc': this.rfc,
                 'id': this.persona_id,
@@ -340,6 +357,8 @@ export default {
             this.ciudad = "";
             this.domicilio = "";
             this.telefono = "";
+            this.company = "";
+            this.tel_company = "";
             this.email = "";
             this.rfc = "";
             this.errorPersona = 0;
@@ -359,6 +378,8 @@ export default {
                             this.ciudad = "";
                             this.domicilio = "";
                             this.telefono = "";
+                            this.company = "";
+                            this.tel_company = "";
                             this.email = "";
                             this.rfc = "";
                             this.tipo = "";
@@ -376,7 +397,9 @@ export default {
                             this.num_documento = data["num_documento"];
                             this.ciudad = data["ciudad"];
                             this.domicilio = data["domicilio"];
-                            this.telefono = data["telefono"];"";
+                            this.telefono = data["telefono"];
+                            this.company = data["company"];
+                            this.tel_company = data["tel_company"];
                             this.email = data["email"];
                             this.rfc = data["rfc"];
                             this.tipo = data["tipo"];

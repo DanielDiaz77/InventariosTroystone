@@ -21,13 +21,15 @@ class ClienteController extends Controller
             if($buscar==''){
                 $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
-                'personas.telefono','personas.rfc','personas.tipo','personas.observacion','users.usuario as vendedor')
+                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
+                'personas.observacion','users.usuario as vendedor')
                 ->where('personas.idusuario',$usvend)
                 ->orderBy('id', 'desc')->paginate(12);
             }else{
                 $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
-                'personas.telefono','personas.rfc','personas.tipo','personas.observacion','users.usuario as vendedor')
+                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
+                'personas.observacion','users.usuario as vendedor')
                 ->where([
                     [$criterio, 'like', '%'. $buscar . '%'],
                     ['personas.idusuario',$usvend]
@@ -41,12 +43,14 @@ class ClienteController extends Controller
             if($buscar==''){
                 $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
-                'personas.telefono','personas.rfc','personas.tipo','personas.observacion','users.usuario as vendedor')
+                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
+                'personas.observacion','users.usuario as vendedor')
                 ->orderBy('id', 'desc')->paginate(12);
             }else{
                 $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
-                'personas.telefono','personas.rfc','personas.tipo','personas.observacion','users.usuario as vendedor')
+                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
+                'personas.observacion','users.usuario as vendedor')
                 ->where($criterio, 'like', '%'. $buscar . '%')
                 ->orderBy('id', 'desc')->paginate(12);
             }
@@ -65,7 +69,6 @@ class ClienteController extends Controller
             'rol' => $usrol
         ];
     }
-
     public function store(Request $request){
         if(!$request->ajax()) return redirect('/');
         $persona = new Persona();
@@ -75,6 +78,8 @@ class ClienteController extends Controller
         $persona->ciudad = $request->ciudad;
         $persona->domicilio = $request->domicilio;
         $persona->telefono = $request->telefono;
+        $persona->company = $request->company;
+        $persona->tel_company = $request->tel_company;
         $persona->email = $request->email;
         $persona->rfc = $request->rfc;
         $persona->tipo = $request->tipo;
@@ -82,9 +87,7 @@ class ClienteController extends Controller
         $persona->idusuario = \Auth::user()->id;
         $persona->save();
     }
-
-    public function update(Request $request)
-    {
+    public function update(Request $request){
         if(!$request->ajax()) return redirect('/');
         $persona = Persona::findOrFail($request->id);
         $persona->nombre = $request->nombre;
@@ -93,6 +96,8 @@ class ClienteController extends Controller
         $persona->ciudad = $request->ciudad;
         $persona->domicilio = $request->domicilio;
         $persona->telefono = $request->telefono;
+        $persona->company = $request->company;
+        $persona->tel_company = $request->tel_company;
         $persona->email = $request->email;
         $persona->rfc = $request->rfc;
         $persona->tipo = $request->tipo;
@@ -100,7 +105,6 @@ class ClienteController extends Controller
         $persona->observacion = $request->observacion;
         $persona->save();
     }
-
     public function selectCliente(Request $request){
 
         if (!$request->ajax()) return redirect('/');
@@ -118,14 +122,14 @@ class ClienteController extends Controller
                 ['rfc','like','%'.$filtro.'%'],
                 ['idusuario',$usvend]
             ])
-            ->select('id','nombre','rfc','tipo')
+            ->select('id','nombre','rfc','tipo','telefono','company','tel_company')
             ->orderBy('nombre','asc')->get();
         }else{
 
             $filtro = $request->filtro;
             $clientes = Persona::where('nombre','like','%'.$filtro.'%')
                 ->orWhere('rfc','like','%'.$filtro.'%')
-                ->select('id','nombre','rfc','tipo')
+                ->select('id','nombre','rfc','tipo','telefono','company','tel_company')
                 ->orderBy('nombre','asc')->get();
         }
 
