@@ -56,10 +56,10 @@
                                     <button type="button" class="btn btn-success btn-sm" @click="verCotizacion(cotizacion.id)">
                                         <i class="icon-eye"></i>
                                     </button>&nbsp;
-                                    <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfCotizacion(cotizacion.id)">
-                                        <i class="fa fa-file-pdf-o"></i>
-                                    </button>&nbsp;
                                     <template v-if="cotizacion.estado=='Registrado'">
+                                        <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfCotizacion(cotizacion.id)">
+                                            <i class="fa fa-file-pdf-o"></i>
+                                        </button>&nbsp;
                                         <button type="button" class="btn btn-danger btn-sm" @click="desactivarCotizacion(cotizacion.id)">
                                             <i class="icon-trash"></i>
                                         </button>
@@ -69,8 +69,9 @@
                                 <td v-text="cotizacion.nombre"></td>
                                 <td v-text="cotizacion.tipo_comprobante"></td>
                                 <td v-text="cotizacion.num_comprobante"></td>
-                                <td v-text="cotizacion.fecha_hora"></td>
-                                <td v-text="cotizacion.vigencia"></td>
+                                <td>{{ convertDateCotizacion(cotizacion.fecha_hora) }}</td>
+                                <td>{{ convertDateVigencia(cotizacion.vigencia) }}</td>
+                                <!-- <td v-text="cotizacion.vigencia"></td> -->
                                 <td v-text="cotizacion.impuesto"></td>
                                 <td v-text="cotizacion.total"></td>
                                 <td v-text="cotizacion.estado "></td>
@@ -146,14 +147,17 @@
 
                     <div class="col-md-1 text-center">
                         <label for=""><strong>Impuesto (*)</strong></label>
-                        <input type="text" class="form-control" v-model="impuesto">
+                        <input type="number" class="form-control" v-model="impuesto">
                     </div>
                     <div class="col-md-2 text-center">
                         <div class="form-group">
                             <label for=""><strong>Forma de pago</strong><span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="forma_pago">
                                 <option value='' disabled>Seleccione la forma de pago</option>
-                                <option value="De contado">De contado</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                                <option value="Transferencia">Transferencia</option>
+                                <option value="Mixto">Mixto</option>
                             </select>
                         </div>
                     </div>
@@ -303,7 +307,7 @@
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total IVA:</strong></td>
-                                    <td>$ {{total_impuesto=((total * impuesto)/(1+impuesto)).toFixed(2)}}</td>
+                                    <td>$ {{total_impuesto=((total * parseFloat(impuesto))/(1+parseFloat(impuesto))).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Neto:</strong></td>
@@ -462,7 +466,7 @@
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="12" align="right"><strong>Total Neto:</strong></td>
-                                    <td>$ {{ total}} </td>
+                                    <td>$ {{ total }} </td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
@@ -532,6 +536,7 @@
       </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
+    <!-- VENTANAS MODAL -->
     <!--Inicio del modal listar articulos-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-primary modal-lg" role="document">
@@ -543,6 +548,7 @@
                 </button>
                 </div>
                 <div class="modal-body">
+                    <!-- Filtros Modal Articulos -->
                     <div class="form-group row">
                         <div class="col-md">
                             <div class="input-group">
@@ -551,7 +557,12 @@
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
                                 </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodega)" class="form-control" placeholder="Texto a buscar">
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="form-control" placeholder="Texto a buscar">
+                                <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscarA,buscarA,bodega,acabado)" class="form-control" placeholder="Terminado">
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="input-group">
                                 <template v-if="areaUs == 'GDL'">
                                     <select class="form-control" v-model="bodega">
                                         <option value="" disabled>Ubicacion</option>
@@ -564,7 +575,7 @@
                                         <option value="San Luis">San Luis</option>
                                     </select>
                                 </template>
-                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
                             </div>
                         </div>
                     </div>
@@ -579,7 +590,7 @@
                                 <th>Largo</th>
                                 <th>Alto</th>
                                 <th>Metros<sup>2</sup></th>
-                                <th>Stock</th>
+                                <th>Terminado</th>
                                 <th>Ubicacion</th>
                                 <th>Comprometido</th>
                             </tr>
@@ -597,7 +608,7 @@
                                 <td v-text="articulo.largo"></td>
                                 <td v-text="articulo.alto"></td>
                                 <td v-text="articulo.metros_cuadrados"></td>
-                                <td v-text="articulo.stock"></td>
+                                <td v-text="articulo.terminado"></td>
                                 <td v-text="articulo.ubicacion"></td>
                                 <td>
                                 <div v-if="articulo.comprometido">
@@ -622,22 +633,24 @@
                     <nav>
                         <ul class="pagination">
                             <li class="page-item" v-if="paginationart.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA,bodega)">Ant</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA,bodega,acabado)">Ant</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumberArt" :key="page" :class="[page == isActivedArt ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA,bodega)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA,bodega,acabado)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="paginationart.current_page < paginationart.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA,bodega)">Sig</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA,bodega,acabado)">Sig</a>
                             </li>
                         </ul>
                     </nav>
+                    <hr>
+                    <div class="float-right">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
+                <!-- <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                    <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
-                <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
-                </div>
+                </div> -->
             </div>
         <!-- /.modal-content -->
         </div>
@@ -875,7 +888,7 @@
     </div>
     <!--Fin del modal-->
 
-        <!--Inicio del modal-cortar placa articulos-->
+    <!--Inicio del modal-cortar placa articulos-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal4}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-warning modal-lg" role="document">
             <div class="modal-content">
@@ -1069,7 +1082,7 @@
                                 <th>Código de material</th>
                                 <th>Material</th>
                                 <th>Metros<sup>2</sup></th>
-                                <th>Stock</th>
+                                <th>Terminado</th>
                                 <th>Ubicacion</th>
                                 <th>No° Cotización</th>
                                 <th>Cliente</th>
@@ -1082,7 +1095,7 @@
                                     <td v-text="articulo.sku"></td>
                                     <td v-text="articulo.nombre_categoria"></td>
                                     <td v-text="articulo.metros_cuadrados"></td>
-                                    <td v-text="articulo.stock"></td>
+                                    <td v-text="articulo.terminado"></td>
                                     <td v-text="articulo.ubicacion"></td>
                                     <td v-text="articulo.cotizacion"></td>
                                     <td v-text="articulo.cliente"></td>
@@ -1184,7 +1197,7 @@ export default {
             total_parcial : 0.0,
             divImp: 0.0,
             total: 0.0,
-            forma_pago : "De contado",
+            forma_pago : "Efectivo",
             tiempo_entrega : "",
             lugar_entrega : "",
             precio: 0.0,
@@ -1258,7 +1271,8 @@ export default {
             CodeDate : "",
             vig : "",
             pastDays : 0,
-            obsEditable : 0
+            obsEditable : 0,
+            acabado: ""
         };
     },
     components: {
@@ -1345,13 +1359,11 @@ export default {
         calcularTotal : function(){
             let me=this;
             let resultado = 0;
+            let subtotal = 0;
+            let iva = parseFloat(me.impuesto) + 1;
             for(var i=0;i<me.arrayDetalle.length;i++){
-                resultado = resultado + (
-                    (
-
-                        ((((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)) - me.arrayDetalle[i].descuento) * (me.impuesto + 1))
-
-                    )
+                subtotal += (((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)-me.arrayDetalle[i].descuento);
+                resultado = subtotal * iva;
             }
             return resultado;
         },
@@ -1405,8 +1417,7 @@ export default {
             me.CodeDate = moment().format('YYMMDD');
             return date;
         }
-
-        },
+    },
     methods: {
         listarCotizacion (page,buscar,criterio){
             let me=this;
@@ -1487,12 +1498,12 @@ export default {
                 //Envia la petición para visualizar la data de esa página
                 me.listarCotizacion(page,buscar,criterio);
         },
-        cambiarPaginaArt(page,buscar,criterio,bodega){
+        cambiarPaginaArt(page,buscar,criterio,bodega,acabado){
             let me = this;
             //Actualiza la página actual
             me.paginationart.current_page = page;
             //Envia la petición para visualizar la data de esa página
-            me.listarArticulo(page,buscar,criterio,bodega);
+            me.listarArticulo(page,buscar,criterio,bodega,acabado);
         },
         cambiarPaginaArtCot(page,buscar,criterio){
             let me = this;
@@ -1665,7 +1676,7 @@ export default {
                 me.observacion = "";
                 me.descuento = 0;
                 me.vigencia = "";
-                me.forma_pago = "De contado";
+                me.forma_pago = "Efectivo";
                 me.tiempo_entrega = "";
                 me.lugar_entrega = "";
                 me.aceptado = 0;
@@ -1674,7 +1685,8 @@ export default {
                 me.comprometido = 0;
                 me.arrayDetalle = [];
                 me.obsEditable = 0;
-
+                me.total_impuesto = 0;
+                me.total_parcial = 0;
             })
             .catch(function(error) {
                 console.log(error);
@@ -1802,6 +1814,12 @@ export default {
             this.idproveedor = 0;
             this.num_comprobante = (parseInt(this.sigNum)+1);
             this.comprometido = 0;
+            this.lugar_entrega = '';
+            this.tiempo_entrega = '';
+            this.forma_pago = 'Efectivo';
+            this.total_impuesto = 0;
+            this.total_parcial = 0;
+            this.vigencia = '';
             this.selectCategoria();
         },
         ocultarDetalle(){
@@ -1839,6 +1857,15 @@ export default {
             this.aceptado = 0;
             this.comprometido = 0;
             this.btnEntrega =  false;
+            this.total = 0;
+            this.totalImpuesto = 0;
+            this.totalParcial = 0;
+            this.arrayDetalle = [];
+            this.total_impuesto = 0;
+            this.total_parcial = 0;
+            this.impuesto = 0.16;
+            this.observacion = "";
+            this.listarCotizacion(1,this.buscar, this.criterio);
             this.getLastNum();
         },
         verCotizacion(id){
@@ -1875,8 +1902,8 @@ export default {
                 me.estadoVn = arrayCotizacionT[0]['estado'];
 
                 moment.locale('es');
-                me.fecha_llegada=moment(fechaform).format('llll');
-                me.vigencia=moment(vigeformt).format('llll');
+                me.fecha_llegada=moment(fechaform).format('dddd DD MMM YYYY hh:mm:ss a');
+                me.vigencia=moment(vigeformt).format('dddd DD MMM YYYY');
                 me.vig = moment(vigeformt).format('YY-MM-DD');
 
                 me.getPastDays(me.vig,me.cotizacion_id,me.estadoVn);
@@ -1932,16 +1959,17 @@ export default {
         cerrarModal() {
             this.modal = 0;
             this.buscarA = "";
+            this.acabado = "";
         },
         abrirModal() {
             this.arrayArticulo=[];
             this.modal = 1;
             this.tituloModal = "Seleccionar Artículos";
-            this.listarArticulo(1,'','sku','');
+            this.listarArticulo(1,'','sku','','');
         },
-        listarArticulo (page,buscar,criterio,bodega){
+        listarArticulo (page,buscar,criterio,bodega,acabado){
             let me=this;
-            var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega;
+            var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega + '&acabado=' + acabado;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayArticulo = respuesta.articulos.data;
@@ -2262,7 +2290,7 @@ export default {
                 'id': this.idarticulo
             })
             .then(function(response) {
-                me.listarArticulo(1,me.codigoA,'codigo',bodega);
+                me.listarArticulo(1,me.codigoA,'codigo',bodega,acabado);
                 me.cerrarModal4();
                 me.abrirModal();
                 me.validatedA = 0;
@@ -2317,7 +2345,19 @@ export default {
             }).catch(function (error) {
                 console.log(error);
             });
-        }
+        },
+        convertDateCotizacion(date){
+            let me=this;
+            moment.locale('es');
+            var datec = moment(date).format('DD MMM YYYY hh:mm:ss a');
+            return datec;
+        },
+        convertDateVigencia(date){
+            let me=this;
+            moment.locale('es');
+            var datec = moment(date).format('DD MMM YYYY');
+            return datec;
+        },
     },
     mounted() {
         this.listarCotizacion(1,this.buscar, this.criterio);

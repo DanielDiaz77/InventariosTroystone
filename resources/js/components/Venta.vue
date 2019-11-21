@@ -113,7 +113,7 @@
         </template>
         <!-- Fin Listado -->
 
-        <!-- Detalle -->
+        <!-- Nueva Venta -->
         <template v-else-if="listado==0">
             <div class="card-body">
                 <div class="form-group row border">
@@ -167,8 +167,9 @@
                                 <option value='' disabled>Seleccione la forma de pago</option>
                                 <option value="Efectivo">Efectivo</option>
                                 <option value="Tarjeta">Tarjeta</option>
-                                <option value="Cheque">Mixto</option>
+                                <option value="Transferencia">Transferencia</option>
                                 <option value="Cheque">Cheque</option>
+                                <option value="Mixto">Mixto</option>
                             </select>
                         </div>
                     </div>
@@ -344,7 +345,7 @@
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total IVA:</strong></td>
-                                    <td>$ {{total_impuesto=((total * impuesto)/(1+impuesto)).toFixed(2)}}</td>
+                                    <td>$ {{total_impuesto=((total * parseFloat(impuesto))/(1+parseFloat(impuesto))).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Neto:</strong></td>
@@ -379,7 +380,8 @@
                 </div>
             </div>
         </template>
-        <!-- Fin detalle -->
+        <!-- Fin Nueva Venta -->
+
          <!-- Ver Venta -->
         <template v-else-if="listado==2">
             <div class="card-body">
@@ -628,7 +630,7 @@
                 </div>
             </div>
         </template>
-        <!-- Fin ver ingreso-->
+        <!-- Fin ver Venta-->
       </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
@@ -643,6 +645,7 @@
                 </button>
                 </div>
                 <div class="modal-body">
+                    <!-- Filtros Modal Articulos -->
                     <div class="form-group row">
                         <div class="col-md">
                             <div class="input-group">
@@ -662,8 +665,8 @@
                                         <option value="" disabled>Ubicacion</option>
                                         <option value="">Todas</option>
                                         <option value="Del Musico">Del Músico</option>
-                                        <option value="Escultores">Escultor</option>
-                                        <option value="Sastres">Sastre</option>
+                                        <option value="Escultores">Escultores</option>
+                                        <option value="Sastres">Sastres</option>
                                         <option value="Mecanicos">Mecánicos</option>
                                         <option value="Tractorista">Tractorista</option>
                                         <option value="San Luis">San Luis</option>
@@ -742,12 +745,14 @@
                             </li>
                         </ul>
                     </nav>
+                    <hr>
+                    <div class="float-right">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
+                <!-- <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                    <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
-                <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
-                </div>
+                </div> -->
             </div>
         <!-- /.modal-content -->
         </div>
@@ -901,10 +906,6 @@
                     <tr>
                         <td><strong>MATERIAL</strong></td>
                         <td v-text="categoria"></td>
-                        <!-- <select disabled class="form-control selectDetalle" v-model="idcategoria">
-                            <option value="0" disabled>Seleccione un material</option>
-                            <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                        </select> -->
                     </tr>
                     <tr >
                         <td><strong>CODIGO DE MATERIAL</strong></td>
@@ -1331,13 +1332,11 @@ export default {
             calcularTotal : function(){
                 let me=this;
                 let resultado = 0;
+                let subtotal = 0;
+                let iva = parseFloat(me.impuesto) + 1;
                 for(var i=0;i<me.arrayDetalle.length;i++){
-                    resultado = resultado + (
-                        (
-
-                            ((((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)) - me.arrayDetalle[i].descuento) * (me.impuesto + 1))
-
-                        )
+                    subtotal += (((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)-me.arrayDetalle[i].descuento);
+                    resultado = subtotal * iva;
                 }
                 return resultado;
             },
@@ -1802,7 +1801,7 @@ export default {
                 me.pagado = arrayVentaT[0]['pagado'];
 
                 moment.locale('es');
-                me.fecha_llegada=moment(fechaform).format('llll');
+                me.fecha_llegada=moment(fechaform).format('dddd DD MMM YYYY hh:mm:ss a');
 
                  var imp =   parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
 
@@ -2235,8 +2234,9 @@ export default {
             });
         },
         convertDateVenta(date){
+            moment.locale('es');
             let me=this;
-            var datec = moment(date).format('MMM DD YYYY HH:mm:ss');
+            var datec = moment(date).format('DD MMM YYYY hh:mm:ss a');
             /* console.log(datec); */
             return datec;
         },
