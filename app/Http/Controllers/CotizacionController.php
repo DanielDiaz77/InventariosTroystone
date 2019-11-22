@@ -133,6 +133,31 @@ class CotizacionController extends Controller
         }
     }
 
+    public function desactivarVenta(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            $cotizacion = Cotizacion::findOrFail($request->id);
+            $cotizacion->estado = 'Vendida';
+            $cotizacion->aceptado = 1;
+            $cotizacion->save();
+
+            $detalles = DetalleCotizacion::select('idarticulo')
+                    ->where('idcotizacion',$request->id)->get();
+
+            foreach($detalles as $ep=>$det){
+                $articulo = Articulo::findOrFail($det['idarticulo']);
+                $articulo->comprometido = 0;
+                $articulo->save();
+            }
+
+            DB::commit();
+
+        }catch(Exception $e){
+            DB::rollBack();
+        }
+    }
+
     public function obtenerCabecera(Request $request){
         if (!$request->ajax()) return redirect('/');
 
@@ -143,7 +168,8 @@ class CotizacionController extends Controller
         'cotizaciones.fecha_hora','cotizaciones.impuesto','cotizaciones.total','cotizaciones.estado',
         'cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion','cotizaciones.forma_pago',
         'cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega','cotizaciones.aceptado','cotizaciones.vigencia',
-        'personas.nombre','users.usuario')
+        'personas.id as idcliente','personas.nombre','personas.tipo','personas.rfc','personas.company','personas.tel_company'
+        ,'users.usuario')
         ->where('cotizaciones.id','=',$id)
         ->orderBy('cotizaciones.id', 'desc')->take(1)->get();
 
@@ -162,7 +188,8 @@ class CotizacionController extends Controller
             'articulos.sku','articulos.codigo','articulos.espesor','articulos.largo','articulos.alto',
             'articulos.metros_cuadrados','articulos.descripcion','articulos.idcategoria','articulos.terminado',
             'articulos.ubicacion','articulos.file','articulos.origen','articulos.contenedor','articulos.fecha_llegada',
-            'articulos.observacion','articulos.condicion','categorias.nombre as categoria')
+            'articulos.observacion','articulos.condicion','articulos.stock','articulos.id as idarticulo',
+            'categorias.nombre as categoria')
         ->where('detalle_cotizaciones.idcotizacion',$id)
         ->orderBy('detalle_cotizaciones.id','desc')->get();
 

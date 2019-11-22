@@ -151,6 +151,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/cotizacion/aceptarCotizacion', 'CotizacionController@aceptarCotizacion');
         Route::get('/cotizacion/nextNum','CotizacionController@getLastNum');
         Route::post('/cotizacion/actualizarObservacion', 'CotizacionController@actualizarObservacion');
+        Route::put('/cotizacion/desactivarVenta', 'CotizacionController@desactivarVenta');
 
         Route::get('/tarea', 'TareaController@index');
         Route::post('/tarea/registrar', 'TareaController@store');

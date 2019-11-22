@@ -71,7 +71,6 @@
                                 <td v-text="cotizacion.num_comprobante"></td>
                                 <td>{{ convertDateCotizacion(cotizacion.fecha_hora) }}</td>
                                 <td>{{ convertDateVigencia(cotizacion.vigencia) }}</td>
-                                <!-- <td v-text="cotizacion.vigencia"></td> -->
                                 <td v-text="cotizacion.impuesto"></td>
                                 <td v-text="cotizacion.total"></td>
                                 <td v-text="cotizacion.estado "></td>
@@ -96,7 +95,7 @@
         </template>
         <!-- Fin Listado -->
 
-        <!-- Detalle -->
+        <!-- Nueva Cotizacion -->
         <template v-else-if="listado==0">
             <div class="card-body">
                 <div class="form-group row border">
@@ -338,7 +337,8 @@
                 </div>
             </div>
         </template>
-        <!-- Fin detalle -->
+        <!-- Fin Nueva Cotizacion -->
+
          <!-- Ver Cotizacion -->
         <template v-else-if="listado==2">
             <div class="card-body">
@@ -528,11 +528,285 @@
                 <div class="form-group row">
                     <div class="col-md-12">
                         <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
+                        <template v-if="estadoVn =='Registrado'">
+                            <button type="button" @click="crearVenta()"  class="btn btn-primary">Pasar a Venta</button>
+                        </template>
                     </div>
                 </div>
             </div>
         </template>
-        <!-- Fin ver ingreso-->
+        <!-- Fin ver Cotizacion-->
+
+        <!-- Nueva Venta -->
+        <template v-else-if="listado==3">
+            <div class="card-body">
+                <div class="form-group row border">
+                    <div class="col-md-3 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Cliente</strong></label>
+                            <h4 v-text="cliente"></h4>
+                        </div>
+                    </div>&nbsp;
+                     <div class="col-md-3 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Tipo de cliente</strong></label>
+                            <p v-text="tipo_cliente"></p>
+                           <!--  <input type="text" readonly :value="tipo_cliente" class="form-control col-md"> -->
+                        </div>
+                    </div>
+                     <div class="col-md-3 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>RFC</strong></label>
+                            <p v-text="rfc_cliente"></p>
+                            <!-- <input type="text" readonly :value="rfc_cliente" class="form-control col-md"> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row border">
+                    <div class="col-md-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Tipo Comprobante (*)</strong></label>
+                            <select v-model="tipo_comprobante" class="form-control">
+                                <option value="">Seleccione</option>
+                                <option value="PRESUPUESTO">PRESUPUESTO</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Número de presupuesto (*)</strong></label>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Forma de pago</strong><span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
+                            <select class="form-control" v-model="forma_pago">
+                                <option value='' disabled>Seleccione la forma de pago</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                                <option value="Transferencia">Transferencia</option>
+                                <option value="Cheque">Cheque</option>
+                                <option value="Mixto">Mixto</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center" v-if="forma_pago =='Cheque'">
+                        <div class="form-group">
+                            <label for=""><strong>No° de Cheque</strong><span style="color:red;" v-show="num_cheque==0">(*Ingrese)</span></label>
+                            <input type="number" min="0" class="form-control" v-model="num_cheque" placeholder="000xx">
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center" v-if="forma_pago =='Cheque'">
+                        <div class="form-group">
+                            <label for=""><strong>Banco</strong><span style="color:red;" v-show="banco==''">(*Ingrese)</span></label>
+                            <input type="text" class="form-control" v-model="banco" placeholder="Banco del cheque">
+                        </div>
+                    </div>
+                    <div class="col-md-1 text-center">
+                        <label for=""><strong>IVA (*)</strong></label>
+                        <input type="text" class="form-control" v-model="impuesto">
+                    </div>
+                    <div class="col-md-1 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Moneda</strong><span style="color:red;" v-show="moneda==''">(*Seleccione)</span></label>
+                            <select class="form-control" v-model="moneda">
+                                <option value='' disabled>Seleccione la moneda del cobro</option>
+                                <option value="Peso Mexicano">Peso Mexicano</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Tiempo de entrega</strong><span style="color:red;" v-show="tiempo_entrega==''">(*Seleccione)</span></label>
+                            <select class="form-control" v-model="tiempo_entrega">
+                                <option value='' disabled>Seleccione el tiempo de entrega</option>
+                                <option value="Inmediata">Inmediata</option>
+                                <option value="de 2 a 10 dias">de 2 a 10 dias</option>
+                                <option value="de 10 a 20 dias">de 10 a 20 dias</option>
+                                <option value="de 21 a 40 dias">de 10 a 20 dias</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Lugar de entrega</strong><span style="color:red;" v-show="lugar_entrega==''">(*Seleccione)</span></label>
+                            <select class="form-control" v-model="lugar_entrega">
+                                <option value='' disabled>Seleccione el lugar de entrega</option>
+                                <option value="LAB TROYSTONE">LAB TROYSTONE</option>
+                                <option value="LAB TROYSTONE S.L.P.">LAB TROYSTONE S.L.P.</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Tipo de facturación</strong><span style="color:red;" v-show="tipo_facturacion==''">(*Seleccione)</span></label>
+                            <select class="form-control" v-model="tipo_facturacion">
+                                <option value='' disabled>Seleccione el tipo de facturación</option>
+                                <option value="Publico General">Publico General</option>
+                                <option value="Cliente">Cliente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12 text-center">
+                        <div v-show="errorVenta" class="form-group row div-error">
+                            <div class="text-center text-error">
+                                <div v-for="error in errorMostrarMsjVenta" :key="error" v-text="error"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row border">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for=""><strong>Articulo</strong> <span style="color:red;" v-show="articulo==''">(*Seleccione)</span> </label>
+                            <div class="form-inline">
+                                <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()"  placeholder="Ingrese el no° de placa" >
+                                <button @click="abrirModal()" class="btn btn-primary">...</button>
+                                <input type="text" readonly class="form-control" v-model="articulo">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Cantidad</strong> <span style="color:red;" v-show="cantidad==0">(*Ingrese la cantidad)</span></label>
+                            <input type="number" min="0" value="0"  class="form-control" v-model="cantidad">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Precio m<sup>2</sup></strong> <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
+                            <input type="number" min="0" value="0" step="any" class="form-control" v-model="precio">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Descuento (%)</strong></label>
+                            <input type="number" min="0" value="0" class="form-control" v-model="descuento">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                        <div class="form-group">
+                            <button @click="agregarDetalle()" class="btn btn-success form-control btnagregar"><i class="icon-plus"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group row border">
+                    <div class="table-responsive col-md-12">
+                        <table class="table table-bordered table-striped table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Opciones</th>
+                                    <th>Material</th>
+                                    <th>Código de material</th>
+                                    <th>No° Placa</th>
+                                    <th>Terminado</th>
+                                    <th>Espesor</th>
+                                    <th>largo</th>
+                                    <th>Alto</th>
+                                    <th>Metros <sup>2</sup></th>
+                                    <th>Cantidad</th>
+                                    <th v-if="moneda!='Peso Mexicano'">
+                                        Precio m<sup>2</sup> {{moneda}}
+                                    </th>
+                                    <th v-else>
+                                        Precio m<sup>2</sup>
+                                    </th>
+                                    <th>Descuento </th>
+                                    <th>Ubicacion</th>
+                                    <th>SubTotal</th>
+                                </tr>
+                            </thead>
+                            <tbody v-if="arrayDetalle.length">
+                                <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
+                                    <td>
+                                        <button @click="eliminarDetalle(index)" type="button" class="btn btn-danger btn-sm">
+                                            <i class="icon-close"></i>
+                                        </button>&nbsp;
+                                        <button type="button" @click="abrirModal2(index)" class="btn btn-success btn-sm">
+                                            <i class="icon-eye"></i>
+                                        </button> &nbsp;
+                                        <button type="button" class="btn btn-warning btn-sm" @click="abrirModal4(index)">
+                                            <i class="icon-crop"></i>
+                                        </button>
+                                    </td>
+                                    <td v-text="detalle.categoria"></td>
+                                    <td v-text="detalle.sku"></td>
+                                    <td v-text="detalle.codigo"></td>
+                                    <td v-text="detalle.terminado"></td>
+                                    <td v-text="detalle.espesor"></td>
+                                    <td v-text="detalle.largo"></td>
+                                    <td v-text="detalle.alto"></td>
+                                    <td v-text="detalle.metros_cuadrados"></td>
+                                    <td>
+                                        <span style="color:red;" v-show="detalle.cantidad>detalle.stock">Solo hay: {{detalle.stock}} disponibles</span>
+                                        <input v-model="detalle.cantidad" min="1" type="number" class="form-control">
+                                    </td>
+                                   <td>
+                                        <span style="color:red;" v-show="detalle.precio<=0">Ingrese el precio</span>
+                                        <input v-model="detalle.precio" min="0" step="any" type="number" class="form-control">
+                                   </td>
+                                    <td>
+                                        <span style="color:red" v-show="detalle.descuento>(detalle.precio * detalle.cantidad)">Descuento superior al subtotal!</span>
+                                        <input v-model="detalle.descuento" min="0" step="any" type="number" class="form-control">
+                                    </td>
+                                    <td v-text="detalle.ubicacion"></td>
+                                    <td>
+                                       {{ (( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento) }}
+                                    </td>
+                                </tr>
+                                <tr style="background-color: #CEECF5;">
+                                    <td colspan="13" align="right"><strong>Total Parcial:</strong></td>
+                                    <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
+                                </tr>
+                                <tr style="background-color: #CEECF5;">
+                                    <td colspan="13" align="right"><strong>Total IVA:</strong></td>
+                                    <td>$ {{total_impuesto=((total * parseFloat(impuesto))/(1+parseFloat(impuesto))).toFixed(2)}}</td>
+                                </tr>
+                                <tr style="background-color: #CEECF5;">
+                                    <td colspan="13" align="right"><strong>Total Neto:</strong></td>
+                                    <td>$ {{total=(calcularTotal.toFixed(2))}}</td>
+                                </tr>
+                            </tbody>
+                            <tbody v-else>
+                                <tr>
+                                    <td colspan="14" class="text-center">
+                                        <strong>NO hay artículos agregados...</strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-4 text-center">
+                        <label for="exampleFormControlTextarea2"><strong>Observaciones</strong></label>
+                        <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
+                    </div>&nbsp;
+                    <div class="col-md-4 text-center float-right">
+                        <label for="exampleFormControlTextarea2"><strong>Observaciones Internas</strong></label>
+                        <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacionpriv"></textarea>
+                    </div>&nbsp;
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <button type="button" @click="verCotizacion(cotizacion_id)"  class="btn btn-secondary">Cancelar</button>
+                        <button type="button" class="btn btn-primary" @click="registrarVenta()">Registrar Venta</button>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <!-- Fin Nueva Venta -->
+
       </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
@@ -1272,7 +1546,15 @@ export default {
             vig : "",
             pastDays : 0,
             obsEditable : 0,
-            acabado: ""
+            acabado: "",
+            observacionpriv : "",
+            num_cheque : "",
+            banco : "",
+            tipo_facturacion : "",
+            errorVenta: 0,
+            errorMostrarMsjVenta: [],
+            sigNum : 0,
+            sigNumV : 0,
         };
     },
     components: {
@@ -1739,7 +2021,7 @@ export default {
             });
 
             swalWithBootstrapButtons.fire({
-                title: "Esta cotizacion ya se vencio favor de anular",
+                title: "Esta cotizacion ya se vencio favor de cancelarla",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Aceptar!",
@@ -1900,7 +2182,9 @@ export default {
                 me.tipo_cambio = arrayCotizacionT[0]['tipo_cambio'];
                 me.observacion = arrayCotizacionT[0]['observacion'];
                 me.estadoVn = arrayCotizacionT[0]['estado'];
-
+                me.rfc_cliente = arrayCotizacionT[0]['rfc'];
+                me.tipo_cliente = arrayCotizacionT[0]['tipo'];
+                me.idcliente = arrayCotizacionT[0]['idcliente'];
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('dddd DD MMM YYYY hh:mm:ss a');
                 me.vigencia=moment(vigeformt).format('dddd DD MMM YYYY');
@@ -1950,9 +2234,9 @@ export default {
                 }
 
             }else if(date == vdate){
-                console.log("La cotizacion vence hoy!");
+               /*  console.log("La cotizacion vence hoy!"); */
             }else{
-                console.log("Disponible");
+                /* console.log("Disponible"); */
             }
 
         },
@@ -2358,10 +2642,141 @@ export default {
             var datec = moment(date).format('DD MMM YYYY');
             return datec;
         },
+        crearVenta(){
+            let me = this;
+            var comp = this.num_comprobante;
+            this.listado = 3;
+            this.tipo_comprobante = "PRESUPUESTO";
+            this.observacionpriv = "Venta de la cotización " + comp;
+            this.observacion = "";
+            this.getLastNumVenta();
+            this.num_comprobante = (parseInt(this.sigNumV)+1);
+        },
+        getLastNumVenta(){
+            let me=this;
+            var url= '/venta/nextNum';
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.sigNumV = respuesta.SigNum;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        registrarVenta(){
+
+            if (this.validarVenta()) {
+                return;
+            }
+
+            if(this.forma_pago != 'Cheque'){
+                this.num_cheque = 0;
+                this.banco = '';
+            }
+
+            let me = this;
+
+            var numcomp = "V-".concat(me.CodeDate,"-",me.num_comprobante);
+            console.log(numcomp);
+
+            axios.post('/venta/registrar',{
+                'idcliente': this.idcliente,
+                'tipo_comprobante': this.tipo_comprobante,
+                'num_comprobante' : numcomp,
+                'impuesto' : this.impuesto,
+                'total' : this.total,
+                'forma_pago' : this.forma_pago,
+                'tiempo_entrega' : this.tiempo_entrega,
+                'lugar_entrega' : this.lugar_entrega,
+                'moneda' : this.moneda,
+                'tipo_cambio' : this.tipo_cambio,
+                'observacion' : this.observacion,
+                'observacionpriv' : this.observacionpriv,
+                'num_cheque'  : this.num_cheque,
+                'banco'       : this.banco,
+                'tipo_facturacion' : this.tipo_facturacion,
+                'data': this.arrayDetalle
+            }).then(function(response) {
+                Swal.fire({
+                    type: 'success',
+                    title: 'Completado...',
+                    text: 'Venta registrada con el comprobante: ' + numcomp,
+                })
+                me.desactivarCotizacionVenta(me.cotizacion_id);
+                me.idcliente = 0;
+                me.tipo_comprobante = "Cotizacion";
+                me.num_comprobante = 0;
+                me.impuesto = 0.16;
+                me.total = 0.0;
+                me.idarticulo = 0;
+                me.articulo = "";
+                me.cantidad = 0;
+                me.vigencia = "";
+                me.precio = 0;
+                me.stock = 0;
+                me.observacion = "";
+                me.descuento = 0;
+                me.vigencia = "";
+                me.forma_pago = "Efectivo";
+                me.tiempo_entrega = "";
+                me.lugar_entrega = "";
+                me.aceptado = 0;
+                me.moneda = "Peso Mexicano";
+                me.tipo_cambio = "";
+                me.comprometido = 0;
+                me.arrayDetalle = [];
+                me.obsEditable = 0;
+                me.total_impuesto = 0;
+                me.total_parcial = 0;
+                me.tipo_facturacion = "";
+
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        validarVenta() {
+            let me = this;
+            var art;
+
+            me.errorVenta = 0;
+            me.errorMostrarMsjVenta = [];
+
+            me.arrayDetalle.map(function(x){
+                if(x.cantidad > x.stock){
+                    art ="La cantidad del articulo " + x.codigo + " supera las cantidades disponibles.";
+                    me.errorMostrarMsjVenta.push(art);
+                }
+            });
+
+            if (me.idcliente==0) me.errorMostrarMsjVenta.push("Seleccione un cliente");
+            if (me.tipo_comprobante==0) me.errorMostrarMsjVenta.push("Seleccione un comprobante.");
+            if (!me.num_comprobante) me.errorMostrarMsjVenta.push("Ingrese el numero de comprobante");
+           /*  if (!me.impuesto) me.errorMostrarMsjVenta.push("Ingrese el impuesto de la venta"); */
+            if (me.arrayDetalle.length<=0) me.errorMostrarMsjVenta.push("Introdusca articulos para la venta");
+            if (me.moneda != 'Peso Mexicano') me.errorMostrarMsjVenta.push("Seleccione el tipo de cambio de la moneda");
+
+            if (me.errorMostrarMsjVenta.length) me.errorVenta = 1;
+
+            return me.errorVenta;
+        },
+        desactivarCotizacionVenta(id) {
+
+            let me = this;
+            axios.put('/cotizacion/desactivarVenta',{
+                'id': id
+            }).then(function (response) {
+                me.ocultarDetalle();
+                me.listarCotizacion(1,'','num_comprobante');
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
     },
     mounted() {
         this.listarCotizacion(1,this.buscar, this.criterio);
         this.getLastNum();
+        this.getLastNumVenta();
     }
 };
 </script>
