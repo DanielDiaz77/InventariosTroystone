@@ -73,7 +73,18 @@
                                 <td>{{ convertDateVigencia(cotizacion.vigencia) }}</td>
                                 <td v-text="cotizacion.impuesto"></td>
                                 <td v-text="cotizacion.total"></td>
-                                <td v-text="cotizacion.estado "></td>
+                                <!-- <td v-text="cotizacion.estado "></td> -->
+                                <td>
+                                    <div v-if="cotizacion.estado == 'Registrado'">
+                                        <span class="badge badge-warning">En espera</span>
+                                    </div>
+                                    <div v-else-if="cotizacion.estado == 'Vendida'">
+                                        <span class="badge badge-success">Aceptada</span>
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-danger">Cotizacion cancelada</span>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -407,7 +418,10 @@
                         <div class="form-group">
                             <label for=""> <strong>Estado: </strong></label>
                             <div v-if="estadoVn == 'Registrado'">
-                                <span class="badge badge-success">Registrado</span>
+                                <span class="badge badge-warning">En espera</span>
+                            </div>
+                            <div v-else-if="estadoVn == 'Vendida'">
+                                <span class="badge badge-success">Aceptada</span>
                             </div>
                             <div v-else>
                                 <span class="badge badge-danger">Cotizacion cancelada</span>

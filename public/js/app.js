@@ -6531,6 +6531,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -86653,11 +86667,31 @@ var render = function() {
                                 }
                               }),
                               _vm._v(" "),
-                              _c("td", {
-                                domProps: {
-                                  textContent: _vm._s(cotizacion.estado)
-                                }
-                              })
+                              _c("td", [
+                                cotizacion.estado == "Registrado"
+                                  ? _c("div", [
+                                      _c(
+                                        "span",
+                                        { staticClass: "badge badge-warning" },
+                                        [_vm._v("En espera")]
+                                      )
+                                    ])
+                                  : cotizacion.estado == "Vendida"
+                                  ? _c("div", [
+                                      _c(
+                                        "span",
+                                        { staticClass: "badge badge-success" },
+                                        [_vm._v("Aceptada")]
+                                      )
+                                    ])
+                                  : _c("div", [
+                                      _c(
+                                        "span",
+                                        { staticClass: "badge badge-danger" },
+                                        [_vm._v("Cotizacion cancelada")]
+                                      )
+                                    ])
+                              ])
                             ])
                           }),
                           0
@@ -88094,8 +88128,16 @@ var render = function() {
                           ? _c("div", [
                               _c(
                                 "span",
+                                { staticClass: "badge badge-warning" },
+                                [_vm._v("En espera")]
+                              )
+                            ])
+                          : _vm.estadoVn == "Vendida"
+                          ? _c("div", [
+                              _c(
+                                "span",
                                 { staticClass: "badge badge-success" },
-                                [_vm._v("Registrado")]
+                                [_vm._v("Aceptada")]
                               )
                             ])
                           : _c("div", [
