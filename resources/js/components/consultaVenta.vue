@@ -320,10 +320,12 @@
             </button>
           </div>
           <div class="modal-body">
-              <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                </lightbox>&nbsp;
+                <h1 class="text-center" v-text="sku"></h1>
+                <template v-if="file">
+                    <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                        <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
+                    </lightbox>&nbsp;
+                </template>
                 <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
                         <tr class="text-center">
@@ -428,10 +430,12 @@
             </button>
           </div>
           <div class="modal-body">
-              <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                </lightbox>&nbsp;
+                <h1 class="text-center" v-text="sku"></h1>
+                <template v-if="file">
+                    <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                        <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
+                    </lightbox>&nbsp;
+                </template>
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
                 </div>

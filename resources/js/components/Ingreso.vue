@@ -552,10 +552,12 @@
             </button>
           </div>
           <div class="modal-body">
-              <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="file">
-                    <img class="img-responsive imgcenter" width="500px" :src="file">
-                </lightbox>&nbsp;
+                <h1 class="text-center" v-text="sku"></h1>
+               <template v-if="file">
+                    <lightbox class="m-0" album="" :src="file">
+                        <img class="img-responsive imgcenter" width="500px" :src="file">
+                    </lightbox>&nbsp;
+               </template>
                 <div class="text-center">
                     <label class="text-left" for=""><strong>Actualizar Imagen</strong></label>
                      <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
@@ -718,10 +720,12 @@
             </button>
           </div>
           <div class="modal-body">
-              <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
-                </lightbox>&nbsp;
+                <h1 class="text-center" v-text="sku"></h1>
+                <template v-if="file">
+                    <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
+                        <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                    </lightbox>&nbsp;
+                </template>
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
                 </div>

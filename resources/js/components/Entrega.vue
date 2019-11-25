@@ -279,11 +279,20 @@
                             <label for=""><strong>Tiempo de entrega</strong></label>
                             <p v-text="tiempo_entrega"></p>
                         </div>
-                    </div><div class="col-md-2">
-                        <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/entregas/'+fileventa">
-                            <img alt="Sin imagen" class="img-responsive img-fluid imgcenter" width="800px" height="300px" :src="'http://inventariostroystone.com/entregas/'+fileventa">
-                        </lightbox>
+                    </div>
+                    <div class="col-md-2">
+                        <template v-if="imagenMinatura !='entregas/null'">
+                            <!-- <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/entregas/'+fileventa"> -->
+                            <lightbox class="m-0" album="" :src="'entregas/'+fileventa">
+                                <img alt="Sin imagen" class="img-responsive img-fluid imgcenter" width="800px" height="300px" :src="'/entregas/'+fileventa">
+                            </lightbox>
+                        </template>
                     </div>&nbsp;
+                    <div class="col-md-1 mr-5 p-0 m-0" v-if="showElim">
+                        <button type="button" class="btn btn-danger btn-circle float-left" aria-label="Eliminar imagen" @click="eliminarImagen(venta_id)">
+                            <i class="fa fa-times"></i>
+                        </button>&nbsp;
+                    </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-md-12">
@@ -443,12 +452,12 @@
                             </div>
                             <div class="col-2">
                                 <template v-if="obsEditable == 0">
-                                    <button type="button" class="btn btn-warning btn-sm float-right" @click="editObservacion()">
+                                    <button type="button" class="btn btn-warning btn-sm float-right btn-circle" @click="editObservacion()">
                                         <i class="icon-pencil"></i>
                                     </button>
                                 </template>
                                 <template v-else>
-                                    <button type="button" class="btn btn-primary btn-sm float-right" @click="actualizarObservacion(venta_id)">
+                                    <button type="button" class="btn btn-primary btn-sm float-right btn-circle" @click="actualizarObservacion(venta_id)">
                                         <i class="fa fa-floppy-o"></i>
                                     </button>
                                 </template>&nbsp;
@@ -475,28 +484,53 @@
                         </div>
                     </div>&nbsp;
                     <div class="col-md-2">
-                        <lightbox class="m-0" album="" :src="imagen">
-                            <figure>
-                                <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
-                            </figure>
-                        </lightbox>&nbsp;
+                        <template v-if="imagenMinatura !='entregas/null'">
+                            <lightbox class="m-0" album="" :src="imagen">
+                                <figure>
+                                    <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
+                                </figure>
+                            </lightbox>&nbsp;
+                        </template>
+                    </div>
+                    <div class="col-md-1 mr-5 p-0 m-0" v-if="showElim">
+                        <button type="button" class="btn btn-danger btn-circle float-left" aria-label="Eliminar imagen" @click="eliminarImagen(venta_id)">
+                            <i class="fa fa-times"></i>
+                        </button>&nbsp;
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-12">
-                        <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
-                        <button type="button" class="btn btn-primary" @click="actualizarDetalle()">Actualizar</button>
-                        <div class="form-group row float-right mr-2">
-                            <label class="col-md-3 form-control-label" for="text-input"> <strong>Actualizar Imagen</strong></label>
-                            <div class="col-md-7">
-                                <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
+                    <div class="col-md-8 order-md-1 order-2">
+                        <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>&nbsp;
+                        <button type="button" class="btn btn-primary" @click="actualizarDetalle()">Actualizar</button>&nbsp;
+                    </div>
+                    <div class="col-md-4 order-md-2 order-1 float-right">
+                        <div class="form-group row">
+                            <label class="col form-control-label" for="text-input"> <strong>Actualizar Imagen</strong></label>&nbsp;
+                            <div class="col">
+                                <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">&nbsp;
                             </div>
-                            <div class="col-md-2">
-                                <button type="button" class="btn btn-primary" @click="updImage()">Guardar</button>
+                            <div class="col">
+                                <button type="button" class="btn btn-sm btn-primary btn-circle" @click="updImage()">
+                                    <i class="fa fa-floppy-o"></i>
+                                </button>&nbsp;
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- <div class="form-group row">
+                    <div class="col">1</div>
+                    <div class="col">2</div>
+                    <div class="col">3</div>
+                    <div class="col">4</div>
+                    <div class="col">5</div>
+                    <div class="col">6</div>
+                    <div class="col">7</div>
+                    <div class="col">8</div>
+                    <div class="col">9</div>
+                    <div class="col">10</div>
+                    <div class="col">11</div>
+                    <div class="col">12</div>
+                </div> -->
             </div>
         </template>
         <!-- Fin Actualizar Entrega-->
@@ -516,10 +550,12 @@
             </button>
           </div>
           <div class="modal-body">
-              <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                </lightbox>&nbsp;
+                <h1 class="text-center" v-text="sku"></h1>
+                <template v-if="file">
+                    <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                        <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
+                    </lightbox>&nbsp;
+                </template>
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
                 </div>
@@ -543,11 +579,6 @@
                     <tr>
                         <td><strong>MATERIAL</strong></td>
                         <td v-text="categoria"></td>
-                       <!--  <select disabled class="form-control selectDetalle" v-model="idcategoria">
-                            <option value="0" disabled>Seleccione un material</option>
-                            <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                        </select> -->
-
                     </tr>
                     <tr >
                         <td><strong>CODIGO DE MATERIAL</strong></td>
@@ -737,7 +768,8 @@ export default {
             entregadas : 0,
             pendientes : 0,
             entregasComp : 0,
-            fileventa: ""
+            fileventa: "",
+            showElim : false
         };
     },
     components: {
@@ -889,6 +921,7 @@ export default {
             this.entregasComp = 0;
             this.fileventa = "";
             this.imagenMinatura = "";
+            this.showElim = false;
         },
         verVenta(id){
 
@@ -933,9 +966,21 @@ export default {
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
 
-                 var imp =   parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
+                var imp =   parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
 
                 me.divImp = imp + 1;
+
+                let hasImg = 'entregas/' + arrayVentaT[0]['file'];
+
+                if(hasImg != 'entregas/null'){
+                    me.imagenMinatura = '/entregas/'+ arrayVentaT[0]['file'];
+                    me.showElim = true;
+                    console.log('Elim: '+me.showElim);
+                }else{
+                    me.imagenMinatura = 'entregas/null';
+                    me.showElim = false;
+                    console.log('Elim: '+me.showElim);
+                }
 
                 if(me.entregado ==1){
                     me.btnEntrega = true;
@@ -1106,7 +1151,8 @@ export default {
                 me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
                 me.pagado = arrayVentaT[0]['pagado'];
                 me.fileventa = arrayVentaT[0]['file'];
-                me.imagenMinatura = 'http://inventariostroystone.com/entregas/'+ arrayVentaT[0]['file'];
+                /* me.imagenMinatura = '/entregas/'+ arrayVentaT[0]['file']; */
+                /* me.imagenMinatura = 'http://inventariostroystone.com/entregas/'+ arrayVentaT[0]['file']; */
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
@@ -1114,6 +1160,19 @@ export default {
                  var imp =   parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
 
                 me.divImp = imp + 1;
+
+                let hasImg = 'entregas/' + arrayVentaT[0]['file'];
+
+                /* console.log("HasImg: " + hasImg); */
+
+                if(hasImg != 'entregas/null'){
+                    me.imagenMinatura = '/entregas/'+ arrayVentaT[0]['file'];
+                    me.showElim = true;
+                }else{
+
+                    me.imagenMinatura = 'entregas/null';
+                    me.showElim = false;
+                }
 
                 if(me.entregado ==1){
                     me.btnEntrega = true;
@@ -1209,6 +1268,44 @@ export default {
             .catch(function(error) {
                 console.log(error);
             });
+        },
+        eliminarImagen(id){
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta de eliminar la imagen de esta entrega?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    /* console.log("id: " + id + " IMG: " + file); */
+                    let me = this;
+                    axios.put('/entrega/eliminarImg', {
+                        'id' : id
+                    }).then(function(response) {
+                        me.listarVenta(1,'','num_comprobante');
+                        me.imagenMinatura = 'images/null';
+                        swalWithBootstrapButtons.fire(
+                            "Elimada!",
+                            "La imagen ha sido eliminada con éxito.",
+                            "success"
+                        )
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
         }
     },
     mounted() {

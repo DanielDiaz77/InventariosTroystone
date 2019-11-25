@@ -2270,6 +2270,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2324,7 +2354,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       buscar: '',
       arrayCategoria: [],
       btnComprometido: '',
-      isEdition: false
+      isEdition: false,
+      showElim: false
     };
   },
   components: {
@@ -2593,6 +2624,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.comprometido = 0;
       this.usuario = '';
       this.isEdition = false;
+      this.file = "";
+      this.showElim = false;
       this.listarArticulo(1, '', 'sku', '', '');
     },
     abrirModal: function abrirModal(modelo, accion) {
@@ -2624,7 +2657,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
                   this.fecha_llegada = '';
                   this.file = '';
                   this.tipoAccion = 1;
-                  this.imagenMinatura = '';
+                  this.imagenMinatura = 'images/null';
+                  this.showElim = false;
                   break;
                 }
 
@@ -2650,7 +2684,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
                   this.origen = data['origen'];
                   this.contenedor = data['contenedor'];
                   this.fecha_llegada = data['fecha_llegada'];
-                  this.imagenMinatura = 'http://inventariostroystone.com/images/' + data['file'];
+                  /* this.imagenMinatura = 'http://inventariostroystone.com/images/' + data['file']; */
+
                   this.estado = data['condicion'];
                   this.comprometido = data['comprometido'];
                   this.usuario = data['usuario'];
@@ -2660,6 +2695,17 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
                     this.btnComprometido = true;
                   } else {
                     this.btnComprometido = false;
+                  }
+
+                  var hasImg = 'images/' + data['file'];
+                  console.log("HasImg: " + hasImg);
+
+                  if (hasImg != 'images/null') {
+                    this.showElim = true;
+                    this.imagenMinatura = 'images/' + data['file'];
+                  } else {
+                    this.showElim = false;
+                    this.imagenMinatura = 'images/null';
                   }
 
                   break;
@@ -2744,6 +2790,43 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_2___default.a);
       this.file = '';
       this.errorArticulo = 0;
       this.imagenMinatura = '';
+    },
+    eliminarImagen: function eliminarImagen(id, imagen) {
+      var _this4 = this;
+
+      var arreglo = imagen.split("/", 2);
+      /* console.log("arreglo: " + arreglo[1]); */
+
+      var file = arreglo[1];
+      var swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-success",
+          cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: false
+      });
+      swalWithBootstrapButtons.fire({
+        title: "¿Esta de eliminar la imagen de este artículo?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Aceptar!",
+        cancelButtonText: "Cancelar!",
+        reverseButtons: true
+      }).then(function (result) {
+        if (result.value) {
+          console.log("id: " + id + " IMG: " + file);
+          var me = _this4;
+          axios.put('/articulo/eliminarImg', {
+            'id': id
+          }).then(function (response) {
+            me.listarArticulo(1, '', 'sku', '', '');
+            me.imagenMinatura = 'images/null';
+            swalWithBootstrapButtons.fire("Elimada!", "La imagen ha sido eliminada con éxito.", "success");
+          })["catch"](function (error) {
+            console.log(error);
+          });
+        } else if (result.dismiss === swal.DismissReason.cancel) {}
+      });
     }
   },
   mounted: function mounted() {
@@ -3897,6 +3980,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 
@@ -4170,6 +4255,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-js-toggle-button */ "./node_modules/vue-js-toggle-button/dist/index.js");
 /* harmony import */ var vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4__);
+//
+//
+//
+//
 //
 //
 //
@@ -5110,6 +5199,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -8689,6 +8784,37 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -8796,7 +8922,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       entregadas: 0,
       pendientes: 0,
       entregasComp: 0,
-      fileventa: ""
+      fileventa: "",
+      showElim: false
     };
   },
   components: {
@@ -8946,6 +9073,7 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       this.entregasComp = 0;
       this.fileventa = "";
       this.imagenMinatura = "";
+      this.showElim = false;
     },
     verVenta: function verVenta(id) {
       var me = this;
@@ -8983,6 +9111,17 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         me.fecha_llegada = moment__WEBPACK_IMPORTED_MODULE_3___default()(fechaform).format('llll');
         var imp = parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
         me.divImp = imp + 1;
+        var hasImg = 'entregas/' + arrayVentaT[0]['file'];
+
+        if (hasImg != 'entregas/null') {
+          me.imagenMinatura = '/entregas/' + arrayVentaT[0]['file'];
+          me.showElim = true;
+          console.log('Elim: ' + me.showElim);
+        } else {
+          me.imagenMinatura = 'entregas/null';
+          me.showElim = false;
+          console.log('Elim: ' + me.showElim);
+        }
 
         if (me.entregado == 1) {
           me.btnEntrega = true;
@@ -9148,11 +9287,24 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
         me.pagado = arrayVentaT[0]['pagado'];
         me.fileventa = arrayVentaT[0]['file'];
-        me.imagenMinatura = 'http://inventariostroystone.com/entregas/' + arrayVentaT[0]['file'];
+        /* me.imagenMinatura = '/entregas/'+ arrayVentaT[0]['file']; */
+
+        /* me.imagenMinatura = 'http://inventariostroystone.com/entregas/'+ arrayVentaT[0]['file']; */
+
         moment__WEBPACK_IMPORTED_MODULE_3___default.a.locale('es');
         me.fecha_llegada = moment__WEBPACK_IMPORTED_MODULE_3___default()(fechaform).format('llll');
         var imp = parseFloat(me.impuesto = arrayVentaT[0]['impuesto']);
         me.divImp = imp + 1;
+        var hasImg = 'entregas/' + arrayVentaT[0]['file'];
+        /* console.log("HasImg: " + hasImg); */
+
+        if (hasImg != 'entregas/null') {
+          me.imagenMinatura = '/entregas/' + arrayVentaT[0]['file'];
+          me.showElim = true;
+        } else {
+          me.imagenMinatura = 'entregas/null';
+          me.showElim = false;
+        }
 
         if (me.entregado == 1) {
           me.btnEntrega = true;
@@ -9246,6 +9398,39 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
       })["catch"](function (error) {
         console.log(error);
       });
+    },
+    eliminarImagen: function eliminarImagen(id) {
+      var _this2 = this;
+
+      var swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-success",
+          cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: false
+      });
+      swalWithBootstrapButtons.fire({
+        title: "¿Esta de eliminar la imagen de esta entrega?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Aceptar!",
+        cancelButtonText: "Cancelar!",
+        reverseButtons: true
+      }).then(function (result) {
+        if (result.value) {
+          /* console.log("id: " + id + " IMG: " + file); */
+          var me = _this2;
+          axios.put('/entrega/eliminarImg', {
+            'id': id
+          }).then(function (response) {
+            me.listarVenta(1, '', 'num_comprobante');
+            me.imagenMinatura = 'images/null';
+            swalWithBootstrapButtons.fire("Elimada!", "La imagen ha sido eliminada con éxito.", "success");
+          })["catch"](function (error) {
+            console.log(error);
+          });
+        } else if (result.dismiss === swal.DismissReason.cancel) {}
+      });
     }
   },
   mounted: function mounted() {
@@ -9272,6 +9457,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_lightbox__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_lightbox__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
+//
+//
+//
+//
 //
 //
 //
@@ -14259,6 +14448,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -17311,7 +17506,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  position: absolute !important;\n}\n.mostrar {\n  display: list-item !important;\n  opacity: 1 !important;\n  position: absolute !important;\n  background-color: #3c29297a !important;\n}\n.div-error {\n  display: flex;\n  justify-content: center;\n}\n.text-error {\n  color: red !important;\n  font-weight: bold;\n}\n.imgcenter {\n    display:flex;\n    margin:0 auto;\n}\n.modal-body{\n    height: 550px;\n    width: 100%;\n    overflow-y: auto;\n}\n", ""]);
+exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  position: absolute !important;\n}\n.mostrar {\n  display: list-item !important;\n  opacity: 1 !important;\n  position: absolute !important;\n  background-color: #3c29297a !important;\n}\n.div-error {\n  display: flex;\n  justify-content: center;\n}\n.text-error {\n  color: red !important;\n  font-weight: bold;\n}\n.imgcenter {\n    display:flex;\n    margin:0 auto;\n}\n.modal-body{\n    height: 550px;\n    width: 100%;\n    overflow-y: auto;\n}\n.btn-circle {\n    width: 30px;\n    height: 30px;\n    padding: 6px 0px;\n    border-radius: 15px;\n    text-align: center;\n    font-size: 13px;\n    line-height: 1.42857;\n}\n", ""]);
 
 // exports
 
@@ -81250,26 +81445,76 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c(
-                      "lightbox",
-                      {
-                        staticClass: "m-0",
-                        attrs: { album: "", src: _vm.imagen }
-                      },
+                      "div",
+                      { staticClass: "form-group row" },
                       [
-                        _c("figure", [
-                          _c("img", {
-                            staticClass: "img-responsive img-fluid imgcenter",
-                            attrs: {
-                              width: "300",
-                              height: "200",
-                              src: _vm.imagen,
-                              alt: "Foto del artículo"
-                            }
-                          })
-                        ])
-                      ]
+                        _vm.imagenMinatura != "images/null"
+                          ? [
+                              _c("div", { staticClass: "col-3" }),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "col-5" },
+                                [
+                                  _c(
+                                    "lightbox",
+                                    {
+                                      staticClass: "m-0",
+                                      attrs: { album: "", src: _vm.imagen }
+                                    },
+                                    [
+                                      _c("figure", [
+                                        _c("img", {
+                                          staticClass:
+                                            "img-responsive img-fluid imgcenter",
+                                          attrs: {
+                                            width: "300",
+                                            height: "200",
+                                            src: _vm.imagen,
+                                            alt: "Foto del artículo"
+                                          }
+                                        })
+                                      ])
+                                    ]
+                                  ),
+                                  _vm._v(" \n                      ")
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _vm.showElim
+                                ? _c("div", { staticClass: "col-1" }, [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass:
+                                          "btn btn-danger btn-circle float-left",
+                                        attrs: {
+                                          type: "button",
+                                          "aria-label": "Eliminar imagen"
+                                        },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.eliminarImagen(
+                                              _vm.articulo_id,
+                                              _vm.imagen
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "fa fa-times" })]
+                                    ),
+                                    _vm._v(" \n                      ")
+                                  ])
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-3" })
+                            ]
+                          : _vm._e()
+                      ],
+                      2
                     ),
-                    _vm._v(" \n              "),
+                    _vm._v(" "),
                     _c(
                       "div",
                       {
@@ -81297,8 +81542,7 @@ var render = function() {
                         )
                       ]
                     )
-                  ],
-                  1
+                  ]
                 ),
                 _vm._v(" "),
                 _c("hr"),
@@ -81414,28 +81658,28 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    {
-                      staticClass: "m-0",
-                      attrs: {
-                        album: "",
-                        src:
-                          "http://inventariostroystone.com/images/" + _vm.file
-                      }
-                    },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive img-fluid imgcenter",
-                        attrs: {
-                          width: "500px",
-                          src:
-                            "http://inventariostroystone.com/images/" + _vm.file
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: { album: "", src: "images/" + _vm.file }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive img-fluid imgcenter",
+                              attrs: {
+                                width: "500px",
+                                src: "images/" + _vm.file
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n              ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c(
                     "table",
                     {
@@ -81601,7 +81845,7 @@ var render = function() {
                     [_vm._v("Cerrar")]
                   )
                 ],
-                1
+                2
               )
             ])
           ]
@@ -83968,28 +84212,35 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    {
-                      staticClass: "m-0",
-                      attrs: {
-                        album: "",
-                        src:
-                          "http://inventariostroystone.com/images/" + _vm.file
-                      }
-                    },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: {
-                          width: "500px",
-                          src:
-                            "http://inventariostroystone.com/images/" + _vm.file
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: {
+                              album: "",
+                              src:
+                                "http://inventariostroystone.com/images/" +
+                                _vm.file
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive imgcenter",
+                              attrs: {
+                                width: "500px",
+                                src:
+                                  "http://inventariostroystone.com/images/" +
+                                  _vm.file
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n              ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _vm.condicion == 1
                     ? _c("div", { staticClass: "text-center" }, [
                         _c("span", { staticClass: "badge badge-success" }, [
@@ -84228,7 +84479,7 @@ var render = function() {
                     1
                   )
                 ],
-                1
+                2
               ),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -85436,28 +85687,35 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    {
-                      staticClass: "m-0",
-                      attrs: {
-                        album: "",
-                        src:
-                          "http://inventariostroystone.com/images/" + _vm.file
-                      }
-                    },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: {
-                          width: "500px",
-                          src:
-                            "http://inventariostroystone.com/images/" + _vm.file
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: {
+                              album: "",
+                              src:
+                                "http://inventariostroystone.com/images/" +
+                                _vm.file
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive imgcenter",
+                              attrs: {
+                                width: "500px",
+                                src:
+                                  "http://inventariostroystone.com/images/" +
+                                  _vm.file
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n              ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c(
                     "table",
                     {
@@ -85629,7 +85887,7 @@ var render = function() {
                     1
                   )
                 ],
-                1
+                2
               ),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -85710,28 +85968,35 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    {
-                      staticClass: "m-0",
-                      attrs: {
-                        album: "",
-                        src:
-                          "http://inventariostroystone.com/images/" + _vm.file
-                      }
-                    },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: {
-                          width: "500px",
-                          src:
-                            "http://inventariostroystone.com/images/" + _vm.file
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: {
+                              album: "",
+                              src:
+                                "http://inventariostroystone.com/images/" +
+                                _vm.file
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive imgcenter",
+                              attrs: {
+                                width: "500px",
+                                src:
+                                  "http://inventariostroystone.com/images/" +
+                                  _vm.file
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n              ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _vm.condicion == 1
                     ? _c("div", { staticClass: "text-center" }, [
                         _c("span", { staticClass: "badge badge-success" }, [
@@ -85923,7 +86188,7 @@ var render = function() {
                     1
                   )
                 ],
-                1
+                2
               ),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -90545,28 +90810,35 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    {
-                      staticClass: "m-0",
-                      attrs: {
-                        album: "",
-                        src:
-                          "http://inventariostroystone.com/images/" + _vm.file
-                      }
-                    },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: {
-                          width: "500px",
-                          src:
-                            "http://inventariostroystone.com/images/" + _vm.file
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: {
+                              album: "",
+                              src:
+                                "http://inventariostroystone.com/images/" +
+                                _vm.file
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive imgcenter",
+                              attrs: {
+                                width: "500px",
+                                src:
+                                  "http://inventariostroystone.com/images/" +
+                                  _vm.file
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n              ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c(
                     "table",
                     {
@@ -90738,7 +91010,7 @@ var render = function() {
                     1
                   )
                 ],
-                1
+                2
               ),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -90819,28 +91091,35 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    {
-                      staticClass: "m-0",
-                      attrs: {
-                        album: "",
-                        src:
-                          "http://inventariostroystone.com/images/" + _vm.file
-                      }
-                    },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: {
-                          width: "500px",
-                          src:
-                            "http://inventariostroystone.com/images/" + _vm.file
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: {
+                              album: "",
+                              src:
+                                "http://inventariostroystone.com/images/" +
+                                _vm.file
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive imgcenter",
+                              attrs: {
+                                width: "500px",
+                                src:
+                                  "http://inventariostroystone.com/images/" +
+                                  _vm.file
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n              ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _vm.condicion == 1
                     ? _c("div", { staticClass: "text-center" }, [
                         _c("span", { staticClass: "badge badge-success" }, [
@@ -91032,7 +91311,7 @@ var render = function() {
                     1
                   )
                 ],
-                1
+                2
               ),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -91116,32 +91395,36 @@ var render = function() {
                         domProps: { textContent: _vm._s(_vm.sku) }
                       }),
                       _vm._v(" "),
-                      _c(
-                        "lightbox",
-                        {
-                          staticClass: "m-0",
-                          attrs: {
-                            album: "",
-                            src:
-                              "http://inventariostroystone.com/images/" +
-                              _vm.file
-                          }
-                        },
-                        [
-                          _c("img", {
-                            staticClass: "img-responsive imgcenter",
-                            attrs: {
-                              width: "250px",
-                              src:
-                                "http://inventariostroystone.com/images/" +
-                                _vm.file
-                            }
-                          })
-                        ]
-                      ),
-                      _vm._v(" \n                      ")
+                      _vm.file
+                        ? [
+                            _c(
+                              "lightbox",
+                              {
+                                staticClass: "m-0",
+                                attrs: {
+                                  album: "",
+                                  src:
+                                    "http://inventariostroystone.com/images/" +
+                                    _vm.file
+                                }
+                              },
+                              [
+                                _c("img", {
+                                  staticClass: "img-responsive imgcenter",
+                                  attrs: {
+                                    width: "250px",
+                                    src:
+                                      "http://inventariostroystone.com/images/" +
+                                      _vm.file
+                                  }
+                                })
+                              ]
+                            ),
+                            _vm._v(" \n                          ")
+                          ]
+                        : _vm._e()
                     ],
-                    1
+                    2
                   )
                 ]),
                 _vm._v(" "),
@@ -94002,39 +94285,63 @@ var render = function() {
                         })
                       ])
                     ]),
+                    _vm._v(" "),
                     _c(
                       "div",
                       { staticClass: "col-md-2" },
                       [
-                        _c(
-                          "lightbox",
-                          {
-                            staticClass: "m-0",
-                            attrs: {
-                              album: "",
-                              src:
-                                "http://inventariostroystone.com/entregas/" +
-                                _vm.fileventa
-                            }
-                          },
-                          [
-                            _c("img", {
-                              staticClass: "img-responsive img-fluid imgcenter",
-                              attrs: {
-                                alt: "Sin imagen",
-                                width: "800px",
-                                height: "300px",
-                                src:
-                                  "http://inventariostroystone.com/entregas/" +
-                                  _vm.fileventa
-                              }
-                            })
-                          ]
-                        )
+                        _vm.imagenMinatura != "entregas/null"
+                          ? [
+                              _c(
+                                "lightbox",
+                                {
+                                  staticClass: "m-0",
+                                  attrs: {
+                                    album: "",
+                                    src: "entregas/" + _vm.fileventa
+                                  }
+                                },
+                                [
+                                  _c("img", {
+                                    staticClass:
+                                      "img-responsive img-fluid imgcenter",
+                                    attrs: {
+                                      alt: "Sin imagen",
+                                      width: "800px",
+                                      height: "300px",
+                                      src: "/entregas/" + _vm.fileventa
+                                    }
+                                  })
+                                ]
+                              )
+                            ]
+                          : _vm._e()
                       ],
-                      1
+                      2
                     ),
-                    _vm._v(" \n              ")
+                    _vm._v(" \n                  "),
+                    _vm.showElim
+                      ? _c("div", { staticClass: "col-md-1 mr-5 p-0 m-0" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "btn btn-danger btn-circle float-left",
+                              attrs: {
+                                type: "button",
+                                "aria-label": "Eliminar imagen"
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.eliminarImagen(_vm.venta_id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-times" })]
+                          ),
+                          _vm._v(" \n                  ")
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group row" }, [
@@ -94432,7 +94739,7 @@ var render = function() {
                                       "button",
                                       {
                                         staticClass:
-                                          "btn btn-warning btn-sm float-right",
+                                          "btn btn-warning btn-sm float-right btn-circle",
                                         attrs: { type: "button" },
                                         on: {
                                           click: function($event) {
@@ -94448,7 +94755,7 @@ var render = function() {
                                       "button",
                                       {
                                         staticClass:
-                                          "btn btn-primary btn-sm float-right",
+                                          "btn btn-primary btn-sm float-right btn-circle",
                                         attrs: { type: "button" },
                                         on: {
                                           click: function($event) {
@@ -94550,35 +94857,62 @@ var render = function() {
                       "div",
                       { staticClass: "col-md-2" },
                       [
-                        _c(
-                          "lightbox",
-                          {
-                            staticClass: "m-0",
-                            attrs: { album: "", src: _vm.imagen }
-                          },
-                          [
-                            _c("figure", [
-                              _c("img", {
-                                staticClass:
-                                  "img-responsive img-fluid imgcenter",
-                                attrs: {
-                                  width: "300",
-                                  height: "200",
-                                  src: _vm.imagen,
-                                  alt: "Foto del artículo"
-                                }
-                              })
-                            ])
-                          ]
-                        ),
-                        _vm._v(" \n                  ")
+                        _vm.imagenMinatura != "entregas/null"
+                          ? [
+                              _c(
+                                "lightbox",
+                                {
+                                  staticClass: "m-0",
+                                  attrs: { album: "", src: _vm.imagen }
+                                },
+                                [
+                                  _c("figure", [
+                                    _c("img", {
+                                      staticClass:
+                                        "img-responsive img-fluid imgcenter",
+                                      attrs: {
+                                        width: "300",
+                                        height: "200",
+                                        src: _vm.imagen,
+                                        alt: "Foto del artículo"
+                                      }
+                                    })
+                                  ])
+                                ]
+                              ),
+                              _vm._v(" \n                      ")
+                            ]
+                          : _vm._e()
                       ],
-                      1
-                    )
+                      2
+                    ),
+                    _vm._v(" "),
+                    _vm.showElim
+                      ? _c("div", { staticClass: "col-md-1 mr-5 p-0 m-0" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "btn btn-danger btn-circle float-left",
+                              attrs: {
+                                type: "button",
+                                "aria-label": "Eliminar imagen"
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.eliminarImagen(_vm.venta_id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-times" })]
+                          ),
+                          _vm._v(" \n                  ")
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group row" }, [
-                    _c("div", { staticClass: "col-md-12" }, [
+                    _c("div", { staticClass: "col-md-8 order-md-1 order-2" }, [
                       _c(
                         "button",
                         {
@@ -94592,7 +94926,7 @@ var render = function() {
                         },
                         [_vm._v("Cerrar")]
                       ),
-                      _vm._v(" "),
+                      _vm._v(" \n                      "),
                       _c(
                         "button",
                         {
@@ -94606,26 +94940,33 @@ var render = function() {
                         },
                         [_vm._v("Actualizar")]
                       ),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        { staticClass: "form-group row float-right mr-2" },
-                        [
+                      _vm._v(" \n                  ")
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "col-md-4 order-md-2 order-1 float-right"
+                      },
+                      [
+                        _c("div", { staticClass: "form-group row" }, [
                           _vm._m(37),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-md-7" }, [
+                          _vm._v(" \n                          "),
+                          _c("div", { staticClass: "col" }, [
                             _c("input", {
                               staticClass: "form-control-file",
                               attrs: { type: "file", src: _vm.imagen },
                               on: { change: _vm.obtenerImagen }
-                            })
+                            }),
+                            _vm._v(" \n                          ")
                           ]),
                           _vm._v(" "),
-                          _c("div", { staticClass: "col-md-2" }, [
+                          _c("div", { staticClass: "col" }, [
                             _c(
                               "button",
                               {
-                                staticClass: "btn btn-primary",
+                                staticClass:
+                                  "btn btn-sm btn-primary btn-circle",
                                 attrs: { type: "button" },
                                 on: {
                                   click: function($event) {
@@ -94633,12 +94974,13 @@ var render = function() {
                                   }
                                 }
                               },
-                              [_vm._v("Guardar")]
-                            )
+                              [_c("i", { staticClass: "fa fa-floppy-o" })]
+                            ),
+                            _vm._v(" \n                          ")
                           ])
-                        ]
-                      )
-                    ])
+                        ])
+                      ]
+                    )
                   ])
                 ])
               ]
@@ -94705,28 +95047,35 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    {
-                      staticClass: "m-0",
-                      attrs: {
-                        album: "",
-                        src:
-                          "http://inventariostroystone.com/images/" + _vm.file
-                      }
-                    },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: {
-                          width: "500px",
-                          src:
-                            "http://inventariostroystone.com/images/" + _vm.file
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: {
+                              album: "",
+                              src:
+                                "http://inventariostroystone.com/images/" +
+                                _vm.file
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive imgcenter",
+                              attrs: {
+                                width: "500px",
+                                src:
+                                  "http://inventariostroystone.com/images/" +
+                                  _vm.file
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n              ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _vm.condicion == 1
                     ? _c("div", { staticClass: "text-center" }, [
                         _c("span", { staticClass: "badge badge-success" }, [
@@ -94918,7 +95267,7 @@ var render = function() {
                     1
                   )
                 ],
-                1
+                2
               ),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -95327,10 +95676,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c(
       "label",
-      {
-        staticClass: "col-md-3 form-control-label",
-        attrs: { for: "text-input" }
-      },
+      { staticClass: "col form-control-label", attrs: { for: "text-input" } },
       [_c("strong", [_vm._v("Actualizar Imagen")])]
     )
   },
@@ -97619,17 +97965,25 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    { staticClass: "m-0", attrs: { album: "", src: _vm.file } },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: { width: "500px", src: _vm.file }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: { album: "", src: _vm.file }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive imgcenter",
+                              attrs: { width: "500px", src: _vm.file }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n             ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c("div", { staticClass: "text-center" }, [
                     _vm._m(22),
                     _vm._v(" "),
@@ -98268,7 +98622,7 @@ var render = function() {
                     1
                   )
                 ],
-                1
+                2
               ),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -98363,26 +98717,31 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    {
-                      staticClass: "m-0",
-                      attrs: {
-                        album: "",
-                        src: "http://localhost:8000/images/" + _vm.file
-                      }
-                    },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: {
-                          width: "500px",
-                          src: "http://localhost:8000/images/" + _vm.file
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: {
+                              album: "",
+                              src: "http://localhost:8000/images/" + _vm.file
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive imgcenter",
+                              attrs: {
+                                width: "500px",
+                                src: "http://localhost:8000/images/" + _vm.file
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n              ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _vm.condicion == 1
                     ? _c("div", { staticClass: "text-center" }, [
                         _c("span", { staticClass: "badge badge-success" }, [
@@ -98621,7 +98980,7 @@ var render = function() {
                     1
                   )
                 ],
-                1
+                2
               ),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -107168,28 +107527,35 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    {
-                      staticClass: "m-0",
-                      attrs: {
-                        album: "",
-                        src:
-                          "http://inventariostroystone.com/images/" + _vm.file
-                      }
-                    },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: {
-                          width: "500px",
-                          src:
-                            "http://inventariostroystone.com/images/" + _vm.file
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: {
+                              album: "",
+                              src:
+                                "http://inventariostroystone.com/images/" +
+                                _vm.file
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive imgcenter",
+                              attrs: {
+                                width: "500px",
+                                src:
+                                  "http://inventariostroystone.com/images/" +
+                                  _vm.file
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n              ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c(
                     "table",
                     {
@@ -107361,7 +107727,7 @@ var render = function() {
                     1
                   )
                 ],
-                1
+                2
               ),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -107442,28 +107808,35 @@ var render = function() {
                     domProps: { textContent: _vm._s(_vm.sku) }
                   }),
                   _vm._v(" "),
-                  _c(
-                    "lightbox",
-                    {
-                      staticClass: "m-0",
-                      attrs: {
-                        album: "",
-                        src:
-                          "http://inventariostroystone.com/images/" + _vm.file
-                      }
-                    },
-                    [
-                      _c("img", {
-                        staticClass: "img-responsive imgcenter",
-                        attrs: {
-                          width: "500px",
-                          src:
-                            "http://inventariostroystone.com/images/" + _vm.file
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" \n              "),
+                  _vm.file
+                    ? [
+                        _c(
+                          "lightbox",
+                          {
+                            staticClass: "m-0",
+                            attrs: {
+                              album: "",
+                              src:
+                                "http://inventariostroystone.com/images/" +
+                                _vm.file
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "img-responsive imgcenter",
+                              attrs: {
+                                width: "500px",
+                                src:
+                                  "http://inventariostroystone.com/images/" +
+                                  _vm.file
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" \n              ")
+                      ]
+                    : _vm._e(),
+                  _vm._v(" "),
                   _vm.condicion == 1
                     ? _c("div", { staticClass: "text-center" }, [
                         _c("span", { staticClass: "badge badge-success" }, [
@@ -107655,7 +108028,7 @@ var render = function() {
                     1
                   )
                 ],
-                1
+                2
               ),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -107739,32 +108112,36 @@ var render = function() {
                         domProps: { textContent: _vm._s(_vm.sku) }
                       }),
                       _vm._v(" "),
-                      _c(
-                        "lightbox",
-                        {
-                          staticClass: "m-0",
-                          attrs: {
-                            album: "",
-                            src:
-                              "http://inventariostroystone.com/images/" +
-                              _vm.file
-                          }
-                        },
-                        [
-                          _c("img", {
-                            staticClass: "img-responsive imgcenter",
-                            attrs: {
-                              width: "250px",
-                              src:
-                                "http://inventariostroystone.com/images/" +
-                                _vm.file
-                            }
-                          })
-                        ]
-                      ),
-                      _vm._v(" \n                      ")
+                      _vm.file
+                        ? [
+                            _c(
+                              "lightbox",
+                              {
+                                staticClass: "m-0",
+                                attrs: {
+                                  album: "",
+                                  src:
+                                    "http://inventariostroystone.com/images/" +
+                                    _vm.file
+                                }
+                              },
+                              [
+                                _c("img", {
+                                  staticClass: "img-responsive imgcenter",
+                                  attrs: {
+                                    width: "250px",
+                                    src:
+                                      "http://inventariostroystone.com/images/" +
+                                      _vm.file
+                                  }
+                                })
+                              ]
+                            ),
+                            _vm._v(" \n                          ")
+                          ]
+                        : _vm._e()
                     ],
-                    1
+                    2
                   )
                 ]),
                 _vm._v(" "),

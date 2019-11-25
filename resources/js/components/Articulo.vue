@@ -293,14 +293,40 @@
                     <label class="col-md-3 form-control-label" for="text-input">Imagen</label>
                     <div class="col-md-9">
                         <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
-
                     </div>
                 </div>
-                <lightbox class="m-0" album="" :src="imagen">
-                    <figure>
-                        <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
-                    </figure>
-                </lightbox>&nbsp;
+                <div class="form-group row">
+                    <template v-if="imagenMinatura !='images/null'">
+                        <div class="col-3"></div>
+                        <div class="col-5">
+                            <lightbox class="m-0" album="" :src="imagen">
+                                <figure>
+                                    <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
+                                </figure>
+                            </lightbox>&nbsp;
+                        </div>
+                        <div class="col-1" v-if="showElim">
+                            <button type="button" class="btn btn-danger btn-circle float-left" aria-label="Eliminar imagen" @click="eliminarImagen(articulo_id,imagen)">
+                                <i class="fa fa-times"></i>
+                            </button>&nbsp;
+                        </div>
+                        <div class="col-3"></div>
+                    </template>
+                </div>
+                <!-- <div class="form-group row">
+                    <div class="col">1</div>
+                    <div class="col">2</div>
+                    <div class="col">3</div>
+                    <div class="col">4</div>
+                    <div class="col">5</div>
+                    <div class="col">6</div>
+                    <div class="col">7</div>
+                    <div class="col">8</div>
+                    <div class="col">9</div>
+                    <div class="col">10</div>
+                    <div class="col">11</div>
+                    <div class="col">12</div>
+                </div> -->
                 <div v-show="errorArticulo" class="form-group row div-error">
                     <div class="text-center text-error">
                     <div v-for="error in errorMostrarMsjArticulo" :key="error" v-text="error"></div>
@@ -336,9 +362,13 @@
           </div>
           <div class="modal-body">
               <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                    <img class="img-responsive img-fluid imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                </lightbox>&nbsp;
+                <template v-if="file">
+                    <!-- <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file"> -->
+                    <lightbox class="m-0" album="" :src="'images/'+file">
+                        <!-- <img class="img-responsive img-fluid imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file"> -->
+                        <img class="img-responsive img-fluid imgcenter" width="500px" :src="'images/'+file">
+                    </lightbox>&nbsp;
+                </template>
                 <table class="table table-bordered table-striped table-sm text-center table-hover">
                     <thead>
                         <tr class="text-center">
@@ -480,7 +510,8 @@ export default {
             buscar : '',
             arrayCategoria : [],
             btnComprometido : '',
-            isEdition : false
+            isEdition : false,
+            showElim : false
         };
     },
     components: {
@@ -760,6 +791,8 @@ export default {
             this.comprometido = 0;
             this.usuario = '';
             this.isEdition = false;
+            this.file = "";
+            this.showElim = false;
             this.listarArticulo(1,'','sku','','');
 
         },
@@ -788,7 +821,8 @@ export default {
                             this.fecha_llegada = '';
                             this.file = '';
                             this.tipoAccion = 1;
-                            this.imagenMinatura = '';
+                            this.imagenMinatura = 'images/null';
+                            this.showElim = false;
                             break;
                         }
                         case "actualizar": {
@@ -812,7 +846,7 @@ export default {
                             this.origen = data['origen'];
                             this.contenedor = data['contenedor'];
                             this.fecha_llegada = data['fecha_llegada'];
-                            this.imagenMinatura = 'http://inventariostroystone.com/images/' + data['file'];
+                            /* this.imagenMinatura = 'http://inventariostroystone.com/images/' + data['file']; */
                             this.estado = data['condicion'];
                             this.comprometido = data['comprometido'];
                             this.usuario = data['usuario'];
@@ -822,6 +856,18 @@ export default {
                                 this.btnComprometido = true;
                             }else{
                                 this.btnComprometido = false;
+                            }
+
+                            let hasImg = 'images/' + data['file'];
+
+                            console.log("HasImg: " + hasImg);
+
+                            if(hasImg != 'images/null'){
+                                this.showElim = true;
+                                this.imagenMinatura = 'images/' + data['file'];
+                            }else{
+                                this.showElim = false;
+                                this.imagenMinatura = 'images/null';
                             }
 
                             break;
@@ -898,6 +944,47 @@ export default {
             this.file = '';
             this.errorArticulo = 0;
             this.imagenMinatura = '';
+        },
+        eliminarImagen(id,imagen){
+            var arreglo = imagen.split("/",2);
+            /* console.log("arreglo: " + arreglo[1]); */
+            let file = arreglo[1];
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta de eliminar la imagen de este artículo?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    console.log("id: " + id + " IMG: " + file);
+                    let me = this;
+                    axios.put('/articulo/eliminarImg', {
+                        'id' : id
+                    }).then(function(response) {
+                        me.listarArticulo(1,'','sku','','');
+                        me.imagenMinatura = 'images/null';
+                        swalWithBootstrapButtons.fire(
+                            "Elimada!",
+                            "La imagen ha sido eliminada con éxito.",
+                            "success"
+                        )
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
         }
     },
     mounted() {
@@ -932,5 +1019,14 @@ export default {
         height: 550px;
         width: 100%;
         overflow-y: auto;
+    }
+    .btn-circle {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 13px;
+        line-height: 1.42857;
     }
 </style>

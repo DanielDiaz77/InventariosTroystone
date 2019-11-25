@@ -396,7 +396,7 @@ class ArticuloController extends Controller
             $articulo->nombre           =   $request->nombre;
             $articulo->terminado        =   $request->terminado;
             $articulo->largo            =   $request->largo;
-            $articulo->alto            =   $request->alto;
+            $articulo->alto             =   $request->alto;
             $articulo->metros_cuadrados =   $request->metros_cuadrados;
             $articulo->espesor          =   $request->espesor;
             $articulo->precio_venta     =   $request->precio_venta;
@@ -420,7 +420,7 @@ class ArticuloController extends Controller
             $articulo->nombre           =   $request->nombre;
             $articulo->terminado        =   $request->terminado;
             $articulo->largo            =   $request->largo;
-            $articulo->alto            =   $request->alto;
+            $articulo->alto             =   $request->alto;
             $articulo->metros_cuadrados =   $request->metros_cuadrados;
             $articulo->espesor          =   $request->espesor;
             $articulo->precio_venta     =   $request->precio_venta;
@@ -868,6 +868,31 @@ class ArticuloController extends Controller
         $articulo = Articulo::findOrFail($request->id);
         $articulo->comprometido = $request->comprometido;
         $articulo->idusuario = \Auth::user()->id;
+        $articulo->save();
+    }
+    public function eliminarImagen(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $directoryName = 'images';
+        //Check if the directory already exists.
+        if(!is_dir($directoryName)){
+            //Directory does not exist, so lets create it.
+            mkdir($directoryName, 0777);
+        }
+
+        $art= Articulo::findOrFail($request->id);
+        $img = $art->file;
+
+        if($img != null){
+            $image_path = public_path($directoryName).'/'.$img;
+            if(file_exists($image_path)){
+                unlink($image_path);
+                $fileName = null;
+            }
+        }
+
+        $articulo = Articulo::findOrFail($request->id);
+        $articulo->file = $fileName;
         $articulo->save();
     }
 }

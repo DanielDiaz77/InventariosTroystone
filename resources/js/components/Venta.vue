@@ -771,10 +771,12 @@
             </button>
           </div>
           <div class="modal-body">
-              <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                </lightbox>&nbsp;
+                <h1 class="text-center" v-text="sku"></h1>
+                <template v-if="file">
+                    <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                        <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
+                    </lightbox>&nbsp;
+                </template>
                 <table class="table table-bordered table-striped table-sm text-center table-hover table-responsive-sm">
                     <thead>
                         <tr class="text-center">
@@ -879,10 +881,12 @@
             </button>
           </div>
           <div class="modal-body">
-              <h1 class="text-center" v-text="sku"></h1>
-                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                    <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                </lightbox>&nbsp;
+                <h1 class="text-center" v-text="sku"></h1>
+                <template v-if="file">
+                   <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                        <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
+                    </lightbox>&nbsp;
+                </template>
                 <div v-if="condicion == 1" class="text-center">
                     <span class="badge badge-success">Activo</span>
                 </div>
@@ -999,9 +1003,11 @@
                     <div class="form-group row">
                         <div class="col-md">
                             <h1 class="text-center" v-text="sku"></h1>
-                            <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                                <img class="img-responsive imgcenter" width="250px" :src="'http://inventariostroystone.com/images/'+file">
-                            </lightbox>&nbsp;
+                            <template v-if="file">
+                                <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                                    <img class="img-responsive imgcenter" width="250px" :src="'http://inventariostroystone.com/images/'+file">
+                                </lightbox>&nbsp;
+                            </template>
                         </div>
                     </div>
                     <div class="table-responsive">

@@ -499,4 +499,30 @@ class VentaController extends Controller
 
         return ['ventas' => $ventas];
     }
+
+    public function eliminarImagen(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $directoryName = 'entregas';
+        //Check if the directory already exists.
+        if(!is_dir($directoryName)){
+            //Directory does not exist, so lets create it.
+            mkdir($directoryName, 0777);
+        }
+
+        $art= Venta::findOrFail($request->id);
+        $img = $art->file;
+
+        if($img != null){
+            $image_path = public_path($directoryName).'/'.$img;
+            if(file_exists($image_path)){
+                unlink($image_path);
+                $fileName = null;
+            }
+        }
+        $venta = Venta::findOrFail($request->id);
+        $venta->file = $fileName;
+        $venta->save();
+
+    }
 }

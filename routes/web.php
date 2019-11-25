@@ -94,6 +94,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/articulo/listarExcel','ArticuloController@listarExcel');
         Route::put('/articulo/cambiarComprometido', 'ArticuloController@cambiarComprometido');
         Route::get('/articulo/listarArticuloCotizado', 'ArticuloController@listarArticuloCotizado');
+        Route::put('/articulo/eliminarImg', 'ArticuloController@eliminarImagen');
 
         Route::get('/proveedor', 'ProveedorController@index');
         Route::post('/proveedor/registrar', 'ProveedorController@store');
@@ -141,6 +142,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/entrega/updDetalle','VentaController@updDetalle');
         Route::get('/venta/obtenerDetallesEntrega','VentaController@obtenerDetallesEntrega');
         Route::put('/entrega/updImagen','VentaController@updImage');
+        Route::put('/entrega/eliminarImg', 'VentaController@eliminarImagen');
 
         Route::get('/cotizacion', 'CotizacionController@index');
         Route::post('/cotizacion/registrar', 'CotizacionController@store');
