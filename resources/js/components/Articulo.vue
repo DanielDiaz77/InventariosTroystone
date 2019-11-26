@@ -14,42 +14,40 @@
             </button>
         </div>
         <div class="card-body">
-          <div class="form-group row">
-            <div class="col-md-6">
-              <div class="input-group row">
-                <select class="form-control col-md-3" v-model="criterio">
-                  <option value="descripcion">Descripción</option>
-                  <option value="sku">Código de material</option>
-                  <option value="codigo">No° de placa</option>
-                  <option value="idcategoria">Material</option>
-                </select>
-                <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado)" class="form-control col-md-4" placeholder="Texto a buscar">
-                <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado)" class="form-control col-md-4" placeholder="Terminado">
-              </div>
-            </div>
-            <div class="col-md-5">
-              <div class="input-group row">
-                <select class="form-control col-md-3" v-model="bodega">
-                    <option value="" disabled>Ubicacion</option>
-                    <option value="">Todas</option>
-                    <option value="Del Musico">Del Músico</option>
-                    <option value="Escultores">Escultores</option>
-                    <option value="Sastres">Sastres</option>
-                    <option value="Mecanicos">Mecánicos</option>
-                    <option value="Tractorista">Tractorista</option>
-                    <option value="San Luis">San Luis</option>
-                </select>
-                <button type="submit" @click="listarArticulo(1,buscar,criterio,bodega,acabado)" class="btn btn-sm btn-primary"><i class="fa fa-search"></i>Buscar</button>
+        <div class="form-inline">
+            <div class="form-group mb-2 col-sm-10">
+                <div class="input-group">
+                    <select class="form-control mb-1" v-model="criterio">
+                        <option value="descripcion">Descripción</option>
+                        <option value="sku">Código de material</option>
+                        <option value="codigo">No° de placa</option>
+                        <option value="idcategoria">Material</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado)" class="form-control mb-1" placeholder="Texto a buscar">
+                    <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado)" class="form-control mb-1" placeholder="Terminado">
 
-              </div>
-            </div>
-            <div class="col-md-1">
-                <div class="input-group row">
-                    <label class="float-right" for=""><strong>Total:</strong></label>
-                    <p class="float-right" v-text="totres"></p>
+                </div>
+                <div class="input-group">
+                    <select class="form-control mb-1" v-model="bodega">
+                        <option value="" disabled>Ubicacion</option>
+                        <option value="">Todas</option>
+                        <option value="Del Musico">Del Músico</option>
+                        <option value="Escultores">Escultores</option>
+                        <option value="Sastres">Sastres</option>
+                        <option value="Mecanicos">Mecánicos</option>
+                        <option value="Tractorista">Tractorista</option>
+                        <option value="San Luis">San Luis</option>
+                    </select>
+                    <button type="submit" @click="listarArticulo(1,buscar,criterio,bodega,acabado)" class="btn btn-sm btn-primary mb-1"><i class="fa fa-search"></i>Buscar</button>
                 </div>
             </div>
-          </div>
+            <div class="form-group mb-2 col-sm-2 float-right">
+                <label class="mb-1 ml-sm-5" for=""><strong>Total:</strong></label>
+                <p class="mb-1" v-text="totres"></p>
+            </div>
+        </div>
           <div class="table-responsive col-md-12">
             <table class="table table-bordered table-striped table-sm text-center table-hover">
                 <thead>
@@ -72,27 +70,28 @@
                 <tbody v-if="arrayArticulo.length">
                     <tr v-for="articulo in arrayArticulo" :key="articulo.id">
                         <td>
-                            <template v-if="articulo.condicion == 1">
-                                <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
-                                    <i class="icon-pencil"></i>
+                            <div class="form-inline">
+                                <template v-if="articulo.condicion == 1">
+                                    <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
+                                        <i class="icon-pencil"></i>
+                                    </button> &nbsp;
+                                </template>
+                                <template v-else></template>
+                                <template v-if="articulo.condicion == 1">
+                                    <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
+                                        <i class="icon-trash"></i>
+                                    </button>
+                                </template>
+                                <template v-else-if="articulo.condicion == 0">
+                                    <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
+                                        <i class="icon-check"></i>
+                                    </button>
+                                </template>
+                                <template v-else></template>&nbsp;
+                                <button type="button" @click="abrirModal2('articulo','visualizar',articulo)" class="btn btn-success btn-sm">
+                                    <i class="icon-eye"></i>
                                 </button> &nbsp;
-                            </template>
-                            <template v-else></template>
-                            <template v-if="articulo.condicion == 1">
-                                <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
-                                <i class="icon-trash"></i>
-                                </button>
-                            </template>
-                            <template v-else-if="articulo.condicion == 0">
-                                <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
-                                <i class="icon-check"></i>
-                                </button>
-                            </template>
-                            <template v-else>
-                            </template>&nbsp;
-                            <button type="button" @click="abrirModal2('articulo','visualizar',articulo)" class="btn btn-success btn-sm">
-                                <i class="icon-eye"></i>
-                            </button> &nbsp;
+                            </div>
                         </td>
                         <td v-text="articulo.codigo"></td>
                         <td v-text="articulo.sku"></td>
@@ -153,199 +152,199 @@
     </div>
     <!--Inicio del modal agregar/actualizar-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-primary modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal"></h4>
-            <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-                <div class="form-group row" v-if="isEdition && estado">
-                    <label class="col-md-3 form-control-label" for="text-input">Comprometido: </label>
-                    <div class="col-md-3">
-                        <toggle-button @change="cambiarComprometido(articulo_id)" v-model="btnComprometido" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
-                    </div>
-                    <label class="col-md-3 form-control-label" for="text-input">Actualizo: </label>
-                    <p  class="col-md-3" v-text="usuario"></p>
+        <div class="modal-dialog modal-primary modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal()" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
                 </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Material</label>
-                    <div class="col-md-9">
-                    <select class="form-control" v-model="idcategoria">
-                        <option value="0" disabled>Seleccione un material</option>
-                        <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                    </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Código</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="codigo" class="form-control" placeholder="Código de barras"/>
-                        <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                            Generando código de barras.
-                        </barcode>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Código de material</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="sku" class="form-control" placeholder="Código de material"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Terminado</label>
-                    <div class="col-md-9">
-                        <select class="form-control" v-model="terminado">
-                                <option value='' disabled>Seleccione un de terminado</option>
-                                <option value="Pulido">Pulido</option>
-                                <option value="Al Corte">Al Corte</option>
-                                <option value="Leather">Leather</option>
-                                <option value="Mate">Mate</option>
-                                <option value="Seda">Seda</option>
-                                <option value="Otro">Otro</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Largo</label>
-                    <div class="col-md-9">
-                        <input type="number" v-model="largo" min="1" class="form-control" placeholder=""/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Alto</label>
-                    <div class="col-md-9">
-                        <input type="number" min="1" v-model="alto" class="form-control" placeholder=""/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Metros<sup>2</sup></label>
-                    <div class="col-md-9">
-                        <input type="number" readonly :value="calcularMts" class="form-control"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Espesor</label>
-                    <div class="col-md-9">
-                        <input type="number" min="1" v-model="espesor" class="form-control" placeholder=""/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Precio m<sup>2</sup></label>
-                    <div class="col-md-9">
-                        <input type="number" min="1" value="0" step="any" v-model="precio_venta" class="form-control" placeholder=""/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Bodega de descarga</label>
-                    <div class="col-md-9">
-                    <select class="form-control" v-model="ubicacion">
-                        <option value="" disabled>Seleccione una bodega de descarga</option>
-                        <option value="Del Musico">Del Músico</option>
-                        <option value="Escultores">Escultores</option>
-                        <option value="Sastres">Sastres</option>
-                        <option value="Mecanicos">Mecánicos</option>
-                        <option value="Tractorista">Tractorista</option>
-                        <option value="San Luis">San Luis</option>
-                    </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Stock</label>
-                    <div class="col-md-9">
-                        <input type="number" min="1" v-model="stock" class="form-control" placeholder=""/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
-                    <div class="col-md-9">
-                        <input type="email" v-model="descripcion" class="form-control" placeholder="Ingrese descripción"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="email-input">observacion</label>
-                    <div class="col-md-9">
-                        <input type="email" v-model="observacion" class="form-control" placeholder="Ingrese las observaciones"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Origen</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="origen" class="form-control" placeholder="Origen"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Contenedor</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="contenedor" class="form-control" placeholder="Contenedor"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Fecha de llegada</label>
-                    <div class="col-md-9">
-                        <input type="date" v-model="fecha_llegada" class="form-control" placeholder="Fecha de llegada"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Imagen</label>
-                    <div class="col-md-9">
-                        <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <template v-if="imagenMinatura !='images/null'">
-                        <div class="col-3"></div>
-                        <div class="col-5">
-                            <lightbox class="m-0" album="" :src="imagen">
-                                <figure>
-                                    <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
-                                </figure>
-                            </lightbox>&nbsp;
+                <div class="modal-body">
+                    <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="form-group row" v-if="isEdition && estado">
+                            <label class="col-md-3 form-control-label" for="text-input">Comprometido: </label>
+                            <div class="col-md-3">
+                                <toggle-button @change="cambiarComprometido(articulo_id)" v-model="btnComprometido" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                            <label class="col-md-3 form-control-label" for="text-input">Actualizo: </label>
+                            <p  class="col-md-3" v-text="usuario"></p>
                         </div>
-                        <div class="col-1" v-if="showElim">
-                            <button type="button" class="btn btn-danger btn-circle float-left" aria-label="Eliminar imagen" @click="eliminarImagen(articulo_id,imagen)">
-                                <i class="fa fa-times"></i>
-                            </button>&nbsp;
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Material</label>
+                            <div class="col-md-9">
+                            <select class="form-control" v-model="idcategoria">
+                                <option value="0" disabled>Seleccione un material</option>
+                                <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
+                            </select>
+                            </div>
                         </div>
-                        <div class="col-3"></div>
-                    </template>
-                </div>
-                <!-- <div class="form-group row">
-                    <div class="col">1</div>
-                    <div class="col">2</div>
-                    <div class="col">3</div>
-                    <div class="col">4</div>
-                    <div class="col">5</div>
-                    <div class="col">6</div>
-                    <div class="col">7</div>
-                    <div class="col">8</div>
-                    <div class="col">9</div>
-                    <div class="col">10</div>
-                    <div class="col">11</div>
-                    <div class="col">12</div>
-                </div> -->
-                <div v-show="errorArticulo" class="form-group row div-error">
-                    <div class="text-center text-error">
-                    <div v-for="error in errorMostrarMsjArticulo" :key="error" v-text="error"></div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Código</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="codigo" class="form-control" placeholder="Código de barras"/>
+                                <barcode :value="codigo" :options="{formar: 'EAN-13'}">
+                                    Generando código de barras.
+                                </barcode>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Código de material</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="sku" class="form-control" placeholder="Código de material"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Terminado</label>
+                            <div class="col-md-9">
+                                <select class="form-control" v-model="terminado">
+                                    <option value='' disabled>Seleccione un de terminado</option>
+                                    <option value="Pulido">Pulido</option>
+                                    <option value="Al Corte">Al Corte</option>
+                                    <option value="Leather">Leather</option>
+                                    <option value="Mate">Mate</option>
+                                    <option value="Seda">Seda</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Largo</label>
+                            <div class="col-md-9">
+                                <input type="number" v-model="largo" min="1" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Alto</label>
+                            <div class="col-md-9">
+                                <input type="number" min="1" v-model="alto" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Metros<sup>2</sup></label>
+                            <div class="col-md-9">
+                                <input type="number" readonly :value="calcularMts" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Espesor</label>
+                            <div class="col-md-9">
+                                <input type="number" min="1" v-model="espesor" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Precio m<sup>2</sup></label>
+                            <div class="col-md-9">
+                                <input type="number" min="1" value="0" step="any" v-model="precio_venta" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Bodega de descarga</label>
+                            <div class="col-md-9">
+                                <select class="form-control" v-model="ubicacion">
+                                    <option value="" disabled>Seleccione una bodega de descarga</option>
+                                    <option value="Del Musico">Del Músico</option>
+                                    <option value="Escultores">Escultores</option>
+                                    <option value="Sastres">Sastres</option>
+                                    <option value="Mecanicos">Mecánicos</option>
+                                    <option value="Tractorista">Tractorista</option>
+                                    <option value="San Luis">San Luis</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Stock</label>
+                            <div class="col-md-9">
+                                <input type="number" min="1" v-model="stock" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
+                            <div class="col-md-9">
+                                <input type="email" v-model="descripcion" class="form-control" placeholder="Ingrese descripción"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="email-input">observacion</label>
+                            <div class="col-md-9">
+                                <input type="email" v-model="observacion" class="form-control" placeholder="Ingrese las observaciones"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Origen</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="origen" class="form-control" placeholder="Origen"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Contenedor</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="contenedor" class="form-control" placeholder="Contenedor"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Fecha de llegada</label>
+                            <div class="col-md-9">
+                                <input type="date" v-model="fecha_llegada" class="form-control" placeholder="Fecha de llegada"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Imagen</label>
+                            <div class="col-md-9">
+                                <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <template v-if="imagenMinatura !='images/null'">
+                                <div class="col-3"></div>
+                                <div class="col-5">
+                                    <lightbox class="m-0" album="" :src="imagen">
+                                        <figure>
+                                            <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
+                                        </figure>
+                                    </lightbox>&nbsp;
+                                </div>
+                                <div class="col-1" v-if="showElim">
+                                    <button type="button" class="btn btn-danger btn-circle float-left" aria-label="Eliminar imagen" @click="eliminarImagen(articulo_id,imagen)">
+                                        <i class="fa fa-times"></i>
+                                    </button>&nbsp;
+                                </div>
+                                <div class="col-3"></div>
+                            </template>
+                        </div>
+                        <!-- <div class="form-group row">
+                            <div class="col">1</div>
+                            <div class="col">2</div>
+                            <div class="col">3</div>
+                            <div class="col">4</div>
+                            <div class="col">5</div>
+                            <div class="col">6</div>
+                            <div class="col">7</div>
+                            <div class="col">8</div>
+                            <div class="col">9</div>
+                            <div class="col">10</div>
+                            <div class="col">11</div>
+                            <div class="col">12</div>
+                        </div> -->
+                        <div v-show="errorArticulo" class="form-group row div-error">
+                            <div class="text-center text-error">
+                            <div v-for="error in errorMostrarMsjArticulo" :key="error" v-text="error"></div>
+                            </div>
+                        </div>
+                    </form>
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarArticulo()">Guardar</button>
+                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarArticulo()">Actualizar</button>
                     </div>
                 </div>
-            </form>
-            <hr>
-            <div class="float-right">
-                <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarArticulo()">Guardar</button>
-                <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarArticulo()">Actualizar</button>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarArticulo()">Guardar</button>
+                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarArticulo()">Actualizar</button>
+                </div>
             </div>
-          </div>
-          <!-- <div class="modal-footer">
-
-          </div> -->
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
-      </div>
       <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
@@ -439,12 +438,14 @@
                             Sin código de barras.
                     </barcode>
                 </div>
-                <hr>
-                <button type="button" class="btn btn-secondary float-right" @click="cerrarModal2()">Cerrar</button>
+                <hr class="d-block d-sm-block d-md-none">
+                <div class="float-right d-block d-sm-block d-md-none">
+                    <button type="button" class="btn btn-secondary float-right" @click="cerrarModal2()">Cerrar</button>
+                </div>
           </div>
-          <!-- <div class="modal-footer">
+          <div class="modal-footer d-none d-sm-none d-md-block">
             <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
-          </div> -->
+          </div>
         </div>
         <!-- /.modal-content -->
       </div>

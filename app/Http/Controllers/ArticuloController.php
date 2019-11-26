@@ -766,7 +766,7 @@ class ArticuloController extends Controller
                     'cotizaciones.num_comprobante as cotizacion','cotizaciones.estado as estado_cotizacion' ,
                     'personas.nombre as cliente')
                 ->where([
-                    ['cotizaciones.estado','!=','Anulada'],
+                    ['cotizaciones.estado','Registrado'],
                     ['articulos.condicion',1]
                 ])
                 ->orderBy('articulos.id', 'desc')->paginate(10);
@@ -786,7 +786,7 @@ class ArticuloController extends Controller
                 ->where([
                     ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                     ['articulos.condicion',1],
-                    ['cotizaciones.estado','!=','Anulada']
+                    ['cotizaciones.estado','Registrado']
                 ])
                 ->orderBy('articulos.id', 'desc')->paginate(10);
             }
@@ -806,7 +806,7 @@ class ArticuloController extends Controller
                     'cotizaciones.num_comprobante as cotizacion','cotizaciones.estado as estado_cotizacion' ,
                     'personas.nombre as cliente')
                 ->where([
-                    ['cotizaciones.estado','!=','Anulada'],
+                    ['cotizaciones.estado','Registrado'],
                     ['articulos.condicion',1],
                     ['articulos.ubicacion','San Luis']
                 ])
@@ -827,7 +827,7 @@ class ArticuloController extends Controller
                 ->where([
                     ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                     ['articulos.condicion',1],
-                    ['cotizaciones.estado','!=','Anulada'],
+                    ['cotizaciones.estado','Registrado'],
                     ['articulos.ubicacion','San Luis']
                 ])
                 ->orderBy('articulos.id', 'desc')->paginate(10);

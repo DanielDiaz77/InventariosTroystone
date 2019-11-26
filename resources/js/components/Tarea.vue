@@ -17,27 +17,22 @@
         <!-- Listado -->
         <template v-if="listado==1">
             <div class="card-body">
-                <div class="form-group row">
-                    <div class="col-md-6">
+                <div class="form-inline">
+                    <div class="form-group mb-2 col-12">
                         <div class="input-group">
-                            <select class="form-control col-md-3" v-model="criterio">
-                            <option value="fecha">Fecha</option>
-                            <option value="idcliente">Cliente</option>
-                            <option value="clase">Tipo</option>
+                            <select class="form-control mb-1" v-model="criterio">
+                                <option value="fecha">Fecha</option>
+                                <option value="idcliente">Cliente</option>
                             </select>
-                            <input type="text" v-model="buscar" @keyup.enter="listarTarea(1,buscar,criterio,estadoTask)" class="form-control" placeholder="Texto a buscar">
+                            <input type="text" v-model="buscar" @keyup.enter="listarTarea(1,buscar,criterio,estadoTask)" class="form-control mb-1" placeholder="Texto a buscar">
                         </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="input-group row">
-                            <select class="form-control col-md-3" v-model="estadoTask">
-                                <option value="" disabled>Estado</option>
-                                <option value="">Todos</option>
-                                <option value="0">Pendiente</option>
+                        <div class="input-group">
+                            <select class="form-control mb-1" v-model="estadoTask">
+                                <option value="">Pendiente</option>
                                 <option value="1">Completado</option>
                                 <option value="2">Cancelado</option>
                             </select>
-                            <button type="submit" @click="listarTarea(1,buscar,criterio,estadoTask)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                            <button type="submit" @click="listarTarea(1,buscar,criterio,estadoTask)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
                         </div>
                     </div>
                 </div>
@@ -535,7 +530,6 @@
                     </div>
                     <div class="form-group row">
                         <template v-if="isComment">
-
                         </template>
                         <template v-else>
                             <div class="col-md-2 text-center">
@@ -575,8 +569,8 @@
                             </div>
                         </div>
                     </div>
-                    <hr>
-                    <div class="float-right">
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
                         <button type="button" v-if="cerrarDet!=1" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
                         <button type="button" v-if="cerrarDet==1" class="btn btn-secondary" @click="cerrarModalDet()">Cerrar</button>
                         <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarTarea()">Guardar</button>
@@ -584,6 +578,14 @@
                         <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarTarea()">Actualizar</button>
                         <button type="button" v-if="tipoAccion==3" class="btn btn-primary" @click="actualizarTareaDet()">Actualizar</button>
                     </div>
+                </div>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                    <button type="button" v-if="cerrarDet!=1" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                    <button type="button" v-if="cerrarDet==1" class="btn btn-secondary" @click="cerrarModalDet()">Cerrar</button>
+                    <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarTarea()">Guardar</button>
+                    <button type="button" v-if="tipoAccion==4" class="btn btn-primary" @click="registrarTareaDet()">Guardar</button>
+                    <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarTarea()">Actualizar</button>
+                    <button type="button" v-if="tipoAccion==3" class="btn btn-primary" @click="actualizarTareaDet()">Actualizar</button>
                 </div>
             </div>
         <!-- /.modal-content -->
@@ -639,7 +641,7 @@ export default {
                 'to'           : 0,
             },
             offset : 3,
-            criterio : 'fecha',
+            criterio : 'idcliente',
             buscar : '',
             areaUs : "",
             estadoVn : "",
@@ -853,7 +855,7 @@ export default {
                 'fecha' : this.fecha
             }).then(function(response) {
                 me.cerrarModal();
-                me.listarTarea(1,'','fecha','');
+                me.listarTarea(1,'','idcliente','');
                 me.idcliente = 0;
                 me.nombre = "";
                 me.descripcion ="";
@@ -901,7 +903,7 @@ export default {
                 'fecha' : this.fecha
             }).then(function(response) {
                 me.cerrarModal();
-                me.listarTarea(1,'','fecha','');
+                me.listarTarea(1,'','idcliente','');
                 me.idcliente = 0;
                 me.nombre = "";
                 me.descripcion ="";
@@ -944,7 +946,7 @@ export default {
                 'id': id,
                 'estado' : this.estado
             }).then(function (response) {
-                me.listarTarea(1,'','fecha','');
+                me.listarTarea(1,'','idcliente','');
             }).catch(function (error) {
                 console.log(error);
             });
@@ -989,7 +991,7 @@ export default {
                     axios.put('/tarea/desactivar',{
                         'id': id
                     }).then(function (response) {
-                        me.listarTarea(1,'','fecha','');
+                        me.listarTarea(1,'','idcliente','');
                         swal.fire(
                         'Anulado!',
                         'La tarea ha sido anulado con éxito.',
@@ -1096,7 +1098,7 @@ export default {
             this.descripcion = "";
             this.tipo = "";
             this.fecha = "";
-            this.listarTarea(1,'','fecha','');
+            this.listarTarea(1,'','idcliente','');
             this.isComment = 0;
         },
         verTarea(idcliente){

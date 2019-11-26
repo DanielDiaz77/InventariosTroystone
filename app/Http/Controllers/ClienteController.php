@@ -122,14 +122,14 @@ class ClienteController extends Controller
                 ['rfc','like','%'.$filtro.'%'],
                 ['idusuario',$usvend]
             ])
-            ->select('id','nombre','rfc','tipo','telefono','company','tel_company')
+            ->select('id','nombre','rfc','tipo','telefono','company','tel_company','observacion')
             ->orderBy('nombre','asc')->get();
         }else{
 
             $filtro = $request->filtro;
             $clientes = Persona::where('nombre','like','%'.$filtro.'%')
                 ->orWhere('rfc','like','%'.$filtro.'%')
-                ->select('id','nombre','rfc','tipo','telefono','company','tel_company')
+                ->select('id','nombre','rfc','tipo','telefono','company','tel_company','observacion')
                 ->orderBy('nombre','asc')->get();
         }
 

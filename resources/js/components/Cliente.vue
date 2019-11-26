@@ -14,178 +14,186 @@
           </button>
         </div>
         <div class="card-body">
-          <div class="form-group row">
-            <div class="col-md-6">
-              <div class="input-group">
-                <select class="form-control col-md-3" v-model="criterio">
-                  <option value="nombre">Nombre</option>
-                  <option value="rfc">RFC</option>
-                  <option value="email">Correo electrónico</option>
-                </select>
-                <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                <button type="submit" @click="listarPersona(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
-              </div>
+            <div class="form-inline">
+                <div class="form-group mb-2 col-12">
+                    <div class="input-group">
+                        <select class="form-control mb-1" v-model="criterio">
+                            <option value="nombre">Nombre</option>
+                            <option value="rfc">RFC</option>
+                            <option value="email">Correo electrónico</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio)" class="form-control mb-1" placeholder="Texto a buscar">
+                        <button type="submit" @click="listarPersona(1,buscar,criterio)" class="btn btn-primary mb-1"><i class="fa fa-search mb-1"></i></button>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="table-responsive col-md-12">
-            <table class="table table-bordered table-striped table-sm table-hover">
-                <thead>
-                    <tr>
-                        <th>Opciones</th>
-                        <th>Nombre</th>
-                        <th>Domicilio</th>
-                        <th>Teléfono</th>
-                        <th>Contacto</th>
-                        <th>Correo electrónico</th>
-                        <th>RFC</th>
-                        <th>Tipo</th>
-                        <th>Observaciones</th>
-                        <th>Vendedor</th>
-                    </tr>
-                </thead>
-                <tbody v-if="arrayPersona.length">
-                    <tr v-for="persona in arrayPersona" :key="persona.id">
-                        <td>
-                        <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
-                            <i class="icon-pencil"></i>
-                        </button>
-                        </td>
-                        <td v-text="persona.nombre"></td>
-                        <td> {{ persona.ciudad}} {{persona.domicilio}}  </td>
-                        <td v-text="persona.telefono"></td>
-                        <td v-if="persona.company">{{persona.company}} - {{persona.tel_company}}</td>
-                        <td v-else></td>
-                        <td v-text="persona.email"></td>
-                        <td v-text="persona.rfc"></td>
-                        <td v-text="persona.tipo"></td>
-                        <td v-text="persona.observacion"></td>
-                        <td v-text="persona.vendedor"></td>
-                    </tr>
-                </tbody>
-                <tbody v-else>
-                    <tr>
-                        <td colspan="10" class="text-center">
-                            <strong>NO hay clientes agregados o con ese criterio...</strong>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-          </div>
-          <nav>
-            <ul class="pagination">
-                <li class="page-item" v-if="pagination.current_page > 1">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
-                </li>
-                <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
-                </li>
-                <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
-                </li>
-            </ul>
-          </nav>
+            <div class="table-responsive col-md-12">
+                <table class="table table-bordered table-striped table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>Opciones</th>
+                            <th>Nombre</th>
+                            <th>Domicilio</th>
+                            <th>Teléfono</th>
+                            <th>Contacto</th>
+                            <th>Correo electrónico</th>
+                            <th>RFC</th>
+                            <th>Tipo</th>
+                            <th>Observaciones</th>
+                            <th>Vendedor</th>
+                        </tr>
+                    </thead>
+                    <tbody v-if="arrayPersona.length">
+                        <tr v-for="persona in arrayPersona" :key="persona.id">
+                            <td>
+                            <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
+                                <i class="icon-pencil"></i>
+                            </button>
+                            </td>
+                            <td v-text="persona.nombre"></td>
+                            <td> {{ persona.ciudad}} {{persona.domicilio}}  </td>
+                            <td v-text="persona.telefono"></td>
+                            <td v-if="persona.company">{{persona.company}} - {{persona.tel_company}}</td>
+                            <td v-else></td>
+                            <td v-text="persona.email"></td>
+                            <td v-text="persona.rfc"></td>
+                            <td v-text="persona.tipo"></td>
+                            <td v-text="persona.observacion"></td>
+                            <td v-text="persona.vendedor"></td>
+                        </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <tr>
+                            <td colspan="10" class="text-center">
+                                <strong>NO hay clientes agregados o con ese criterio...</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" v-if="pagination.current_page > 1">
+                        <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
+                    </li>
+                    <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
+                        <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
+                    </li>
+                    <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                        <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
       </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
     <!--Inicio del modal agregar/actualizar-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-primary modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal"></h4>
-            <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
-                    <div class="col-md-9">
-                    <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del cliente"/>
-                    </div>
+        <div class="modal-dialog modal-primary modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
                 </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Dirección</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio del cliente"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Ciudad y estado</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado del cliente"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Teléfono</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="telefono" class="form-control" placeholder="Teléfono del cliente"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Contacto</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="company" class="form-control" placeholder="Contacto de cliente"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Telefono de contacto</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="tel_company" class="form-control" placeholder="Teléfono de contacto de cliente"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Correo electrónico</label>
-                    <div class="col-md-9">
-                        <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico del cliente"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">RFC</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC del cliente o compañia"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Tipo</label>
-                    <div class="col-md-9">
-                         <select class="form-control" v-model="tipo">
-                            <option value="" disabled>Seleccione el tipo de cliente</option>
-                            <option value="PROSPECTO">PROSPECTO</option>
-                            <option value="PRIMER CONTACTO">PRIMER CONTACTO</option>
-                            <option value="CLIENTE FINAL">CLIENTE FINAL</option>
-                            <option value="CLIENTE MARMOLERO">CLIENTE MARMOLERO</option>
-                            <option value="CLIENTE COCINERO">CLIENTE COCINERO</option>
-                            <option value="CLIENTE ARQ">CLIENTE ARQ</option>
-                            <option value="GENERAL Y PAGOS">GENERAL Y PAGOS</option>
-                            <option value="NO PROMOVER">NO PROMOVER</option>
-                    </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                     <label class="col-md-3 form-control-label" for="text-area">Observaciones</label>
-                    <div class="col-md-9">
-                        <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
-                    </div>&nbsp;
-                </div>
+                <div class="modal-body">
+                    <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
+                            <div class="col-md-9">
+                            <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del cliente"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Dirección</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio del cliente"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Ciudad y estado</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado del cliente"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Teléfono</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="telefono" class="form-control" placeholder="Teléfono del cliente"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Contacto</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="company" class="form-control" placeholder="Contacto de cliente"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Telefono de contacto</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="tel_company" class="form-control" placeholder="Teléfono de contacto de cliente"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Correo electrónico</label>
+                            <div class="col-md-9">
+                                <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico del cliente"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">RFC</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC del cliente o compañia"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Tipo</label>
+                            <div class="col-md-9">
+                                <select class="form-control" v-model="tipo">
+                                    <option value="" disabled>Seleccione el tipo de cliente</option>
+                                    <option value="PROSPECTO">PROSPECTO</option>
+                                    <option value="PRIMER CONTACTO">PRIMER CONTACTO</option>
+                                    <option value="CLIENTE FINAL">CLIENTE FINAL</option>
+                                    <option value="CLIENTE MARMOLERO">CLIENTE MARMOLERO</option>
+                                    <option value="CLIENTE COCINERO">CLIENTE COCINERO</option>
+                                    <option value="CLIENTE ARQ">CLIENTE ARQ</option>
+                                    <option value="GENERAL Y PAGOS">GENERAL Y PAGOS</option>
+                                    <option value="NO PROMOVER">NO PROMOVER</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-area">Observaciones</label>
+                            <div class="col-md-9">
+                                <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
+                            </div>&nbsp;
+                        </div>
 
-              <div v-show="errorPersona" class="form-group row div-error">
-                <div class="text-center text-error">
-                  <div v-for="error in errorMostrarMsjPersona" :key="error" v-text="error"></div>
+                    <div v-show="errorPersona" class="form-group row div-error">
+                        <div class="text-center text-error">
+                        <div v-for="error in errorMostrarMsjPersona" :key="error" v-text="error"></div>
+                        </div>
+                    </div>
+                    </form>
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
+                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
+                    </div>
                 </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-            <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
-            <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
-          </div>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                    <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
+                    <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
-      </div>
       <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->

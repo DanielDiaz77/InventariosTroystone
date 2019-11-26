@@ -16,17 +16,17 @@
         <!-- Listado -->
         <template v-if="listado==1">
             <div class="card-body">
-                <div class="form-group row">
-                    <div class="col-md-6">
-                    <div class="input-group">
-                        <select class="form-control col-md-3" v-model="criterio">
-                        <option value="num_comprobante">No° Comprobante</option>
-                        <option value="fecha_hora">Fecha</option>
-                        <option value="estado">Estado</option>
+                <div class="form-inline">
+                    <div class="form-group mb-2 col-12">
+                        <select class="form-control mb-1" v-model="criterio">
+                            <option value="num_comprobante">No° Comprobante</option>
+                            <option value="fecha_hora">Fecha</option>
+                            <option value="estado">Estado</option>
                         </select>
-                        <input type="text" v-model="buscar" @keyup.enter="listarIngreso(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                        <button type="submit" @click="listarIngreso(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
-                    </div>
+                        <div class="input-group">
+                            <input type="text" v-model="buscar" @keyup.enter="listarIngreso(1,buscar,criterio)" class="form-control mb-1" placeholder="Texto a buscar">
+                            <button type="submit" @click="listarIngreso(1,buscar,criterio)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -43,17 +43,19 @@
                                 <th>Estado</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if="arrayIngreso.length">
                             <tr v-for="ingreso in arrayIngreso" :key="ingreso.id">
                                 <td>
-                                    <button type="button" class="btn btn-success btn-sm" @click="verIngreso(ingreso.id)">
-                                        <i class="icon-eye"></i>
-                                    </button>&nbsp;
-                                    <template v-if="ingreso.estado=='Registrado'">
-                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarIngreso(ingreso.id)">
-                                            <i class="icon-trash"></i>
-                                        </button>
-                                    </template>
+                                    <div class="form-inline">
+                                        <button type="button" class="btn btn-success btn-sm" @click="verIngreso(ingreso.id)">
+                                            <i class="icon-eye"></i>
+                                        </button>&nbsp;
+                                        <template v-if="ingreso.estado=='Registrado'">
+                                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarIngreso(ingreso.id)">
+                                                <i class="icon-trash"></i>
+                                            </button>
+                                        </template>
+                                    </div>
                                 </td>
                                 <td v-text="ingreso.usuario"></td>
                                 <td v-text="ingreso.nombre"></td>
@@ -64,6 +66,13 @@
                                 <!-- <td v-text="ingreso.total"></td>
                                 <td v-text="ingreso.impuesto"></td> -->
                                 <td v-text="ingreso.estado "></td>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <strong>NO hay ingresos registrados o con ese criterio...</strong>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -300,12 +309,14 @@
                             <tbody v-if="arrayDetalle.length">
                                 <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
                                     <td>
-                                        <button @click="eliminarDetalle(index)" type="button" class="btn btn-danger btn-sm">
+                                        <div class="form-inline">
+                                            <button @click="eliminarDetalle(index)" type="button" class="btn btn-danger btn-sm">
                                             <i class="icon-close"></i>
-                                        </button>&nbsp;
-                                        <button type="button" @click="abrirModal2(index)" class="btn btn-warning btn-sm">
-                                            <i class="icon-pencil"></i>
-                                        </button> &nbsp;
+                                            </button>&nbsp;
+                                            <button type="button" @click="abrirModal2(index)" class="btn btn-warning btn-sm">
+                                                <i class="icon-pencil"></i>
+                                            </button> &nbsp;
+                                        </div>
                                     </td>
                                     <td v-text="detalle.sku"></td>
                                     <td>
@@ -528,11 +539,17 @@
                             </tbody>
                         </table>
                     </div>
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
+                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer d-none d-sm-none d-md-block">
                     <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
                     <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
-                <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
+                    <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
                 </div>
             </div>
         <!-- /.modal-content -->
@@ -543,293 +560,302 @@
 
     <!--Inicio del modal Visualizar articulo Insertado-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal2}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-warning modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal + sku"></h4>
-            <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-                <h1 class="text-center" v-text="sku"></h1>
-               <template v-if="file">
-                    <lightbox class="m-0" album="" :src="file">
-                        <img class="img-responsive imgcenter" width="500px" :src="file">
-                    </lightbox>&nbsp;
-               </template>
-                <div class="text-center">
-                    <label class="text-left" for=""><strong>Actualizar Imagen</strong></label>
-                     <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
+        <div class="modal-dialog modal-warning modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal + sku"></h4>
+                    <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
                 </div>
-                <table class="table table-bordered table-striped table-sm text-center table-hover">
-                    <thead>
-                        <tr class="text-center">
-                            <th class="text-center" colspan="2">Detalle del artículo</th>
+                <div class="modal-body">
+                    <h1 class="text-center" v-text="sku"></h1>
+                    <template v-if="file">
+                            <lightbox class="m-0" album="" :src="file">
+                                <img class="img-responsive imgcenter" width="500px" :src="file">
+                            </lightbox>&nbsp;
+                    </template>
+                    <div class="text-center">
+                        <label class="text-left" for=""><strong>Actualizar Imagen</strong></label>
+                        <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
+                    </div>
+                    <table class="table table-bordered table-striped table-sm text-center table-hover">
+                        <thead>
+                            <tr class="text-center">
+                                <th class="text-center" colspan="2">Detalle del artículo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><strong>NO° DE PLACA</strong></td>
+                            <td>
+                                <input type="text" class="form-control" v-model="codigo" readonly>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><strong>NO° DE PLACA</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="codigo" readonly>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>MATERIAL</strong></td>
-                        <td>
-                            <select class="form-control" v-model="idcategoria_r">
-                                <option value="0" disabled>Seleccione un material</option>
-                                <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>CODIGO DE MATERIAL</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="sku">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>TERMINADO</strong></td>
-                        <td>
-                            <select class="form-control" v-model="terminado">
-                                <option value='' disabled>Seleccione un de terminado</option>
-                                <option value="Pulido">Pulido</option>
-                                <option value="Al Corte">Al Corte</option>
-                                <option value="Leather">Leather</option>
-                                <option value="Mate">Mate</option>
-                                <option value="Seda">Seda</option>
-                                <option value="Otro">Otro</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>LARGO</strong></td>
-                        <td>
-                            <input type="number" min="0" value="0" step="any" class="form-control" v-model="largo">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>ALTO</strong></td>
-                        <td>
-                            <input type="number" min="0" value="0" step="any" class="form-control" v-model="alto">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>METROS<sup>2</sup> </strong></td>
-                        <td>
-                             <input type="number" readonly :value="calcularMts" class="form-control"/>
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="espesor">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>PRECIO</strong></td>
-                        <td>
-                            <input type="number" min="0" value="0" class="form-control" v-model="precio_venta">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>BODEGA DE DESCARGA</strong></td>
-                        <td>
-                            <select class="form-control" v-model="ubicacion">
-                                <option value='' disabled>Seleccione una bodega de descarga</option>
-                                <option value="Del Musico">Del Músico</option>
-                                <option value="Escultores">Escultor</option>
-                                <option value="Sastres">Sastre</option>
-                                <option value="Mecanicos">Mecánicos</option>
-                                <option value="Tractorista">Tractorista</option>
-                                <option value="San Luis">San Luis</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>Cantidad</strong></td>
-                        <td>
-                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="cantidad">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>DESCRIPCION</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="descripcion_r">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>OBSERVACIONES</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="observacion_r">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>ORIGEN</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="origen">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>CONTENEDOR</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="contenedor">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td>
-                            <input type="text" class="form-control" v-model="espesor">
-                        </td>
-                    </tr>
-                    <tr >
-                        <td><strong>FECHA DE LLEGADA</strong></td>
-                        <td>
-                            <input type="date" v-model="fecha_llegada" class="form-control" placeholder="Fecha de llegada"/>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><strong>MATERIAL</strong></td>
+                            <td>
+                                <select class="form-control" v-model="idcategoria_r">
+                                    <option value="0" disabled>Seleccione un material</option>
+                                    <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>CODIGO DE MATERIAL</strong></td>
+                            <td>
+                                <input type="text" class="form-control" v-model="sku">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>TERMINADO</strong></td>
+                            <td>
+                                <select class="form-control" v-model="terminado">
+                                    <option value='' disabled>Seleccione un de terminado</option>
+                                    <option value="Pulido">Pulido</option>
+                                    <option value="Al Corte">Al Corte</option>
+                                    <option value="Leather">Leather</option>
+                                    <option value="Mate">Mate</option>
+                                    <option value="Seda">Seda</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>LARGO</strong></td>
+                            <td>
+                                <input type="number" min="0" value="0" step="any" class="form-control" v-model="largo">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>ALTO</strong></td>
+                            <td>
+                                <input type="number" min="0" value="0" step="any" class="form-control" v-model="alto">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>METROS<sup>2</sup> </strong></td>
+                            <td>
+                                <input type="number" readonly :value="calcularMts" class="form-control"/>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>ESPESOR</strong></td>
+                            <td>
+                                <input type="text" class="form-control" v-model="espesor">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>PRECIO</strong></td>
+                            <td>
+                                <input type="number" min="0" value="0" class="form-control" v-model="precio_venta">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>BODEGA DE DESCARGA</strong></td>
+                            <td>
+                                <select class="form-control" v-model="ubicacion">
+                                    <option value='' disabled>Seleccione una bodega de descarga</option>
+                                    <option value="Del Musico">Del Músico</option>
+                                    <option value="Escultores">Escultor</option>
+                                    <option value="Sastres">Sastre</option>
+                                    <option value="Mecanicos">Mecánicos</option>
+                                    <option value="Tractorista">Tractorista</option>
+                                    <option value="San Luis">San Luis</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>Cantidad</strong></td>
+                            <td>
+                                <input type="number" min="0" value="0" step="any" class="form-control" v-model="cantidad">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>DESCRIPCION</strong></td>
+                            <td>
+                                <input type="text" class="form-control" v-model="descripcion_r">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>OBSERVACIONES</strong></td>
+                            <td>
+                                <input type="text" class="form-control" v-model="observacion_r">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>ORIGEN</strong></td>
+                            <td>
+                                <input type="text" class="form-control" v-model="origen">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>CONTENEDOR</strong></td>
+                            <td>
+                                <input type="text" class="form-control" v-model="contenedor">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>ESPESOR</strong></td>
+                            <td>
+                                <input type="text" class="form-control" v-model="espesor">
+                            </td>
+                        </tr>
+                        <tr >
+                            <td><strong>FECHA DE LLEGADA</strong></td>
+                            <td>
+                                <input type="date" v-model="fecha_llegada" class="form-control" placeholder="Fecha de llegada"/>
+                            </td>
+                        </tr>
 
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                            Sin código de barras.
-                    </barcode>
+                        </tbody>
+                    </table>
+                    <div class="text-center">
+                        <barcode :value="codigo" :options="{formar: 'EAN-13'}">
+                                Sin código de barras.
+                        </barcode>
+                    </div>
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
+                        <button type="button" class="btn btn-ligth" @click="actualizarDetalle()">Actualizar</button>
+                    </div>
                 </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
-            <button type="button" class="btn btn-ligth" @click="actualizarDetalle()">Actualizar</button>
-          </div>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
+                    <button type="button" class="btn btn-ligth" @click="actualizarDetalle()">Actualizar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
+        <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
     <!--Inicio del modal Visualizar articulo detalle listado==2-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal3}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-info modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal + sku"></h4>
-            <button type="button" class="close" @click="cerrarModal3()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-                <h1 class="text-center" v-text="sku"></h1>
-                <template v-if="file">
-                    <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
-                        <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
-                    </lightbox>&nbsp;
-                </template>
-                <div v-if="condicion == 1" class="text-center">
-                    <span class="badge badge-success">Activo</span>
+        <div class="modal-dialog modal-info modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal + sku"></h4>
+                    <button type="button" class="close" @click="cerrarModal3()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
                 </div>
-                <div v-else-if="condicion == 3" class="text-center">
-                    <span class="badge badge-warning">Cortado</span>
-                </div>
-                <div v-else class="text-center">
-                    <span class="badge badge-danger">Desactivado</span>
-                </div>&nbsp;
-                <table class="table table-bordered table-striped table-sm text-center table-hover">
-                    <thead>
-                        <tr class="text-center">
-                            <th class="text-center" colspan="2">Detalle del artículo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><strong>NO° DE PLACA</strong></td>
-                        <td v-text="codigo"></td>
-                    </tr>
-                    <tr>
-                        <td><strong>MATERIAL</strong></td>
+                <div class="modal-body">
+                        <h1 class="text-center" v-text="sku"></h1>
+                        <template v-if="file">
+                            <lightbox class="m-0" album="" :src="'http://localhost:8000/images/'+file">
+                                <img class="img-responsive imgcenter" width="500px" :src="'http://localhost:8000/images/'+file">
+                            </lightbox>&nbsp;
+                        </template>
+                        <div v-if="condicion == 1" class="text-center">
+                            <span class="badge badge-success">Activo</span>
+                        </div>
+                        <div v-else-if="condicion == 3" class="text-center">
+                            <span class="badge badge-warning">Cortado</span>
+                        </div>
+                        <div v-else class="text-center">
+                            <span class="badge badge-danger">Desactivado</span>
+                        </div>&nbsp;
+                        <table class="table table-bordered table-striped table-sm text-center table-hover">
+                            <thead>
+                                <tr class="text-center">
+                                    <th class="text-center" colspan="2">Detalle del artículo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><strong>NO° DE PLACA</strong></td>
+                                <td v-text="codigo"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>MATERIAL</strong></td>
 
-                        <select disabled class="form-control selectDetalle" v-model="idcategoria_r">
-                            <option value="0" disabled>Seleccione un material</option>
-                            <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                        </select>
+                                <select disabled class="form-control selectDetalle" v-model="idcategoria_r">
+                                    <option value="0" disabled>Seleccione un material</option>
+                                    <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
+                                </select>
 
-                    </tr>
-                    <tr >
-                        <td><strong>CODIGO DE MATERIAL</strong></td>
-                        <td v-text="sku"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>TERMINADO</strong></td>
-                        <td v-text="terminado"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>LARGO</strong></td>
-                        <td v-text="largo"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ALTO</strong></td>
-                        <td v-text="alto"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>METROS<sup>2</sup> </strong></td>
-                        <td v-text="metros_cuadrados"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td v-text="espesor"> </td>
-                    </tr>
-                    <tr >
-                        <td><strong>PRECIO</strong></td>
-                        <td v-text="precio_venta"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>BODEGA DE DESCARGA</strong></td>
-                        <td v-text="ubicacion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>Cantidad</strong></td>
-                        <td v-text="cantidad"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>DESCRIPCION</strong></td>
-                        <td v-text="descripcion_r"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>OBSERVACIONES</strong></td>
-                        <td v-text="observacion_r"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ORIGEN</strong></td>
-                        <td v-text="origen"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>CONTENEDOR</strong></td>
-                        <td v-text="contenedor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td v-text="espesor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>FECHA DE LLEGADA</strong></td>
-                        <td v-text="fecha_llegada"></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                            Sin código de barras.
-                    </barcode>
+                            </tr>
+                            <tr >
+                                <td><strong>CODIGO DE MATERIAL</strong></td>
+                                <td v-text="sku"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>TERMINADO</strong></td>
+                                <td v-text="terminado"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>LARGO</strong></td>
+                                <td v-text="largo"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ALTO</strong></td>
+                                <td v-text="alto"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>METROS<sup>2</sup> </strong></td>
+                                <td v-text="metros_cuadrados"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ESPESOR</strong></td>
+                                <td v-text="espesor"> </td>
+                            </tr>
+                            <tr >
+                                <td><strong>PRECIO</strong></td>
+                                <td v-text="precio_venta"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>BODEGA DE DESCARGA</strong></td>
+                                <td v-text="ubicacion"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>Cantidad</strong></td>
+                                <td v-text="cantidad"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>DESCRIPCION</strong></td>
+                                <td v-text="descripcion_r"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>OBSERVACIONES</strong></td>
+                                <td v-text="observacion_r"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ORIGEN</strong></td>
+                                <td v-text="origen"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>CONTENEDOR</strong></td>
+                                <td v-text="contenedor"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ESPESOR</strong></td>
+                                <td v-text="espesor"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>FECHA DE LLEGADA</strong></td>
+                                <td v-text="fecha_llegada"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center">
+                            <barcode :value="codigo" :options="{formar: 'EAN-13'}">
+                                    Sin código de barras.
+                            </barcode>
+                        </div>
+                        <hr class="d-block d-sm-block d-md-none">
+                        <div class="float-right d-block d-sm-block d-md-none">
+                            <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
+                        </div>
                 </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
-          </div>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
+        <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
   </main>

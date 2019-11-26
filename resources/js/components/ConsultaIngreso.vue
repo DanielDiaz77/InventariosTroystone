@@ -13,17 +13,17 @@
         <!-- Listado -->
         <template v-if="listado==1">
             <div class="card-body">
-                <div class="form-group row">
-                    <div class="col-md-6">
-                    <div class="input-group">
-                        <select class="form-control col-md-3" v-model="criterio">
-                        <option value="num_comprobante">No° Comprobante</option>
-                        <option value="fecha_hora">Fecha</option>
-                        <option value="estado">Estado</option>
+                <div class="form-inline">
+                    <div class="form-group mb-2 col-12">
+                        <select class="form-control mb-1" v-model="criterio">
+                            <option value="num_comprobante">No° Comprobante</option>
+                            <option value="fecha_hora">Fecha</option>
+                            <option value="estado">Estado</option>
                         </select>
-                        <input type="text" v-model="buscar" @keyup.enter="listarIngreso(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                        <button type="submit" @click="listarIngreso(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
-                    </div>
+                        <div class="input-group">
+                            <input type="text" v-model="buscar" @keyup.enter="listarIngreso(1,buscar,criterio)" class="form-control mb-1" placeholder="Texto a buscar">
+                            <button type="submit" @click="listarIngreso(1,buscar,criterio)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -39,7 +39,7 @@
                                 <th>Estado</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if="arrayIngreso.length">
                             <tr v-for="ingreso in arrayIngreso" :key="ingreso.id">
                                 <td>
                                     <button type="button" class="btn btn-success btn-sm" @click="verIngreso(ingreso.id)">
@@ -52,6 +52,13 @@
                                 <td v-text="ingreso.num_comprobante"></td>
                                 <td v-text="ingreso.fecha_hora"></td>
                                 <td v-text="ingreso.estado "></td>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <strong>NO hay ingresos registrados o con ese criterio...</strong>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -215,14 +222,12 @@
                     </tr>
                     <tr>
                         <td><strong>MATERIAL</strong></td>
-
                         <select disabled class="form-control selectDetalle" v-model="idcategoria_r">
                             <option value="0" disabled>Seleccione un material</option>
                             <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
                         </select>
-
                     </tr>
-                    <tr >
+                    <tr>
                         <td><strong>CODIGO DE MATERIAL</strong></td>
                         <td v-text="sku"></td>
                     </tr>
@@ -289,8 +294,12 @@
                             Sin código de barras.
                     </barcode>
                 </div>
+                <hr class="d-block d-sm-block d-md-none">
+                <div class="float-right d-block d-sm-block d-md-none">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
+                </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer d-none d-sm-none d-md-block">
             <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
           </div>
         </div>

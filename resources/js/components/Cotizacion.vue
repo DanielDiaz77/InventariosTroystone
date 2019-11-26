@@ -16,22 +16,26 @@
         <!-- Listado -->
         <template v-if="listado==1">
             <div class="card-body">
-                <div class="form-group row">
-                    <div class="col-md-6">
+                <div class="form-inline">
+                    <div class="form-group mb-2 col-sm-10">
                         <div class="input-group">
-                            <select class="form-control col-md-3" v-model="criterio">
-                            <option value="num_comprobante">No° Comprobante</option>
-                            <option value="fecha_hora">Fecha</option>
-                            <option value="estado">Estado</option>
+                            <select class="form-control mb-1" v-model="criterio">
+                                <option value="num_comprobante">No° Comprobante</option>
+                                <option value="fecha_hora">Fecha</option>
                             </select>
-                            <input type="text" v-model="buscar" @keyup.enter="listarCotizacion(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                            <button type="submit" @click="listarCotizacion(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                            <input type="text" v-model="buscar" @keyup.enter="listarCotizacion(1,buscar,criterio,estadoCotizacion)" class="form-control mb-1" placeholder="Texto a buscar">
+                        </div>
+                        <div class="input-group">
+                            <select class="form-control mb-1" v-model="estadoCotizacion">
+                                <option value="">Pendiente</option>
+                                <option value="Vendida">Vendida</option>
+                                <option value="Anulada">Cancelada</option>
+                            </select>
+                            <button type="submit" @click="listarCotizacion(1,buscar,criterio,estadoCotizacion)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-inline">
-                            <button @click="abrirModal5()" class="btn btn-primary">...</button>&nbsp;<strong>Buscar Articulos cotizados</strong>
-                        </div>
+                    <div class="form-group mb-2 col-sm-2 float-right">
+                        <button @click="abrirModal5()" class="btn btn-primary">...</button>&nbsp;<strong>Buscar Articulos cotizados</strong>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -50,7 +54,7 @@
                                 <th>Estado</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if="arrayCotizacion.length">
                             <tr v-for="cotizacion in arrayCotizacion" :key="cotizacion.id">
                                 <td>
                                     <button type="button" class="btn btn-success btn-sm" @click="verCotizacion(cotizacion.id)">
@@ -79,26 +83,33 @@
                                         <span class="badge badge-warning">En espera</span>
                                     </div>
                                     <div v-else-if="cotizacion.estado == 'Vendida'">
-                                        <span class="badge badge-success">Aceptada</span>
+                                        <span class="badge badge-success">Vendida</span>
                                     </div>
                                     <div v-else>
-                                        <span class="badge badge-danger">Cotizacion cancelada</span>
+                                        <span class="badge badge-danger">Cancelada</span>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
+                        <tbody v-else>
+                        <tr>
+                            <td colspan="10" class="text-center">
+                                <strong>NO hay cotizaciones registradas o con ese criterio...</strong>
+                            </td>
+                        </tr>
+                    </tbody>
                     </table>
                 </div>
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoCotizacion)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoCotizacion)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoCotizacion)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -117,7 +128,38 @@
                                 </v-select>
                         </div>
                     </div>&nbsp;
-                     <div class="col-md-3 text-center">
+                    <div class="col-md-2 text-center sinpadding" v-if="telefono_cliente">
+                        <div class="form-group">
+                            <label for=""><strong>Teléfono</strong></label>
+                            <h6 for=""><strong v-text="telefono_cliente"></strong></h6>
+                        </div>
+                    </div>&nbsp;
+                     <div class="col-md-2 text-center sinpadding" v-if="tipo_cliente">
+                        <div class="form-group">
+                            <label for=""><strong>Tipo de cliente</strong></label>
+                            <h6 for=""><strong v-text="tipo_cliente"></strong></h6>
+                        </div>
+                    </div>&nbsp;
+                    <div class="col-md-2 text-center sinpadding" v-if="rfc_cliente">
+                        <div class="form-group">
+                            <label for=""><strong>RFC</strong></label>
+                            <h6 for=""><strong v-text="rfc_cliente"></strong></h6>
+                        </div>
+                    </div>&nbsp;
+                    <div class="col-md-2 text-center sinpadding" v-if="contacto_cliente">
+                        <div class="form-group">
+                            <label for=""><strong>Contacto</strong></label>
+                            <h6 for=""><strong> {{contacto_cliente}} | {{telcontacto_cliente}}</strong></h6>
+                        </div>
+                    </div>&nbsp;
+
+                    <div class="col-md-3 text-center sinpadding" v-if="obs_cliente">
+                        <div class="form-group">
+                            <label for=""><strong>Observaciones</strong></label>
+                            <h6 for=""><strong> {{obs_cliente}}</strong></h6>
+                        </div>
+                    </div>&nbsp;
+                    <!-- <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>Tipo de cliente</strong></label>
                             <input type="text" readonly :value="tipo_cliente" class="form-control col-md">
@@ -128,7 +170,7 @@
                             <label for=""><strong>RFC</strong></label>
                             <input type="text" readonly :value="rfc_cliente" class="form-control col-md">
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="form-group row border">
                     <div class="col-md-2 text-center">
@@ -837,22 +879,22 @@
                 </div>
                 <div class="modal-body">
                     <!-- Filtros Modal Articulos -->
-                    <div class="form-group row">
-                        <div class="col-md">
+                    <div class="form-inline col-sm-12">
+                        <div class="form-group mb-2">
                             <div class="input-group">
-                                <select class="form-control col-md-3" v-model="criterioA">
+                                <select class="form-control mb-1" v-model="criterioA">
                                     <option value="sku">Código de material</option>
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
                                 </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="form-control" placeholder="Texto a buscar">
-                                <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscarA,buscarA,bodega,acabado)" class="form-control" placeholder="Terminado">
                             </div>
-                        </div>
-                        <div class="col-md">
+                            <div class="input-group">
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="form-control mb-1" placeholder="Texto a buscar">
+                                <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscarA,buscarA,bodega,acabado)" class="form-control mb-1" placeholder="Terminado">
+                            </div>
                             <div class="input-group">
                                 <template v-if="areaUs == 'GDL'">
-                                    <select class="form-control" v-model="bodega">
+                                    <select class="form-control mb-1" v-model="bodega">
                                         <option value="" disabled>Ubicacion</option>
                                         <option value="">Todas</option>
                                         <option value="Del Musico">Del Músico</option>
@@ -863,7 +905,7 @@
                                         <option value="San Luis">San Luis</option>
                                     </select>
                                 </template>
-                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>&nbsp;
                             </div>
                         </div>
                     </div>
@@ -931,14 +973,14 @@
                             </li>
                         </ul>
                     </nav>
-                    <hr>
-                    <div class="float-right">
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
                         <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
                     </div>
                 </div>
-                <!-- <div class="modal-footer">
+                <div class="modal-footer d-none d-sm-none d-md-block">
                     <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                </div> -->
+                </div>
             </div>
         <!-- /.modal-content -->
         </div>
@@ -948,28 +990,151 @@
 
     <!--Inicio del modal Visualizar articulo Insertado-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal2}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-info modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal + sku"></h4>
-            <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-                <h1 class="text-center" v-text="sku"></h1>
-                <template v-if="file">
-                    <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                        <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                    </lightbox>&nbsp;
-                </template>
-                <table class="table table-bordered table-striped table-sm text-center table-hover">
-                    <thead>
-                        <tr class="text-center">
-                            <th class="text-center" colspan="2">Detalle del artículo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        <div class="modal-dialog modal-info modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal + sku"></h4>
+                    <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h1 class="text-center" v-text="sku"></h1>
+                    <template v-if="file">
+                        <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                            <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
+                        </lightbox>&nbsp;
+                    </template>
+                    <table class="table table-bordered table-striped table-sm text-center table-hover">
+                        <thead>
+                            <tr class="text-center">
+                                <th class="text-center" colspan="2">Detalle del artículo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>NO° DE PLACA</strong></td>
+                                <td v-text="codigo"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>MATERIAL</strong></td>
+                                <td v-text="categoria"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>CODIGO DE MATERIAL</strong></td>
+                                <td v-text="sku"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>TERMINADO</strong></td>
+                                <td v-text="terminado"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>LARGO</strong></td>
+                                <td v-text="largo"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ALTO</strong></td>
+                                <td v-text="alto"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>METROS<sup>2</sup> </strong></td>
+                                <td v-text="calcularMts"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ESPESOR</strong></td>
+                                <td v-text="espesor"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>PRECIO</strong></td>
+                                <td v-text="precio"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>BODEGA DE DESCARGA</strong></td>
+                                <td v-text="ubicacion"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>Stock</strong></td>
+                                <td v-text="stock"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>DESCRIPCION</strong></td>
+                                <td v-text="descripcion"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>OBSERVACIONES</strong></td>
+                                <td v-text="observacion"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ORIGEN</strong></td>
+                                <td v-text="origen"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>CONTENEDOR</strong></td>
+                                <td v-text="contenedor"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ESPESOR</strong></td>
+                                <td v-text="espesor"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>FECHA DE LLEGADA</strong></td>
+                                <td v-text="fecha_llegada"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-center">
+                        <barcode :value="codigo" :options="{formar: 'EAN-13'}">
+                                Sin código de barras.
+                        </barcode>
+                    </div>
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
+                    </div>
+                </div>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!--Fin del modal-->
+
+    <!--Inicio del modal Visualizar articulo detalle listado==2-->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal3}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-info modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal + sku"></h4>
+                    <button type="button" class="close" @click="cerrarModal3()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h1 class="text-center" v-text="sku"></h1>
+                    <template v-if="file">
+                        <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                            <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
+                        </lightbox>&nbsp;
+                    </template>
+                    <div v-if="condicion == 1" class="text-center">
+                        <span class="badge badge-success">Activo</span>
+                    </div>
+                    <div v-else-if="condicion == 3" class="text-center">
+                        <span class="badge badge-warning">Cortado</span>
+                    </div>
+                    <div v-else class="text-center">
+                        <span class="badge badge-danger">Desactivado</span>
+                    </div>&nbsp;
+                    <table class="table table-bordered table-striped table-sm text-center table-hover">
+                        <thead>
+                            <tr class="text-center">
+                                <th class="text-center" colspan="2">Detalle del artículo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                         <tr>
                             <td><strong>NO° DE PLACA</strong></td>
                             <td v-text="codigo"></td>
@@ -977,6 +1142,11 @@
                         <tr>
                             <td><strong>MATERIAL</strong></td>
                             <td v-text="categoria"></td>
+                            <!-- <select disabled class="form-control selectDetalle" v-model="idcategoria">
+                                <option value="0" disabled>Seleccione un material</option>
+                                <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
+                            </select> -->
+
                         </tr>
                         <tr >
                             <td><strong>CODIGO DE MATERIAL</strong></td>
@@ -996,11 +1166,11 @@
                         </tr>
                         <tr >
                             <td><strong>METROS<sup>2</sup> </strong></td>
-                            <td v-text="calcularMts"></td>
+                            <td v-text="metros_cuadrados"></td>
                         </tr>
                         <tr >
                             <td><strong>ESPESOR</strong></td>
-                            <td v-text="espesor"></td>
+                            <td v-text="espesor"> </td>
                         </tr>
                         <tr >
                             <td><strong>PRECIO</strong></td>
@@ -1011,8 +1181,8 @@
                             <td v-text="ubicacion"></td>
                         </tr>
                         <tr >
-                            <td><strong>Stock</strong></td>
-                            <td v-text="stock"></td>
+                            <td><strong>Cantidad</strong></td>
+                            <td v-text="cantidad"></td>
                         </tr>
                         <tr >
                             <td><strong>DESCRIPCION</strong></td>
@@ -1038,145 +1208,25 @@
                             <td><strong>FECHA DE LLEGADA</strong></td>
                             <td v-text="fecha_llegada"></td>
                         </tr>
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                            Sin código de barras.
-                    </barcode>
+                        </tbody>
+                    </table>
+                    <div class="text-center">
+                        <barcode :value="codigo" :options="{formar: 'EAN-13'}">
+                                Sin código de barras.
+                        </barcode>
+                    </div>
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
+                    </div>
                 </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
-          </div>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!--Fin del modal-->
-
-    <!--Inicio del modal Visualizar articulo detalle listado==2-->
-    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal3}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-info modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal + sku"></h4>
-            <button type="button" class="close" @click="cerrarModal3()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-                <h1 class="text-center" v-text="sku"></h1>
-                <template v-if="file">
-                    <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                        <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                    </lightbox>&nbsp;
-                </template>
-                <div v-if="condicion == 1" class="text-center">
-                    <span class="badge badge-success">Activo</span>
-                </div>
-                <div v-else-if="condicion == 3" class="text-center">
-                    <span class="badge badge-warning">Cortado</span>
-                </div>
-                <div v-else class="text-center">
-                    <span class="badge badge-danger">Desactivado</span>
-                </div>&nbsp;
-                <table class="table table-bordered table-striped table-sm text-center table-hover">
-                    <thead>
-                        <tr class="text-center">
-                            <th class="text-center" colspan="2">Detalle del artículo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><strong>NO° DE PLACA</strong></td>
-                        <td v-text="codigo"></td>
-                    </tr>
-                    <tr>
-                        <td><strong>MATERIAL</strong></td>
-                        <td v-text="categoria"></td>
-                        <!-- <select disabled class="form-control selectDetalle" v-model="idcategoria">
-                            <option value="0" disabled>Seleccione un material</option>
-                            <option class="text-center" v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                        </select> -->
-
-                    </tr>
-                    <tr >
-                        <td><strong>CODIGO DE MATERIAL</strong></td>
-                        <td v-text="sku"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>TERMINADO</strong></td>
-                        <td v-text="terminado"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>LARGO</strong></td>
-                        <td v-text="largo"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ALTO</strong></td>
-                        <td v-text="alto"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>METROS<sup>2</sup> </strong></td>
-                        <td v-text="metros_cuadrados"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td v-text="espesor"> </td>
-                    </tr>
-                    <tr >
-                        <td><strong>PRECIO</strong></td>
-                        <td v-text="precio"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>BODEGA DE DESCARGA</strong></td>
-                        <td v-text="ubicacion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>Cantidad</strong></td>
-                        <td v-text="cantidad"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>DESCRIPCION</strong></td>
-                        <td v-text="descripcion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>OBSERVACIONES</strong></td>
-                        <td v-text="observacion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ORIGEN</strong></td>
-                        <td v-text="origen"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>CONTENEDOR</strong></td>
-                        <td v-text="contenedor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td v-text="espesor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>FECHA DE LLEGADA</strong></td>
-                        <td v-text="fecha_llegada"></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                            Sin código de barras.
-                    </barcode>
-                </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
-          </div>
-        </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
+        <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
 
@@ -1238,9 +1288,8 @@
                     <div class="container">
                         <form action method="post" enctype="multipart/form-data" class="form-horizontal">
                             <div class="form-group row">
-
-                                <label class="col-md-4 form-control-label" for="text-input">Metros <sup> 2</sup> Restantes</label>
-                                <div class="col-md-4">
+                                <label class="col-md-4 form-control-label mb-3" for="text-input">Metros <sup> 2</sup> Restantes</label>
+                                <div class="col-md-4 mb-3">
                                     <input type="number" readonly :value="calcularMtsRestantes" class="form-control"/>
                                 </div>&nbsp;
 
@@ -1251,7 +1300,7 @@
                                     <strong>(*La distrubucion de medidas supera el tamaño original de la placa)</strong>
                                 </span>
                             <!-- ArticuloA -->
-                                <div class="col-md-6 border">
+                                <div class="col-md-6 border mb-2">
                                     <h3 class="text-center" v-text="sku + ' A'"></h3>
                                     <div class="form-group row">
                                         <span class="col-md-12" style="color:red;" v-show="codigoA==''">(*Ingrese el código, recuerde debe ser único)</span>
@@ -1288,10 +1337,10 @@
                                             <input type="number" v-model="precioA" :disabled="validatedA == 1"  min="1" class="form-control" placeholder=""/>
                                         </div>
                                     </div>
-                                    <button type="button" v-if="validatedA==0" class="btn btn-primary float-right" @click="registrarArticuloA()">Guardar</button>&nbsp;
+                                    <button type="button" v-if="validatedA==0" class="btn btn-primary float-right mb-2" @click="registrarArticuloA()">Guardar</button>&nbsp;
                                 </div>
                             <!-- ArticuloB -->
-                                <div class="col-md-6 border">
+                                <div class="col-md-6 border mb-2">
                                     <h3 class="text-center" v-text="sku + ' B'"></h3>
                                     <div class="form-group row">
                                         <span class="col-md-12" style="color:red;" v-show="codigoB==''">(*Ingrese el código, recuerde debe ser único)</span>
@@ -1327,15 +1376,20 @@
                                             <input type="number" v-model="precioB" :disabled="validatedB == 1" min="1" class="form-control" placeholder=""/>
                                         </div>
                                     </div>
-                                    <button type="button" v-if="validatedB==0" class="btn btn-primary float-right" @click="registrarArticuloB()">Guardar</button>&nbsp;&nbsp;
+                                    <button type="button" v-if="validatedB==0" class="btn btn-primary float-right mb-2" @click="registrarArticuloB()">Guardar</button>&nbsp;&nbsp;
                                 </div>
                             </div>
                         </form>
+                        <hr class="d-block d-sm-block d-md-none">
+                        <div class="float-right d-block d-sm-block d-md-none">
+                            <button type="button" v-if="validatedA==0 && validatedB==0" class="btn btn-secondary" @click="cerrarModal4()">Cerrar</button>
+                            <button type="button" v-if="validatedA==1 || validatedB==1" class="btn btn-primary" @click="actualizarArticulo(),eliminarDetalle(ind)">Actualizar</button>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer d-none d-sm-none d-md-block">
                     <button type="button" v-if="validatedA==0 && validatedB==0" class="btn btn-secondary" @click="cerrarModal4()">Cerrar</button>
-                <button type="button" v-if="validatedA==1 || validatedB==1" class="btn btn-primary" @click="actualizarArticulo(),eliminarDetalle(ind)">Actualizar</button>
+                    <button type="button" v-if="validatedA==1 || validatedB==1" class="btn btn-primary" @click="actualizarArticulo(),eliminarDetalle(ind)">Actualizar</button>
                 </div>
             </div>
         <!-- /.modal-content -->
@@ -1454,6 +1508,10 @@ export default {
             idcliente: 0,
             rfc_cliente : "",
             tipo_cliente : "",
+            telefono_cliente : "",
+            contacto_cliente : "",
+            telcontacto_cliente : "",
+            obs_cliente: "",
             cliente: '',
             user: '',
             tipo_comprobante: "COTIZACION",
@@ -1575,6 +1633,7 @@ export default {
             errorMostrarMsjVenta: [],
             sigNum : 0,
             sigNumV : 0,
+            estadoCotizacion : ""
         };
     },
     components: {
@@ -1721,9 +1780,9 @@ export default {
         }
     },
     methods: {
-        listarCotizacion (page,buscar,criterio){
+        listarCotizacion (page,buscar,criterio,estadoCotizacion){
             let me=this;
-            var url= '/cotizacion?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/cotizacion?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estadoCotizacion;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayCotizacion = respuesta.cotizaciones.data;
@@ -1753,6 +1812,10 @@ export default {
             me.idcliente = val1.id;
             me.rfc_cliente =  val1.rfc;
             me.tipo_cliente = val1.tipo;
+            me.telefono_cliente = val1.telefono;
+            me.contacto_cliente = val1.company;
+            me.telcontacto_cliente = val1.tel_company;
+            me.obs_cliente = val1.observacion;
         },
         buscarArticulo(){
             let me = this;
@@ -1793,12 +1856,12 @@ export default {
 
 
         },
-        cambiarPagina(page,buscar,criterio){
+        cambiarPagina(page,buscar,criterio,estadoCotizacion){
             let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarCotizacion(page,buscar,criterio);
+                me.listarCotizacion(page,buscar,criterio,estadoCotizacion);
         },
         cambiarPaginaArt(page,buscar,criterio,bodega,acabado){
             let me = this;
@@ -1963,7 +2026,7 @@ export default {
                 'data': this.arrayDetalle
             }).then(function(response) {
                 me.ocultarDetalle();
-                me.listarCotizacion(1,'','num_comprobante');
+                me.listarCotizacion(1,'','num_comprobante','');
                 me.idcliente = 0;
                 me.tipo_comprobante = "Presupuesto";
                 me.num_comprobante = 0;
@@ -2018,7 +2081,7 @@ export default {
                     axios.put('/cotizacion/desactivar',{
                         'id': id
                     }).then(function (response) {
-                        me.listarCotizacion(1,'','num_comprobante');
+                        me.listarCotizacion(1,'','num_comprobante','');
                         swal.fire(
                         'Anulado!',
                         'La cotizacion ha sido anulado con éxito.',
@@ -2054,7 +2117,7 @@ export default {
                     axios.put('/cotizacion/desactivar',{
                         'id': id
                     }).then(function (response) {
-                        me.listarCotizacion(1,'','num_comprobante');
+                        me.listarCotizacion(1,'','num_comprobante','');
                         swal(
                         'Anulado!',
                         'La cotizacion ha sido anulado con éxito.',
@@ -2167,7 +2230,13 @@ export default {
             this.total_parcial = 0;
             this.impuesto = 0.16;
             this.observacion = "";
-            this.listarCotizacion(1,this.buscar, this.criterio);
+            this.rfc_cliente = "";
+            this.tipo_cliente = "";
+            this.telefono_cliente = "";
+            this.contacto_cliente = "";
+            this.telcontacto_cliente = "";
+            this.obs_cliente = "";
+            this.listarCotizacion(1,this.buscar, this.criterio,this.estadoCotizacion);
             this.getLastNum();
         },
         verCotizacion(id){
@@ -2594,9 +2663,18 @@ export default {
                 'id': this.idarticulo
             })
             .then(function(response) {
-                me.listarArticulo(1,me.codigoA,'codigo',bodega,acabado);
+                /* me.listarArticulo(1,me.codigoA,'codigo',bodega,acabado);
                 me.cerrarModal4();
                 me.abrirModal();
+                me.validatedA = 0;
+                me.validatedB = 0;*/
+                me.buscarA = me.codigoA;
+                me.criterioA = 'codigo';
+                me.bodega = '';
+                me.acabado = '';
+                me.cerrarModal4();
+                me.abrirModal();
+                me.listarArticulo(1,me.buscarA,me.criterioA,me.bodega ,me.acabado);
                 me.validatedA = 0;
                 me.validatedB = 0;
 
@@ -2616,7 +2694,7 @@ export default {
                 'id': id,
                 'aceptado' : this.aceptado
             }).then(function (response) {
-                me.listarCotizacion(1,'','num_comprobante');
+                me.listarCotizacion(1,'','num_comprobante','');
             }).catch(function (error) {
                 console.log(error);
             });
@@ -2787,14 +2865,14 @@ export default {
                 'id': id
             }).then(function (response) {
                 me.ocultarDetalle();
-                me.listarCotizacion(1,'','num_comprobante');
+                me.listarCotizacion(1,'','num_comprobante','');
             }).catch(function (error) {
                 console.log(error);
             });
-        },
+        }
     },
     mounted() {
-        this.listarCotizacion(1,this.buscar, this.criterio);
+        this.listarCotizacion(1,this.buscar, this.criterio,this.estadoCotizacion);
         this.getLastNum();
         this.getLastNumVenta();
     }

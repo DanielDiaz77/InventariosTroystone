@@ -13,18 +13,23 @@
         <!-- Listado -->
         <template v-if="listado==1">
             <div class="card-body">
-                <div class="form-group row">
-                    <div class="col-md-6">
-                    <div class="input-group">
-                        <select class="form-control col-md-3" v-model="criterio">
-                        <option value="num_comprobante">No° Comprobante</option>
-                        <option value="fecha_hora">Fecha</option>
-                        <option value="estado">Estado</option>
-                        <option value="entregado">Entregado</option>
-                        </select>
-                        <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                        <button type="submit" @click="listarVenta(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
-                    </div>
+                <div class="form-inline">
+                    <div class="form-group mb-2 col-12">
+                        <div class="input-group">
+                            <select class="form-control mb-1" v-model="criterio">
+                                <option value="num_comprobante">No° Comprobante</option>
+                                <option value="fecha_hora">Fecha</option>
+                                <option value="forma_pago">Forma de pago</option>
+                            </select>
+                            <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio,estadoVenta)" class="form-control mb-1" placeholder="Texto a buscar...">
+                        </div>
+                        <div class="input-group">
+                            <select class="form-control mb-1" v-model="estadoVenta">
+                                <option value="">Activa</option>
+                                <option value="Anulada">Cancelada</option>
+                            </select>
+                            <button type="submit" @click="listarVenta(1,buscar,criterio,estadoVenta)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -81,7 +86,12 @@
                                 <td v-else>
                                     <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
                                 </td>
-                                <td v-text="venta.estado "></td>
+                                <td v-if="venta.estado =='Registrado'">
+                                    <span class="badge badge-success">Activa</span>
+                                </td>
+                                <td v-else>
+                                    <span class="badge badge-danger">Cancelada</span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -89,13 +99,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoVenta)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoVenta)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoVenta)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -311,28 +321,151 @@
 
     <!--Inicio del modal Visualizar articulo Insertado-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal2}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-info modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal + sku"></h4>
-            <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-                <h1 class="text-center" v-text="sku"></h1>
-                <template v-if="file">
-                    <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                        <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                    </lightbox>&nbsp;
-                </template>
-                <table class="table table-bordered table-striped table-sm text-center table-hover">
-                    <thead>
-                        <tr class="text-center">
-                            <th class="text-center" colspan="2">Detalle del artículo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        <div class="modal-dialog modal-info modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal + sku"></h4>
+                    <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h1 class="text-center" v-text="sku"></h1>
+                    <template v-if="file">
+                        <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                            <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
+                        </lightbox>&nbsp;
+                    </template>
+                    <table class="table table-bordered table-striped table-sm text-center table-hover">
+                        <thead>
+                            <tr class="text-center">
+                                <th class="text-center" colspan="2">Detalle del artículo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>NO° DE PLACA</strong></td>
+                                <td v-text="codigo"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>MATERIAL</strong></td>
+                                <td v-text="categoria"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>CODIGO DE MATERIAL</strong></td>
+                                <td v-text="sku"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>TERMINADO</strong></td>
+                                <td v-text="terminado"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>LARGO</strong></td>
+                                <td v-text="largo"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ALTO</strong></td>
+                                <td v-text="alto"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>METROS<sup>2</sup> </strong></td>
+                                <td v-text="calcularMts"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ESPESOR</strong></td>
+                                <td v-text="espesor"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>PRECIO</strong></td>
+                                <td v-text="precio"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>BODEGA DE DESCARGA</strong></td>
+                                <td v-text="ubicacion"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>Stock</strong></td>
+                                <td v-text="stock"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>DESCRIPCION</strong></td>
+                                <td v-text="descripcion"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>OBSERVACIONES</strong></td>
+                                <td v-text="observacion"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ORIGEN</strong></td>
+                                <td v-text="origen"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>CONTENEDOR</strong></td>
+                                <td v-text="contenedor"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>ESPESOR</strong></td>
+                                <td v-text="espesor"></td>
+                            </tr>
+                            <tr >
+                                <td><strong>FECHA DE LLEGADA</strong></td>
+                                <td v-text="fecha_llegada"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-center">
+                        <barcode :value="codigo" :options="{formar: 'EAN-13'}">
+                                Sin código de barras.
+                        </barcode>
+                    </div>
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
+                    </div>
+                </div>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!--Fin del modal-->
+
+    <!--Inicio del modal Visualizar articulo detalle listado==2-->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal3}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-info modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal + sku"></h4>
+                    <button type="button" class="close" @click="cerrarModal3()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h1 class="text-center" v-text="sku"></h1>
+                    <template v-if="file">
+                        <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
+                            <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
+                        </lightbox>&nbsp;
+                    </template>
+                    <div v-if="condicion == 1" class="text-center">
+                        <span class="badge badge-success">Activo</span>
+                    </div>
+                    <div v-else-if="condicion == 3" class="text-center">
+                        <span class="badge badge-warning">Cortado</span>
+                    </div>
+                    <div v-else class="text-center">
+                        <span class="badge badge-danger">Desactivado</span>
+                    </div>&nbsp;
+                    <table class="table table-bordered table-striped table-sm text-center table-hover">
+                        <thead>
+                            <tr class="text-center">
+                                <th class="text-center" colspan="2">Detalle del artículo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                         <tr>
                             <td><strong>NO° DE PLACA</strong></td>
                             <td v-text="codigo"></td>
@@ -359,11 +492,11 @@
                         </tr>
                         <tr >
                             <td><strong>METROS<sup>2</sup> </strong></td>
-                            <td v-text="calcularMts"></td>
+                            <td v-text="metros_cuadrados"></td>
                         </tr>
                         <tr >
                             <td><strong>ESPESOR</strong></td>
-                            <td v-text="espesor"></td>
+                            <td v-text="espesor"> </td>
                         </tr>
                         <tr >
                             <td><strong>PRECIO</strong></td>
@@ -374,8 +507,8 @@
                             <td v-text="ubicacion"></td>
                         </tr>
                         <tr >
-                            <td><strong>Stock</strong></td>
-                            <td v-text="stock"></td>
+                            <td><strong>Cantidad</strong></td>
+                            <td v-text="cantidad"></td>
                         </tr>
                         <tr >
                             <td><strong>DESCRIPCION</strong></td>
@@ -401,139 +534,24 @@
                             <td><strong>FECHA DE LLEGADA</strong></td>
                             <td v-text="fecha_llegada"></td>
                         </tr>
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                            Sin código de barras.
-                    </barcode>
+                        </tbody>
+                    </table>
+                    <div class="text-center">
+                        <barcode :value="codigo" :options="{formar: 'EAN-13'}">
+                                Sin código de barras.
+                        </barcode>
+                    </div>
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
+                    </div>
                 </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
-          </div>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!--Fin del modal-->
-
-    <!--Inicio del modal Visualizar articulo detalle listado==2-->
-    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal3}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-info modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal + sku"></h4>
-            <button type="button" class="close" @click="cerrarModal3()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-                <h1 class="text-center" v-text="sku"></h1>
-                <template v-if="file">
-                    <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file">
-                        <img class="img-responsive imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file">
-                    </lightbox>&nbsp;
-                </template>
-                <div v-if="condicion == 1" class="text-center">
-                    <span class="badge badge-success">Activo</span>
-                </div>
-                <div v-else-if="condicion == 3" class="text-center">
-                    <span class="badge badge-warning">Cortado</span>
-                </div>
-                <div v-else class="text-center">
-                    <span class="badge badge-danger">Desactivado</span>
-                </div>&nbsp;
-                <table class="table table-bordered table-striped table-sm text-center table-hover">
-                    <thead>
-                        <tr class="text-center">
-                            <th class="text-center" colspan="2">Detalle del artículo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><strong>NO° DE PLACA</strong></td>
-                        <td v-text="codigo"></td>
-                    </tr>
-                    <tr>
-                        <td><strong>MATERIAL</strong></td>
-                        <td v-text="categoria"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>CODIGO DE MATERIAL</strong></td>
-                        <td v-text="sku"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>TERMINADO</strong></td>
-                        <td v-text="terminado"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>LARGO</strong></td>
-                        <td v-text="largo"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ALTO</strong></td>
-                        <td v-text="alto"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>METROS<sup>2</sup> </strong></td>
-                        <td v-text="metros_cuadrados"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td v-text="espesor"> </td>
-                    </tr>
-                    <tr >
-                        <td><strong>PRECIO</strong></td>
-                        <td v-text="precio"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>BODEGA DE DESCARGA</strong></td>
-                        <td v-text="ubicacion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>Cantidad</strong></td>
-                        <td v-text="cantidad"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>DESCRIPCION</strong></td>
-                        <td v-text="descripcion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>OBSERVACIONES</strong></td>
-                        <td v-text="observacion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ORIGEN</strong></td>
-                        <td v-text="origen"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>CONTENEDOR</strong></td>
-                        <td v-text="contenedor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td v-text="espesor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>FECHA DE LLEGADA</strong></td>
-                        <td v-text="fecha_llegada"></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                            Sin código de barras.
-                    </barcode>
-                </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
-          </div>
-        </div>
-        <!-- /.modal-content -->
-      </div>
       <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
@@ -620,7 +638,8 @@ export default {
             buscar : '',
             btnEntrega : false,
             btnPagado : false,
-            estadoVn : ""
+            estadoVn : "",
+            estadoVenta : ""
         };
     },
     components: {
@@ -667,9 +686,9 @@ export default {
 
         },
     methods: {
-        listarVenta (page,buscar,criterio){
+        listarVenta (page,buscar,criterio,estadoVenta){
             let me=this;
-            var url= '/venta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/venta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estadoVenta;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayVenta = respuesta.ventas.data;
@@ -679,12 +698,12 @@ export default {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio){
+        cambiarPagina(page,buscar,criterio,estadoVenta){
             let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarVenta(page,buscar,criterio);
+                me.listarVenta(page,buscar,criterio,estadoVenta);
         },
         mostrarDetalle(){
             this.listado = 0;
@@ -927,7 +946,7 @@ export default {
         }
     },
     mounted() {
-        this.listarVenta(1,this.buscar, this.criterio);
+        this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta);
     }
 };
 </script>

@@ -14,186 +14,194 @@
           </button>
         </div>
         <div class="card-body">
-          <div class="form-group row">
-            <div class="col-md-6">
-              <div class="input-group">
-                <select class="form-control col-md-3" v-model="criterio">
-                  <option value="nombre">Nombre</option>
-                  <option value="rfc">RFC</option>
-                  <option value="email">Correo electrónico</option>
-                </select>
-                <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                <button type="submit" @click="listarPersona(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
-              </div>
+            <div class="form-inline">
+                <div class="form-group mb-2 col-12">
+                    <div class="input-group">
+                        <select class="form-control mb-1" v-model="criterio">
+                            <option value="nombre">Nombre</option>
+                            <option value="rfc">RFC</option>
+                            <option value="email">Correo electrónico</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio)" class="form-control mb-1" placeholder="Texto a buscar">
+                        <button type="submit" @click="listarPersona(1,buscar,criterio)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="table-responsive col-md-12">
-            <table class="table table-bordered table-striped table-sm table-hover">
-                <thead>
-                    <tr>
-                        <th>Opciones</th>
-                        <th>Nombre</th>
-                        <th>Ciudad</th>
-                        <th>Domicilio</th>
-                        <th>Teléfono</th>
-                        <th>Correo electrónico</th>
-                        <th>RFC</th>
-                        <th>Usuario</th>
-                        <th>Rol</th>
-                        <th>Area</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="persona in arrayPersona" :key="persona.id">
-                        <td>
-                            <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
-                                <i class="icon-pencil"></i>
-                            </button>&nbsp;
-                            <template v-if="persona.condicion">
-                                <button type="button" class="btn btn-danger btn-sm" @click="desactivarUsuario(persona.id)">
-                                    <i class="icon-trash"></i>
-                                </button>
-                            </template>
-                            <template v-else>
-                                <button type="button" class="btn btn-info btn-sm" @click="activarUsuario(persona.id)">
-                                    <i class="icon-check"></i>
-                                </button>
-                            </template>
-                        </td>
-                        <td v-text="persona.nombre"></td>
-                        <td v-text="persona.ciudad"></td>
-                        <td v-text="persona.domicilio"></td>
-                        <td v-text="persona.telefono"></td>
-                        <td v-text="persona.email"></td>
-                        <td v-text="persona.rfc"></td>
-                        <td v-text="persona.usuario"></td>
-                        <td v-text="persona.rol"></td>
-                        <td v-if="persona.area == 'GDL'">
-                            Guadalajara
-                        </td>
-                        <td v-else-if="persona.area == 'SLP'">
-                            San Luis
-                        </td>
-                        <td v-else>N/A</td>
-                    </tr>
-                </tbody>
-            </table>
-          </div>
-          <nav>
-            <ul class="pagination">
-                <li class="page-item" v-if="pagination.current_page > 1">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
-                </li>
-                <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
-                </li>
-                <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
-                </li>
-            </ul>
-          </nav>
+            <div class="table-responsive col-md-12">
+                <table class="table table-bordered table-striped table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>Opciones</th>
+                            <th>Nombre</th>
+                            <th>Ciudad</th>
+                            <th>Domicilio</th>
+                            <th>Teléfono</th>
+                            <th>Correo electrónico</th>
+                            <th>RFC</th>
+                            <th>Usuario</th>
+                            <th>Rol</th>
+                            <th>Area</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="persona in arrayPersona" :key="persona.id">
+                            <td>
+                                <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
+                                    <i class="icon-pencil"></i>
+                                </button>&nbsp;
+                                <template v-if="persona.condicion">
+                                    <button type="button" class="btn btn-danger btn-sm" @click="desactivarUsuario(persona.id)">
+                                        <i class="icon-trash"></i>
+                                    </button>
+                                </template>
+                                <template v-else>
+                                    <button type="button" class="btn btn-info btn-sm" @click="activarUsuario(persona.id)">
+                                        <i class="icon-check"></i>
+                                    </button>
+                                </template>
+                            </td>
+                            <td v-text="persona.nombre"></td>
+                            <td v-text="persona.ciudad"></td>
+                            <td v-text="persona.domicilio"></td>
+                            <td v-text="persona.telefono"></td>
+                            <td v-text="persona.email"></td>
+                            <td v-text="persona.rfc"></td>
+                            <td v-text="persona.usuario"></td>
+                            <td v-text="persona.rol"></td>
+                            <td v-if="persona.area == 'GDL'">
+                                Guadalajara
+                            </td>
+                            <td v-else-if="persona.area == 'SLP'">
+                                San Luis
+                            </td>
+                            <td v-else>N/A</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" v-if="pagination.current_page > 1">
+                        <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
+                    </li>
+                    <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
+                        <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
+                    </li>
+                    <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                        <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
       </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
     <!--Inicio del modal agregar/actualizar-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-primary modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal"></h4>
-            <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
-                    <div class="col-md-9">
-                    <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del usuarío"/>
-                    </div>
+        <div class="modal-dialog modal-primary modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
                 </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Ciudad</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad donde habita la persona"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Domicilio</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio del persona"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Teléfono</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="telefono" class="form-control" placeholder="Teléfono del usuarío"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Correo electrónico</label>
-                    <div class="col-md-9">
-                        <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico del usuarío"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">RFC</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC del usuarío"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Rol (*)</label>
-                    <div class="col-md-9">
-                       <select class="form-control" v-model="idrol">
-                           <option value="0">Seleccione un rol</option>
-                           <option v-for="rol in arrayRol" :key="rol.id" :value="rol.id" v-text="rol.nombre">
+                <div class="modal-body">
+                    <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
+                            <div class="col-md-9">
+                            <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del usuarío"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Ciudad</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad donde habita la persona"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Domicilio</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio del persona"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Teléfono</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="telefono" class="form-control" placeholder="Teléfono del usuarío"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Correo electrónico</label>
+                            <div class="col-md-9">
+                                <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico del usuarío"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">RFC</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC del usuarío"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Rol (*)</label>
+                            <div class="col-md-9">
+                            <select class="form-control" v-model="idrol">
+                                <option value="0">Seleccione un rol</option>
+                                <option v-for="rol in arrayRol" :key="rol.id" :value="rol.id" v-text="rol.nombre">
 
-                           </option>
-                       </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Usuario (*)</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="usuario" class="form-control" placeholder="Nombre de usuarío"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Contraseña (*)</label>
-                    <div class="col-md-9">
-                        <input type="password" v-model="password" class="form-control" placeholder="Contraseña de acceso al sistema"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="text-input" class="col-md-3 form-control-label">Area</label>
-                    <div class="col-md-9">
-                        <select class="form-control" v-model="area">
-                            <option value="" disabled>Seleccione un area para el usuario</option>
-                            <option value="GDL">Guadalajara</option>
-                            <option value="SLP">San Luis</option>
-                        </select>
-                    </div>
-                </div>
+                                </option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Usuario (*)</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="usuario" class="form-control" placeholder="Nombre de usuarío"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="text-input">Contraseña (*)</label>
+                            <div class="col-md-9">
+                                <input type="password" v-model="password" class="form-control" placeholder="Contraseña de acceso al sistema"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="text-input" class="col-md-3 form-control-label">Area</label>
+                            <div class="col-md-9">
+                                <select class="form-control" v-model="area">
+                                    <option value="" disabled>Seleccione un area para el usuario</option>
+                                    <option value="GDL">Guadalajara</option>
+                                    <option value="SLP">San Luis</option>
+                                </select>
+                            </div>
+                        </div>
 
-              <div v-show="errorPersona" class="form-group row div-error">
-                <div class="text-center text-error">
-                  <div v-for="error in errorMostrarMsjPersona" :key="error" v-text="error"></div>
+                    <div v-show="errorPersona" class="form-group row div-error">
+                        <div class="text-center text-error">
+                        <div v-for="error in errorMostrarMsjPersona" :key="error" v-text="error"></div>
+                        </div>
+                    </div>
+                    </form>
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
+                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
+                    </div>
                 </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-            <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
-            <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
-          </div>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                    <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
+                    <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
+        <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
   </main>
