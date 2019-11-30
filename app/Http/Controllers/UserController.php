@@ -10,8 +10,7 @@ use App\Persona;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         if (!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
@@ -52,8 +51,8 @@ class UserController extends Controller
             'personas' => $personas
         ];
     }
-    public function store(Request $request)
-    {
+
+    public function store(Request $request){
         if(!$request->ajax()) return redirect('/');
 
         try{
@@ -88,8 +87,7 @@ class UserController extends Controller
 
     }
 
-    public function update(Request $request)
-    {
+    public function update(Request $request){
         if(!$request->ajax()) return redirect('/');
 
         try{
@@ -146,5 +144,17 @@ class UserController extends Controller
         $user = User::findOrFail($request->id);
         $user->condicion = '1';
         $user->save();
+    }
+
+    public function selectUsuario(Request $request){
+
+        //if(!$request->ajax()) return redirect('/');
+
+        $usuarios = User::join('personas','users.id','=','personas.id')
+        ->where([['condicion',1],['idrol','!=',3]])
+        ->select('users.id','personas.nombre')->orderBy('id','asc')->get();
+
+        return ['usuarios' => $usuarios];
+
     }
 }

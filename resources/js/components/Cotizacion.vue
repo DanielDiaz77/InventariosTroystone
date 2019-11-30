@@ -2104,9 +2104,9 @@ export default {
             });
 
             swalWithBootstrapButtons.fire({
-                title: "Esta cotizacion ya se vencio favor de cancelarla",
+                title: "Esta cotizacion ya se vencio será cancelada",
                 type: "warning",
-                showCancelButton: true,
+                showCancelButton: false,
                 confirmButtonText: "Aceptar!",
                 cancelButtonText: "Cancelar!",
                 reverseButtons: true
@@ -2117,12 +2117,8 @@ export default {
                     axios.put('/cotizacion/desactivar',{
                         'id': id
                     }).then(function (response) {
+                        me.ocultarDetalle();
                         me.listarCotizacion(1,'','num_comprobante','');
-                        swal(
-                        'Anulado!',
-                        'La cotizacion ha sido anulado con éxito.',
-                        'success'
-                        )
                     }).catch(function (error) {
                         console.log(error);
                     });

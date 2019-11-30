@@ -102,6 +102,15 @@
                 </div>
                 <div class="modal-body">
                     <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="form-group row" v-if="userrol==1">
+                            <label class="col-md-3 form-control-label" for="text-input">Vendedor</label>
+                            <div class="col-md-9">
+                            <select class="form-control" v-model="userid">
+                                <option value="0" disabled>Seleccione un vendedor</option>
+                                <option v-for="vendedor in arrayVendedores" :key="vendedor.id" :value="vendedor.id" v-text="vendedor.nombre"></option>
+                            </select>
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
                             <div class="col-md-9">
@@ -216,6 +225,7 @@ export default {
             tipo: "",
             observacion: "",
             userid : "",
+            userrol: "",
             company : "",
             tel_company : "",
             arrayPersona: [],
@@ -234,7 +244,8 @@ export default {
             },
             offset : 3,
             criterio : 'nombre',
-            buscar : ''
+            buscar : '',
+            arrayVendedores : []
         };
     },
 
@@ -275,7 +286,10 @@ export default {
                 var respuesta= response.data;
                 me.arrayPersona = respuesta.personas.data;
                 me.pagination= respuesta.pagination;
-                /* console.log(respuesta.rol); */
+                me.userid = respuesta.userid;
+                me.userrol = respuesta.userrol;
+                /* console.log("Rol: " + respuesta.userrol);
+                console.log("ID: " + respuesta.userid); */
             })
             .catch(function (error) {
                 console.log(error);
@@ -307,6 +321,7 @@ export default {
                 'email': this.email,
                 'rfc': this.rfc,
                 'tipo': this.tipo,
+                'idusuario' : this.userid,
                 'observacion':this.observacion
             })
             .then(function(response) {
@@ -335,6 +350,7 @@ export default {
                 'rfc': this.rfc,
                 'id': this.persona_id,
                 'tipo': this.tipo,
+                'idusuario' : this.userid,
                 'observacion':this.observacion
             })
             .then(function(response) {
@@ -372,6 +388,7 @@ export default {
             this.errorPersona = 0;
             this.tipo = "";
             this.observacion = "";
+            this.listarPersona(1,'','nombre');
         },
         abrirModal(modelo, accion, data = []) {
             switch (modelo) {
@@ -412,11 +429,25 @@ export default {
                             this.rfc = data["rfc"];
                             this.tipo = data["tipo"];
                             this.observacion = data["observacion"];
+                            this.userid = data["idvendedor"];
                             break;
                         }
                     }
                 }
             }
+            this.selectVendedor();
+        },
+        selectVendedor(){
+            let me=this;
+            var url= '/user/selectUsuario';
+
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.arrayVendedores = respuesta.usuarios;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         }
     },
     mounted() {

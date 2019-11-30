@@ -3425,6 +3425,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -3440,6 +3449,7 @@ __webpack_require__.r(__webpack_exports__);
       tipo: "",
       observacion: "",
       userid: "",
+      userrol: "",
       company: "",
       tel_company: "",
       arrayPersona: [],
@@ -3458,7 +3468,8 @@ __webpack_require__.r(__webpack_exports__);
       },
       offset: 3,
       criterio: 'nombre',
-      buscar: ''
+      buscar: '',
+      arrayVendedores: []
     };
   },
   computed: {
@@ -3501,7 +3512,10 @@ __webpack_require__.r(__webpack_exports__);
         var respuesta = response.data;
         me.arrayPersona = respuesta.personas.data;
         me.pagination = respuesta.pagination;
-        /* console.log(respuesta.rol); */
+        me.userid = respuesta.userid;
+        me.userrol = respuesta.userrol;
+        /* console.log("Rol: " + respuesta.userrol);
+        console.log("ID: " + respuesta.userid); */
       })["catch"](function (error) {
         console.log(error);
       });
@@ -3531,6 +3545,7 @@ __webpack_require__.r(__webpack_exports__);
         'email': this.email,
         'rfc': this.rfc,
         'tipo': this.tipo,
+        'idusuario': this.userid,
         'observacion': this.observacion
       }).then(function (response) {
         me.cerrarModal();
@@ -3558,6 +3573,7 @@ __webpack_require__.r(__webpack_exports__);
         'rfc': this.rfc,
         'id': this.persona_id,
         'tipo': this.tipo,
+        'idusuario': this.userid,
         'observacion': this.observacion
       }).then(function (response) {
         me.cerrarModal();
@@ -3589,6 +3605,7 @@ __webpack_require__.r(__webpack_exports__);
       this.errorPersona = 0;
       this.tipo = "";
       this.observacion = "";
+      this.listarPersona(1, '', 'nombre');
     },
     abrirModal: function abrirModal(modelo, accion) {
       var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
@@ -3635,11 +3652,24 @@ __webpack_require__.r(__webpack_exports__);
                   this.rfc = data["rfc"];
                   this.tipo = data["tipo"];
                   this.observacion = data["observacion"];
+                  this.userid = data["idvendedor"];
                   break;
                 }
             }
           }
       }
+
+      this.selectVendedor();
+    },
+    selectVendedor: function selectVendedor() {
+      var me = this;
+      var url = '/user/selectUsuario';
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.arrayVendedores = respuesta.usuarios;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   },
   mounted: function mounted() {
@@ -7319,9 +7349,9 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
         buttonsStyling: false
       });
       swalWithBootstrapButtons.fire({
-        title: "Esta cotizacion ya se vencio favor de cancelarla",
+        title: "Esta cotizacion ya se vencio será cancelada",
         type: "warning",
-        showCancelButton: true,
+        showCancelButton: false,
         confirmButtonText: "Aceptar!",
         cancelButtonText: "Cancelar!",
         reverseButtons: true
@@ -7331,8 +7361,8 @@ Vue.use(vue_js_toggle_button__WEBPACK_IMPORTED_MODULE_4___default.a);
           axios.put('/cotizacion/desactivar', {
             'id': id
           }).then(function (response) {
+            me.ocultarDetalle();
             me.listarCotizacion(1, '', 'num_comprobante', '');
-            swal('Anulado!', 'La cotizacion ha sido anulado con éxito.', 'success');
           })["catch"](function (error) {
             console.log(error);
           });
@@ -83425,6 +83455,70 @@ var render = function() {
                     }
                   },
                   [
+                    _vm.userrol == 1
+                      ? _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            {
+                              staticClass: "col-md-3 form-control-label",
+                              attrs: { for: "text-input" }
+                            },
+                            [_vm._v("Vendedor")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-md-9" }, [
+                            _c(
+                              "select",
+                              {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.userid,
+                                    expression: "userid"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                on: {
+                                  change: function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.userid = $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  }
+                                }
+                              },
+                              [
+                                _c(
+                                  "option",
+                                  { attrs: { value: "0", disabled: "" } },
+                                  [_vm._v("Seleccione un vendedor")]
+                                ),
+                                _vm._v(" "),
+                                _vm._l(_vm.arrayVendedores, function(vendedor) {
+                                  return _c("option", {
+                                    key: vendedor.id,
+                                    domProps: {
+                                      value: vendedor.id,
+                                      textContent: _vm._s(vendedor.nombre)
+                                    }
+                                  })
+                                })
+                              ],
+                              2
+                            )
+                          ])
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
                     _c("div", { staticClass: "form-group row" }, [
                       _c(
                         "label",
