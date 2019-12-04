@@ -163,6 +163,11 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/tarea/completar', 'TareaController@completar');
         Route::get('/tarea/obtenerTareas','TareaController@obtenerTareasCliente');
 
+        Route::get('/event', 'EventController@index');
+        Route::post('/event/registrar', 'EventController@store');
+        Route::put('/event/actualizar', 'EventController@update');
+        Route::delete('/event/{id}','EventController@destroy');
+
     });
 });
 
