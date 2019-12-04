@@ -59,6 +59,10 @@
                 <consultaventa></consultaventa>
             </template>
 
+            <template v-if="menu==16">
+                <calendario></calendario>
+            </template>
+
             <template v-if="menu==11">
                 <ayuda></ayuda>
             </template>

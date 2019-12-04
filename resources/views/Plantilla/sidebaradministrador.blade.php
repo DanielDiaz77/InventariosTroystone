@@ -76,6 +76,9 @@
                     </li>
                 </ul>
             </li>
+            <li @click="menu=16" class="nav-item">
+                <a class="nav-link" href="#"><i class="fa fa-calendar"></i> Actividades</a>
+            </li>
             <li @click="menu=11" class="nav-item">
                 <a class="nav-link" href="#"><i class="icon-book-open"></i> Ayuda <span class="badge badge-danger">PDF</span></a>
             </li>
