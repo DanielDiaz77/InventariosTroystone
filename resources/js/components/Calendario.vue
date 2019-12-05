@@ -18,8 +18,8 @@
                 <vue-cal style="height: 600px" locale="es"
                     :selected-date = getDateToday
                     :min-date = getDateToday
-                    :time-from="8 * 60"
-                    :time-to="23 * 60"
+                    :time-from="7 * 60"
+
                     resize-x
                     default-view="month"
                     :disable-views="['years']"
@@ -43,6 +43,49 @@
                 </div>
                 <div class="modal-body">
                     <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="form-group row m-0">
+                            <div class="col-md-5 text-center">
+                                <div class="form-group">
+                                    <label for=""><strong>Cliente (*)</strong></label>
+                                        <v-select :on-search="selectCliente" label="nombre" :options="arrayCliente" placeholder="Seleccionar un cliente..."
+                                        :onChange="getDatosCliente">
+                                        </v-select>
+                                </div>
+                            </div>&nbsp;
+                            <template v-if="idcliente">
+
+                                <div class="col-md-3 text-center">
+                                    <div class="form-group" v-if="cliente">
+                                        <label><strong>Cliente</strong></label>
+                                        <h4><strong v-text="cliente"></strong></h4>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="form-group" v-if="tipo">
+                                        <label for=""><strong>Tipo de cliente</strong></label>
+                                        <h6 for=""><strong v-text="tipo"></strong></h6>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="form-group" v-if="rfc">
+                                        <label for=""><strong>RFC</strong></label>
+                                        <h6 for=""><strong v-text="rfc"></strong></h6>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-center sinpadding" v-if="telefono">
+                                    <div class="form-group">
+                                        <label for=""><strong>Teléfono</strong></label>
+                                        <h6 for=""><strong v-text="telefono"></strong></h6>
+                                    </div>
+                                </div>&nbsp;
+                                <div class="col-md-4 text-center sinpadding" v-if="company">
+                                    <div class="form-group">
+                                        <label for=""><strong>Contacto</strong></label>
+                                        <h6 for=""><strong> {{company}} | {{tel_company}}</strong></h6>
+                                    </div>
+                                </div>&nbsp;
+                            </template>
+                        </div>
                         <div class="form-group row m-0">
                             <label class="col-md-3 form-control-label m-2 p-0 mr-0 order-md-1 order-1"><strong>Inicio</strong></label>
                             <label class="col-md-3 form-control-label m-2 p-0 mr-0 order-md-2 order-3"><strong>Fin</strong></label>
@@ -79,11 +122,23 @@
                             </div>
                         </div>
                         <div class="form-group row m-0">
+                            <div class="col-10">
+                                <label for=""><strong>Notas:</strong></label>
+                                <textarea placeholder="Contenido" class="form-control rounded-0 noresize" rows="3" maxlength="256" v-model="content"></textarea>
+                            </div>
+                            <template v-if="isEdition">
+                            <div class="col-md-1">
+                                <label for=""><strong>Actividad Completada:</strong></label>&nbsp;
+                                 <toggle-button @change="cambiarEstadoEvent(eventid)" v-model="btnComp" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                            </template>
+                        </div>
+                        <!-- <div class="form-group row m-0">
                             <label class="col-md-3 form-control-label m-2 p-0 mr-0" for="text-area"><strong>Contendio</strong></label>
                             <div class="col-md-9">
                                 <textarea placeholder="Contenido" class="form-control rounded-0 noresize" rows="3" maxlength="256" v-model="content"></textarea>
                             </div>&nbsp;
-                        </div>
+                        </div> -->
                         <div v-show="errorEvent" class="form-group row div-error">
                             <div class="text-center text-error">
                                 <div v-for="error in errorMostrarMsjEvent" :key="error" v-text="error"></div>
@@ -92,6 +147,7 @@
                         <hr class="d-block d-sm-block d-md-none">
                         <div class="float-right d-block d-sm-block d-md-none">
                             <button type="button" v-if="isEdition==false" class="btn btn-primary" @click="registrarEvento()">Guardar</button>
+                            <button type="button" v-if="isEdition" class="btn btn-primary" @click="actualizarEvento()">Actualizar</button>
                             <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
                         </div>
                     </form>
@@ -119,22 +175,61 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- <div class="col-md caja2"> -->
+                   <!--  <div class="row">
+                        <div class="col clrblue">1</div>
+                        <div class="col">2</div>
+                        <div class="col clrblue">3</div>
+                        <div class="col">4</div>
+                        <div class="col clrblue">5</div>
+                        <div class="col">6</div>
+                        <div class="col clrblue">7</div>
+                        <div class="col">8</div>
+                        <div class="col clrblue">9</div>
+                        <div class="col">10</div>
+                        <div class="col clrblue">11</div>
+                        <div class="col">12</div>
+                    </div> -->
+                    <!-- INF CLIENTE -->
+                    <div class="form-group row">
+                        <div class="col-md-4 text-center">
+                            <div class="form-group">
+                                <h1 for="" class="float-left"><strong v-text="cliente"></strong></h1>
+                            </div>
+                        </div>&nbsp;
+                        <div class="col-md-2 text-center sinpadding" v-if="telefono">
+                            <div class="form-group">
+                                <label for=""><strong>Teléfono</strong></label>
+                                <h6 for=""><strong v-text="telefono"></strong></h6>
+                            </div>
+                        </div>&nbsp;
+                        <div class="col-md-2 text-center sinpadding" v-if="tipo">
+                            <div class="form-group">
+                                <label for=""><strong>Tipo de cliente</strong></label>
+                                <h6 for=""><strong v-text="tipo"></strong></h6>
+                            </div>
+                        </div>&nbsp;
+                        <div class="col-md-2 text-center sinpadding" v-if="rfc">
+                            <div class="form-group">
+                                <label for=""><strong>RFC</strong></label>
+                                <h6 for=""><strong v-text="rfc"></strong></h6>
+                            </div>
+                        </div>&nbsp;
+                        <div class="col-md-4 text-center sinpadding" v-if="company">
+                            <div class="form-group">
+                                <label for=""><strong>Contacto</strong></label>
+                                <h6 for=""><strong> {{company}} | {{tel_company}}</strong></h6>
+                            </div>
+                        </div>&nbsp;
+
+                        <!-- <div class="col-md-3 text-center sinpadding" v-if="observacion">
+                            <div class="form-group">
+                                <label for=""><strong>Observaciones</strong></label>
+                                <h6 for=""><strong> {{observacion}}</strong></h6>
+                            </div>
+                        </div>&nbsp; -->
+                    </div>
+                    <hr>
                     <div :class="['col-md','caja2-' + clase]">
-                        <!-- <div class="row">
-                            <div class="col clrblue">1</div>
-                            <div class="col">2</div>
-                            <div class="col clrblue">3</div>
-                            <div class="col">4</div>
-                            <div class="col clrblue">5</div>
-                            <div class="col">6</div>
-                            <div class="col clrblue">7</div>
-                            <div class="col">8</div>
-                            <div class="col clrblue">9</div>
-                            <div class="col">10</div>
-                            <div class="col clrblue">11</div>
-                            <div class="col">12</div>
-                        </div> -->
                         <div class="row">
                             <div class="col-md col-10 mt-3">
                                 <h4 v-text="title"></h4>
@@ -186,10 +281,13 @@ import 'vue-cal/dist/i18n/es.js';
 import moment from 'moment';
 import datePicker from 'vue-bootstrap-datetimepicker';
 import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
+import vSelect from 'vue-select';
+import ToggleButton from 'vue-js-toggle-button';
 Vue.use(datePicker);
+Vue.use(ToggleButton);
 //Vue.component('date-picker', VueBootstrapDatetimePicker);
 export default {
-    components: { VueCal },
+    components: { VueCal,vSelect },
     data() {
         return {
             events: [],
@@ -204,6 +302,7 @@ export default {
             clase : "",
             start : "",
             end : "",
+            estado : 0,
             options: {
                 format: 'YYYY-MM-DD HH:mm:ss',
                 useCurrent: false,
@@ -211,13 +310,26 @@ export default {
                 showClose: true,
                 daysOfWeekDisabled: [0],
                 minDate: moment(),
-                maxDate: moment().add(30, 'days'),
+                maxDate: moment().add(60, 'days'),
             },
             isEdition : false,
             isView : false,
             dateToday : "",
             errorEvent: 0,
             errorMostrarMsjEvent: [],
+            idcliente : "",
+            cliente : "",
+            rfc : "",
+            telefono : "",
+            ciudad : "",
+            domicilio : "",
+            company : "",
+            tel_company : "",
+            email : "",
+            tipo : "",
+            observacion : "",
+            arrayCliente : [],
+            btnComp : false
         };
     },
     computed:{
@@ -251,6 +363,19 @@ export default {
             this.start = "";
             this.end = "";
             this.isEdition = false;
+            this.estado = 0;
+            this.idcliente = "";
+            this.cliente = "";
+            this.rfc = "";
+            this.telefono = "";
+            this.ciudad = "";
+            this.domicilio = "";
+            this.company = "";
+            this.tel_company = "";
+            this.email = "";
+            this.tipo = "";
+            this.observacion = "";
+            this.btnComp = false;
         },
         abriModalEditar(Event){
             this.modal = 1;
@@ -263,6 +388,24 @@ export default {
             this.clase = Event.class;
             this.start = Event.start;
             this.end = Event.end;
+            this.estado = Event.estado;
+
+            this.idcliente = Event.idcliente;
+            this.cliente = Event.cliente;
+            this.rfc = Event.rfc;
+            this.telefono = Event.telefono;
+            this.ciudad = Event.ciudad;
+            this.domicilio = Event.domicilio;
+            this.company = Event.company;
+            this.tel_company = Event.tel_company;
+            this.email = Event.email;
+            this.tipo = Event.tipo;
+            this.observacion = Event.observacion;
+            this.errorMostrarMsjEvent = [];
+
+            if(this.estado){
+                this.btnComp = true;
+            }
         },
         onEventClick (event, e) {
             this.selectedEvent = event;
@@ -275,11 +418,28 @@ export default {
             this.clase = this.selectedEvent.class;
             this.start = this.selectedEvent.start;
             this.end = this.selectedEvent.end;
+            this.estado = this.selectedEvent.estado;
+
+            this.idcliente = this.selectedEvent.idcliente;
+            this.cliente = this.selectedEvent.cliente;
+            this.rfc = this.selectedEvent.rfc;
+            this.telefono = this.selectedEvent.telefono;
+            this.ciudad = this.selectedEvent.ciudad;
+            this.domicilio = this.selectedEvent.domicilio;
+            this.company = this.selectedEvent.company;
+            this.tel_company = this.selectedEvent.tel_company;
+            this.email = this.selectedEvent.email;
+            this.tipo = this.selectedEvent.tipo;
+            this.observacion =  this.selectedEvent.observacion;
             this.isEdition = true;
             this.isView = true;
             e.stopPropagation()
 
             this.options.minDate = this.start;
+
+            if(this.estado){
+                this.btnComp = true;
+            }
 
             /* console.log("MinDate EventClick " + this.options.minDate); */
 
@@ -299,7 +459,20 @@ export default {
             this.clase = "";
             this.start = "";
             this.end = "";
+            this.estado = 0;
+            this.idcliente = "";
+            this.cliente = "";
+            this.rfc = "";
+            this.telefono = "";
+            this.ciudad = "";
+            this.domicilio = "";
+            this.company = "";
+            this.tel_company = "";
+            this.email = "";
+            this.tipo = "";
+            this.observacion = "";
             this.isEdition = false;
+            this.btnComp = false;
             this.options.minDate = moment().format('YYYY-MM-DD HH:mm:ss');
             this.listarEventos();
 
@@ -316,11 +489,50 @@ export default {
             this.clase = "";
             this.start = "";
             this.end = "";
+            this.estado = 0;
+            this.idcliente = "";
+            this.cliente = "";
+            this.rfc = "";
+            this.telefono = "";
+            this.ciudad = "";
+            this.domicilio = "";
+            this.company = "";
+            this.tel_company = "";
+            this.email = "";
+            this.tipo = "";
+            this.observacion = "";
             this.isEdition = false;
+            this.btnComp = false;
             this.options.minDate = moment().format('YYYY-MM-DD HH:mm:ss');
             this.listarEventos();
 
             /* console.log("MinDate at Close " + this.options.minDate); */
+        },
+        selectCliente(search,loading){
+            let me=this;
+            loading(true)
+            var url= '/cliente/selectCliente?filtro='+search;
+            axios.get(url).then(function (response) {
+                let respuesta = response.data;
+                q: search
+                me.arrayCliente=respuesta.clientes;
+                loading(false)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        getDatosCliente(val1){
+            let me = this;
+            me.loading = true;
+            me.idcliente = val1.id;
+            me.cliente = val1.nombre;
+            me.rfc =  val1.rfc;
+            me.tipo = val1.tipo;
+            me.telefono = val1.telefono;
+            me.company = val1.company;
+            me.tel_company = val1.tel_company;
+            me.observacion = val1.observacion;
         },
         validarEvent() {
             this.errorEvent = 0;
@@ -330,6 +542,7 @@ export default {
             if (!this.content) this.errorMostrarMsjEvent.push("El contenido no puede estar vacio...");
             if (!this.start) this.errorMostrarMsjEvent.push("Selecciona la fecha de inicio...");
             if (!this.end) this.errorMostrarMsjEvent.push("Selecciona la fecha de final...");
+            if (this.idcliente==0) this.errorMostrarMsjEvent.push("Seleccione un cliente");
             if (this.errorMostrarMsjEvent.length) this.errorEvent = 1;
 
             return this.errorEvent;
@@ -346,7 +559,8 @@ export default {
                 'end': this.end,
                 'title': this.title,
                 'content': this.content,
-                'clase': this.clase
+                'clase': this.clase,
+                'idcliente' : this.idcliente
             })
             .then(function(response) {
                 me.cerrarModal();
@@ -368,7 +582,9 @@ export default {
                 'title': this.title,
                 'content': this.content,
                 'clase': this.clase,
-                'idusuario' : this.idusuario
+                'idcliente' : this.idcliente,
+                'idusuario' : this.idusuario,
+                'estado' : this.estado
             })
             .then(function(response) {
                 me.cerrarModal();
@@ -412,7 +628,37 @@ export default {
                 }else if (result.dismiss === swal.DismissReason.cancel){
                 }
             })
-        }
+        },
+        cambiarEstadoEvent(id){
+            let me = this;
+            if(me.btnComp == true){
+                me.estado = 1;
+            }else{
+                me.estado = 0;
+            }
+            var antestado = me.estado;
+            axios.put('/event/completar',{
+                'id': id,
+                'estado' : this.estado
+            }).then(function (response) {
+
+                if(antestado == 1){
+                  Swal.fire(
+                    "Completado!",
+                    "La actividad ha sido marcada como completada con éxito.",
+                    "success"
+                    )
+                }else{
+                    Swal.fire(
+                        "Cambiado!",
+                        "La actividad ha sido marcada como incompleta.",
+                        "warning"
+                    )
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
     },
     mounted() {
         this.listarEventos();
@@ -439,10 +685,10 @@ export default {
       font-weight: bold;
     }
     .content-event{
-        height: 550px !important;
+        height: 660px !important;
     }
     .content-event2{
-        height: 420px !important;
+        height: 650px !important;
     }
     /* Green-theme. */
     .vuecal__menu, .vuecal__cell-events-count {background-color: #42b983;}

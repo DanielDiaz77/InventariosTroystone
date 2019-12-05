@@ -167,6 +167,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/event/registrar', 'EventController@store');
         Route::put('/event/actualizar', 'EventController@update');
         Route::delete('/event/{id}','EventController@destroy');
+        Route::put('/event/completar', 'EventController@completar');
+        Route::get('/event/obtenerEventsCliente','EventController@obtenerEventsCliente');
 
     });
 });

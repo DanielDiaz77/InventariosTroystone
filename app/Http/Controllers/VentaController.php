@@ -519,7 +519,7 @@ class VentaController extends Controller
 
     public function obtenerVentasCliente(Request $request){
 
-        //if (!$request->ajax()) return redirect('/');
+        if (!$request->ajax()) return redirect('/');
         $idcliente = $request->idcliente;
 
         $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')

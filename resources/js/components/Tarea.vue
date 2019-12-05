@@ -12,6 +12,7 @@
           <button v-if="btnNewTask" type="button" @click="abrirModal('registrar')" class="btn btn-sm btn-secondary">
             <i class="icon-plus"></i>&nbsp;Nueva Tarea
           </button>
+          <button v-if="btnNewTask==0" type="button" @click="ocultarDetalle()"  class="btn btn-sm btn-primary float-right">Volver</button>
 
         </div>
         <!-- Listado -->
@@ -443,9 +444,53 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="form-group row border">
-
-                </div> -->
+                <hr>
+                <div class="form-group row">
+                    <!-- Actividades -->
+                    <div class="col-md-6">
+                        <div class="page-header">
+                            <h3 id="timeline">Actividades pendientes {{ cliente }} &nbsp;</h3>
+                        </div>
+                        <div class="mt-3" v-if="arrayActividadesT.length">
+                            <div v-for="activity in arrayActividadesT" :key="activity.id">
+                                <div :class="['col-md','caja2-' + activity.class]">
+                                    <div class="row">
+                                        <div class="col-md col-10 mt-3">
+                                            <h4 v-text="activity.title"></h4>
+                                            <div class="form-inline">
+                                                <div class="form-group mb-2">
+                                                    <div class="input-group">
+                                                        <p><i class="fa fa-clock-o"></i> Inicio {{ activity.start }}</p>&nbsp;
+                                                        <p><i class="fa fa-clock-o"></i>Final {{ activity.end }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <p v-text="activity.content"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <nav>
+                                <ul class="pagination mt-3">
+                                    <li class="page-item" v-if="paginationEvent.current_page > 1">
+                                        <a class="page-link" href="#" @click.prevent="cambiarPaginaEvent(idcliente,paginationEvent.current_page - 1,)">Ant</a>
+                                    </li>
+                                    <li class="page-item" v-for="page in pagesNumberEvent" :key="page" :class="[page == isActivedEvent ? 'active' : '']">
+                                        <a class="page-link" href="#" @click.prevent="cambiarPaginaEvent(idcliente,page)" v-text="page"></a>
+                                    </li>
+                                    <li class="page-item" v-if="paginationEvent.current_page < paginationEvent.last_page">
+                                        <a class="page-link" href="#" @click.prevent="cambiarPaginaEvent(idcliente,paginationEvent.current_page + 1)">Sig</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div v-else>
+                            <h5>Sin Actividades...</h5>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group row">
                     <div class="col-md-12 float-right">
                         <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
@@ -658,7 +703,16 @@ export default {
             nextTask : [],
             cerrarDet : 0,
             isComment : 0,
-            arrayCommentT : []
+            arrayCommentT : [],
+            arrayActividadesT : [],
+            paginationEvent : {
+                'total'        : 0,
+                'current_page' : 0,
+                'per_page'     : 0,
+                'last_page'    : 0,
+                'from'         : 0,
+                'to'           : 0,
+            },
         };
     },
     components: {
@@ -668,6 +722,9 @@ export default {
     computed:{
         isActived: function(){
             return this.pagination.current_page;
+        },
+        isActivedEvent: function(){
+            return this.paginationEvent.current_page;
         },
         pagesNumber: function() {
             if(!this.pagination.to) {
@@ -682,6 +739,28 @@ export default {
             var to = from + (this.offset * 2);
             if(to >= this.pagination.last_page){
                 to = this.pagination.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+        pagesNumberEvent: function() {
+            if(!this.paginationEvent.to) {
+                return [];
+            }
+
+            var from = this.paginationEvent.current_page - this.offset;
+            if(from < 1) {
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.paginationEvent.last_page){
+                to = this.paginationEvent.last_page;
             }
 
             var pagesArray = [];
@@ -1083,6 +1162,7 @@ export default {
             this.nextTask = [];
             this.arrayVentasT = [];
             this.arrayCommentT = [];
+            this.arrayActividadesT = [];
             this.idcliente = '';
             this.cliente = '';
             this.rfc_cliente = '';
@@ -1100,7 +1180,16 @@ export default {
             this.fecha = "";
             this.listarTarea(1,'','idcliente','');
             this.isComment = 0;
+            this.paginationEvent = {
+                'total'        : 0,
+                'current_page' : 0,
+                'per_page'     : 0,
+                'last_page'    : 0,
+                'from'         : 0,
+                'to'           : 0,
+            };
         },
+
         verTarea(idcliente){
             let me = this;
             me.listado = 0;
@@ -1133,7 +1222,34 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
+
+            this.obtenerEventos(idcliente,1);
         },
+
+        obtenerEventos(idcliente,page){
+            let me = this;
+            var url= '/event/obtenerEventsCliente?page='+ page + '&idcliente=' + idcliente;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.arrayActividadesT = respuesta.actividades.data;
+                me.paginationEvent = respuesta.pagination;
+                /* console.log(me.paginationEvent); */
+                /* console.log(me.arrayActividadesT); */
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+            /* this.arrayActividadesT = []; */
+        },
+        cambiarPaginaEvent(idcliente,page){
+            let me = this;
+            //Actualiza la página actual
+            me.paginationEvent.current_page = page;
+            //Envia la petición para visualizar la data de esa página
+            me.obtenerEventos(idcliente,page);
+        },
+
         pdfVenta(id){
             window.open('/venta/pdf/'+id);
         },
@@ -1289,8 +1405,7 @@ export default {
         text-align: center;
 
     }
-    input[type="number"]
-    {
+    input[type="number"]{
         -webkit-appearance: textfield !important;
         margin: 0;
     }
@@ -1495,5 +1610,41 @@ export default {
         text-align: center;
         font-size: 13px;
         line-height: 1.42857;
+    }
+    div.caja2-red{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(217,83,79);
+        box-shadow: 0 1px 6px rgba(217,83,79);
+        height: 250px;
+    }
+    div.caja2-blue{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(66,139,202);
+        box-shadow: 0 1px 6px rgba(66,139,202);
+        height: 250px;
+    }
+    div.caja2-green{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(17, 192, 32, 0.9);
+        box-shadow: 0 1px 6px rgba(17, 192, 32, 0.9);
+        height: 250px;
+    }
+    div.caja2-orange{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(253, 165, 0, 0.945);
+        box-shadow: 0 1px 6px rgba(253, 165, 0, 0.945);
+        height: 250px;
+    }
+    div.caja2-purple{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(181, 32, 250, 0.9);
+        box-shadow: 0 1px 6px rgba(181, 32, 250, 0.9);
+        height: 250px;
+    }
+    div.caja2-yellow{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(250, 234, 9, 0.986);
+        box-shadow: 0 1px 6px rgba(250, 234, 9, 0.986);
+        height: 250px;
     }
 </style>

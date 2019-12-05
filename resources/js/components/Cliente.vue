@@ -101,93 +101,185 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-                        <div class="form-group row" v-if="userrol==1">
-                            <label class="col-md-3 form-control-label" for="text-input">Vendedor</label>
-                            <div class="col-md-9">
-                            <select class="form-control" v-model="userid">
-                                <option value="0" disabled>Seleccione un vendedor</option>
-                                <option v-for="vendedor in arrayVendedores" :key="vendedor.id" :value="vendedor.id" v-text="vendedor.nombre"></option>
-                            </select>
+                    <div class="row">
+                        <div class="col-12">
+                            <h5>Seleccione el tipo de cliente</h5>
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a href="#tabCliente" class="nav-link active" data-toggle="tab">Persona</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#tabEmpresa" class="nav-link" data-toggle="tab">Empresa</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tabCliente" role="tab panel">
+                                    <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                                        <div class="form-group row" v-if="userrol==1">
+                                            <label class="col-md-3 form-control-label" for="text-input">Vendedor</label>
+                                            <div class="col-md-9">
+                                                <select class="form-control" v-model="userid">
+                                                    <option value="0" disabled>Seleccione un vendedor</option>
+                                                    <option v-for="vendedor in arrayVendedores" :key="vendedor.id" :value="vendedor.id" v-text="vendedor.nombre"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
+                                            <div class="col-md-9">
+                                            <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del cliente"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Dirección</label>
+                                            <div class="col-md-9">
+                                                <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio del cliente"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Ciudad y estado</label>
+                                            <div class="col-md-9">
+                                                <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado del cliente"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Teléfono</label>
+                                            <div class="col-md-9">
+                                                <input type="text" v-model="telefono" maxlength="13" class="form-control" placeholder="Teléfono del cliente"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Correo electrónico</label>
+                                            <div class="col-md-9">
+                                                <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico del cliente"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">RFC</label>
+                                            <div class="col-md-9">
+                                                <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC del cliente o compañia"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Tipo</label>
+                                            <div class="col-md-9">
+                                                <select class="form-control" v-model="tipo">
+                                                    <option value="" disabled>Seleccione el tipo de cliente</option>
+                                                    <option value="PROSPECTO">PROSPECTO</option>
+                                                    <option value="PRIMER CONTACTO">PRIMER CONTACTO</option>
+                                                    <option value="CLIENTE FINAL">CLIENTE FINAL</option>
+                                                    <option value="CLIENTE MARMOLERO">CLIENTE MARMOLERO</option>
+                                                    <option value="CLIENTE COCINERO">CLIENTE COCINERO</option>
+                                                    <option value="CLIENTE ARQ">CLIENTE ARQ</option>
+                                                    <option value="GENERAL Y PAGOS">GENERAL Y PAGOS</option>
+                                                    <option value="NO PROMOVER">NO PROMOVER</option>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-area">Observaciones</label>
+                                            <div class="col-md-9">
+                                                <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
+                                            </div>&nbsp;
+                                        </div>
+                                        <div v-show="errorPersona" class="form-group row div-error">
+                                            <div class="text-center text-error">
+                                            <div v-for="error in errorMostrarMsjPersona" :key="error" v-text="error"></div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="tab-pane" id="tabEmpresa" role="tabpanel">
+                                    <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                                        <div class="form-group row" v-if="userrol==1">
+                                            <label class="col-md-3 form-control-label" for="text-input">Vendedor</label>
+                                            <div class="col-md-9">
+                                                <select class="form-control" v-model="userid">
+                                                    <option value="0" disabled>Seleccione un vendedor</option>
+                                                    <option v-for="vendedor in arrayVendedores" :key="vendedor.id" :value="vendedor.id" v-text="vendedor.nombre"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
+                                            <div class="col-md-9">
+                                            <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de la empresa"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Dirección</label>
+                                            <div class="col-md-9">
+                                                <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Ciudad y estado</label>
+                                            <div class="col-md-9">
+                                                <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Teléfono</label>
+                                            <div class="col-md-9">
+                                                <input type="text" v-model="telefono" maxlength="13" class="form-control" placeholder="Teléfono de al empresa"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Contacto</label>
+                                            <div class="col-md-9">
+                                                <input type="text" v-model="company" class="form-control" placeholder="Contacto"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Telefono de contacto</label>
+                                            <div class="col-md-9">
+                                                <input type="text" v-model="tel_company" class="form-control" placeholder="Teléfono de contacto"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Correo electrónico</label>
+                                            <div class="col-md-9">
+                                                <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">RFC</label>
+                                            <div class="col-md-9">
+                                                <input type="text" v-model="rfc" maxlength="12" class="form-control" placeholder="RFC"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-input">Tipo</label>
+                                            <div class="col-md-9">
+                                                <select class="form-control" v-model="tipo">
+                                                    <option value="" disabled>Seleccione el tipo de cliente</option>
+                                                    <option value="PROSPECTO">PROSPECTO</option>
+                                                    <option value="PRIMER CONTACTO">PRIMER CONTACTO</option>
+                                                    <option value="CLIENTE FINAL">CLIENTE FINAL</option>
+                                                    <option value="CLIENTE MARMOLERO">CLIENTE MARMOLERO</option>
+                                                    <option value="CLIENTE COCINERO">CLIENTE COCINERO</option>
+                                                    <option value="CLIENTE ARQ">CLIENTE ARQ</option>
+                                                    <option value="GENERAL Y PAGOS">GENERAL Y PAGOS</option>
+                                                    <option value="NO PROMOVER">NO PROMOVER</option>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 form-control-label" for="text-area">Observaciones</label>
+                                            <div class="col-md-9">
+                                                <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
+                                            </div>&nbsp;
+                                        </div>
+                                        <div v-show="errorPersona" class="form-group row div-error">
+                                            <div class="text-center text-error">
+                                            <div v-for="error in errorMostrarMsjPersona" :key="error" v-text="error"></div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
-                            <div class="col-md-9">
-                            <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del cliente"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Dirección</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio del cliente"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Ciudad y estado</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado del cliente"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Teléfono</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="telefono" class="form-control" placeholder="Teléfono del cliente"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Contacto</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="company" class="form-control" placeholder="Contacto de cliente"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Telefono de contacto</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="tel_company" class="form-control" placeholder="Teléfono de contacto de cliente"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Correo electrónico</label>
-                            <div class="col-md-9">
-                                <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico del cliente"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">RFC</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC del cliente o compañia"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Tipo</label>
-                            <div class="col-md-9">
-                                <select class="form-control" v-model="tipo">
-                                    <option value="" disabled>Seleccione el tipo de cliente</option>
-                                    <option value="PROSPECTO">PROSPECTO</option>
-                                    <option value="PRIMER CONTACTO">PRIMER CONTACTO</option>
-                                    <option value="CLIENTE FINAL">CLIENTE FINAL</option>
-                                    <option value="CLIENTE MARMOLERO">CLIENTE MARMOLERO</option>
-                                    <option value="CLIENTE COCINERO">CLIENTE COCINERO</option>
-                                    <option value="CLIENTE ARQ">CLIENTE ARQ</option>
-                                    <option value="GENERAL Y PAGOS">GENERAL Y PAGOS</option>
-                                    <option value="NO PROMOVER">NO PROMOVER</option>
-                            </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-area">Observaciones</label>
-                            <div class="col-md-9">
-                                <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
-                            </div>&nbsp;
-                        </div>
-
-                    <div v-show="errorPersona" class="form-group row div-error">
-                        <div class="text-center text-error">
-                        <div v-for="error in errorMostrarMsjPersona" :key="error" v-text="error"></div>
                         </div>
                     </div>
-                    </form>
                     <hr class="d-block d-sm-block d-md-none">
                     <div class="float-right d-block d-sm-block d-md-none">
                         <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
