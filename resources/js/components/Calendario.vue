@@ -255,12 +255,18 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group row" v-if="usrol == 1">
+                        <div class="col-md-6 text-center mt-3">
+                            <div class="form-group">
+                                <h3 for="" class="float-left">Autor: <strong v-text="usuario"></strong></h3>
+                            </div>
+                        </div>&nbsp;
+                    </div>
                     <hr class="d-block d-sm-block d-md-none">
                     <div class="float-right d-block d-sm-block d-md-none">
                         <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
                     </div>
                 </div>
-
                 <div class="modal-footer d-none d-sm-none d-md-block">
                     <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
                 </div>
@@ -329,7 +335,9 @@ export default {
             tipo : "",
             observacion : "",
             arrayCliente : [],
-            btnComp : false
+            btnComp : false,
+            usrol : 0,
+            usuario : ""
         };
     },
     computed:{
@@ -348,6 +356,8 @@ export default {
             axios.get('/event').then(function (response) {
                 var respuesta= response.data;
                 me.events = response.data.eventos;
+                /* console.log("Rol: " + respuesta.userrol); */
+                me.usrol = respuesta.userrol;
             })
             .catch(function (error) {
                 console.log(error);
@@ -375,6 +385,7 @@ export default {
             this.email = "";
             this.tipo = "";
             this.observacion = "";
+            this.usuario = "";
             this.btnComp = false;
         },
         abriModalEditar(Event){
@@ -431,6 +442,7 @@ export default {
             this.email = this.selectedEvent.email;
             this.tipo = this.selectedEvent.tipo;
             this.observacion =  this.selectedEvent.observacion;
+            this.usuario =  this.selectedEvent.user;
             this.isEdition = true;
             this.isView = true;
             e.stopPropagation()
@@ -473,6 +485,7 @@ export default {
             this.observacion = "";
             this.isEdition = false;
             this.btnComp = false;
+            this.usuario = "";
             this.options.minDate = moment().format('YYYY-MM-DD HH:mm:ss');
             this.listarEventos();
 
@@ -501,6 +514,7 @@ export default {
             this.email = "";
             this.tipo = "";
             this.observacion = "";
+            this.usuario = "";
             this.isEdition = false;
             this.btnComp = false;
             this.options.minDate = moment().format('YYYY-MM-DD HH:mm:ss');

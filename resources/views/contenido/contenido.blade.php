@@ -103,6 +103,9 @@
             <template v-if="menu==10">
                 <consultaventa></consultaventa>
             </template>
+            <template v-if="menu==16">
+                <calendario></calendario>
+            </template>
 
             <template v-if="menu==11">
                 <ayuda></ayuda>
@@ -140,6 +143,10 @@
 
             <template v-if="menu==14">
                 <entrega></entrega>
+            </template>
+
+            <template v-if="menu==16">
+                <calendario></calendario>
             </template>
 
             <template v-if="menu==11">

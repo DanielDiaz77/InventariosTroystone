@@ -12,19 +12,37 @@ use App\Persona;
 class EventController extends Controller
 {
     public function index(Request $request){
+
         if(!$request->ajax()) return redirect('/');
 
-        $eventos = Event::join('users','users.id','=','events.idusuario')
-        ->join('personas','personas.id','=','events.idcliente')
-        ->select('users.id as userid','users.usuario as user','events.id','events.start',
-        'events.end','events.title','events.content','events.title','events.class','personas.rfc',
-        'events.estado','personas.id as idcliente','personas.nombre as cliente','personas.domicilio',
-        'personas.telefono','personas.ciudad','personas.observacion','personas.email','personas.tipo',
-        'personas.company','personas.tel_company')
-        ->orderby('events.id')
-        ->get();
+        $usrol = \Auth::user()->idrol;
 
-        return ['eventos' => $eventos];
+        if($usrol == 2){
+            $usvend = \Auth::user()->id;
+            $eventos = Event::join('users','users.id','=','events.idusuario')
+            ->join('personas','personas.id','=','events.idcliente')
+            ->select('users.id as userid','users.usuario as user','events.id','events.start',
+            'events.end','events.title','events.content','events.title','events.class','personas.rfc',
+            'events.estado','personas.id as idcliente','personas.nombre as cliente','personas.domicilio',
+            'personas.telefono','personas.ciudad','personas.observacion','personas.email','personas.tipo',
+            'personas.company','personas.tel_company')
+            ->where('events.idusuario',$usvend)
+            ->orderby('events.id')
+            ->get();
+
+        }else{
+            $eventos = Event::join('users','users.id','=','events.idusuario')
+            ->join('personas','personas.id','=','events.idcliente')
+            ->select('users.id as userid','users.usuario as user','events.id','events.start',
+            'events.end','events.title','events.content','events.title','events.class','personas.rfc',
+            'events.estado','personas.id as idcliente','personas.nombre as cliente','personas.domicilio',
+            'personas.telefono','personas.ciudad','personas.observacion','personas.email','personas.tipo',
+            'personas.company','personas.tel_company')
+            ->orderby('events.id')
+            ->get();
+        }
+
+        return ['eventos' => $eventos,'userrol' => $usrol];
     }
     public function store(Request $request){
 
