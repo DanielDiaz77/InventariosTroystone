@@ -97,10 +97,11 @@ class EventController extends Controller
         ->select('users.usuario as user','events.id','events.start',
         'events.end','events.title','events.content','events.title','events.class',
         'events.estado')
-        ->where([
+        ->where('events.idcliente',$idcliente)
+        /* ->where([
             ['events.idcliente','=',$idcliente],
             ['events.estado',0]
-        ])
+        ]) */
         ->orderBy('events.start','desc')->paginate(1);
 
         return [

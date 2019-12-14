@@ -454,6 +454,16 @@
                         <div class="mt-3" v-if="arrayActividadesT.length">
                             <div v-for="activity in arrayActividadesT" :key="activity.id">
                                 <div :class="['col-md','caja2-' + activity.class]">
+                                    <div class="row m-0 p-0">
+                                        <div class="col">
+                                            <template v-if="activity.estado">
+                                                <p class="text-success font-weight-bold float-right" style="font-size: 25px;">Completada <i class="fa fa-check-circle-o" aria-hidden="true"></i></p>
+                                            </template>
+                                            <template v-else>
+                                                <p class="text-danger font-weight-bold float-right" style="font-size: 25px;">Incompleta <i class="fa fa-times-circle-o" aria-hidden="true"></i></p>
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col-md col-10 mt-3">
                                             <h4 v-text="activity.title"></h4>

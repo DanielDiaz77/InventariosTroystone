@@ -229,9 +229,19 @@
                         </div>&nbsp; -->
                     </div>
                     <hr>
-                    <div :class="['col-md','caja2-' + clase]">
+                    <div :class="['col-md','caja2-' + clase,'m-0']">
+                        <div class="row m-0 p-0">
+                            <div class="col">
+                                <template v-if="estado">
+                                    <p class="text-success font-weight-bold float-right" style="font-size: 25px;">Completada <i class="fa fa-check-circle-o" aria-hidden="true"></i></p>
+                                </template>
+                                <template v-else>
+                                    <p class="text-danger font-weight-bold float-right" style="font-size: 25px;">Incompleta <i class="fa fa-times-circle-o" aria-hidden="true"></i></p>
+                                </template>
+                            </div>
+                        </div>
                         <div class="row">
-                            <div class="col-md col-10 mt-3">
+                            <div class="col-md col-10">
                                 <h4 v-text="title"></h4>
                                 <div class="form-inline">
                                     <div class="form-group mb-2">
@@ -242,7 +252,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md col-1 mt-3">
+                            <div class="col-md col-1">
                                 <button type="button" class="btn btn-sm btntask float-right" @click="abriModalEditar(selectedEvent)">
                                     <i class="fa fa-pencil"></i>
                                 </button>&nbsp;
@@ -251,7 +261,7 @@
                                 </button>&nbsp;
                             </div>
                             <div class="col-md-12">
-                                <p v-text="content"></p>
+                                <p v-text="content"></p> <br>
                             </div>
                         </div>
                     </div>
