@@ -170,6 +170,19 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/event/completar', 'EventController@completar');
         Route::get('/event/obtenerEventsCliente','EventController@obtenerEventsCliente');
 
+        Route::get('/traslado', 'TrasladoController@index');
+        Route::post('/traslado/registrar', 'TrasladoController@store');
+        Route::put('/traslado/desactivar', 'TrasladoController@desactivar');
+        Route::get('/traslado/obtenerCabecera', 'TrasladoController@obtenerCabecera');
+        Route::get('/traslado/obtenerDetalles', 'TrasladoController@obtenerDetalles');
+        Route::get('/traslado/nextNum','TrasladoController@getLastNum');
+        Route::get('/traslado/pdf/{id}','TrasladoController@pdf');
+        Route::post('/traslado/cambiarEntrega','TrasladoController@cambiarEntrega');
+        Route::post('/traslado/actualizarObservacion','TrasladoController@actualizarObservacion');
+        Route::put('/traslado/updImagen','TrasladoController@updImage');
+        Route::put('/traslado/eliminarImg', 'TrasladoController@eliminarImagen');
+
+
     });
 });
 

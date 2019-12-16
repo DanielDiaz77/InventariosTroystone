@@ -63,6 +63,10 @@
                 <calendario></calendario>
             </template>
 
+            <template v-if="menu==17">
+                <traslado></traslado>
+            </template>
+
             <template v-if="menu==11">
                 <ayuda></ayuda>
             </template>
@@ -103,8 +107,13 @@
             <template v-if="menu==10">
                 <consultaventa></consultaventa>
             </template>
+
             <template v-if="menu==16">
                 <calendario></calendario>
+            </template>
+
+            <template v-if="menu==17">
+                <traslado></traslado>
             </template>
 
             <template v-if="menu==11">
@@ -147,6 +156,10 @@
 
             <template v-if="menu==16">
                 <calendario></calendario>
+            </template>
+
+            <template v-if="menu==17">
+                <traslado></traslado>
             </template>
 
             <template v-if="menu==11">
