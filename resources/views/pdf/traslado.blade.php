@@ -5,21 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>Comprobante de traslado</title>
+    <!-- Latest compiled and minified CSS -->
     <style>
         body {
-        /*position: relative;*/
-        /*width: 16cm;  */
-        /*height: 29.7cm; */
-        margin:0;
-        padding:0;
-        top:0;
-        bottom:0;
+            /*position: relative;*/
+            /*width: 16cm;  */
+            /*height: 29.7cm; */
+            margin:0;
+            padding:0;
+            top:0;
+            bottom:0;
 
-        /*color: #555555;*/
-        /*background: #FFFFFF; */
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        /*font-family: SourceSansPro;*/
+            /*color: #555555;*/
+            /*background: #FFFFFF; */
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            /*font-family: SourceSansPro;*/
         }
 
         #logo{
@@ -31,14 +32,14 @@
         }
 
         #imagen{
-        width: 100px;
+            width: 100px;
         }
 
         #datos{
-        float: left;
-        margin-top: 0%;
-        margin-left: 2%;
-        margin-right: 2%;
+            float: left;
+            margin-top: 0%;
+            margin-left: 2%;
+            margin-right: 2%;
         /*text-align: justify;*/
         }
 
@@ -76,15 +77,15 @@
         }
 
         #fac, #fv, #fa{
-        color: #FFFFFF;
-        font-size: 15px;
+            color: #FFFFFF;
+            font-size: 15px;
         }
 
         #facliente thead{
-        padding: 20px;
-        background: #f3861c;
-        text-align: left;
-        border-bottom: 1px solid #FFFFFF;
+            padding: 20px;
+            background: #f3861c;
+            text-align: left;
+            border-bottom: 1px solid #FFFFFF;
         }
 
         #facvendedor{
@@ -95,10 +96,10 @@
         }
 
         #facvendedor thead{
-        padding: 20px;
-        background: #f3861c;
-        text-align: center;
-        border-bottom: 1px solid #FFFFFF;
+            padding: 20px;
+            background: #f3861c;
+            text-align: center;
+            border-bottom: 1px solid #FFFFFF;
         }
 
         #facarticulo{
@@ -149,6 +150,26 @@
         },
         .table-b, .th-b, .td-b {
             border: 1px solid black;
+        }
+        .firmaEnv{
+            float: left;
+            /* background-color: #f3861c; */
+            width: 45%;
+            text-align:center;
+            border-top: solid 2px #000;
+            margin-left: 2px;
+            padding: 0;
+            margin-top: 0%;
+        }
+        .firmaRec{
+            float: right;
+            /* background-color: #e4b178; */
+            width: 45%;
+            text-align:center;
+            border-top: solid 2px #000;
+            margin-left: 2px;
+            padding: 0;
+            margin-top: 0%;
         }
     </style>
     <body>
@@ -210,8 +231,8 @@
                     </thead>
                     <tbody>
                         <tr>
-                        <th>Realizó: <p id="cliente">{{$t->usuario}}<br>
-                            Traslado a : {{ $t->nueva_ubicacion }}<br>
+                            <th>Realizó: {{$t->usuario}}<br>
+                                Traslado a : {{ $t->nueva_ubicacion }}<br>
                         </tr>
                     </tbody>
                 </table>
@@ -225,27 +246,29 @@
                 <table id="facarticulo" class="table-b">
                     <thead>
                         <tr id="fa">
+                            <th>No°</th>
                             <th>MATERIAL</th>
                             <th>No° PLACA</th>
                             <th>SKU</th>
                             <th>MEDIDAS</th>
                             <th>METROS <sup>2</sup></th>
-                            <th>CANT.</th>
+                            <th>TERMINADO</th>
                             <th>Ubicacion Actual</th>
                             <th>Ubicacion Antes</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($detalles as $det)
+                        @foreach ($detalles as $index => $det)
 
 
                         <tr>
+                            <td class="td-b">{{ ($index + 1)}}</td>
                             <td class="td-b">{{ $det->categoria }}</td>
                             <td class="td-b">{{ $det->codigo }}</td>
                             <td class="td-b">{{ $det->articulo }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>
-                            <td class="td-b">{{ $det->cantidad }}</td>
+                            <td class="td-b">{{ $det->terminado }}</td>
                             <td class="td-b">{{ $det->artubicacion }}</td>
                             <td class="td-b">{{ $det->ubicacion }}</td>
                         </tr>
@@ -255,7 +278,7 @@
                 </table>
                 @foreach ($traslado as $t)
                 <p>
-                    <strong>Fecha de realizacion: </strong>
+                    <strong>Fecha de registro: </strong>
                     <?php
                         setlocale(LC_TIME, "spanish");
                         $mi_fecha = $t->fecha_hora;
@@ -270,6 +293,15 @@
             </div>
         </section>
         <br>
+        <br>
+        <section style="margin-top:50px;">
+            <div class="firmaEnv">
+                <p>Firma de quien entrega</p>
+            </div>
+            <div class="firmaRec">
+                <p>Firma de quien recibe</p>
+            </div>
+        </section>
         <br>
         <footer>
             <div id="gracias">

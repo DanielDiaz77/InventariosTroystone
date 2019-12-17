@@ -173,6 +173,7 @@
                                 <table class="table table-bordered table-striped table-sm table-hover">
                                     <thead>
                                         <tr>
+                                            <th>No°</th>
                                             <th>Opciones</th>
                                             <th>Material</th>
                                             <th>SKU</th>
@@ -188,6 +189,7 @@
                                     </thead>
                                     <tbody v-if="arrayDetalle.length">
                                         <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
+                                            <td width="10px">{{ (index + 1) }}</td>
                                             <td>
                                                 <div class="form-inline">
                                                     <button @click="eliminarDetalle(index)" type="button" class="btn btn-danger btn-sm">
@@ -302,7 +304,7 @@
                                 <table class="table table-bordered table-striped table-sm table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Imagen</th>
+                                            <th>No°</th>
                                             <th>Material</th>
                                             <th>SKU</th>
                                             <th>No° Placa</th>
@@ -317,18 +319,8 @@
                                         </tr>
                                     </thead>
                                     <tbody v-if="arrayDetalle.length">
-                                        <tr v-for="detalle in arrayDetalle" :key="detalle.id">
-                                            <td>
-                                                <div class="form-inline">
-                                                    <template v-if="detalle.file">
-                                                        <lightbox class="m-0" album="" :src="'images/'+detalle.file">
-                                                            <button type="button" class="btn btn-outline-success btn-sm">
-                                                                <i class="fa fa-picture-o"></i>
-                                                            </button>&nbsp;
-                                                        </lightbox>
-                                                    </template>
-                                                </div>
-                                            </td>
+                                        <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
+                                            <td width="10px">{{ (index + 1) }}</td>
                                             <td v-text="detalle.categoria"></td>
                                             <td v-text="detalle.sku"></td>
                                             <td v-text="detalle.codigo"></td>

@@ -220,16 +220,17 @@ class TrasladoController extends Controller
     public function pdf(Request $request,$id){
 
         $traslado = Traslado::join('users','traslados.idusuario','=','users.id')
+        ->leftjoin('personas','traslados.idusuario','=','personas.idusuario')
         ->select('traslados.id','traslados.tipo_comprobante','traslados.num_comprobante',
-            'traslados.fecha_hora','traslados.nueva_ubicacion','traslados.entregado','traslados.estado',
-            'traslados.file','traslados.observacion as comentario','users.usuario')
+        'traslados.fecha_hora','traslados.nueva_ubicacion','traslados.entregado','traslados.estado',
+        'traslados.file','traslados.observacion as comentario','personas.nombre as usuario')
         ->where('traslados.id',$id)->take(1)->get();
 
         $detalles = DetalleTraslado::join('articulos','detalle_traslados.idarticulo','=','articulos.id')
             ->leftJoin('categorias','articulos.idcategoria','=','categorias.id')
             ->select('detalle_traslados.cantidad','detalle_traslados.ubicacion','articulos.sku as articulo',
             'articulos.largo','articulos.alto','articulos.metros_cuadrados', 'categorias.nombre as categoria',
-            'articulos.codigo','articulos.ubicacion as artubicacion')
+            'articulos.codigo','articulos.ubicacion as artubicacion','articulos.terminado')
             ->where('detalle_traslados.idtraslado',$id)
             ->orderBy('detalle_traslados.id','desc')->get();
 
