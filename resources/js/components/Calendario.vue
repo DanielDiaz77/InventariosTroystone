@@ -8,10 +8,28 @@
         <!-- Ejemplo de tabla Listado -->
         <div class="card">
             <div class="card-header">
-                <i class="fa fa-align-justify"></i> Actividades
-                <button type="button" class="btn btn-secondary" @click="abrirModal()">
-                    <i class="icon-plus"></i>&nbsp;Nuevo
-                </button>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <i class="fa fa-align-justify"></i> Actividades
+                        <button type="button" class="btn btn-secondary" @click="abrirModal()">
+                            <i class="icon-plus"></i>&nbsp;Nuevo
+                        </button>
+                    </div>
+                    <div v-if="usrol == 1">
+                         <div class="form-inline">
+                            <div class="form-group">
+                                 <div class="input-group">
+                                    <i class="fa fa-map-marker"></i> Area &nbsp;
+                                    <select class="form-control" v-model="zona" @change="listarEventos(zona)" >
+                                        <option value=''>Todo</option>
+                                        <option value="GDL">Guadalajara</option>
+                                        <option value="SLP">San Luis</option>
+                                    </select>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                  <!-- <vue-cal locale="es" :events="events" selected-date="2018-11-19"></vue-cal> -->
@@ -53,7 +71,6 @@
                                 </div>
                             </div>&nbsp;
                             <template v-if="idcliente">
-
                                 <div class="col-md-3 text-center">
                                     <div class="form-group" v-if="cliente">
                                         <label><strong>Cliente</strong></label>
@@ -115,19 +132,39 @@
                                 <div v-if="clase=='yellow'" class="m-2 clryellow"></div>
                             </div>
                         </div>
-                        <div class="form-group row m-0">
-                            <label class="col-md-3 form-control-label m-2 p-0 mr-0" for="text-input"><strong>Título</strong></label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="title" class="form-control" placeholder="Titulo de la actividad"/>
+                        <div class="form-group row m-0 d-flex justify-content-around">
+                            <div class="col-8">
+                                <div class="input-group input-group-sm mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Título</span>
+                                    </div>
+                                    <input type="text" class="form-control" v-model="title" placeholder="Titulo de la actividad" aria-label="Username" aria-describedby="basic-addon1">
+                                </div>
+                            </div>
+                            <div class="col-4" v-if="usrol == 1">
+                                <div class="input-group input-group-sm mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Lugar</span>
+                                    </div>
+                                    <select class="form-control" v-model="area">
+                                        <option value='' disabled>Lugar de la actividad</option>
+                                        <option value="GDL">Guadalajara</option>
+                                        <option value="SLP">San Luis</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row m-0">
-                            <div class="col-10">
-                                <label for=""><strong>Notas:</strong></label>
-                                <textarea placeholder="Contenido" class="form-control rounded-0 noresize" rows="3" maxlength="256" v-model="content"></textarea>
+                            <div class="col-9">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-addon btn btn-primary">Notas:</span>
+                                    <textarea class="form-control custom-control rounded-0" v-model="content" rows="3" maxlength="256" style="resize:none"></textarea>
+                                </div>
+                                <!-- <label for=""><strong>Notas:</strong></label>
+                                <textarea placeholder="Contenido" class="form-control rounded-0 noresize" rows="3" maxlength="256" v-model="content"></textarea> -->
                             </div>
                             <template v-if="isEdition">
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <label for=""><strong>Actividad Completada:</strong></label>&nbsp;
                                  <toggle-button @change="cambiarEstadoEvent(eventid)" v-model="btnComp" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
@@ -175,20 +212,6 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                   <!--  <div class="row">
-                        <div class="col clrblue">1</div>
-                        <div class="col">2</div>
-                        <div class="col clrblue">3</div>
-                        <div class="col">4</div>
-                        <div class="col clrblue">5</div>
-                        <div class="col">6</div>
-                        <div class="col clrblue">7</div>
-                        <div class="col">8</div>
-                        <div class="col clrblue">9</div>
-                        <div class="col">10</div>
-                        <div class="col clrblue">11</div>
-                        <div class="col">12</div>
-                    </div> -->
                     <!-- INF CLIENTE -->
                     <div class="form-group row">
                         <div class="col-md-4 text-center">
@@ -231,6 +254,10 @@
                     <hr>
                     <div :class="['col-md','caja2-' + clase,'m-0']">
                         <div class="row m-0 p-0">
+                            <div class="col float-left">
+                                <p class="text-danger font-weight-bold" style="font-size: 25px;" v-if="area == 'GDL'">Guadalajara <i class="fa fa-map-marker" aria-hidden="true"></i></p>
+                                <p class="text-danger font-weight-bold" style="font-size: 25px;" v-else-if="area == 'SLP'">San Luis <i class="fa fa-map-marker" aria-hidden="true"></i></p>
+                            </div>
                             <div class="col">
                                 <template v-if="estado">
                                     <p class="text-success font-weight-bold float-right" style="font-size: 25px;">Completada <i class="fa fa-check-circle-o" aria-hidden="true"></i></p>
@@ -318,6 +345,7 @@ export default {
             clase : "",
             start : "",
             end : "",
+            area: "",
             estado : 0,
             options: {
                 format: 'YYYY-MM-DD HH:mm:ss',
@@ -325,7 +353,7 @@ export default {
                 showClear: true,
                 showClose: true,
                 daysOfWeekDisabled: [0],
-                minDate: moment(),
+                minDate: moment().subtract(60, 'seconds'),
                 maxDate: moment().add(60, 'days'),
             },
             isEdition : false,
@@ -347,7 +375,9 @@ export default {
             arrayCliente : [],
             btnComp : false,
             usrol : 0,
-            usuario : ""
+            usarea : "",
+            usuario : "",
+            zona : ""
         };
     },
     computed:{
@@ -361,13 +391,15 @@ export default {
         }
     },
     methods: {
-        listarEventos(){
+        listarEventos(zona){
             let me=this;
-            axios.get('/event').then(function (response) {
+            var url = '/event?zona=' + zona;
+            axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.events = response.data.eventos;
                 /* console.log("Rol: " + respuesta.userrol); */
                 me.usrol = respuesta.userrol;
+                me.usarea = respuesta.userarea;
             })
             .catch(function (error) {
                 console.log(error);
@@ -397,6 +429,7 @@ export default {
             this.observacion = "";
             this.usuario = "";
             this.btnComp = false;
+            this.area = this.usarea;
         },
         abriModalEditar(Event){
             this.modal = 1;
@@ -410,7 +443,7 @@ export default {
             this.start = Event.start;
             this.end = Event.end;
             this.estado = Event.estado;
-
+            this.area = Event.area;
             this.idcliente = Event.idcliente;
             this.cliente = Event.cliente;
             this.rfc = Event.rfc;
@@ -440,6 +473,7 @@ export default {
             this.start = this.selectedEvent.start;
             this.end = this.selectedEvent.end;
             this.estado = this.selectedEvent.estado;
+            this.area = this.selectedEvent.area;
 
             this.idcliente = this.selectedEvent.idcliente;
             this.cliente = this.selectedEvent.cliente;
@@ -496,8 +530,9 @@ export default {
             this.isEdition = false;
             this.btnComp = false;
             this.usuario = "";
-            this.options.minDate = moment().format('YYYY-MM-DD HH:mm:ss');
-            this.listarEventos();
+            this.area = "";
+            this.options.minDate = moment().subtract(60, 'seconds').format('YYYY-MM-DD HH:mm:ss');
+            this.listarEventos(this.zona);
 
             /* console.log("MinDate at Close " + this.options.minDate); */
         },
@@ -525,10 +560,11 @@ export default {
             this.tipo = "";
             this.observacion = "";
             this.usuario = "";
+            this.area = "";
             this.isEdition = false;
             this.btnComp = false;
             this.options.minDate = moment().format('YYYY-MM-DD HH:mm:ss');
-            this.listarEventos();
+            this.listarEventos(this.zona);
 
             /* console.log("MinDate at Close " + this.options.minDate); */
         },
@@ -584,11 +620,12 @@ export default {
                 'title': this.title,
                 'content': this.content,
                 'clase': this.clase,
+                'area': this.area,
                 'idcliente' : this.idcliente
             })
             .then(function(response) {
                 me.cerrarModal();
-                me.listarEventos();
+                me.listarEventos(this.zona);
             })
             .catch(function(error) {
                 console.log(error);
@@ -608,11 +645,12 @@ export default {
                 'clase': this.clase,
                 'idcliente' : this.idcliente,
                 'idusuario' : this.idusuario,
+                'area': this.area,
                 'estado' : this.estado
             })
             .then(function(response) {
                 me.cerrarModal();
-                me.listarEventos();
+                me.listarEventos('');
             })
             .catch(function(error) {
                 console.log(error);
@@ -640,7 +678,7 @@ export default {
                     let me = this;
                     axios.delete('/event/'+ id).then(function(response) {
                         me.cerrarModal2();
-                        me.listarEventos();
+                        me.listarEventos('');
                         swalWithBootstrapButtons.fire(
                             "Eliminado!",
                             "El evento ha sido eliminado con éxito.",
@@ -685,7 +723,7 @@ export default {
         },
     },
     mounted() {
-        this.listarEventos();
+        this.listarEventos('');
     }
 };
 </script>

@@ -15,34 +15,49 @@ class EventController extends Controller
 
         if(!$request->ajax()) return redirect('/');
 
-        $usrol = \Auth::user()->idrol;
+        $zona = $request->zona;
 
-        if($usrol == 2){
-            $usvend = \Auth::user()->id;
-            $eventos = Event::join('users','users.id','=','events.idusuario')
-            ->join('personas','personas.id','=','events.idcliente')
-            ->select('users.id as userid','users.usuario as user','events.id','events.start',
-            'events.end','events.title','events.content','events.title','events.class','personas.rfc',
-            'events.estado','personas.id as idcliente','personas.nombre as cliente','personas.domicilio',
-            'personas.telefono','personas.ciudad','personas.observacion','personas.email','personas.tipo',
-            'personas.company','personas.tel_company')
-            ->where('events.idusuario',$usvend)
-            ->orderby('events.id')
-            ->get();
+        $usrol = \Auth::user()->idrol;
+        $usarea = \Auth::user()->area;
+
+        if($usrol == 1){
+            if($zona == ''){
+                $eventos = Event::join('users','users.id','=','events.idusuario')
+                ->join('personas','personas.id','=','events.idcliente')
+                ->select('users.id as userid','users.usuario as user','events.id','events.start',
+                    'events.end','events.title','events.content','events.title','events.class','personas.rfc',
+                    'events.estado','personas.id as idcliente','personas.nombre as cliente','personas.domicilio',
+                    'personas.telefono','personas.ciudad','personas.observacion','personas.email','personas.tipo',
+                    'personas.company','personas.tel_company','events.area')
+                ->orderby('events.id')
+                ->get();
+            }else{
+                $eventos = Event::join('users','users.id','=','events.idusuario')
+                ->join('personas','personas.id','=','events.idcliente')
+                ->select('users.id as userid','users.usuario as user','events.id','events.start',
+                    'events.end','events.title','events.content','events.title','events.class','personas.rfc',
+                    'events.estado','personas.id as idcliente','personas.nombre as cliente','personas.domicilio',
+                    'personas.telefono','personas.ciudad','personas.observacion','personas.email','personas.tipo',
+                    'personas.company','personas.tel_company','events.area')
+                ->where('events.area',$zona)
+                ->orderby('events.id')
+                ->get();
+            }
 
         }else{
             $eventos = Event::join('users','users.id','=','events.idusuario')
             ->join('personas','personas.id','=','events.idcliente')
             ->select('users.id as userid','users.usuario as user','events.id','events.start',
-            'events.end','events.title','events.content','events.title','events.class','personas.rfc',
-            'events.estado','personas.id as idcliente','personas.nombre as cliente','personas.domicilio',
-            'personas.telefono','personas.ciudad','personas.observacion','personas.email','personas.tipo',
-            'personas.company','personas.tel_company')
+                'events.end','events.title','events.content','events.title','events.class','personas.rfc',
+                'events.estado','personas.id as idcliente','personas.nombre as cliente','personas.domicilio',
+                'personas.telefono','personas.ciudad','personas.observacion','personas.email','personas.tipo',
+                'personas.company','personas.tel_company','events.area')
+            ->where('events.area',$usarea)
             ->orderby('events.id')
             ->get();
         }
 
-        return ['eventos' => $eventos,'userrol' => $usrol];
+        return ['eventos' => $eventos,'userrol' => $usrol,'userarea' => $usarea];
     }
     public function store(Request $request){
 
@@ -56,6 +71,7 @@ class EventController extends Controller
         $event->class = $request->clase;
         $event->idusuario = \Auth::user()->id;
         $event->idcliente = $request->idcliente;
+        $event->area = $request->area;
         $event->estado = '0';
         $event->save();
     }
@@ -71,6 +87,7 @@ class EventController extends Controller
         $event->class = $request->clase;
         $event->idusuario = $request->idusuario;
         $event->idcliente = $request->idcliente;
+        $event->area = $request->area;
         $event->estado = $request->estado;
         $event->save();
 
