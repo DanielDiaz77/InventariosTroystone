@@ -23,14 +23,14 @@ class ClienteController extends Controller
                 $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
                 'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
-                'personas.active','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
                 ->where('personas.idusuario',$usvend)
                 ->orderBy('id', 'desc')->paginate(12);
             }else{
                 $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
                 'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
-                'personas.active','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
                 ->where([
                     [$criterio, 'like', '%'. $buscar . '%'],
                     ['personas.idusuario',$usvend]
@@ -45,13 +45,13 @@ class ClienteController extends Controller
                 $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
                 'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
-                'personas.active','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
                 ->orderBy('id', 'desc')->paginate(12);
             }else{
                 $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
                 'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
-                'personas.active','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
                 ->where($criterio, 'like', '%'. $buscar . '%')
                 ->orderBy('id', 'desc')->paginate(12);
             }
@@ -131,14 +131,14 @@ class ClienteController extends Controller
                 ['rfc','like','%'.$filtro.'%'],
                 ['idusuario',$usvend]
             ])
-            ->select('id','nombre','rfc','tipo','telefono','company','tel_company','observacion')
+            ->select('id','nombre','rfc','tipo','telefono','company','tel_company','observacion','cfdi')
             ->orderBy('nombre','asc')->get();
         }else{
 
             $filtro = $request->filtro;
             $clientes = Persona::where('nombre','like','%'.$filtro.'%')
                 ->orWhere('rfc','like','%'.$filtro.'%')
-                ->select('id','nombre','rfc','tipo','telefono','company','tel_company','observacion')
+                ->select('id','nombre','rfc','tipo','telefono','company','tel_company','observacion','cfdi')
                 ->orderBy('nombre','asc')->get();
         }
 

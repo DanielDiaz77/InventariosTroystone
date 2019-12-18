@@ -38,29 +38,39 @@
                             <th>Domicilio</th>
                             <th>Teléfono</th>
                             <th>Contacto</th>
-                            <th>Correo electrónico</th>
-                            <th>RFC</th>
+                            <th>Teléfono Contacto</th>
                             <th>Tipo</th>
-                            <th>Observaciones</th>
+                            <!-- <th>Observaciones</th> -->
                             <th>Vendedor</th>
                         </tr>
                     </thead>
                     <tbody v-if="arrayPersona.length">
                         <tr v-for="persona in arrayPersona" :key="persona.id">
                             <td>
-                            <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
-                                <i class="icon-pencil"></i>
-                            </button>
+                                <div class="form-inline">
+                                    <div class="form-group mb-2 col-sm-10">
+                                        <div class="input-group">
+                                             <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
+                                                <i class="icon-pencil"></i>
+                                            </button>
+                                        </div>&nbsp;
+                                        <div class="input-group">
+                                             <button type="button" @click="abrirModal2(persona)" class="btn btn-success btn-sm">
+                                                <i class="icon-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td v-text="persona.nombre"></td>
                             <td> {{ persona.ciudad}} {{persona.domicilio}}  </td>
                             <td v-text="persona.telefono"></td>
-                            <td v-if="persona.company">{{persona.company}} - {{persona.tel_company}}</td>
+                            <td v-if="persona.company" v-text="persona.company"></td>
                             <td v-else></td>
-                            <td v-text="persona.email"></td>
-                            <td v-text="persona.rfc"></td>
+                            <td v-if="persona.tel_company" v-text="persona.tel_company"></td>
+                            <td v-else></td>
                             <td v-text="persona.tipo"></td>
-                            <td v-text="persona.observacion"></td>
+                            <!-- <td v-text="persona.observacion"></td> -->
                             <td v-text="persona.vendedor"></td>
                         </tr>
                     </tbody>
@@ -339,7 +349,91 @@
         </div>
       <!-- /.modal-dialog -->
     </div>
-    <!--Fin del modal-->
+    <!--Fin del modal agregar/actualizar-->
+
+    <!--Inicio del modal Visualizar Cliente-->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal2}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-primary modal-lg" role="document">
+            <div class="modal-content content-task">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h1><i class="fa fa-user" aria-hidden="true"></i> {{ nombre}}</h1>
+                            <p class="font-weight-bold" style="font-size: 20px;" v-text="tipo"></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>Datos de generales: </h4>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-6">
+                            <label for=""><strong>Domicilio: </strong> </label>
+                            <p> {{domicilio}} - {{ciudad}} </p>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3">
+                            <label for=""><strong>Telefono: </strong> </label>
+                            <p v-text="telefono"> </p>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3">
+                            <label for=""><strong>Correo electrónico: </strong> </label>
+                            <p v-text="email"> </p>
+                        </div>
+                    </div>
+                    <div class="row" v-if="company">
+                        <div class="col-12">
+                            <h4>Datos de contacto: </h4>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-6">
+                            <label for=""><strong>Nombre del contacto: </strong> </label>
+                            <p v-text="company"></p>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-6">
+                            <label for=""><strong>Telefono del contacto: </strong> </label>
+                            <p v-text="tel_company"> </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>Datos de fiscales: </h4>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-6">
+                            <label for=""><strong>RFC: </strong> </label>
+                            <p v-text="rfc"></p>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-6">
+                            <label for=""><strong>Uso de CFDI: </strong> </label>
+                            <p v-text="cfdi"> </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>Observaciones: </h4>
+                        </div>
+                        <div class="col">
+                            <p v-text="observacion"></p>
+                        </div>
+                    </div>
+                    <hr class="d-block d-sm-block d-md-none">
+                    <div class="float-right d-block d-sm-block d-md-none">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
+                    </div>
+                </div>
+                <div class="modal-footer d-none d-sm-none d-md-block">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!--Fin del modal Visualizar Cliente-->
+
   </main>
 </template>
 
@@ -365,6 +459,7 @@ export default {
             tel_company : "",
             arrayPersona: [],
             modal: 0,
+            modal2 : 0,
             tituloModal: "",
             tipoAccion: 0,
             errorPersona: 0,
@@ -510,6 +605,7 @@ export default {
             return this.errorPersona;
         },
         cerrarModal() {
+            var page = this.pagination.current_page;
             this.modal = 0;
             this.tituloModal = "";
             this.nombre = "";
@@ -525,7 +621,7 @@ export default {
             this.errorPersona = 0;
             this.tipo = "";
             this.observacion = "";
-            this.listarPersona(1,'','nombre');
+            this.listarPersona(page,'','nombre');
         },
         abrirModal(modelo, accion, data = []) {
             switch (modelo) {
@@ -573,6 +669,45 @@ export default {
                 }
             }
             this.selectVendedor();
+        },
+        abrirModal2(data = []){
+            this.modal2 = 1;
+            this.tituloModal = "Detalles Cliente: " + data["nombre"];
+            this.tipoAccion = 2;
+            this.persona_id = data["id"];
+            this.nombre = data["nombre"];
+            this.tipo_documento = data["tipo_documento"];
+            this.num_documento = data["num_documento"];
+            this.ciudad = data["ciudad"];
+            this.domicilio = data["domicilio"];
+            this.telefono = data["telefono"];
+            this.company = data["company"];
+            this.tel_company = data["tel_company"];
+            this.email = data["email"];
+            this.rfc = data["rfc"];
+            this.tipo = data["tipo"];
+            this.observacion = data["observacion"];
+            this.userid = data["idvendedor"];
+            this.cfdi = data["cfdi"];
+        },
+        cerrarModal2(){
+            var page = this.pagination.current_page;
+            this.modal2 = 0;
+            this.tituloModal = "";
+            this.nombre = "";
+            this.tipo_documento = "";
+            this.num_documento = "";
+            this.ciudad = "";
+            this.domicilio = "";
+            this.telefono = "";
+            this.company = "";
+            this.tel_company = "";
+            this.email = "";
+            this.rfc = "";
+            this.errorPersona = 0;
+            this.tipo = "";
+            this.observacion = "";
+            this.listarPersona(page,'','nombre');
         },
         selectVendedor(){
             let me=this;

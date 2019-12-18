@@ -146,6 +146,12 @@
                             <h6 for=""><strong v-text="rfc_cliente"></strong></h6>
                         </div>
                     </div>&nbsp;
+                    <div class="col-md-2 text-center sinpadding" v-if="cfdi_cliente">
+                        <div class="form-group">
+                            <label for=""><strong>Uso del CFDI</strong></label>
+                            <h6 for=""><strong v-text="cfdi_cliente"></strong></h6>
+                        </div>
+                    </div>&nbsp;
                     <div class="col-md-2 text-center sinpadding" v-if="contacto_cliente">
                         <div class="form-group">
                             <label for=""><strong>Contacto</strong></label>
@@ -610,11 +616,17 @@
                            <!--  <input type="text" readonly :value="tipo_cliente" class="form-control col-md"> -->
                         </div>
                     </div>
-                     <div class="col-md-3 text-center">
+                    <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>RFC</strong></label>
                             <p v-text="rfc_cliente"></p>
                             <!-- <input type="text" readonly :value="rfc_cliente" class="form-control col-md"> -->
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Uso de CFDI</strong></label>
+                            <p v-text="cfdi_cliente"></p>
                         </div>
                     </div>
                 </div>
@@ -1507,6 +1519,7 @@ export default {
             cotizacion_id: 0,
             idcliente: 0,
             rfc_cliente : "",
+            cfdi_cliente : "",
             tipo_cliente : "",
             telefono_cliente : "",
             contacto_cliente : "",
@@ -1816,6 +1829,7 @@ export default {
             me.contacto_cliente = val1.company;
             me.telcontacto_cliente = val1.tel_company;
             me.obs_cliente = val1.observacion;
+            me.cfdi_cliente =  val1.cfdi;
         },
         buscarArticulo(){
             let me = this;
@@ -2227,6 +2241,7 @@ export default {
             this.impuesto = 0.16;
             this.observacion = "";
             this.rfc_cliente = "";
+            this.cfdi_cliente = "";
             this.tipo_cliente = "";
             this.telefono_cliente = "";
             this.contacto_cliente = "";
@@ -2268,6 +2283,7 @@ export default {
                 me.observacion = arrayCotizacionT[0]['observacion'];
                 me.estadoVn = arrayCotizacionT[0]['estado'];
                 me.rfc_cliente = arrayCotizacionT[0]['rfc'];
+                me.cfdi_cliente = arrayCotizacionT[0]['cfdi'];
                 me.tipo_cliente = arrayCotizacionT[0]['tipo'];
                 me.idcliente = arrayCotizacionT[0]['idcliente'];
                 moment.locale('es');

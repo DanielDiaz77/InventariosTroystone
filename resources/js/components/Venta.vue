@@ -152,6 +152,12 @@
                             <h6 for=""><strong v-text="rfc_cliente"></strong></h6>
                         </div>
                     </div>&nbsp;
+                    <div class="col-md-2 text-center sinpadding" v-if="cfdi_cliente">
+                        <div class="form-group">
+                            <label for=""><strong>Uso del CFDI</strong></label>
+                            <h6 for=""><strong v-text="cfdi_cliente"></strong></h6>
+                        </div>
+                    </div>&nbsp;
                     <div class="col-md-2 text-center sinpadding" v-if="contacto_cliente">
                         <div class="form-group">
                             <label for=""><strong>Contacto</strong></label>
@@ -1333,6 +1339,7 @@ export default {
             contacto_cliente : "",
             telcontacto_cliente : "",
             obs_cliente: "",
+            cfdi_cliente: "",
             bodega : "",
             areaUs : "",
             acabado : "",
@@ -1482,6 +1489,7 @@ export default {
             me.contacto_cliente = val1.company;
             me.telcontacto_cliente = val1.tel_company;
             me.obs_cliente = val1.observacion;
+            me.cfdi_cliente =  val1.cfdi;
 
         },
         buscarArticulo(){
@@ -1673,6 +1681,7 @@ export default {
                 me.idcliente = 0;
                 me.tipo_cliente = "";
                 me.rfc_cliente = "";
+                me.cfdi_cliente = "";
                 me.tipo_comprobante = "Presupuesto";
                 me.num_comprobante = 0;
                 me.impuesto = 0.16;
@@ -1829,6 +1838,7 @@ export default {
             this.obsprivEditable = 0;
             this.idcliente = 0;
             this.rfc_cliente = "";
+            this.cfdi_cliente = "";
             this.tipo_cliente = "";
             this.telefono_cliente = "";
             this.contacto_cliente = "";
