@@ -173,6 +173,9 @@
         }
     </style>
     <body>
+        @php
+            setlocale(LC_TIME,'spanish.UTF-8');
+        @endphp
         @foreach ($traslado as $t)
         <header>
             {{-- <div id="divIzq">aaaaaaa</div> --}}
@@ -185,14 +188,13 @@
                 <p id="encabezado">
                     {{-- <b>TroyStone&reg;</b><br>Calz. Lázaro Cardenas #2080 Int. 20. Col. Del Fresno, C.P. 44900, Guadalajara, Jalisco
                     <br>Telefono:(01 33) 36 92 81 92<br>Email:ventas@troystone.com.mx --}}
-                    <b>Guadalajara, Jalisco a
+                    <b>Guadalajara, Jalisco
                     <?php
-                        setlocale(LC_TIME, "spanish");
-                        $mi_fecha = now();
-                        $mi_fecha = str_replace("/", "-", $mi_fecha);
-                        $Nueva_Fecha = date("d-m-Y", strtotime($mi_fecha));
-                        $Mes_Anyo = strftime("%A, %d de %B de %Y", strtotime($Nueva_Fecha));
-                        echo $Mes_Anyo;
+                        date_default_timezone_set('America/Mexico_City');
+                        setlocale(LC_TIME, 'es_MX.UTF-8');
+                        $fecha_actual=strftime("%Y-%m-%d");
+                        $hora_actual=strftime("%A, %d de %B de %Y");
+                        echo $hora_actual;
                     ?> </b>
                 </p>
             </div>
@@ -280,7 +282,7 @@
                 <p>
                     <strong>Fecha de registro: </strong>
                     <?php
-                        setlocale(LC_TIME, "spanish");
+                        //setlocale(LC_TIME, "spanish");
                         $mi_fecha = $t->fecha_hora;
                         $mi_fecha = str_replace("/", "-", $mi_fecha);
                         $Nueva_Fecha = date("d-m-Y", strtotime($mi_fecha));

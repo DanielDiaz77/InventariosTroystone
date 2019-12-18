@@ -152,6 +152,9 @@
         }
     </style>
     <body>
+        @php
+            setlocale(LC_TIME,'spanish.UTF-8');
+        @endphp
         @foreach ($venta as $v)
         <header>
             {{-- <div id="divIzq">aaaaaaa</div> --}}
@@ -164,9 +167,9 @@
                 <p id="encabezado">
                     {{-- <b>TroyStone&reg;</b><br>Calz. Lázaro Cardenas #2080 Int. 20. Col. Del Fresno, C.P. 44900, Guadalajara, Jalisco
                     <br>Telefono:(01 33) 36 92 81 92<br>Email:ventas@troystone.com.mx --}}
-                    <b>Guadalajara, Jalisco a
+                    <b>Guadalajara, Jalisco
                     <?php
-                        setlocale(LC_TIME, "spanish");
+                        //setlocale(LC_TIME, "spanish");
                         $mi_fecha = now();
                         $mi_fecha = str_replace("/", "-", $mi_fecha);
                         $Nueva_Fecha = date("d-m-Y", strtotime($mi_fecha));
@@ -267,7 +270,7 @@
                 <p>
                     <strong>Fecha de realizacion: </strong>
                     <?php
-                        setlocale(LC_TIME, "spanish");
+                        //setlocale(LC_TIME, "spanish");
                         $mi_fecha = $v->created_at;
                         $mi_fecha = str_replace("/", "-", $mi_fecha);
                         $Nueva_Fecha = date("d-m-Y", strtotime($mi_fecha));

@@ -81,11 +81,14 @@
     </style>
 </head>
 <body>
+    @php
+        setlocale(LC_TIME,'spanish.UTF-8');
+    @endphp
     <div>
         <h3>Lista de Artículos <span class="derecha">
             {{-- {{ now()->formatLocalized('%A %d %B %Y') }} --}}
             <?php
-                setlocale(LC_TIME, "spanish");
+                //setlocale(LC_TIME, "spanish");
                 $mi_fecha = now();
                 $mi_fecha = str_replace("/", "-", $mi_fecha);
                 $Nueva_Fecha = date("d-m-Y", strtotime($mi_fecha));
