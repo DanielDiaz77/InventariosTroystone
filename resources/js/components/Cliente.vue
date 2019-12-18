@@ -93,7 +93,7 @@
     <!--Inicio del modal agregar/actualizar-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-primary modal-lg" role="document">
-            <div class="modal-content">
+            <div class="modal-content content-task">
                 <div class="modal-header">
                     <h4 class="modal-title" v-text="tituloModal"></h4>
                     <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
@@ -106,63 +106,30 @@
                             <h5>Seleccione el tipo de cliente</h5>
                             <ul class="nav nav-tabs">
                                 <li class="nav-item">
-                                    <a href="#tabCliente" class="nav-link active" data-toggle="tab">Persona</a>
+                                    <a href="#tabCliente" class="nav-link active" data-toggle="tab">Persona Física</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#tabEmpresa" class="nav-link" data-toggle="tab">Empresa</a>
+                                    <a href="#tabEmpresa" class="nav-link" data-toggle="tab">Persona Moral</a>
                                 </li>
                             </ul>
                             <div class="tab-content">
+                                <!-- TAB CLIENTE -->
                                 <div class="tab-pane active" id="tabCliente" role="tab panel">
                                     <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-                                        <div class="form-group row" v-if="userrol==1">
-                                            <label class="col-md-3 form-control-label" for="text-input">Vendedor</label>
-                                            <div class="col-md-9">
+                                        <div class="row">
+                                            <div class="input-group input-group-sm col-12 col-lg-6  mb-3" v-if="userrol==1">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Vendedor</span>
+                                                </div>
                                                 <select class="form-control" v-model="userid">
                                                     <option value="0" disabled>Seleccione un vendedor</option>
                                                     <option v-for="vendedor in arrayVendedores" :key="vendedor.id" :value="vendedor.id" v-text="vendedor.nombre"></option>
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
-                                            <div class="col-md-9">
-                                            <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del cliente"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Dirección</label>
-                                            <div class="col-md-9">
-                                                <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio del cliente"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Ciudad y estado</label>
-                                            <div class="col-md-9">
-                                                <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado del cliente"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Teléfono</label>
-                                            <div class="col-md-9">
-                                                <input type="text" v-model="telefono" maxlength="13" class="form-control" placeholder="Teléfono del cliente"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Correo electrónico</label>
-                                            <div class="col-md-9">
-                                                <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico del cliente"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">RFC</label>
-                                            <div class="col-md-9">
-                                                <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC del cliente o compañia"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Tipo</label>
-                                            <div class="col-md-9">
+                                            <div class="input-group input-group-sm col-12 col-lg-6  mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Tipo</span>
+                                                </div>
                                                 <select class="form-control" v-model="tipo">
                                                     <option value="" disabled>Seleccione el tipo de cliente</option>
                                                     <option value="PROSPECTO">PROSPECTO</option>
@@ -173,14 +140,74 @@
                                                     <option value="CLIENTE ARQ">CLIENTE ARQ</option>
                                                     <option value="GENERAL Y PAGOS">GENERAL Y PAGOS</option>
                                                     <option value="NO PROMOVER">NO PROMOVER</option>
-                                            </select>
+                                                </select>
+                                            </div>
+                                            <div class="input-group input-group-sm col-12 col-lg-6  mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Nombre</span>
+                                                </div>
+                                                <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de la persona física"/>
+                                            </div>
+                                            <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Teléfono</span>
+                                                </div>
+                                                <input type="text" v-model="telefono" maxlength="13" class="form-control" placeholder="Teléfono de la persona física"/>
+                                            </div>
+                                            <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Correo electrónico</span>
+                                                </div>
+                                                <input type="text" v-model="email" class="form-control" placeholder="Correo electrónico"/>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-area">Observaciones</label>
-                                            <div class="col-md-9">
-                                                <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
-                                            </div>&nbsp;
+                                        <div class="row">
+                                            <div class="input-group input-group-sm col-12  col-xl-8  mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Direccion</span>
+                                                </div>
+                                                <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio"/>
+                                                <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-sm col-12 col-xl-8  mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Contacto</span>
+                                                </div>
+                                                <input type="text" v-model="company" class="form-control" placeholder="Nombre de contacto"/>
+                                                <input type="text" maxlength="13" v-model="tel_company" class="form-control" placeholder="Teléfono de contacto"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">RFC</span>
+                                                </div>
+                                                <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC persona física"/>
+                                            </div>
+                                            <div class="input-group input-group-sm col-12 col-lg-6  mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Uso del CFDI</span>
+                                                </div>
+                                                <select class="form-control" v-model="cfdi">
+                                                    <option value="" disabled>Seleccione</option>
+                                                    <option value="G01-Adquisicion de mercacias">G01-Adquisicion de mercacias</option>
+                                                    <option value="G02-Devoluciones,descuentos o bonificaciones">G02-Devoluciones,descuentos o bonificaciones</option>
+                                                    <option value="G03-Gastos en general">G03-Gastos en general</option>
+                                                    <option value="G04-Pago con tarjeta de credito">G04-Pago con tarjeta de credito</option>
+                                                    <option value="G28-Pago con tarjeta de debito">G28-Pago con tarjeta de debito</option>
+                                                    <option value="P01-Por definir">P01-Por definir</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-sm col-12 col-lg-8 mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Observaciones</span>
+                                                </div>
+                                                <textarea class="form-control rounded-0" style="resize: none;" rows="3" maxlength="256" v-model="observacion"></textarea>
+                                            </div>
                                         </div>
                                         <div v-show="errorPersona" class="form-group row div-error">
                                             <div class="text-center text-error">
@@ -189,68 +216,23 @@
                                         </div>
                                     </form>
                                 </div>
+                                <!-- TAB EMPRESA -->
                                 <div class="tab-pane" id="tabEmpresa" role="tabpanel">
                                     <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-                                        <div class="form-group row" v-if="userrol==1">
-                                            <label class="col-md-3 form-control-label" for="text-input">Vendedor</label>
-                                            <div class="col-md-9">
+                                        <div class="row">
+                                            <div class="input-group input-group-sm col-12 col-lg-6  mb-3" v-if="userrol==1">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Vendedor</span>
+                                                </div>
                                                 <select class="form-control" v-model="userid">
                                                     <option value="0" disabled>Seleccione un vendedor</option>
                                                     <option v-for="vendedor in arrayVendedores" :key="vendedor.id" :value="vendedor.id" v-text="vendedor.nombre"></option>
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
-                                            <div class="col-md-9">
-                                            <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de la empresa"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Dirección</label>
-                                            <div class="col-md-9">
-                                                <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Ciudad y estado</label>
-                                            <div class="col-md-9">
-                                                <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Teléfono</label>
-                                            <div class="col-md-9">
-                                                <input type="text" v-model="telefono" maxlength="13" class="form-control" placeholder="Teléfono de al empresa"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Contacto</label>
-                                            <div class="col-md-9">
-                                                <input type="text" v-model="company" class="form-control" placeholder="Contacto"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Telefono de contacto</label>
-                                            <div class="col-md-9">
-                                                <input type="text" v-model="tel_company" class="form-control" placeholder="Teléfono de contacto"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Correo electrónico</label>
-                                            <div class="col-md-9">
-                                                <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">RFC</label>
-                                            <div class="col-md-9">
-                                                <input type="text" v-model="rfc" maxlength="12" class="form-control" placeholder="RFC"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Tipo</label>
-                                            <div class="col-md-9">
+                                            <div class="input-group input-group-sm col-12 col-lg-6  mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Tipo</span>
+                                                </div>
                                                 <select class="form-control" v-model="tipo">
                                                     <option value="" disabled>Seleccione el tipo de cliente</option>
                                                     <option value="PROSPECTO">PROSPECTO</option>
@@ -261,14 +243,74 @@
                                                     <option value="CLIENTE ARQ">CLIENTE ARQ</option>
                                                     <option value="GENERAL Y PAGOS">GENERAL Y PAGOS</option>
                                                     <option value="NO PROMOVER">NO PROMOVER</option>
-                                            </select>
+                                                </select>
+                                            </div>
+                                            <div class="input-group input-group-sm col-12 col-lg-6  mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Nombre</span>
+                                                </div>
+                                                <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de la persona moral"/>
+                                            </div>
+                                            <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Teléfono</span>
+                                                </div>
+                                                <input type="text" v-model="telefono" maxlength="13" class="form-control" placeholder="Teléfono de la persona moral"/>
+                                            </div>
+                                            <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Correo electrónico</span>
+                                                </div>
+                                                <input type="text" v-model="email" class="form-control" placeholder="Correo electrónico"/>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-area">Observaciones</label>
-                                            <div class="col-md-9">
-                                                <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion"></textarea>
-                                            </div>&nbsp;
+                                        <div class="row">
+                                            <div class="input-group input-group-sm col-12  col-xl-8  mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Direccion</span>
+                                                </div>
+                                                <input type="text" v-model="domicilio" class="form-control" placeholder="Domicilio"/>
+                                                <input type="text" v-model="ciudad" class="form-control" placeholder="Ciudad y estado"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-sm col-12 col-xl-8  mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Contacto</span>
+                                                </div>
+                                                <input type="text" v-model="company" class="form-control" placeholder="Nombre de contacto"/>
+                                                <input type="text" maxlength="13" v-model="tel_company" class="form-control" placeholder="Teléfono de contacto"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">RFC</span>
+                                                </div>
+                                                <input type="text" v-model="rfc" maxlength="13" class="form-control" placeholder="RFC persona moral"/>
+                                            </div>
+                                            <div class="input-group input-group-sm col-12 col-lg-6  mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Uso del CFDI</span>
+                                                </div>
+                                                <select class="form-control" v-model="cfdi">
+                                                    <option value="" disabled>Seleccione</option>
+                                                    <option value="G01-Adquisicion de mercacias">G01-Adquisicion de mercacias</option>
+                                                    <option value="G02-Devoluciones,descuentos o bonificaciones">G02-Devoluciones,descuentos o bonificaciones</option>
+                                                    <option value="G03-Gastos en general">G03-Gastos en general</option>
+                                                    <option value="G04-Pago con tarjeta de credito">G04-Pago con tarjeta de credito</option>
+                                                    <option value="G28-Pago con tarjeta de debito">G28-Pago con tarjeta de debito</option>
+                                                    <option value="P01-Por definir">P01-Por definir</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-sm col-12 col-lg-8 mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Observaciones</span>
+                                                </div>
+                                                <textarea class="form-control rounded-0" style="resize: none;" rows="3" maxlength="256" v-model="observacion"></textarea>
+                                            </div>
                                         </div>
                                         <div v-show="errorPersona" class="form-group row div-error">
                                             <div class="text-center text-error">
@@ -316,6 +358,7 @@ export default {
             rfc: "",
             tipo: "",
             observacion: "",
+            cfdi : "",
             userid : "",
             userrol: "",
             company : "",
@@ -414,7 +457,8 @@ export default {
                 'rfc': this.rfc,
                 'tipo': this.tipo,
                 'idusuario' : this.userid,
-                'observacion':this.observacion
+                'observacion':this.observacion,
+                'cfdi' : this.cfdi
             })
             .then(function(response) {
                 me.cerrarModal();
@@ -442,6 +486,7 @@ export default {
                 'rfc': this.rfc,
                 'id': this.persona_id,
                 'tipo': this.tipo,
+                'cfdi' : this.cfdi,
                 'idusuario' : this.userid,
                 'observacion':this.observacion
             })
@@ -551,12 +596,18 @@ export default {
     .modal-content {
       width: 100% !important;
       position: absolute !important;
+
     }
     .mostrar {
       display: list-item !important;
       opacity: 1 !important;
       position: absolute !important;
       background-color: #3c29297a !important;
+    }
+    .content-task{
+        /* height: 700px !important; */
+        /* height : auto  !important; */
+        min-height: 652px !important;
     }
     .div-error {
       display: flex;

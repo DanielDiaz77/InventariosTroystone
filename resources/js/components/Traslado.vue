@@ -9,9 +9,10 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fa fa-align-justify"></i> Traslados
-                    <button type="button" @click="mostrarDetalle()" class="btn btn-secondary">
+                    <button v-if="btnNewTask" type="button" @click="mostrarDetalle()" class="btn btn-secondary">
                         <i class="icon-plus"></i>&nbsp;Nuevo
                     </button>
+                    <button v-if="btnNewTask==0" type="button" @click="ocultarDetalle()"  class="btn btn-sm btn-primary float-right">Volver</button>
                 </div>
                 <!-- Listado principal -->
                 <template v-if="listado==1">
@@ -619,7 +620,8 @@ Vue.use(ToggleButton);
                 bodegaArt : "",
                 acabadoArt : "",
                 areaUs : "",
-                showElim : false
+                showElim : false,
+                btnNewTask : 1
 
             };
         },
@@ -694,6 +696,7 @@ Vue.use(ToggleButton);
 
             listarTraslado(page,buscar,criterio,estadoTraslado){
                 let me=this;
+                me.btnNewTask = 1;
                 var url= '/traslado?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estadoTraslado;
                 axios.get(url).then(function (response){
                     var respuesta= response.data;
@@ -792,6 +795,7 @@ Vue.use(ToggleButton);
                 this.obsEditable = 0;
                 this.imagenMinatura = "";
                 this.listarTraslado(1,'','num_comprobante','');
+                this.btnNewTask = 1;
             },
             obtenerImagen(e){
                 let img = e.target.files[0];
@@ -971,7 +975,7 @@ Vue.use(ToggleButton);
             verTraslado(id){
                 let me = this;
                 me.listado = 2;
-
+                me.btnNewTask = 0;
                 //Obtener los datos del ingreso
                 var arrayTrasladoT=[];
                 var url= '/traslado/obtenerCabecera?id=' + id;

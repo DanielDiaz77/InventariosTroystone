@@ -525,7 +525,7 @@
                 <div class="modal-body">
                     <div class="form-group row">
                         <div class="col-md-5 text-center">
-                            <div class="form-group" v-if="isEdition == false">
+                            <div class="form-group" v-if="isEdition == false && iscompleted==false">
                                 <label for=""><strong>Cliente (*)</strong></label>
                                     <v-select :on-search="selectCliente" label="nombre" :options="arrayCliente" placeholder="Buscar clientes..." :onChange="getDatosCliente">
                                     </v-select>
@@ -723,6 +723,7 @@ export default {
                 'from'         : 0,
                 'to'           : 0,
             },
+            iscompleted : false
         };
     },
     components: {
@@ -868,6 +869,8 @@ export default {
             this.estado = 0;
             this.btnComp = false;
             this.isEdition = false;
+            this.iscompleted = false;
+            this.listarTarea(1,'','idcliente','');
         },
         cerrarModalDet(){
             this.modal = 0;
@@ -904,6 +907,7 @@ export default {
                     this.fecha = data['fecha'];
                     this.estado =data['estado'];
                     this.isEdition = true;
+                    this.iscompleted = false;
 
                     if(this.estado){
                         this.btnComp = true;
@@ -1035,7 +1039,39 @@ export default {
                 'id': id,
                 'estado' : this.estado
             }).then(function (response) {
-                me.listarTarea(1,'','idcliente','');
+                if(me.estado == 1){
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger"
+                        },
+                        buttonsStyling: false
+                    });
+
+                    swalWithBootstrapButtons.fire({
+                        title: "¿Tarea completada, desea añadir otra?",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Si!",
+                        cancelButtonText: "No!",
+                        reverseButtons: true
+                    })
+                    .then(result => {
+                        if (result.value) {
+                            /* me.cerrarModal(); */
+                            me.UpdateTask('newTaskComp');
+                        }else if (result.dismiss === swal.DismissReason.cancel){
+                            me.cerrarModal();
+
+                        }
+                    })
+                }else{
+                   Swal.fire(
+                        "Atención!",
+                        "La tarea ha sido marcada como incompleta.",
+                        "warning"
+                    )
+                }
             }).catch(function (error) {
                 console.log(error);
             });
@@ -1051,7 +1087,41 @@ export default {
                 'id': id,
                 'estado' : this.estado
             }).then(function (response) {
-                me.verTarea(me.idcliente);
+                /* me.verTarea(me.idcliente); */
+                if(me.estado == 1){
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger"
+                        },
+                        buttonsStyling: false
+                    });
+
+                    swalWithBootstrapButtons.fire({
+                        title: "¿Tarea completada, desea añadir otra?",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Si!",
+                        cancelButtonText: "No!",
+                        reverseButtons: true
+                    })
+                    .then(result => {
+                        if (result.value) {
+                            /* me.cerrarModal(); */
+                            me.UpdateTask('newTaskComp');
+                        }else if (result.dismiss === swal.DismissReason.cancel){
+                            me.cerrarModal();
+
+                        }
+                    })
+                }else{
+                   Swal.fire(
+                        "Atención!",
+                        "La tarea ha sido marcada como incompleta.",
+                        "warning"
+                    )
+                }
+
             }).catch(function (error) {
                 console.log(error);
             });
@@ -1184,6 +1254,7 @@ export default {
             this.btnNewTask = 1;
             this.cerrarDet = 0;
             this.isEdition = false;
+            this.iscompleted = false;
             this.nombre = "";
             this.descripcion = "";
             this.tipo = "";
@@ -1284,6 +1355,7 @@ export default {
                     this.fecha = data['fecha'];
                     this.estado =data['estado'];
                     this.isEdition = true;
+                    this.iscompleted = false;
                     this.cerrarDet = 1;
                     this.isComment = 0;
 
@@ -1312,6 +1384,7 @@ export default {
                     this.fecha = data['fecha'];
                     this.estado =data['estado'];
                     this.isEdition = true;
+                    this.iscompleted = false;
                     this.cerrarDet = 1;
 
                     if(this.estado){
@@ -1326,6 +1399,7 @@ export default {
                     this.cerrarDet = 1;
                     this.tituloModal = "Nueva Tarea Para " + this.cliente;
                     this.isEdition = true;
+                    this.iscompleted = false;
                     this.nombre = "";
                     this.descripcion = "";
                     this.tipo = "";
@@ -1339,6 +1413,7 @@ export default {
                     this.cerrarDet = 1;
                     this.tituloModal = "Nuevo Comentario Para " + this.cliente;
                     this.isEdition = true;
+                    this.iscompleted = false;
                     this.nombre = "";
                     this.descripcion = "";
                     this.tipo = "Comentario";
@@ -1365,6 +1440,7 @@ export default {
                     this.fecha = data['fecha'];
                     this.estado =data['estado'];
                     this.isEdition = true;
+                    this.iscompleted = false;
                     this.cerrarDet = 1;
                     this.isComment = 1;
 
@@ -1372,6 +1448,20 @@ export default {
                         this.btnComp = true;
                     }
 
+                    break;
+                }
+                case "newTaskComp" : {
+                    this.modal = 1;
+                    this.tipoAccion = 4;
+                    this.cerrarDet = 1;
+                    this.tituloModal = "Nueva Tarea Para " + this.cliente;
+                    this.isEdition = false;
+                    this.iscompleted = true;
+                    this.nombre = "";
+                    this.descripcion = "";
+                    this.tipo = "";
+                    this.fecha = "";
+                    this.isComment = 0;
                     break;
                 }
             }

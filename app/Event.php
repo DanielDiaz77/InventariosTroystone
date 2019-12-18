@@ -8,7 +8,7 @@ class Event extends Model
 {
     protected $table = 'events';
 
-    protected $fillable = ['start','end','title','content','class','estado','idusuario','idcliente'];
+    protected $fillable = ['start','end','title','content','class','estado','idusuario','idcliente','area'];
 
     public function usuario(){
         return $this->belongsTo('App\User');
