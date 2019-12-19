@@ -21,6 +21,8 @@ class VentaController extends Controller
         $criterio = $request->criterio;
         $estadoV = $request->estado;
 
+        $usrol = \Auth::user()->idrol;
+
         if($criterio == 'entregado'){
             $buscar = 1;
         }
@@ -97,7 +99,8 @@ class VentaController extends Controller
                 'from'         => $ventas->firstItem(),
                 'to'           => $ventas->lastItem(),
             ],
-            'ventas' => $ventas
+            'ventas' => $ventas,
+            'userrol' => $usrol
         ];
     }
 

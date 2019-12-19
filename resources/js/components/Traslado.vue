@@ -276,15 +276,29 @@
                                 <label for=""><strong>Fecha:</strong></label>
                                 <p> {{ formatedDate(fecha_hora) }} </p>
                             </div>
-                            <div class="form-group p-2">
-                                <label for=""><strong>Entregado 100%:</strong> </label>
-                                <div v-if="estadoVn !='Anulado'">
-                                    <toggle-button @change="cambiarEstadoEntrega(traslado_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            <template v-if="usrol != 1">
+                                <div class="form-group p-2" v-if="!entregado">
+                                    <label for=""><strong>Entregado 100%:</strong> </label>
+                                    <div v-if="estadoVn !='Anulado'">
+                                        <toggle-button @change="cambiarEstadoEntrega(traslado_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-danger">Anulado</span>
+                                    </div>
                                 </div>
-                                <div v-else>
-                                    <span class="badge badge-danger">Anulado</span>
+                            </template>
+                            <template v-else>
+                                <div class="form-group p-2">
+                                    <label for=""><strong>Entregado 100%:</strong> </label>
+                                    <div v-if="estadoVn !='Anulado'">
+                                        <toggle-button @change="cambiarEstadoEntrega(traslado_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-danger">Anulado</span>
+                                    </div>
                                 </div>
-                            </div>
+                            </template>
+
                             <div class="form-group p-2">
                                 <label for=""><strong>Trasladados a</strong></label>
                                 <p v-text="nueva_ubicacion"></p>
@@ -621,7 +635,8 @@ Vue.use(ToggleButton);
                 acabadoArt : "",
                 areaUs : "",
                 showElim : false,
-                btnNewTask : 1
+                btnNewTask : 1,
+                usrol : 0
 
             };
         },
@@ -702,6 +717,7 @@ Vue.use(ToggleButton);
                     var respuesta= response.data;
                     me.arrayTraslado = respuesta.traslados.data;
                     me.pagination= respuesta.pagination;
+                    me.usrol = respuesta.userrol;
                 })
                 .catch(function (error) {
                     console.log(error);

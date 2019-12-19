@@ -65,11 +65,17 @@
                                         <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfVenta(venta.id)">
                                             <i class="fa fa-file-pdf-o"></i>
                                         </button>&nbsp;
-                                        <template v-if="venta.estado=='Registrado'">
+                                        <template v-if="usrol != 1">
+                                            <button type="button" v-if="!venta.entregado" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)">
+                                                <i class="icon-trash"></i>
+                                            </button>
+                                        </template>
+                                        <template v-else>
                                             <button type="button" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)">
                                                 <i class="icon-trash"></i>
                                             </button>
                                         </template>
+
                                     </div>
                                 </td>
                                 <td v-text="venta.usuario"></td>
@@ -489,47 +495,89 @@
                             <p v-text="tipo_facturacion"></p>
                         </div>
                     </div>
-                    <div class="col-md-1">
-                        <div class="form-group">
-                            <label for=""><strong>Entregado 100%:</strong> </label>
-                            <div v-if="pagado == 1">
-                                <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
-                            </div>
-                            <div v-else-if="estadoVn == 'Registrado'">
-                                <span class="badge badge-danger">Pendiente de pago</span>
-                            </div>
-                            <div v-else></div>
-                        </div>
-                    </div>
-                    <div class="col-md-1">
-                        <div class="form-group">
-                            <label for=""><strong>Entregado Parcial:</strong> </label>
-                            <div v-if="pagado == 1">
-                                <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
-                            </div>
-                            <div v-else-if="estadoVn == 'Registrado'">
-                                <span class="badge badge-danger">Pendiente de pago</span>
-                            </div>
-                            <div v-else></div>
-                        </div>
-                    </div>
-                    <div class="col-md-1">
-                        <div class="form-group">
-                            <label for=""><strong>100% Pagado: </strong> </label>
-                            <div v-if="estadoVn == 'Registrado'">
-                                <toggle-button @change="cambiarEstadoPagado(venta_id)" v-model="btnPagado" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
-                            </div>
-                            <div v-else>
-                                <span class="badge badge-danger">Presupuesto cancelado</span>
+                    <template v-if="usrol != 1">
+                        <div class="col-md-1" v-if="!entregado && entregado_parcial == 0">
+                            <div class="form-group">
+                                <label for=""><strong>Entregado 100%:</strong> </label>
+                                <div v-if="pagado">
+                                    <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                </div>
+                                <div v-else>
+                                    <span class="badge badge-danger">Pendiente de pago</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="col-md-1" v-if="!entregado_parcial && entregado == 0">
+                            <div class="form-group">
+                                <label for=""><strong>Entregado Parcial:</strong> </label>
+                                <div v-if="pagado">
+                                    <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                </div>
+                                <div v-else>
+                                    <span class="badge badge-danger">Pendiente de pago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="col-md-1" v-if="!entregado_parcial">
+                            <div class="form-group">
+                                <label for=""><strong>Entregado 100%:</strong> </label>
+                                <div v-if="pagado">
+                                    <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                </div>
+                                <div v-else>
+                                    <span class="badge badge-danger">Pendiente de pago</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1" v-if="!entregado">
+                            <div class="form-group">
+                                <label for=""><strong>Entregado Parcial:</strong> </label>
+                                <div v-if="pagado">
+                                    <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                </div>
+                                <div v-else>
+                                    <span class="badge badge-danger">Pendiente de pago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template v-if="usrol != 1">
+                        <div class="col-md-1" v-if="!pagado">
+                            <div class="form-group">
+                                <label for=""><strong>100% Pagado: </strong> </label>
+                                <div v-if="estadoVn == 'Registrado'">
+                                    <toggle-button @change="cambiarEstadoPagado(venta_id)" v-model="btnPagado" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                </div>
+                                <div v-else>
+                                    <span class="badge badge-danger">Presupuesto cancelado</span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for=""><strong>100% Pagado: </strong> </label>
+                                <div v-if="estadoVn == 'Registrado'">
+                                    <toggle-button @change="cambiarEstadoPagado(venta_id)" v-model="btnPagado" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                </div>
+                                <div v-else>
+                                    <span class="badge badge-danger">Presupuesto cancelado</span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for=""><strong>Forma de pago</strong></label>
                             <p v-text="forma_pago"></p>
                         </div>
                     </div>
+
                     <div class="col-md-2" v-if="forma_pago =='Cheque'">
                         <div class="form-group">
                             <label for=""><strong>No° de cheque</strong></label>
@@ -1343,7 +1391,8 @@ export default {
             bodega : "",
             areaUs : "",
             acabado : "",
-            estadoVenta : ""
+            estadoVenta : "",
+            usrol : 0
         };
     },
     components: {
@@ -1460,6 +1509,7 @@ export default {
                 var respuesta= response.data;
                 me.arrayVenta = respuesta.ventas.data;
                 me.pagination= respuesta.pagination;
+                me.usrol = respuesta.userrol;
             })
             .catch(function (error) {
                 console.log(error);
@@ -2240,6 +2290,17 @@ export default {
                 'entregado' : this.entregado
             }).then(function (response) {
                 me.listarVenta(1,'','num_comprobante','');
+                if(me.entregado == 1){
+                    swal.fire(
+                    'Completado!',
+                    'El presupuesto ha sido registrado con entregado al 100%.',
+                    'success')
+                }else{
+                    swal.fire(
+                    'Atención!',
+                    'El presupuesto ha sido registrado como no entregado.',
+                    'warning')
+                }
             }).catch(function (error) {
                 console.log(error);
             });
@@ -2256,6 +2317,17 @@ export default {
                 'entrega_parcial' : this.entregado_parcial
             }).then(function (response) {
                 me.listarVenta(1,'','num_comprobante','');
+                if(me.entregado_parcial == 1){
+                    swal.fire(
+                    'Completado!',
+                    'El presupuesto ha sido registrado con entrega parcial.',
+                    'success')
+                }else{
+                    swal.fire(
+                    'Atención!',
+                    'El presupuesto ha sido registrado como no entregado.',
+                    'warning')
+                }
             }).catch(function (error) {
                 console.log(error);
             });
@@ -2274,6 +2346,17 @@ export default {
                 'pagado' : this.pagado
             }).then(function (response) {
                 me.listarVenta(1,'','num_comprobante','');
+                if(me.pagado == 1){
+                    swal.fire(
+                    'Completado!',
+                    'El presupuesto ha sido marcado como pagado con éxito.',
+                    'success')
+                }else{
+                    swal.fire(
+                    'Atención!',
+                    'El presupuesto se registro como pendiente de pago.',
+                    'warning')
+                }
             }).catch(function (error) {
                 console.log(error);
             });
@@ -2366,8 +2449,7 @@ export default {
         text-align: center;
 
     }
-    input[type="number"]
-    {
+    input[type="number"]{
         -webkit-appearance: textfield !important;
         margin: 0;
        /*  -moz-appearance:textfield !important; */

@@ -20,6 +20,8 @@ class TrasladoController extends Controller
         $criterio = $request->criterio;
         $estado = $request->estado;
 
+        $usrol = \Auth::user()->idrol;
+
         if($estado == ''){
             if ($buscar==''){
                 $traslados = Traslado::join('users','traslados.idusuario','=','users.id')
@@ -67,7 +69,8 @@ class TrasladoController extends Controller
                 'from'         => $traslados->firstItem(),
                 'to'           => $traslados->lastItem(),
             ],
-            'traslados' => $traslados
+            'traslados' => $traslados,
+            'userrol' => $usrol
         ];
     }
 
