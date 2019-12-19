@@ -66,6 +66,7 @@ class UserController extends Controller
             $persona->telefono = $request->telefono;
             $persona->email = $request->email;
             $persona->rfc = $request->rfc;
+            $persona->active = 0;
             $persona->save();
 
             $user = new User();
@@ -109,6 +110,7 @@ class UserController extends Controller
             $persona->telefono = $request->telefono;
             $persona->email = $request->email;
             $persona->rfc = $request->rfc;
+            $persona->active = 0;
             $persona->save();
 
             if($request->filled('password')){
