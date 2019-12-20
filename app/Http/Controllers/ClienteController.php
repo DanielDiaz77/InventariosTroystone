@@ -55,7 +55,7 @@ class ClienteController extends Controller
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
                 'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
                 'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
-                ->where([[$criterio, 'like', '%'. $buscar . '%'],['personas.estado',$estado]])
+                ->where([[$criterio, 'like', '%'. $buscar . '%'],['personas.active',$estado]])
                 ->orderBy('id', 'desc')->paginate(12);
             }
         }
