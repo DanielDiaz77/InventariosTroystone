@@ -30,7 +30,7 @@
 
                 </div>
                 <div class="input-group">
-                    <select class="form-control mb-1" v-model="bodega">
+                    <select class="form-control mb-1" v-model="bodega" @change="listarArticulo(1,buscar,criterio,bodega,acabado)">
                         <option value="" disabled>Ubicacion</option>
                         <option value="">Todas</option>
                         <option value="Del Musico">Del Músico</option>

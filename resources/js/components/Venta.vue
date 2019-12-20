@@ -27,7 +27,7 @@
                             <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio,estadoVenta)" class="form-control mb-1" placeholder="Texto a buscar...">
                         </div>
                         <div class="input-group">
-                            <select class="form-control mb-1" v-model="estadoVenta">
+                            <select class="form-control mb-1" v-model="estadoVenta" @change="listarVenta(1,buscar,criterio,estadoVenta)">
                                 <option value="">Activa</option>
                                 <option value="Anulada">Cancelada</option>
                             </select>
@@ -333,6 +333,7 @@
                         <table class="table table-bordered table-striped table-sm table-hover">
                             <thead>
                                 <tr>
+                                    <th width="10px">No°</th>
                                     <th>Opciones</th>
                                     <th>Material</th>
                                     <th>Código de material</th>
@@ -356,6 +357,7 @@
                             </thead>
                             <tbody v-if="arrayDetalle.length">
                                 <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
+                                    <td width="10px" v-text="index + 1"></td>
                                     <td>
                                         <div class="form-inline">
                                             <button @click="eliminarDetalle(index)" type="button" class="btn btn-danger btn-sm">
@@ -395,21 +397,21 @@
                                     </td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="13" align="right"><strong>Total Parcial:</strong></td>
+                                    <td colspan="14" align="right"><strong>Total Parcial:</strong></td>
                                     <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="13" align="right"><strong>Total IVA:</strong></td>
+                                    <td colspan="14" align="right"><strong>Total IVA:</strong></td>
                                     <td>$ {{total_impuesto=((total * parseFloat(impuesto))/(1+parseFloat(impuesto))).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="13" align="right"><strong>Total Neto:</strong></td>
+                                    <td colspan="14" align="right"><strong>Total Neto:</strong></td>
                                     <td>$ {{total=(calcularTotal.toFixed(2))}}</td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="14" class="text-center">
+                                    <td colspan="15" class="text-center">
                                         <strong>NO hay artículos agregados...</strong>
                                     </td>
                                 </tr>
@@ -596,6 +598,7 @@
                         <table class="table table-bordered table-striped table-sm table-hover">
                             <thead>
                                 <tr>
+                                    <th width="10px">No°</th>
                                     <th>Detalles</th>
                                     <th>Código de material</th>
                                     <th>No° Placa</th>
@@ -614,6 +617,7 @@
                             </thead>
                             <tbody v-if="arrayDetalle.length">
                                 <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
+                                    <td width="10px" v-text="index + 1"></td>
                                     <td>
                                         <button type="button" @click="abrirModal3(index)" class="btn btn-success btn-sm">
                                             <i class="icon-eye"></i>
@@ -731,6 +735,7 @@
       </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
+
     <!--Inicio del modal listar articulos-->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-primary modal-lg" role="document">
@@ -744,9 +749,9 @@
                 <div class="modal-body">
                     <!-- Filtros Modal Articulos -->
                     <div class="form-group row">
-                        <div class="col-md">
+                        <div class="col-md-8">
                             <div class="input-group">
-                                <select class="form-control col-md-3" v-model="criterioA">
+                                <select class="form-control" v-model="criterioA">
                                     <option value="sku">Código de material</option>
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
@@ -755,10 +760,11 @@
                                 <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscarA,buscarA,bodega,acabado)" class="form-control" placeholder="Terminado">
                             </div>
                         </div>
-                        <div class="col-md">
+                        <div class="col-md-4">
                             <div class="input-group">
+                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="btn btn-primary"><i class="fa fa-search"></i>Buscar</button>&nbsp;
                                 <template v-if="areaUs == 'GDL'">
-                                    <select class="form-control" v-model="bodega">
+                                    <select class="form-control" v-model="bodega" @change="listarArticulo(1,buscarA,buscarA,bodega,acabado)">
                                         <option value="" disabled>Ubicacion</option>
                                         <option value="">Todas</option>
                                         <option value="Del Musico">Del Músico</option>
@@ -769,7 +775,6 @@
                                         <option value="San Luis">San Luis</option>
                                     </select>
                                 </template>
-                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="btn btn-primary"><i class="fa fa-search"></i>Buscar</button>&nbsp;
                             </div>
                         </div>
                     </div>

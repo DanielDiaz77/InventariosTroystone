@@ -13,6 +13,7 @@
             <i class="icon-plus"></i>&nbsp;Nuevo
           </button>
           <button v-if="btnNewCliente==0" type="button" @click="ocultarDetalle()"  class="btn btn-sm btn-primary float-right">Volver</button>
+
         </div>
         <!-- Listado de clientes -->
         <template v-if="listado==1">
@@ -27,8 +28,14 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio)" class="form-control mb-1" placeholder="Texto a buscar">
-                            <button type="submit" @click="listarPersona(1,buscar,criterio)" class="btn btn-primary mb-1"><i class="fa fa-search mb-1"></i></button>
+                            <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio,status)" class="form-control mb-1" placeholder="Texto a buscar">
+                            <button type="submit" @click="listarPersona(1,buscar,criterio,status)" class="btn btn-primary mb-1"><i class="fa fa-search mb-1"></i></button>
+                        </div>
+                        <div class="input-group" v-if="userrol == 1">
+                            <select class="form-control mb-1" v-model="status" @change="listarPersona(1,buscar,criterio,status)">
+                                <option value="1">Activos</option>
+                                <option value="0">Eliminados</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -52,15 +59,26 @@
                                 <td>
                                     <div class="form-inline">
                                         <div class="form-group mb-2 col-sm-10">
+                                            <template v-if="persona.active">
+                                                <div class="input-group">
+                                                    <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
+                                                        <i class="icon-pencil"></i>
+                                                    </button>
+                                                </div>&nbsp;
+                                                <div class="input-group">
+                                                    <button type="button" @click="desactivarCliente(persona.id)" class="btn btn-danger btn-sm">
+                                                        <i class="icon-trash"></i>
+                                                    </button>
+                                                </div>&nbsp;
+                                            </template>
+                                            <template v-if="userrol == 1">
+                                                <div class="input-group" v-if="!persona.active">
+                                                    <button type="button" @click="activarCliente(persona.id)" class="btn btn-info btn-sm">
+                                                        <i class="icon-check"></i>
+                                                    </button>
+                                                </div>&nbsp;
+                                            </template>
                                             <div class="input-group">
-                                                <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
-                                                    <i class="icon-pencil"></i>
-                                                </button>
-                                            </div>&nbsp;
-                                            <div class="input-group">
-                                                <!-- <button type="button" @click="abrirModal2(persona)" class="btn btn-success btn-sm">
-                                                    <i class="icon-eye"></i>
-                                                </button> -->
                                                 <button type="button" @click="mostrarDetalle(persona)" class="btn btn-success btn-sm">
                                                     <i class="icon-eye"></i>
                                                 </button>
@@ -92,13 +110,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,status)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,status)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,status)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -865,7 +883,8 @@ export default {
             CodeDate : "",
             errorTarea: 0,
             errorMostrarMsjTarea: [],
-            dateAct : ""
+            dateAct : "",
+            status : 1
         };
     },
 
@@ -934,10 +953,10 @@ export default {
             },
         },
     methods: {
-        listarPersona (page,buscar,criterio){
+        listarPersona (page,buscar,criterio,status){
             let me=this;
             me.btnNewCliente = 1;
-            var url= '/cliente?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/cliente?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&status='+ status;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayPersona = respuesta.personas.data;
@@ -951,12 +970,12 @@ export default {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio){
+        cambiarPagina(page,buscar,criterio,status){
             let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarPersona(page,buscar,criterio);
+                me.listarPersona(page,buscar,criterio,status);
         },
         registrarPersona() {
             if (this.validarPersona()) {
@@ -983,7 +1002,7 @@ export default {
             })
             .then(function(response) {
                 me.cerrarModal();
-                me.listarPersona(1,'','nombre');
+                me.listarPersona(1,'','nombre',1);
             })
             .catch(function(error) {
                 console.log(error);
@@ -1013,7 +1032,7 @@ export default {
             })
             .then(function(response) {
                 me.cerrarModal();
-                me.listarPersona(1,'','nombre');
+                me.listarPersona(1,'','nombre',1);
             })
             .catch(function(error) {
                 console.log(error);
@@ -1047,7 +1066,7 @@ export default {
             this.errorPersona = 0;
             this.tipo = "";
             this.observacion = "";
-            this.listarPersona(page,'','nombre');
+            this.listarPersona(page,'','nombre',1);
         },
         abrirModal(modelo, accion, data = []) {
             switch (modelo) {
@@ -1192,7 +1211,7 @@ export default {
             this.arrayVentasT = [];
             this.arrayCommentT = [];
             this.arrayActividadesT = [];
-            this.listarPersona(page,'','nombre');
+            this.listarPersona(page,'','nombre',1);
         },
         obtenerTareas(idcliente){
             let me = this;
@@ -1395,11 +1414,86 @@ export default {
                 }else if (result.dismiss === swal.DismissReason.cancel){
                 }
             })
+        },
+        desactivarCliente(id) {
+            var page = this.pagination.current_page;
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro de eliminar este cliente?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/cliente/desactivar', {
+                        'id' : id
+                    }).then(function(response) {
+                        me.listarPersona(page,'','nombre',1);
+                        swalWithBootstrapButtons.fire(
+                            "Eliminado!",
+                            "El cliente ha sido eliminado con éxito.",
+                            "success"
+                        )
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
+        },
+        activarCliente(id) {
+            var page = this.pagination.current_page;
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro de activar este cliente?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/cliente/activar', {
+                        'id' : id
+                    }).then(function(response) {
+                        me.listarPersona(page,'','nombre',1);
+                        swalWithBootstrapButtons.fire(
+                            "Activado!",
+                            "El cliente ha sido activado con éxito.",
+                            "success"
+                        )
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
         }
 
     },
     mounted() {
-        this.listarPersona(1,this.buscar, this.criterio);
+        this.listarPersona(1,this.buscar, this.criterio,this.status);
     }
 };
 </script>

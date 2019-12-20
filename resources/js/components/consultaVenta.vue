@@ -24,7 +24,7 @@
                             <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio,estadoVenta)" class="form-control mb-1" placeholder="Texto a buscar...">
                         </div>
                         <div class="input-group">
-                            <select class="form-control mb-1" v-model="estadoVenta">
+                            <select class="form-control mb-1" v-model="estadoVenta" @change="listarVenta(1,buscar,criterio,estadoVenta)">
                                 <option value="">Activa</option>
                                 <option value="Anulada">Cancelada</option>
                             </select>

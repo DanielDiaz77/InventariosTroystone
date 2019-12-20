@@ -28,7 +28,7 @@
                             <input type="text" v-model="buscar" @keyup.enter="listarTarea(1,buscar,criterio,estadoTask)" class="form-control mb-1" placeholder="Texto a buscar">
                         </div>
                         <div class="input-group">
-                            <select class="form-control mb-1" v-model="estadoTask">
+                            <select class="form-control mb-1" v-model="estadoTask" @change="listarTarea(1,buscar,criterio,estadoTask)">
                                 <option value="">Pendiente</option>
                                 <option value="1">Completado</option>
                                 <option value="2">Cancelado</option>

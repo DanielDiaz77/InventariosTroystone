@@ -26,7 +26,7 @@
                             <input type="text" v-model="buscar" @keyup.enter="listarCotizacion(1,buscar,criterio,estadoCotizacion)" class="form-control mb-1" placeholder="Texto a buscar">
                         </div>
                         <div class="input-group">
-                            <select class="form-control mb-1" v-model="estadoCotizacion">
+                            <select class="form-control mb-1" v-model="estadoCotizacion" @change="listarCotizacion(1,buscar,criterio,estadoCotizacion)">
                                 <option value="">Pendiente</option>
                                 <option value="Vendida">Vendida</option>
                                 <option value="Anulada">Cancelada</option>

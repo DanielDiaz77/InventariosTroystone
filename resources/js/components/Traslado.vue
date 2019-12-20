@@ -28,7 +28,7 @@
                                     <input type="text" v-model="buscar" @keyup.enter="listarTraslado(1,buscar,criterio,estadoTraslado)" class="form-control mb-1" placeholder="Texto a buscar...">
                                 </div>
                                 <div class="input-group">
-                                    <select class="form-control mb-1" v-model="estadoTraslado">
+                                    <select class="form-control mb-1" v-model="estadoTraslado" @change="listarTraslado(1,buscar,criterio,estadoTraslado)">
                                         <option value="">Activo</option>
                                         <option value="Anulado">Cancelado</option>
                                     </select>

@@ -41,20 +41,21 @@ class ClienteController extends Controller
         }else{
             $buscar = $request->buscar;
             $criterio = $request->criterio;
+            $estado = $request->status;
 
             if($buscar==''){
                 $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
                 'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
                 'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
-                ->where('personas.active',1)
+                ->where('personas.active',$estado)
                 ->orderBy('id', 'desc')->paginate(12);
             }else{
                 $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
                 ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email',
                 'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo',
                 'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
-                ->where([[$criterio, 'like', '%'. $buscar . '%'],['personas.active',1]])
+                ->where([[$criterio, 'like', '%'. $buscar . '%'],['personas.estado',$estado]])
                 ->orderBy('id', 'desc')->paginate(12);
             }
         }
@@ -115,6 +116,20 @@ class ClienteController extends Controller
         $persona->observacion = $request->observacion;
         $persona->save();
     }
+
+    public function desactivarCliente(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $cliente = Persona::findOrFail($request->id);
+        $cliente->active = '0';
+        $cliente->save();
+    }
+    public function activarCliente(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $cliente = Persona::findOrFail($request->id);
+        $cliente->active = '1';
+        $cliente->save();
+    }
+
     public function selectCliente(Request $request){
 
         if (!$request->ajax()) return redirect('/');
