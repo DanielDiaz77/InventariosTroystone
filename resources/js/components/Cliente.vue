@@ -66,14 +66,14 @@
                                                     </button>
                                                 </div>&nbsp;
                                                 <div class="input-group">
-                                                    <button type="button" @click="desactivarCliente(persona.id)" class="btn btn-danger btn-sm">
+                                                    <button type="button" @click="desactivarCliente(persona.id,persona.nombre)" class="btn btn-danger btn-sm">
                                                         <i class="icon-trash"></i>
                                                     </button>
                                                 </div>&nbsp;
                                             </template>
                                             <template v-if="userrol == 1">
                                                 <div class="input-group" v-if="!persona.active">
-                                                    <button type="button" @click="activarCliente(persona.id)" class="btn btn-info btn-sm">
+                                                    <button type="button" @click="activarCliente(persona.id,persona.nombre)" class="btn btn-info btn-sm">
                                                         <i class="icon-check"></i>
                                                     </button>
                                                 </div>&nbsp;
@@ -984,6 +984,8 @@ export default {
 
             let me = this;
 
+            var newName = this.nombre;
+
             axios.post("/cliente/registrar", {
                 'nombre': this.nombre,
                 'tipo_documento': this.tipo_documento,
@@ -1001,6 +1003,10 @@ export default {
                 'cfdi' : this.cfdi
             })
             .then(function(response) {
+                swal.fire(
+                'Registrado!',
+                'El cliente ' + '<b>' + newName + '</b>' + ' ha sido registrado con éxito.',
+                'success')
                 me.cerrarModal();
                 me.listarPersona(1,'','nombre',1);
             })
@@ -1009,10 +1015,14 @@ export default {
             });
         },
         actualizarPersona() {
+            var page = this.pagination.current_page;
+
             if (this.validarPersona()) {
                 return;
             }
             let me = this;
+            var clienteUp =  this.nombre;
+
             axios.put("/cliente/actualizar", {
                 'nombre': this.nombre,
                 'tipo_documento': this.tipo_documento,
@@ -1032,7 +1042,11 @@ export default {
             })
             .then(function(response) {
                 me.cerrarModal();
-                me.listarPersona(1,'','nombre',1);
+                swal.fire(
+                'Actualizado!',
+                'El cliente ' + '<b>' + clienteUp + '</b>' + ' ha sido actualizado con éxito.',
+                'success')
+                me.listarPersona(page,'','nombre',1);
             })
             .catch(function(error) {
                 console.log(error);
@@ -1051,6 +1065,7 @@ export default {
         },
         cerrarModal() {
             var page = this.pagination.current_page;
+            var stat = this.status;
             this.modal = 0;
             this.tituloModal = "";
             this.nombre = "";
@@ -1066,7 +1081,7 @@ export default {
             this.errorPersona = 0;
             this.tipo = "";
             this.observacion = "";
-            this.listarPersona(page,'','nombre',1);
+            this.listarPersona(page,'','nombre',stat);
         },
         abrirModal(modelo, accion, data = []) {
             switch (modelo) {
@@ -1187,6 +1202,7 @@ export default {
         },
         ocultarDetalle(){
             var page = this.pagination.current_page;
+            var stat = this.status;
             this.listado = 1;
             this.btnNewCliente = 1;
             this.persona_id = 0;
@@ -1211,7 +1227,7 @@ export default {
             this.arrayVentasT = [];
             this.arrayCommentT = [];
             this.arrayActividadesT = [];
-            this.listarPersona(page,'','nombre',1);
+            this.listarPersona(page,'','nombre',stat);
         },
         obtenerTareas(idcliente){
             let me = this;
@@ -1415,8 +1431,9 @@ export default {
                 }
             })
         },
-        desactivarCliente(id) {
+        desactivarCliente(id,name) {
             var page = this.pagination.current_page;
+            var stat = this.status;
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
@@ -1427,7 +1444,7 @@ export default {
             });
 
             swalWithBootstrapButtons.fire({
-                title: "¿Esta seguro de eliminar este cliente?",
+                title: "¿Esta seguro de eliminar al cliente " + name +"?",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Aceptar!",
@@ -1437,13 +1454,14 @@ export default {
             .then(result => {
                 if (result.value) {
                     let me = this;
+                    var upCliente = me.nombre;
                     axios.put('/cliente/desactivar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarPersona(page,'','nombre',1);
+                        me.listarPersona(page,'','nombre',stat);
                         swalWithBootstrapButtons.fire(
                             "Eliminado!",
-                            "El cliente ha sido eliminado con éxito.",
+                            "El cliente " + "<b>" + name +"</b>" +" ha sido eliminado con éxito.",
                             "success"
                         )
                     }).catch(function(error) {
@@ -1453,8 +1471,9 @@ export default {
                 }
             })
         },
-        activarCliente(id) {
+        activarCliente(id,name) {
             var page = this.pagination.current_page;
+            var stat = this.status;
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                 confirmButton: "btn btn-success",
@@ -1464,7 +1483,7 @@ export default {
             });
 
             swalWithBootstrapButtons.fire({
-                title: "¿Esta seguro de activar este cliente?",
+                title: "¿Esta seguro de activar al cliente " + name + "?",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Aceptar!",
@@ -1477,10 +1496,10 @@ export default {
                     axios.put('/cliente/activar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarPersona(page,'','nombre',1);
+                        me.listarPersona(page,'','nombre',stat);
                         swalWithBootstrapButtons.fire(
                             "Activado!",
-                            "El cliente ha sido activado con éxito.",
+                            "El cliente " + "<b>" + name +"</b>" +" ha sido activado con éxito.",
                             "success"
                         )
                     }).catch(function(error) {
