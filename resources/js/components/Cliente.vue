@@ -490,6 +490,23 @@
                             <h5>Sin Actividades...</h5>
                         </div>
                     </div>
+                    <!-- Files Upploader -->
+                    <div class="col-md-6">
+                        <div class="page-header">
+                            <h3 id="timeline">Archivos adjuntos de {{ nombre }} &nbsp;</h3>
+                        </div>
+                        <hr>
+                        <div>
+                            <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Subir Archivos</label>
+                                    <input type="file" class="form-control" placeholder="Subir Archivos"
+                                        multiple accept="image/png,image/jpeg,image/jpg,application/pdf" @change="fieldChange">
+                                </div>
+                                 <button type="button" class="btn btn-sm btn-primary">Guardar</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group row mt-3">
@@ -884,7 +901,8 @@ export default {
             errorTarea: 0,
             errorMostrarMsjTarea: [],
             dateAct : "",
-            status : 1
+            status : 1,
+            arrayFiles : []
         };
     },
 
@@ -1508,7 +1526,32 @@ export default {
                 }else if (result.dismiss === swal.DismissReason.cancel){
                 }
             })
-        }
+        },
+        fieldChange(e){
+            /* console.log(e); */
+
+            let selectedFilesTemp = e.target.files;
+
+            for(var i=0;i<selectedFilesTemp.length;i++){
+
+                console.log("Archivo " + i + ":" + selectedFilesTemp[i]['name']);
+
+                let upFile = e.target.files[i];
+
+                this.cargarFiles(upFile);
+                /* this.arrayFiles.push(selectedFilesTemp[i]); */
+            }
+
+        },
+        cargarFiles(img){
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.arrayFiles.push({
+                    url : e.target.result
+                });
+            }
+            reader.readAsDataURL(img);
+        },
 
     },
     mounted() {
