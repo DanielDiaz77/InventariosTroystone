@@ -21,4 +21,8 @@ class Venta extends Model
     public function cliente(){
         return $this->belongsTo('App\Persona');
     }
+
+    public function files(){
+        return $this->morphMany(File::class,'fillable');
+    }
 }
