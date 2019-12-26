@@ -491,7 +491,7 @@
                         </div>
                     </div>
                     <!-- Files Upploader -->
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                         <div class="page-header">
                             <h3 id="timeline">Archivos adjuntos de {{ nombre }} &nbsp;</h3>
                         </div>
@@ -506,7 +506,7 @@
                                  <button type="button" class="btn btn-sm btn-primary">Guardar</button>
                             </form>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="form-group row mt-3">
@@ -1003,11 +1003,13 @@ export default {
             let me = this;
 
             var newName = this.nombre;
+            var rand = Math.round(Math.random() * (99 - 999));
+            var numcomp = "C-".concat(me.CodeDate,rand);
 
             axios.post("/cliente/registrar", {
                 'nombre': this.nombre,
                 'tipo_documento': this.tipo_documento,
-                'num_documento': this.num_documento,
+                'num_documento': numcomp,
                 'ciudad': this.ciudad,
                 'domicilio': this.domicilio,
                 'telefono': this.telefono,

@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\PDF;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\VentasExport;
+use App\Exports\VentasExportDet;
+
 
 class VentaController extends Controller
 {
@@ -85,6 +89,98 @@ class VentaController extends Controller
                 ->where([
                     ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                     ['ventas.estado','Registrado']
+                ])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }
+        }
+
+        return [
+            'pagination' => [
+                'total'        => $ventas->total(),
+                'current_page' => $ventas->currentPage(),
+                'per_page'     => $ventas->perPage(),
+                'last_page'    => $ventas->lastPage(),
+                'from'         => $ventas->firstItem(),
+                'to'           => $ventas->lastItem(),
+            ],
+            'ventas' => $ventas,
+            'userrol' => $usrol
+        ];
+    }
+
+    public function indexInvo(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $buscar = $request->buscar;
+        $criterio = $request->criterio;
+        $estadoV = $request->estado;
+
+        $usrol = \Auth::user()->idrol;
+
+        if($criterio == 'entregado'){
+            $buscar = 1;
+        }
+
+        if($criterio == 'entrega_parcial'){
+            $buscar = 1;
+        }
+
+
+        if($estadoV == "Anulada"){
+            if ($buscar==''){
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                ->where([['ventas.estado',$estadoV],['ventas.tipo_facturacion','Cliente']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }
+            else{
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                ->where([
+                    ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
+                    ['ventas.estado',$estadoV],
+                    ['ventas.tipo_facturacion','Cliente']
+                ])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }
+        }else{
+            if ($buscar==''){
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                ->where([['ventas.estado','Registrado'],['ventas.tipo_facturacion','Cliente']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }
+            else{
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                ->where([
+                    ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
+                    ['ventas.estado','Registrado'],
+                    ['ventas.tipo_facturacion','Cliente']
                 ])
                 ->orderBy('ventas.id', 'desc')->paginate(12);
             }
@@ -563,5 +659,18 @@ class VentaController extends Controller
         $venta->file = $fileName;
         $venta->save();
 
+    }
+
+    public function ListarExcel(Request $request){
+        $inicio = $request->inicio;
+        $fin = $request->fin;
+
+        return Excel::download(new VentasExport($inicio,$fin), 'presupuestos-'.$inicio.'-'.$fin.'.xlsx');
+    }
+    public function ListarExcelDet(Request $request){
+        $inicio = $request->inicio;
+        $fin = $request->fin;
+
+        return Excel::download(new VentasExportDet($inicio,$fin), 'DetallePresupuestos-'.$inicio.'-'.$fin.'.xlsx');
     }
 }

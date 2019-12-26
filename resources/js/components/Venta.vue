@@ -17,7 +17,7 @@
         <template v-if="listado==1">
             <div class="card-body">
                 <div class="form-inline">
-                    <div class="form-group mb-2 col-12">
+                    <div class="form-group mb-2 col-11">
                         <div class="input-group">
                             <select class="form-control mb-1" v-model="criterio">
                                 <option value="num_comprobante">No° Comprobante</option>
@@ -33,6 +33,9 @@
                             </select>
                             <button type="submit" @click="listarVenta(1,buscar,criterio,estadoVenta)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
                         </div>
+                    </div>
+                     <div class="form-group mb-2 col-1 float-right">
+                        <button @click="abrirModal5()" class="btn btn-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -1267,6 +1270,51 @@
     </div>
     <!--Fin del modal-->
 
+    <!-- Modal exportar excel -->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal5}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-success modal-md " role="document">
+            <div class="modal-content content-export">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal5()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                </div>
+                <div class="modal-body ">
+                    <!-- <h3 class="mb-3">Generar reporte de ventas</h3> -->
+                    <div class="row d-flex justify-content-around">
+                        <div class="col-12 col-md-6 mb-2">
+                            <label for=""><strong>Inicio: </strong></label>
+                            <!-- <date-picker name="date" v-model="fecha1" class="form-control" :config="options"></date-picker> -->
+                            <input type="date" class="form-control" v-model="fecha1">
+                        </div>
+                        <div class="col-12 col-md-6 mb-2">
+                            <label for=""><strong>Fin: </strong></label>
+                           <!--  <date-picker name="date" v-model="fecha2" :config="options"></date-picker> -->
+                           <input type="date" class="form-control" v-model="fecha2">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-5">
+                        <div>
+                            <button type="button" class="btn btn-primary mr-5" @click="listarExcel(fecha1,fecha2)">Resumido</button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary ml-5" @click="listarExcelDet(fecha1,fecha2)">Detallado</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal5()">Cerrar</button>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <!-- Fin exportar excel -->
+
   </main>
 </template>
 <script>
@@ -1274,9 +1322,11 @@ import vSelect from 'vue-select';
 import VueBarcode from 'vue-barcode';
 import VueLightbox from 'vue-lightbox';
 import moment from 'moment';
-import ToggleButton from 'vue-js-toggle-button'
+import ToggleButton from 'vue-js-toggle-button';
+import datePicker from 'vue-bootstrap-datetimepicker';
 Vue.component("Lightbox",VueLightbox);
 Vue.use(ToggleButton);
+Vue.use(datePicker);
 export default {
     data() {
         return {
@@ -1338,6 +1388,7 @@ export default {
             modal2: 0,
             modal3: 0,
             modal4: 0,
+            modal5: 0,
             ind : '',
             tituloModal: "",
             tipoAccion: 0,
@@ -1397,7 +1448,18 @@ export default {
             areaUs : "",
             acabado : "",
             estadoVenta : "",
-            usrol : 0
+            usrol : 0,
+            fecha1 : "",
+            fecha2 : "",
+            options: {
+                format: 'YYYY-MM-DD',
+                useCurrent: false,
+                showClear: true,
+                showClose: true,
+                daysOfWeekDisabled: [0],
+                minDate: moment().subtract(60, 'seconds'),
+                maxDate: moment().add(60, 'days'),
+            },
         };
     },
     components: {
@@ -2417,6 +2479,22 @@ export default {
             /* console.log(datec); */
             return datec;
         },
+        abrirModal5(){
+            this.modal5 = 1;
+            this.tituloModal = "Generar Reporte de ventas";
+        },
+        cerrarModal5(){
+            this.modal5 = 0;
+            this.tituloModal = "";
+            this.fecha1 = "";
+            this.fecha2 = "";
+        },
+        listarExcel(inicio, fin){
+            window.open('/venta/ExportExcel?inicio=' + inicio + '&fin=' + fin);
+        },
+        listarExcelDet(inicio, fin){
+            window.open('/venta/ExportExcelDet?inicio=' + inicio + '&fin=' + fin);
+        }
     },
     mounted() {
         this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta);
@@ -2461,5 +2539,9 @@ export default {
     }
     .sinpadding [class*="col-"] {
         padding: 0;
+    }
+    .content-export{
+        /* width: auto !important; */
+        height: 380px !important;
     }
 </style>

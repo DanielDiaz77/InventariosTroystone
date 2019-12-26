@@ -126,6 +126,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/ingreso/nextNum','IngresoController@getLastNum');
 
         Route::get('/venta','VentaController@index');
+        Route::get('/ventaInv','VentaController@indexInvo');
         Route::post('/venta/registrar','VentaController@store');
         Route::put('/venta/desactivar','VentaController@desactivar');
         Route::get('/venta/obtenerCabecera','VentaController@obtenerCabecera');
@@ -146,6 +147,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/venta/obtenerDetallesEntrega','VentaController@obtenerDetallesEntrega');
         Route::put('/entrega/updImagen','VentaController@updImage');
         Route::put('/entrega/eliminarImg', 'VentaController@eliminarImagen');
+        Route::get('/venta/ExportExcel','VentaController@listarExcel');
+        Route::get('/venta/ExportExcelDet','VentaController@listarExcelDet');
 
         Route::get('/cotizacion', 'CotizacionController@index');
         Route::post('/cotizacion/registrar', 'CotizacionController@store');

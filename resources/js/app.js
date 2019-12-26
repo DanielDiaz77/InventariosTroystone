@@ -40,6 +40,7 @@ Vue.component('acerca', require('./components/Acerca.vue').default);
 Vue.component('tarea', require('./components/Tarea.vue').default);
 Vue.component('calendario', require('./components/Calendario.vue').default);
 Vue.component('traslado', require('./components/Traslado.vue').default);
+Vue.component('facturacion', require('./components/Facturacion.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

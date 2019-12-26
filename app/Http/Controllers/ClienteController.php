@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Persona;
+use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 
@@ -74,8 +75,14 @@ class ClienteController extends Controller
             'userid' => $usid
         ];
     }
+
     public function store(Request $request){
         if(!$request->ajax()) return redirect('/');
+
+        /* $dt = Carbon::now()->format('Ynd'); */ //Generar la fecha en formato 20191226.
+
+        /* $noCliente = 'C-'+ $request->num_documento; */
+
         $persona = new Persona();
         $persona->nombre = $request->nombre;
         $persona->tipo_documento = $request->tipo_documento;
@@ -95,8 +102,12 @@ class ClienteController extends Controller
         /* $persona->idusuario = \Auth::user()->id; */
         $persona->save();
     }
+
     public function update(Request $request){
         if(!$request->ajax()) return redirect('/');
+
+        $dt = Carbon::now()->format('Ynd'); //Generar la fecha en formato 20191226.
+
         $persona = Persona::findOrFail($request->id);
         $persona->nombre = $request->nombre;
         $persona->tipo_documento = $request->tipo_documento;
@@ -123,6 +134,7 @@ class ClienteController extends Controller
         $cliente->active = '0';
         $cliente->save();
     }
+
     public function activarCliente(Request $request){
         if(!$request->ajax()) return redirect('/');
         $cliente = Persona::findOrFail($request->id);

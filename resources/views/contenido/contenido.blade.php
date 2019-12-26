@@ -67,6 +67,10 @@
                 <traslado></traslado>
             </template>
 
+            <template v-if="menu==18">
+                <facturacion></facturacion>
+            </template>
+
             <template v-if="menu==11">
                 <ayuda></ayuda>
             </template>
@@ -74,6 +78,7 @@
             <template v-if="menu==12">
                 <acerca></acerca>
             </template>
+
         @elseif(Auth::user()->idrol == 2)
 
             <template v-if="menu==0">
