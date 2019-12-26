@@ -45,6 +45,7 @@
                             <tr>
                                 <th>Opciones</th>
                                 <th>Nombre</th>
+                                <th>No° de cliente</th>
                                 <th>Domicilio</th>
                                 <th>Teléfono</th>
                                 <th>Contacto</th>
@@ -87,6 +88,7 @@
                                     </div>
                                 </td>
                                 <td v-text="persona.nombre"></td>
+                                <td v-text="persona.num_documento"></td>
                                 <td> {{ persona.ciudad}} {{persona.domicilio}}  </td>
                                 <td v-text="persona.telefono"></td>
                                 <td v-if="persona.company" v-text="persona.company"></td>
@@ -131,6 +133,7 @@
                     <div class="col-12 col-sm-6 col-lg-3 text-center">
                         <h1><i class="fa fa-user" aria-hidden="true"></i> {{ nombre}}</h1>
                         <p class="font-weight-bold" style="font-size: 20px;" v-text="tipo"></p>
+                        <p class="font-weight-bold" style="font-size: 20px;" v-text="num_documento"></p>
                     </div>
                     <div class="col-6 col-sm-6 col-lg-3 col-xl-2">
                         <label for=""><strong>Domicilio: </strong><span style="color:red;" v-show="!domicilio || !ciudad">(*Complete esta informacion)</span> </label>
@@ -1000,13 +1003,20 @@ export default {
                 return;
             }
 
-            let me = this;
+            let date = "";
+            moment.locale('es');
+            date = moment().format('YYMMDD');
 
             var newName = this.nombre;
             var rand = Math.round(Math.random() * (99 - 999));
-            var numcomp = "C-".concat(me.CodeDate,rand);
 
-            axios.post("/cliente/registrar", {
+
+
+            var numcomp = "C-".concat(date,rand);
+
+            console.log("Codigo: " + numcomp);
+
+            /* axios.post("/cliente/registrar", {
                 'nombre': this.nombre,
                 'tipo_documento': this.tipo_documento,
                 'num_documento': numcomp,
@@ -1032,7 +1042,7 @@ export default {
             })
             .catch(function(error) {
                 console.log(error);
-            });
+            }); */
         },
         actualizarPersona() {
             var page = this.pagination.current_page;

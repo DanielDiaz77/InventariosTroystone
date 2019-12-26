@@ -132,10 +132,10 @@
             <div class="card-body">
                 <!-- INF CLIENTE -->
                 <div class="form-group row">
-                    <div class="col-md-3 text-center">
-                        <div class="form-group">
-                            <h1 for="" class="float-left"><strong v-text="cliente"></strong></h1>
-                        </div>
+                    <div class="col-12 col-sm-6 col-lg-3 text-center">
+                        <h1><i class="fa fa-user" aria-hidden="true"></i> {{ cliente}}</h1>
+                       <!--  <p class="font-weight-bold" style="font-size: 20px;" v-text="tipo_cliente"></p> -->
+                        <p class="font-weight-bold" style="font-size: 20px;" v-text="num_cliente"></p>
                     </div>&nbsp;
                     <div class="col-md-2 text-center sinpadding" v-if="telefono_cliente">
                         <div class="form-group">
@@ -671,6 +671,7 @@ export default {
             user: '',
             idcliente: 0,
             cliente: '',
+            num_cliente : "",
             rfc_cliente : "",
             tipo_cliente : "",
             telefono_cliente : "",
@@ -1289,6 +1290,7 @@ export default {
                 me.contacto_cliente = me.arrayTareaT[0]['company'];
                 me.telcontacto_cliente = me.arrayTareaT[0]['tel_company'];
                 me.obs_cliente = me.arrayTareaT[0]['observacion'];
+                me.num_cliente = me.arrayTarea[0]['num_documento'];
             })
             .catch(function (error) {
                 console.log(error);

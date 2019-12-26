@@ -106,7 +106,7 @@ class TareaController extends Controller
                     ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
                     'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
                     'personas.tel_company','users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
-                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase','personas.num_documento')
                     ->where([['tareas.estado',0],['tareas.tipo','!=','Comentario']])
                     ->orderBy('tareas.fecha', 'asc')->paginate(12);
                 }else{
@@ -115,7 +115,7 @@ class TareaController extends Controller
                     ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
                     'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
                     'personas.tel_company','users.idrol','users.area','tareas.id','tareas.nombre','tareas.descripcion',
-                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+                    'tareas.fecha','tareas.estado', 'tareas.tipo as clase','personas.num_documento')
                     ->where([[$criterio, 'like', '%'. $buscar . '%'],['tareas.estado',0],['tareas.tipo','!=','Comentario']])
                     ->orderBy('tareas.fecha', 'asc')->paginate(12);
                 }
@@ -225,7 +225,7 @@ class TareaController extends Controller
         ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
             'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
             'personas.tel_company','personas.observacion','users.idrol','users.area','tareas.id','tareas.nombre',
-            'tareas.descripcion','tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+            'tareas.descripcion','tareas.fecha','tareas.estado', 'tareas.tipo as clase','personas.num_documento')
         ->where([
             ['tareas.idcliente',$idcliente],
             ['tareas.tipo','!=','Comentario']
@@ -237,7 +237,7 @@ class TareaController extends Controller
         ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
             'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
             'personas.tel_company','personas.observacion','users.idrol','users.area','tareas.id','tareas.nombre',
-            'tareas.descripcion','tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+            'tareas.descripcion','tareas.fecha','tareas.estado', 'tareas.tipo as clase','personas.num_documento')
         ->where([
             ['tareas.idcliente',$idcliente],
             ['tareas.tipo','!=','Comentario'],
@@ -250,7 +250,7 @@ class TareaController extends Controller
         ->select('personas.id as idcliente','personas.nombre as cliente','personas.domicilio','personas.telefono',
             'personas.ciudad','personas.rfc','personas.email','personas.tipo','users.usuario','personas.company',
             'personas.tel_company','personas.observacion','users.idrol','users.area','tareas.id','tareas.nombre',
-            'tareas.descripcion','tareas.fecha','tareas.estado', 'tareas.tipo as clase')
+            'tareas.descripcion','tareas.fecha','tareas.estado', 'tareas.tipo as clase','personas.num_documento')
         ->where([
             ['tareas.idcliente',$idcliente],
             ['tareas.tipo','Comentario'],
