@@ -20,4 +20,8 @@ class Persona extends Model
         return $this->hasOne('App\User');
     }
 
+    public function documents(){
+        return $this->morphMany(Document::class,'documentable');
+    }
+
 }

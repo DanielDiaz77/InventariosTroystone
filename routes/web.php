@@ -107,6 +107,9 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/cliente/selectCliente', 'ClienteController@selectCliente');
         Route::put('/cliente/desactivar', 'ClienteController@desactivarCliente');
         Route::put('/cliente/activar', 'ClienteController@activarCliente');
+        Route::put('/cliente/filesupplo', 'ClienteController@filesUppload');
+        Route::get('/cliente/getDocs', 'ClienteController@getDocs');
+        Route::put('/cliente/eliminarDoc', 'ClienteController@eliminarDoc');
 
         Route::get('/rol', 'RolController@index');
         Route::get('/rol/selectRol', 'RolController@selectRol');

@@ -21,7 +21,4 @@ class Tarea extends Model
         return $this->belongsTo('App\Persona');
     }
 
-    public function files(){
-        return $this->morphMany(File::class,'fillable');
-    }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Persona;
+use App\Document;
 use Carbon\Carbon;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClienteController extends Controller
 {
@@ -60,6 +61,7 @@ class ClienteController extends Controller
                 ->orderBy('id', 'desc')->paginate(12);
             }
         }
+
 
         return [
             'pagination' => [
@@ -174,5 +176,89 @@ class ClienteController extends Controller
         }
 
         return ['clientes' => $clientes];
+    }
+
+    public function filesUppload(Request $request){
+
+        if (!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+
+            //The name of the directory that we need to create.
+            $directoryName = 'clientesfiles';
+
+            if(!is_dir($directoryName)){
+                //Directory does not exist, so lets create it.
+                mkdir($directoryName, 0777);
+            }
+
+            $archivos = $request->filesdata;//Array de archivos
+
+
+            $docs = array();
+            foreach($archivos as $ar=>$file){
+
+                $exploded = explode(',', $file['url']);
+                $decoded = base64_decode($exploded[1]);
+                $extn = explode('/', $file['tipo']);
+                $extension = $extn[1];
+                $fileName = str_random().'.'.$extension;
+                $path = public_path($directoryName).'/'.$fileName;
+                file_put_contents($path,$decoded);
+
+                //array_push($docs,$fileName);
+
+                $docum = new Document(['url' => $fileName, 'tipo' => $extension ]);
+                $persona = Persona::findOrFail($request->id); //ID dueño de los archivos
+                $persona->documents()->save($docum);
+                DB::commit();
+
+                /* array_push($docs,$docum); */
+            }
+           /*  $cliente = $persona->nombre;
+            return ['ArrayDocs' => $docs,'Cliente' => $cliente]; */
+
+
+        }catch(Exception $e){
+            DB::rollBack();
+        }
+    }
+
+    public function getDocs(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $cliente = Persona::findOrFail($request->id); //ID dueño de los archivos
+        $files = $cliente->documents()->get();
+
+        return [
+            'documentos' => $files
+        ];
+    }
+
+    public function eliminarDoc(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        //The name of the directory that we need to create.
+        $directoryName = 'clientesfiles';
+
+        try{
+            DB::beginTransaction();
+
+            $doc= Document::findOrFail($request->id);
+            $img = $doc->url;
+
+
+            if($img != null){
+                $image_path = public_path($directoryName).'/'.$img;
+                if(file_exists($image_path)){
+                    unlink($image_path);
+                }
+            }
+
+            $doc->delete();
+            DB::commit();
+
+        }catch(Exception $e){
+            DB::rollBack();
+        }
     }
 }

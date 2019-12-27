@@ -436,7 +436,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Fila de Actividades en calendario -->
+                <!-- Fila de Actividades en calendario & Files Upploader -->
                 <div class="form-group row mt-3">
                     <!-- Actividades -->
                     <div class="col-md-6">
@@ -494,9 +494,47 @@
                         </div>
                     </div>
                     <!-- Files Upploader -->
-                    <!-- <div class="col-md-6">
+                    <div class="col-md-6">
                         <div class="page-header">
                             <h3 id="timeline">Archivos adjuntos de {{ nombre }} &nbsp;</h3>
+                        </div>
+                        <div class="divdocs" v-if="docsArray.length">
+                            <div v-for="file in docsArray" :key="file.id" class="d-flex justify-content-around">
+                                <div>
+                                    <template v-if="file.tipo != 'pdf'">
+                                        <div class="d-flex justify-content-center">
+                                            <div>
+                                                <lightbox class="m-0" album="" :src="'clientesfiles/'+file.url">
+                                                    <figure class="figure">
+                                                        <img :src="'clientesfiles/'+file.url" width="150" height="100" class="figure-img img-fluid rounded" alt="File CAPTION">
+                                                        <figcaption class="figure-caption text-right" v-text="file.url"></figcaption>
+                                                    </figure>
+                                                </lightbox>&nbsp;
+                                            </div>
+                                            <div>
+                                                <button @click="eliminarFile(file.id,persona_id)" class="btn btn-transparent text-danger rounded-circle"><i class="fa fa-times fa-2x"></i></button>
+                                            </div>
+                                        </div>
+
+                                    </template>
+                                    <template v-else>
+                                        <div class="d-flex justify-content-center">
+                                            <div>
+                                                <figure class="figure">
+                                                    <img @click="downloadDoc(file.url)" src="img/PDFICON.png" width="100" height="70" class="figure-img img-fluid rounded" alt="File CAPTION">
+                                                    <figcaption class="figure-caption text-right" v-text="file.url"></figcaption>
+                                                </figure>
+                                            </div>
+                                            <div>
+                                                <button @click="eliminarFile(file.id,persona_id)" class="btn btn-transparent text-danger rounded-circle"><i class="fa fa-times fa-2x"></i></button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else style="height: auto !important;">
+                            <h5>Sin archivos adjuntos...</h5>
                         </div>
                         <hr>
                         <div>
@@ -506,10 +544,10 @@
                                     <input type="file" class="form-control" placeholder="Subir Archivos"
                                         multiple accept="image/png,image/jpeg,image/jpg,application/pdf" @change="fieldChange">
                                 </div>
-                                 <button type="button" class="btn btn-sm btn-primary">Guardar</button>
+                                 <button v-if="arrayFiles.length" @click="guardarFiles()" type="button" class="btn btn-sm btn-primary">Guardar</button>
                             </form>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
 
                 <div class="form-group row mt-3">
@@ -840,6 +878,8 @@
 
 <script>
 import moment from 'moment';
+import VueLightbox from 'vue-lightbox';
+Vue.component("Lightbox",VueLightbox);
 export default {
     data() {
         return {
@@ -905,7 +945,8 @@ export default {
             errorMostrarMsjTarea: [],
             dateAct : "",
             status : 1,
-            arrayFiles : []
+            arrayFiles : [],
+            docsArray : []
         };
     },
 
@@ -1227,7 +1268,7 @@ export default {
             this.obtenerTareas(idcliente);
             this.obtenerVentas(idcliente);
             this.obtenerEventos(idcliente,1);
-
+            this.getDocs(idcliente);
 
         },
         ocultarDetalle(){
@@ -1299,6 +1340,18 @@ export default {
             });
 
             /* this.arrayActividadesT = []; */
+        },
+        getDocs(idcliente){
+            let me = this;
+            var url= '/cliente/getDocs?id=' + idcliente;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.docsArray = respuesta.documentos;
+                /* console.log(respuesta.documentos); */
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         },
         cambiarPaginaEvent(idcliente,page){
             let me = this;
@@ -1539,31 +1592,102 @@ export default {
                 }
             })
         },
+        pdfVenta(id){
+            window.open('/venta/pdf/'+id);
+        },
+        downloadDoc(file){
+            window.open('clientesfiles/'+file);
+        },
         fieldChange(e){
             /* console.log(e); */
 
             let selectedFilesTemp = e.target.files;
 
+           /*  console.log(selectedFilesTemp); */
+
             for(var i=0;i<selectedFilesTemp.length;i++){
 
-                console.log("Archivo " + i + ":" + selectedFilesTemp[i]['name']);
+                /* console.log("Archivo " + i + ":" + selectedFilesTemp[i]['name']);
+
+                console.log("Tipo  " + i + ":" + selectedFilesTemp[i]['type']); */
 
                 let upFile = e.target.files[i];
+                let type = e.target.files[i]["type"];
+                this.cargarFiles(upFile,type);
 
-                this.cargarFiles(upFile);
                 /* this.arrayFiles.push(selectedFilesTemp[i]); */
             }
 
         },
-        cargarFiles(img){
+        cargarFiles(img,type){
             let reader = new FileReader();
             reader.onload = (e) => {
                 this.arrayFiles.push({
-                    url : e.target.result
+                    url : e.target.result,
+                    tipo : type
                 });
             }
             reader.readAsDataURL(img);
         },
+        guardarFiles(){
+            let me = this;
+            var cliente = this.persona_id;
+            axios.put('/cliente/filesupplo',{
+                'id' : this.persona_id,
+                'filesdata': this.arrayFiles
+            }).then(function(response) {
+                swal.fire(
+                'Completado!',
+                'Los archivos fueron guardados con éxito.',
+                'success');
+                me.arrayFiles = [];
+                me.getDocs(cliente);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        /* eliminarFile(id){
+            console.log("Eliminar el documento " + id);
+        }, */
+        eliminarFile(id,idcliente){
+            var cliente = idcliente;
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro eliminar este documento?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/cliente/eliminarDoc', {
+                        'id' : id
+                    }).then(function(response) {
+                        swalWithBootstrapButtons.fire(
+                            "Eliminado!",
+                            "El documento ha sido eliminada con éxito.",
+                            "success"
+                        );
+                        me.getDocs(cliente);
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
+        }
+
 
     },
     mounted() {
@@ -1607,14 +1731,14 @@ export default {
         height: auto !important;
 
     }
-    /* div.divtask{
-        height: 400px;
+    div.divdocs{
+        height: 300px !important;
         width: 100% !important;
         overflow-y: scroll;
         scrollbar-width: none;
     }
-    .divtask::-webkit-scrollbar {
+    .divdocs::-webkit-scrollbar {
         display: none;
-    } */
+    }
 
 </style>
