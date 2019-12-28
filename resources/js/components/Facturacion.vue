@@ -21,14 +21,27 @@
                                 <option value="fecha_hora">Fecha</option>
                                 <option value="forma_pago">Forma de pago</option>
                             </select>
-                            <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio,estadoVenta)" class="form-control mb-1" placeholder="Texto a buscar...">
+                            <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio,estadoVenta,tipo_fact)" class="form-control mb-1" placeholder="Texto a buscar...">
                         </div>
                         <div class="input-group">
-                            <select class="form-control mb-1" v-model="estadoVenta" @change="listarVenta(1,buscar,criterio,estadoVenta)">
-                                <option value="">Activa</option>
-                                <option value="Anulada">Cancelada</option>
+                            <select class="form-control mb-1" v-model="estadoVenta" @change="listarVenta(1,buscar,criterio,estadoVenta,tipo_fact)">
+                                <option value="1">Facturado</option>
+                                <option value="0">No facturado</option>
                             </select>
-                            <button type="submit" @click="listarVenta(1,buscar,criterio,estadoVenta)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                            <button type="submit" @click="listarVenta(1,buscar,criterio,estadoVenta,tipo_fact)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                        </div>&nbsp;
+                        <div class="input-group input-group-sm ml-xl-5">
+                            <!-- <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Tipo de facturación &nbsp; <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
+                                <button class="btn btn-sm btn-info" type="button">Tipo de facturación &nbsp; <i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+                            </div> -->
+                            <select class="form-control" id="tipofact" name="tipofact" v-model="tipo_fact" @change="listarVenta(1,buscar,criterio,estadoVenta,tipo_fact)">
+                                <option value="Cliente">Cliente</option>
+                                <option value="Publico General">Publico General</option>
+                            </select>
+                            <!-- <div class="input-group-prepend"> -->
+                                <button class="btn btn-sm btn-info" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp; Tipo de facturación </button>
+                            <!-- </div> -->
                         </div>
                     </div>
                 </div>
@@ -39,6 +52,7 @@
                                 <th>Opciones</th>
                                 <th>Atendió</th>
                                 <th>Cliente</th>
+                                <th>RFC</th>
                                 <th>Tipo Comprobante</th>
                                 <th>No° Comprobante</th>
                                 <th>Fecha Hora</th>
@@ -46,13 +60,12 @@
                                 <th>Total</th>
                                 <th>Forma de pago</th>
                                 <th>Facturación</th>
-                                <th>Entregado</th>
-                                <th>100% Pagado</th>
-                                <th>Estado</th>
+                                <th>Facturado</th>
+                                <th>Factura Enviada</th>
 
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if="arrayVenta.length">
                             <tr v-for="venta in arrayVenta" :key="venta.id">
                                 <td>
                                     <button type="button" class="btn btn-success btn-sm" @click="verVenta(venta.id)">
@@ -64,6 +77,7 @@
                                 </td>
                                  <td v-text="venta.usuario"></td>
                                 <td v-text="venta.nombre"></td>
+                                <td v-text="venta.rfccliente"></td>
                                 <td v-text="venta.tipo_comprobante"></td>
                                 <td v-text="venta.num_comprobante"></td>
                                 <td v-text="venta.fecha_hora"></td>
@@ -71,26 +85,32 @@
                                 <td v-text="venta.total"></td>
                                 <td v-text="venta.forma_pago"></td>
                                 <td v-text="venta.tipo_facturacion"></td>
-                                <td v-if="venta.entregado">
-                                    <span class="badge badge-success">100%</span>
+                                <td class="text-center">
+                                    <input type="checkbox" :id="'chk'+venta.id" v-model="venta.facturado"
+                                        @change="cambiarFacturacion(venta.id,venta.facturado,venta.num_comprobante)" :disabled="usrol!=1">
+                                    <template v-if="venta.facturado">
+                                         <label :for="'chk'+venta.id">Facturado</label>
+                                    </template>
+                                    <template v-else>
+                                        <label :for="'chk'+venta.id">No Facturado</label>
+                                    </template>
                                 </td>
-                                <td v-else-if="venta.entrega_parcial">
-                                    <span class="badge badge-warning">Parcial</span>
+                                <td class="text-center">
+                                    <input type="checkbox" :id="'chkEn'+venta.id" v-model="venta.factura_env"
+                                        @change="cambiarFacturacionEnv(venta.id,venta.factura_env,venta.num_comprobante)" :disabled="!venta.facturado">
+                                    <template v-if="venta.factura_env">
+                                         <label :for="'chkEn'+venta.id">Enviada</label>
+                                    </template>
+                                    <template v-else>
+                                        <label :for="'chkEn'+venta.id">No Enviada</label>
+                                    </template>
                                 </td>
-                                <td v-else>
-                                     <span class="badge badge-danger">No entregado</span>
-                                </td>
-                                 <td v-if="venta.pagado">
-                                    <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
-                                </td>
-                                <td v-else>
-                                    <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
-                                </td>
-                                <td v-if="venta.estado =='Registrado'">
-                                    <span class="badge badge-success">Activa</span>
-                                </td>
-                                <td v-else>
-                                    <span class="badge badge-danger">Cancelada</span>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
+                            <tr>
+                                <td colspan="14" class="text-center">
+                                    <strong>NO hay presupuestos con ese criterio o estado...</strong>
                                 </td>
                             </tr>
                         </tbody>
@@ -99,13 +119,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoVenta)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoVenta,tipo_fact)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoVenta)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoVenta,tipo_fact)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoVenta)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoVenta,tipo_fact)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -639,7 +659,11 @@ export default {
             btnEntrega : false,
             btnPagado : false,
             estadoVn : "",
-            estadoVenta : ""
+            estadoVenta : "0",
+            facturado : 0,
+            factura_env : 0,
+            tipo_fact : "Cliente",
+            usrol : 0,
         };
     },
     components: {
@@ -686,24 +710,25 @@ export default {
 
         },
     methods: {
-        listarVenta (page,buscar,criterio,estadoVenta){
+        listarVenta (page,buscar,criterio,estadoVenta,tipoFact){
             let me=this;
-            var url= '/ventaInv?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estadoVenta;
+            var url= '/ventaInv?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estadoVenta + '&tipofact=' + tipoFact;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayVenta = respuesta.ventas.data;
                 me.pagination= respuesta.pagination;
+                me.usrol = respuesta.userrol;
             })
             .catch(function (error) {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio,estadoVenta){
+        cambiarPagina(page,buscar,criterio,estadoVenta,tipoFact){
             let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarVenta(page,buscar,criterio,estadoVenta);
+                me.listarVenta(page,buscar,criterio,estadoVenta,tipoFact);
         },
         mostrarDetalle(){
             this.listado = 0;
@@ -943,10 +968,79 @@ export default {
         },
         pdfVenta(id){
             window.open('/venta/pdf/'+id);
+        },
+        cambiarFacturacion(id,estado,pr){
+            /* console.log('Cambiar el estado ' + estado + ' de la venta ' + id); */
+            let me = this;
+
+            var factip = me.tipo_fact;
+            var pageac = me.pagination.current_page;
+            var estadovt = me.estadoVenta;
+
+            if(estado == true){
+                me.facturado = 1;
+            }else{
+                me.facturado = 0;
+            }
+            //console.log('Venta ' + id + ' marcada como ' + me.facturado);
+            axios.put('/venta/cambiarFacturacion',{
+                'id': id,
+                'estado' : this.facturado
+            }).then(function (response) {
+                if(estado == 1){
+                    swal.fire(
+                    'Completado!',
+                    'El presupuesto '+ pr + ' ha sido registrado con facturado.',
+                    'success')
+                }else{
+                    swal.fire(
+                    'Atención!',
+                    'El presupuesto '+ pr +' ha sido registrado como no facturado.',
+                    'warning')
+                }
+                me.listarVenta(pageac,'','',estadovt,factip);
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        cambiarFacturacionEnv(id,estado,pr){
+            /* console.log('Cambiar el estadoenv ' + estado + ' de la venta ' + id); */
+            let me = this;
+
+            var factip = me.tipo_fact;
+            var pageac = me.pagination.current_page;
+            var estadovt = me.estadoVenta;
+
+            if(estado == true){
+                me.factura_env = 1;
+            }else{
+                me.factura_env = 0;
+            }
+
+            axios.put('/venta/cambiarFacturacionEnv',{
+                'id': id,
+                'estadoEn' : this.factura_env
+            }).then(function (response) {
+                if(estado == 1){
+                    swal.fire(
+                    'Completado!',
+                    'La factura del presupuesto '+ pr + ' ha sido registrado con enviada.',
+                    'success')
+                }else{
+                    swal.fire(
+                    'Atención!',
+                    'La factura del presupuesto '+ pr +' ha sido registrado como no enviada.',
+                    'warning')
+                }
+                me.listarVenta(pageac,'','',estadovt,factip);
+            }).catch(function (error) {
+                console.log(error);
+            });
+
         }
     },
     mounted() {
-        this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta);
+        this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta,this.tipo_fact);
     }
 };
 </script>

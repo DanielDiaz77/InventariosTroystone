@@ -129,6 +129,10 @@
                 <acerca></acerca>
             </template>
 
+            <template v-if="menu==18">
+                <facturacion></facturacion>
+            </template>
+
         @elseif(Auth::user()->idrol == 3)
 
             <template v-if="menu==0">

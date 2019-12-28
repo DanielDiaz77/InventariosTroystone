@@ -20,23 +20,38 @@
                     <div class="form-group mb-2 col-11">
                         <div class="input-group">
                             <select class="form-control mb-1" v-model="criterio">
+                                <option value="cliente">Cliente</option>
                                 <option value="num_comprobante">No° Comprobante</option>
                                 <option value="fecha_hora">Fecha</option>
                                 <option value="forma_pago">Forma de pago</option>
                             </select>
-                            <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio,estadoVenta)" class="form-control mb-1" placeholder="Texto a buscar...">
+                            <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega)" class="form-control mb-1" placeholder="Texto a buscar...">
                         </div>
                         <div class="input-group">
-                            <select class="form-control mb-1" v-model="estadoVenta" @change="listarVenta(1,buscar,criterio,estadoVenta)">
+                            <select class="form-control mb-1" v-model="estadoVenta" @change="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega)">
                                 <option value="">Activa</option>
                                 <option value="Anulada">Cancelada</option>
                             </select>
-                            <button type="submit" @click="listarVenta(1,buscar,criterio,estadoVenta)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                            <button type="submit" @click="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                        </div>
+                        <div class="input-group input-group-sm ml-sm-2 mr-sm-1 ml-md-2 ml-lg-5" v-if="estadoVenta!='Anulada'">
+                            <select class="form-control" id="tipofact" name="tipofact" v-model="estadoEntrega" @change="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega)">
+                                <option value="">Todo</option>
+                                <option value="entregado">100%</option>
+                                <option value="entrega_parcial">Parcial</option>
+                                <option value="no_entregado">No entregado</option>
+                            </select>
+                            <!-- <div class="input-group-prepend"> -->
+                                <button class="btn btn-sm btn-warning" type="button"><i class="fa fa-truck" aria-hidden="true"></i>&nbsp; Entregas </button>
+                            <!-- </div> -->
+                        </div>
+                        <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5" v-if="estadoVenta!='Anulada'">
+                             <button @click="abrirModal5()" class="btn btn-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
                         </div>
                     </div>
-                     <div class="form-group mb-2 col-1 float-right">
+                    <!-- <div class="form-group mb-2 col-1 float-right">
                         <button @click="abrirModal5()" class="btn btn-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-sm table-hover table-responsive-xl">
@@ -58,7 +73,7 @@
 
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if="arrayVenta.length">
                             <tr v-for="venta in arrayVenta" :key="venta.id">
                                 <td>
                                     <div class="form-inline">
@@ -69,12 +84,14 @@
                                             <i class="fa fa-file-pdf-o"></i>
                                         </button>&nbsp;
                                         <template v-if="usrol != 1">
-                                            <button type="button" v-if="!venta.entregado" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)">
-                                                <i class="icon-trash"></i>
-                                            </button>
+                                           <template v-if="venta.estado == 'Registrado'">
+                                                <button type="button" v-if="!venta.entregado" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)">
+                                                    <i class="icon-trash"></i>
+                                                </button>
+                                           </template>
                                         </template>
                                         <template v-else>
-                                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)">
+                                            <button type="button"  class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)" v-if="venta.estado == 'Registrado'">
                                                 <i class="icon-trash"></i>
                                             </button>
                                         </template>
@@ -113,18 +130,25 @@
                                 </td>
                             </tr>
                         </tbody>
+                        <tbody v-else>
+                            <tr>
+                                <td colspan="13" class="text-center">
+                                    <strong>NO hay presupuestos con ese criterio o estado...</strong>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoVenta)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoVenta,estadoEntrega)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoVenta)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoVenta,estadoEntrega)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoVenta)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoVenta,estadoEntrega)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -1461,7 +1485,8 @@ export default {
                 maxDate: moment().add(60, 'days'),
             },
             facturado : 0,
-            factura_env: 0
+            factura_env: 0,
+            estadoEntrega : ""
         };
     },
     components: {
@@ -1571,9 +1596,9 @@ export default {
             }
         },
     methods: {
-        listarVenta (page,buscar,criterio,estadoVenta){
+        listarVenta (page,buscar,criterio,estadoVenta,estadoEntrega){
             let me=this;
-            var url= '/venta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estadoVenta;
+            var url= '/venta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estadoVenta + '&estadoEntrega=' + estadoEntrega;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayVenta = respuesta.ventas.data;
@@ -1649,12 +1674,12 @@ export default {
 
 
         },
-        cambiarPagina(page,buscar,criterio,estadoVenta){
+        cambiarPagina(page,buscar,criterio,estadoVenta,estadoEntrega){
             let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarVenta(page,buscar,criterio,estadoVenta);
+                me.listarVenta(page,buscar,criterio,estadoVenta,estadoEntrega);
         },
         cambiarPaginaArt(page,buscar,criterio,bodega,acabado){
             let me = this;
@@ -1796,7 +1821,7 @@ export default {
                 'data': this.arrayDetalle
             }).then(function(response) {
                 me.ocultarDetalle();
-                me.listarVenta(1,'','num_comprobante','');
+                me.listarVenta(1,'','num_comprobante','','');
                 me.idcliente = 0;
                 me.tipo_cliente = "";
                 me.rfc_cliente = "";
@@ -1853,7 +1878,7 @@ export default {
                     axios.put('/venta/desactivar',{
                         'id': id
                     }).then(function (response) {
-                        me.listarVenta(1,'','num_comprobante','');
+                        me.listarVenta(1,'','num_comprobante','','');
                         swal(
                         'Anulado!',
                         'La venta ha sido anulado con éxito.',
@@ -2362,7 +2387,7 @@ export default {
                 'id': id,
                 'entregado' : this.entregado
             }).then(function (response) {
-                me.listarVenta(1,'','num_comprobante','');
+                me.listarVenta(1,'','num_comprobante','','');
                 if(me.entregado == 1){
                     swal.fire(
                     'Completado!',
@@ -2389,7 +2414,7 @@ export default {
                 'id': id,
                 'entrega_parcial' : this.entregado_parcial
             }).then(function (response) {
-                me.listarVenta(1,'','num_comprobante','');
+                me.listarVenta(1,'','num_comprobante','','');
                 if(me.entregado_parcial == 1){
                     swal.fire(
                     'Completado!',
@@ -2418,7 +2443,7 @@ export default {
                 'id': id,
                 'pagado' : this.pagado
             }).then(function (response) {
-                me.listarVenta(1,'','num_comprobante','');
+                me.listarVenta(1,'','num_comprobante','','');
                 if(me.pagado == 1){
                     swal.fire(
                     'Completado!',
@@ -2503,7 +2528,7 @@ export default {
         }
     },
     mounted() {
-        this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta);
+        this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta,this.estadoEntrega);
         this.getLastNum();
     }
 };

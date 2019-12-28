@@ -143,6 +143,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/venta/actualizarObservacionPriv','VentaController@actualizarObservacionPriv');
         Route::get('/venta/nextNum','VentaController@getLastNum');
         Route::get('/venta/obtenerVentasCliente','VentaController@obtenerVentasCliente');
+        Route::put('/venta/cambiarFacturacion','VentaController@cambiarFacturacion');
+        Route::put('/venta/cambiarFacturacionEnv','VentaController@cambiarFacturacionEnv');
 
         Route::get('/entrega','VentaController@indexEntregas');
         Route::get('/entrega/pdf/{id}','VentaController@pdfEntrega');
