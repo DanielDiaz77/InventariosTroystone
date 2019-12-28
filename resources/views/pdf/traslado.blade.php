@@ -280,6 +280,7 @@
                 </table>
                 @foreach ($traslado as $t)
                 <p>
+                    <strong>UNA VEZ SALIDA LA MERCANCÍA NO EXISTEN CAMBIOS NI DEVOLUCIONES.</strong><br>
                     <strong>Fecha de registro: </strong>
                     <?php
                         //setlocale(LC_TIME, "spanish");

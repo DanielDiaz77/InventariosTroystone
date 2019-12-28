@@ -640,21 +640,21 @@
                                     <td>{{ (( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento) }}</td>
                                 </tr>
                                  <tr style="background-color: #CEECF5;">
-                                    <td colspan="12" align="right"><strong>Total Parcial:</strong></td>
+                                    <td colspan="13" align="right"><strong>Total Parcial:</strong></td>
                                     <td>$ {{total_parcial = (total / divImp).toFixed(2) }}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="12" align="right"><strong>Total Impuesto:</strong></td>
+                                    <td colspan="13" align="right"><strong>Total Impuesto:</strong></td>
                                     <td>$ {{total_impuesto=((total * impuesto)/(divImp)).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="12" align="right"><strong>Total Neto:</strong></td>
+                                    <td colspan="13" align="right"><strong>Total Neto:</strong></td>
                                     <td>$ {{ total}} </td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="13" class="text-center">
+                                    <td colspan="14" class="text-center">
                                         <strong>NO hay artículos en este detalle...</strong>
                                     </td>
                                 </tr>
@@ -1460,6 +1460,8 @@ export default {
                 minDate: moment().subtract(60, 'seconds'),
                 maxDate: moment().add(60, 'days'),
             },
+            facturado : 0,
+            factura_env: 0
         };
     },
     components: {
@@ -1961,6 +1963,8 @@ export default {
             this.contacto_cliente = "";
             this.telcontacto_cliente = "";
             this.obs_cliente = "";
+            this.factura_env = 0;
+            this.facturado = 0;
             this.getLastNum();
         },
         verVenta(id){
@@ -2001,6 +2005,8 @@ export default {
                 me.banco = arrayVentaT[0]['banco'];
                 me.tipo_facturacion = arrayVentaT[0]['tipo_facturacion'];
                 me.pagado = arrayVentaT[0]['pagado'];
+                me.facturado = arrayVentaT[0]['facturado'];
+                me.factura_env = arrayVentaT[0]['factura_env'];
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('dddd DD MMM YYYY hh:mm:ss a');

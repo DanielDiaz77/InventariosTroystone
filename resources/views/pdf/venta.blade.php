@@ -248,6 +248,7 @@
                             <th>MATERIAL</th>
                             <th>No° PLACA</th>
                             <th>MEDIDAS</th>
+                            <th>UBICACION</th>
                             <th>P U</th>
                             <th>METROS <sup>2</sup></th>
                             <th>CANT.</th>
@@ -263,6 +264,7 @@
                             <td class="td-b">{{ $det->articulo }}</td>
                             <td class="td-b">{{ $det->codigo }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
+                            <td class="td-b">{{ $det->ubicacion }}</td>
                             <td class="td-b">{{ $det->precio }}</td>
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>
                             <td class="td-b">{{ $det->cantidad }}</td>
@@ -280,10 +282,12 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                             <th class="th-b">SUBTOTAL</th>
                             <td class="th-b">{{ number_format(round($v->total/($v->impuesto + 1),2),2)}}</td>
                         </tr>
                         <tr>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -300,6 +304,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                             <th class="th-b">TOTAL</th>
                             <td class="th-b">{{ number_format($v->total,2) }}</td>
                         </tr>
@@ -309,14 +314,21 @@
                 </table>
                 @foreach ($venta as $v)
                 <p>
+                    <strong>UNA VEZ SALIDA LA MERCANCÍA NO EXISTEN CAMBIOS NI DEVOLUCIONES.</strong><br>
                     <strong>Fecha de realizacion: </strong>
                     <?php
-                        //setlocale(LC_TIME, "spanish.utf-8");
+                        /* setlocale(LC_TIME, "spanish.utf-8");
                         $mi_fecha = $v->created_at;
                         $mi_fecha = str_replace("/", "-", $mi_fecha);
                         $Nueva_Fecha = date("d-m-Y", strtotime($mi_fecha));
                         $Mes_Anyo = strftime("%A, %D de %B de %Y", strtotime($Nueva_Fecha));
-                        echo $Mes_Anyo;
+                        echo $Mes_Anyo; */
+                        date_default_timezone_set('America/Mexico_City');
+                        setlocale(LC_TIME, 'es_MX.UTF-8');
+                        //$fecha_actual=strftime("%Y-%m-%d");
+                        $hora_actual=strftime("%A, %d de %B de %Y",strtotime($v->created_at));
+                        echo $hora_actual;
+
                     ?> <br>
                     <strong>Nota: </strong>{{ $v->observacion }} <br>
                     <strong>Forma de pago: </strong>{{ $v->forma_pago }}

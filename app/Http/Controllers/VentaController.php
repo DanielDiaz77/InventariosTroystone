@@ -45,7 +45,8 @@ class VentaController extends Controller
                 'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                'ventas.factura_env')
                 ->where('ventas.estado',$estadoV)
                 ->orderBy('ventas.id', 'desc')->paginate(12);
             }
@@ -57,7 +58,8 @@ class VentaController extends Controller
                 'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                'ventas.factura_env')
                 ->where([
                     ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                     ['ventas.estado',$estadoV]
@@ -73,7 +75,8 @@ class VentaController extends Controller
                 'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                'ventas.factura_env')
                 ->where('ventas.estado','Registrado')
                 ->orderBy('ventas.id', 'desc')->paginate(12);
             }
@@ -85,7 +88,8 @@ class VentaController extends Controller
                 'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                'ventas.factura_env')
                 ->where([
                     ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                     ['ventas.estado','Registrado']
@@ -135,7 +139,8 @@ class VentaController extends Controller
                 'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                'ventas.factura_env')
                 ->where([['ventas.estado',$estadoV],['ventas.tipo_facturacion','Cliente']])
                 ->orderBy('ventas.id', 'desc')->paginate(12);
             }
@@ -147,7 +152,8 @@ class VentaController extends Controller
                 'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                'ventas.factura_env')
                 ->where([
                     ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                     ['ventas.estado',$estadoV],
@@ -164,7 +170,8 @@ class VentaController extends Controller
                 'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                'ventas.factura_env')
                 ->where([['ventas.estado','Registrado'],['ventas.tipo_facturacion','Cliente']])
                 ->orderBy('ventas.id', 'desc')->paginate(12);
             }
@@ -176,7 +183,8 @@ class VentaController extends Controller
                 'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                'ventas.tipo_facturacion','users.usuario','observacionpriv')
+                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                'ventas.factura_env')
                 ->where([
                     ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                     ['ventas.estado','Registrado'],
@@ -229,7 +237,8 @@ class VentaController extends Controller
             $venta->num_cheque = $request->num_cheque;
             $venta->banco = $request->banco;
             $venta->tipo_facturacion = $request->tipo_facturacion;
-
+            $venta->facturado = 0;
+            $venta->factura_env = 0;
             $venta->save();
 
             $detalles = $request->data;//Array de detalles
@@ -289,6 +298,8 @@ class VentaController extends Controller
             $venta->entregado = 0;
             $venta->entrega_parcial = 0;
             $venta->pagado = 0;
+            $venta->facturado = 0;
+            $venta->factura_env = 0;
             $venta->save();
 
             $detalles = DetalleVenta::select('idarticulo','cantidad')
@@ -319,7 +330,8 @@ class VentaController extends Controller
         'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
         'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
-        'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv')
+        'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv',
+        'ventas.facturado','ventas.factura_env')
         ->where('ventas.id','=',$id)
         ->orderBy('ventas.id', 'desc')->take(1)->get();
 
@@ -358,13 +370,13 @@ class VentaController extends Controller
             'ventas.num_cheque','ventas.banco','ventas.tipo_facturacion','ventas.pagado',
             'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
             'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial',
-            'ventas.observacionpriv')
+            'ventas.observacionpriv','ventas.facturado','ventas.factura_env')
         ->where('ventas.id',$id)->take(1)->get();
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
             ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
                 'articulos.sku as articulo','articulos.largo','articulos.alto',
-                'articulos.metros_cuadrados','articulos.codigo')
+                'articulos.metros_cuadrados','articulos.codigo','articulos.ubicacion')
             ->where('detalle_ventas.idventa',$id)
             ->orderBy('detalle_ventas.id','desc')->get();
 
@@ -443,7 +455,8 @@ class VentaController extends Controller
             'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
             'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-            'ventas.entrega_parcial','users.usuario','ventas.observacionpriv')
+            'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+            'ventas.factura_env')
             ->where([
                 ['ventas.pagado',1],
                 ['ventas.estado','!=','Anulada']
@@ -458,7 +471,8 @@ class VentaController extends Controller
             'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado',
             'ventas.num_cheque','ventas.entrega_parcial','ventas.banco','users.usuario',
-            'ventas.tipo_facturacion','ventas.pagado','personas.nombre','ventas.observacionpriv')
+            'ventas.tipo_facturacion','ventas.pagado','personas.nombre','ventas.observacionpriv',
+            'ventas.facturado','ventas.factura_env')
             ->where([
                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                 ['ventas.pagado',1],
@@ -514,13 +528,15 @@ class VentaController extends Controller
             'ventas.entregado','ventas.moneda','ventas.tipo_cambio', 'ventas.observacion',
             'ventas.num_cheque','ventas.banco','ventas.tipo_facturacion','ventas.pagado',
             'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
-            'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial')
+            'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial',
+            'ventas.facturado','ventas.factura_env')
         ->where('ventas.id',$id)->take(1)->get();
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
             ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
                 'detalle_ventas.entregadas','detalle_ventas.pendientes','articulos.sku as articulo',
-                'articulos.largo','articulos.alto','articulos.metros_cuadrados', 'articulos.codigo')
+                'articulos.largo','articulos.alto','articulos.metros_cuadrados', 'articulos.codigo',
+                'articulos.ubicacion')
             ->where('detalle_ventas.idventa',$id)
             ->orderBy('detalle_ventas.id','desc')->get();
 
@@ -628,7 +644,8 @@ class VentaController extends Controller
         'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
         'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
-        'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv')
+        'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv',
+        'ventas.facturado','ventas.factura_env')
         ->where('ventas.idcliente','=',$idcliente)
         ->orderBy('ventas.fecha_hora','desc')->paginate(5);
 
@@ -670,7 +687,6 @@ class VentaController extends Controller
     public function ListarExcelDet(Request $request){
         $inicio = $request->inicio;
         $fin = $request->fin;
-
         return Excel::download(new VentasExportDet($inicio,$fin), 'DetallePresupuestos-'.$inicio.'-'.$fin.'.xlsx');
     }
 }

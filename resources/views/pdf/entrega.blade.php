@@ -241,7 +241,8 @@
                             <th>MATERIAL</th>
                             <th>No° PLACA</th>
                             <th>MEDIDAS</th>
-                            <th>P U</th>
+                            <th>UBICACION</th>
+                            {{-- <th>P U</th> --}}
                             <th>METROS <sup>2</sup></th>
                             <th>CANT.</th>
                             <th>ENTREGADAS</th>
@@ -256,7 +257,8 @@
                             <td class="td-b">{{ $det->articulo }}</td>
                             <td class="td-b">{{ $det->codigo }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
-                            <td class="td-b">{{ $det->precio }}</td>
+                            <td class="td-b">{{ $det->ubicacion }}</td>
+                            {{-- <td class="td-b">{{ $det->precio }}</td> --}}
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>
                             <td class="td-b">{{ $det->cantidad }}</td>
                             <td class="td-b">{{ $det->entregadas }}</td>
@@ -268,6 +270,7 @@
                 </table>
                 @foreach ($venta as $v)
                 <p>
+                    <strong>UNA VEZ SALIDA LA MERCANCÍA NO EXISTEN CAMBIOS NI DEVOLUCIONES</strong><br>
                     <strong>Fecha de realizacion: </strong>
                     <?php
                         //setlocale(LC_TIME, "spanish");
