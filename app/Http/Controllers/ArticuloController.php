@@ -20,6 +20,8 @@ class ArticuloController extends Controller
         $criterio = $request->criterio;
         $bodega = $request->bodega;
         $acabado = $request->acabado;
+        $estado = $request->estado;
+
 
         if($criterio == 'idcategoria'){
             if($buscar != ''){
@@ -29,162 +31,483 @@ class ArticuloController extends Controller
             }
         }
 
-        if($bodega == ''){
-            if($buscar==''){
-                if($acabado == ''){
-                    $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                    ->leftjoin('users','articulos.idusuario','=','users.id')
-                    ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                        'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                        'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                        'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                        'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                        'articulos.comprometido','users.usuario')
-                    ->where('articulos.stock','>',0)
-                    ->orderBy('articulos.id', 'desc')->paginate(12);
-                    $total = Articulo::where('articulos.stock','>',0)->count();
+        if($estado == 1){
+            if($bodega == ''){
+                if($buscar==''){
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where('articulos.stock','>',0)
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where('articulos.stock','>',0)->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([
+                            ['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])->count();
+                    }
                 }else{
-                    $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                    ->leftjoin('users','articulos.idusuario','=','users.id')
-                    ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                        'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                        'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                        'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                        'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                        'articulos.comprometido','users.usuario')
-                    ->where([
-                        ['articulos.stock','>',0],
-                        ['articulos.terminado','like', '%'. $acabado . '%']
-                    ])
-                    ->orderBy('articulos.id', 'desc')->paginate(12);
-                    $total = Articulo::where([
-                        ['articulos.stock','>',0],
-                        ['articulos.terminado','like', '%'. $acabado . '%']
-                    ])->count();
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.stock','>',0]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.stock','>',0]
+                        ])->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])->count();
+                    }
                 }
             }else{
-                if($acabado == ''){
-                    $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                    ->leftjoin('users','articulos.idusuario','=','users.id')
-                    ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                        'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                        'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                        'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                        'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                        'articulos.comprometido','users.usuario')
-                    ->where([
-                        ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                        ['articulos.stock','>',0]
-                    ])
-                    ->orderBy('articulos.id', 'desc')->paginate(12);
-                    $total = Articulo::where([
-                        ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                        ['articulos.stock','>',0]
-                    ])->count();
+                if($buscar==''){
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.stock','>',0]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where('articulos.ubicacion',$bodega)->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.terminado','like', '%'. $acabado . '%']])->count();
+                    }
                 }else{
-                    $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                    ->leftjoin('users','articulos.idusuario','=','users.id')
-                    ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                        'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                        'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                        'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                        'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                        'articulos.comprometido','users.usuario')
-                    ->where([
-                        ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                        ['articulos.stock','>',0],
-                        ['articulos.terminado','like', '%'. $acabado . '%']
-                    ])
-                    ->orderBy('articulos.id', 'desc')->paginate(12);
-                    $total = Articulo::where([
-                        ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                        ['articulos.stock','>',0],
-                        ['articulos.terminado','like', '%'. $acabado . '%']
-                    ])->count();
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.stock','>',0]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.stock','>',0]
+                        ])->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])->count();
+                    }
                 }
             }
-        }else{
-            if($buscar==''){
-                if($acabado == ''){
-                    $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                    ->leftjoin('users','articulos.idusuario','=','users.id')
-                    ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                        'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                        'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                        'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                        'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                        'articulos.comprometido','users.usuario')
-                    ->where([
-                        ['articulos.ubicacion',$bodega],
-                        ['articulos.stock','>',0]
-                    ])
-                    ->orderBy('articulos.id', 'desc')->paginate(12);
-                    $total = Articulo::where('articulos.ubicacion',$bodega)->count();
+        }elseif($estado == 2){
+            if($bodega == ''){
+                if($buscar==''){
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where('articulos.stock','<=',0)
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where('articulos.stock','<=',0)->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.stock','<=',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([
+                            ['articulos.stock','<=',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])->count();
+                    }
                 }else{
-                    $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                    ->leftjoin('users','articulos.idusuario','=','users.id')
-                    ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                        'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                        'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                        'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                        'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                        'articulos.comprometido','users.usuario')
-                    ->where([
-                        ['articulos.ubicacion',$bodega],
-                        ['articulos.stock','>',0],
-                        ['articulos.terminado','like', '%'. $acabado . '%']
-                    ])
-                    ->orderBy('articulos.id', 'desc')->paginate(12);
-                    $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.terminado','like', '%'. $acabado . '%']])->count();
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.stock','<=',0]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.stock','<=',0]
+                        ])->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.stock','<=',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.stock','<=',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])->count();
+                    }
                 }
             }else{
-                if($acabado == ''){
-                    $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                    ->leftjoin('users','articulos.idusuario','=','users.id')
-                    ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                        'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                        'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                        'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                        'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                        'articulos.comprometido','users.usuario')
-                    ->where([
-                        ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                        ['articulos.ubicacion', $bodega],
-                        ['articulos.stock','>',0]
-                    ])
-                    ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                    $total = Articulo::where([
-                        ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                        ['articulos.ubicacion', $bodega],
-                        ['articulos.stock','>',0]
-                    ])->count();
+                if($buscar==''){
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.stock','<=',0]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0]])->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.stock','<=',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.terminado','like', '%'. $acabado . '%']])->count();
+                    }
                 }else{
-                    $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                    ->leftjoin('users','articulos.idusuario','=','users.id')
-                    ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                        'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                        'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                        'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                        'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                        'articulos.comprometido','users.usuario')
-                    ->where([
-                        ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                        ['articulos.ubicacion', $bodega],
-                        ['articulos.stock','>',0],
-                        ['articulos.terminado','like', '%'. $acabado . '%']
-                    ])
-                    ->orderBy('articulos.id', 'desc')->paginate(12);
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.stock','<=',0]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
 
-                    $total = Articulo::where([
-                        ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                        ['articulos.ubicacion', $bodega],
-                        ['articulos.stock','>',0],
-                        ['articulos.terminado','like', '%'. $acabado . '%']
-                    ])->count();
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.stock','<=',0]
+                        ])->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.stock','<=',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.stock','<=',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])->count();
+                    }
+                }
+            }
+        }elseif($estado == 3){
+            if($bodega == ''){
+                if($buscar==''){
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where('articulos.condicion',3)
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where('articulos.condicion',3)->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.condicion',3],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([
+                            ['articulos.condicion',3],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])->count();
+                    }
+                }else{
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.condicion',3]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.condicion',3]
+                        ])->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.condicion',3],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.condicion',3],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])->count();
+                    }
+                }
+            }else{
+                if($buscar==''){
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.condicion',3]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.condicion',3]])->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.condicion',3],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        $total = Articulo::where([
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.condicion',3]])->count();
+                    }
+                }else{
+                    if($acabado == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.condicion',3]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.condicion',3]
+                        ])->count();
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.condicion',3],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+
+                        $total = Articulo::where([
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
+                            ['articulos.ubicacion', $bodega],
+                            ['articulos.condicion',3],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])->count();
+                    }
                 }
             }
         }
+
+
 
         return [
             'pagination' => [
