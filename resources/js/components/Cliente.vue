@@ -1043,7 +1043,7 @@ export default {
             if (this.validarPersona()) {
                 return;
             }
-
+            let me = this;
             let date = "";
             moment.locale('es');
             date = moment().format('YYMMDD');
@@ -1055,9 +1055,9 @@ export default {
 
             var numcomp = "C-".concat(date,rand);
 
-            console.log("Codigo: " + numcomp);
+           /*  console.log("Codigo: " + numcomp); */
 
-            /* axios.post("/cliente/registrar", {
+            axios.post("/cliente/registrar", {
                 'nombre': this.nombre,
                 'tipo_documento': this.tipo_documento,
                 'num_documento': numcomp,
@@ -1083,7 +1083,7 @@ export default {
             })
             .catch(function(error) {
                 console.log(error);
-            }); */
+            });
         },
         actualizarPersona() {
             var page = this.pagination.current_page;
