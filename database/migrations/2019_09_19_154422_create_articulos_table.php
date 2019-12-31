@@ -22,7 +22,7 @@ class CreateArticulosTable extends Migration
             $table->string('terminado',50);
             $table->decimal('largo',4,2);
             $table->decimal('alto',4,2);
-            $table->decimal('metros_cuadrados',4,2);
+            $table->decimal('metros_cuadrados',6,4);
             $table->decimal('espesor',4,2);
             $table->decimal('precio_venta',11,2)->nullable();
             $table->string('ubicacion',50);
