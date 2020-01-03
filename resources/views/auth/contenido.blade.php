@@ -24,5 +24,13 @@
 
     {{-- <script src="js/app.js"></script> --}}
     <script src="js/plantilla.js"></script>
+    <style>
+        .troybackg {
+            background-color: #f5861c !important;
+        }
+        .troybackg-light {
+            background-color: #fc9c21 !important;
+        }
+    </style>
 </body>
 </html>

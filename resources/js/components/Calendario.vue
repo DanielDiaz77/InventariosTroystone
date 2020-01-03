@@ -120,7 +120,12 @@
                                     <option value="green" style="background-color: rgba(17, 192, 32, 0.9);color: #FFFFFF;">Verde</option>
                                     <option value="orange" style="background-color: rgba(253, 165, 0, 0.945);color: #FFFFFF;">Naranja</option>
                                     <option value="purple" style="background-color: rgba(181, 32, 250, 0.9);color: #FFFFFF;">Morado</option>
-                                    <option value="yellow" style="background-color: rgba(250, 234, 9, 0.986;">Amarillo</option>
+                                    <option value="yellow" style="background-color: rgba(250, 234, 9, 0.986);">Amarillo</option>
+                                    <option value="aqua" style="background-color: rgba(124, 255, 203, 0.986);">AquaMarina</option>
+                                    <option value="ruby" style="background-color: rgba(216, 17, 89, 0.986);color: #FFFFFF;">Ruby</option>
+                                    <option value="darkblue" style="background-color: rgba(23, 42, 58, 0.9);color: #FFFFFF;">Azul Marino</option>
+                                    <option value="brown" style="background-color: rgba(165, 117, 72, 0.9);color: #FFFFFF;">Café</option>
+                                    <option value="lavender" style="background-color: rgba(120, 85, 137, 0.726);color: #FFFFFF;">Lavanda</option>
                                 </select>
                             </div>
                             <div class="col-2 col-md-1 mb-2 order-md-7 order-7">
@@ -130,6 +135,11 @@
                                 <div v-if="clase=='orange'" class="m-2 clrorange"></div>
                                 <div v-if="clase=='purple'" class="m-2 clrpurple"></div>
                                 <div v-if="clase=='yellow'" class="m-2 clryellow"></div>
+                                <div v-if="clase=='aqua'" class="m-2 clraqua"></div>
+                                <div v-if="clase=='ruby'" class="m-2 clrruby"></div>
+                                <div v-if="clase=='darkblue'" class="m-2 clrdarkblue"></div>
+                                <div v-if="clase=='brown'" class="m-2 clrbrown"></div>
+                                <div v-if="clase=='lavender'" class="m-2 clrlavender"></div>
                             </div>
                         </div>
                         <div class="form-group row m-0 d-flex justify-content-around">
@@ -767,7 +777,11 @@ export default {
     .vuecal__event.orange {background-color: rgba(253, 165, 0, 0.945);border: 1px solid rgb(253, 165, 0, 0.945);color: #fff;}
     .vuecal__event.purple {background-color: rgba(181, 32, 250, 0.9);border: 1px solid rgb(181, 32, 250, 0.9);color: #fff;}
     .vuecal__event.yellow {background-color: rgba(250, 234, 9, 0.986);border: 1px solid rgb(250, 234, 9, 0.986);color: #000;}
-
+    .vuecal__event.aqua {background-color: rgba(124, 255, 203, 0.986);border: 1px solid rgb(124, 255, 203, 0.986);color: #000;}
+    .vuecal__event.ruby {background-color: rgba(216, 17, 89, 0.986);border: 1px solid rgb(216, 17, 89, 0.986);color: #fff;}
+    .vuecal__event.darkblue {background-color: rgba(23, 42, 58, 0.9);border: 1px solid rgb(23, 42, 58, 0.9);color: #fff;}
+    .vuecal__event.brown {background-color: rgba(165, 117, 72, 0.9);border: 1px solid rgb(165, 117, 72, 0.9);color: #fff;}
+    .vuecal__event.lavender {background-color: rgba(120, 85, 137, 0.726);border: 1px solid rgb(120, 85, 137, 0.726);color: #fff;}
 
     .clrred{
         background-color: rgba(217,83,79) !important;
@@ -796,6 +810,31 @@ export default {
     }
     .clryellow{
         background-color: rgba(250, 234, 9, 0.986) !important;
+        width: 20px;
+        height: 20px;
+    }
+    .clraqua{
+        background-color: rgba(124, 255, 203, 0.986) !important;
+        width: 20px;
+        height: 20px;
+    }
+    .clrruby{
+        background-color: rgba(216, 17, 89, 0.986) !important;
+        width: 20px;
+        height: 20px;
+    }
+    .clrdarkblue{
+        background-color: rgba(23, 42, 58, 0.9) !important;
+        width: 20px;
+        height: 20px;
+    }
+    .clrbrown{
+        background-color: rgba(165, 117, 72, 0.9) !important;
+        width: 20px;
+        height: 20px;
+    }
+    .clrlavender{
+        background-color: rgba(120, 85, 137, 0.726) !important;
         width: 20px;
         height: 20px;
     }
@@ -839,6 +878,36 @@ export default {
         /* box-shadow: inset 0 0 2px black; */
         -webkit-box-shadow: 0 1px 6px rgba(250, 234, 9, 0.986);
         box-shadow: 0 1px 6px rgba(250, 234, 9, 0.986);
+        height: 250px;
+    }
+    div.caja2-aqua{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(124, 255, 203, 0.986);
+        box-shadow: 0 1px 6px rgba(124, 255, 203, 0.986);
+        height: 250px;
+    }
+    div.caja2-ruby{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(216, 17, 89, 0.986);
+        box-shadow: 0 1px 6px rgba(216, 17, 89, 0.986);
+        height: 250px;
+    }
+    div.caja2-darkblue{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(23, 42, 58, 0.9);
+        box-shadow: 0 1px 6px rgba(23, 42, 58, 0.9);
+        height: 250px;
+    }
+    div.caja2-brown{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(165, 117, 72, 0.9);
+        box-shadow: 0 1px 6px rgba(165, 117, 72, 0.9);
+        height: 250px;
+    }
+    div.caja2-lavender{
+        /* box-shadow: inset 0 0 2px black; */
+        -webkit-box-shadow: 0 1px 6px rgba(120, 85, 137, 0.726);
+        box-shadow: 0 1px 6px rgba(120, 85, 137, 0.726);
         height: 250px;
     }
 
