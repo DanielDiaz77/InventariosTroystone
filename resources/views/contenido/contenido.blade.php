@@ -71,6 +71,10 @@
                 <facturacion></facturacion>
             </template>
 
+            <template v-if="menu==19">
+                <consultaactividad></consultaactividad>
+            </template>
+
             <template v-if="menu==11">
                 <ayuda></ayuda>
             </template>

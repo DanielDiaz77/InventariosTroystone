@@ -133,4 +133,158 @@ class EventController extends Controller
             'actividades' => $eventos
         ];
     }
+
+    public function listarEventos(Request $request){
+
+        //if(!$request->ajax()) return redirect('/');
+
+        $buscar = $request->buscar;
+        $criterio = $request->criterio;
+
+        $estado = $request->estado;
+        $area = $request->area;
+
+        if($area != ''){
+            if($estado != ''){
+                if($buscar!=''){
+                    if($criterio == 'cliente'){
+                        $eventos = Event::join('users','users.id','=','events.idusuario')
+                        ->join('personas','personas.id','=','events.idcliente')
+                        ->select('users.usuario as user','events.id','events.start',
+                        'events.end','events.title','events.content','events.title','events.class',
+                        'events.estado','events.area','personas.nombre as cliente')
+                        ->where([
+                            ['events.area',$area],
+                            ['events.estado',$estado],
+                            ['personas.nombre', 'like', '%'. $buscar . '%']])
+                        ->orderBy('events.start','desc')->paginate(12);
+                    }else{
+                        $eventos = Event::join('users','users.id','=','events.idusuario')
+                        ->join('personas','personas.id','=','events.idcliente')
+                        ->select('users.usuario as user','events.id','events.start',
+                        'events.end','events.title','events.content','events.title','events.class',
+                        'events.estado','events.area','personas.nombre as cliente')
+                        ->where([
+                            ['events.area',$area],
+                            ['events.estado',$estado],
+                            ['events.'.$criterio, 'like', '%'. $buscar . '%']])
+                        ->orderBy('events.start','desc')->paginate(12);
+                    }
+                }else{
+                    $eventos = Event::join('users','users.id','=','events.idusuario')
+                    ->join('personas','personas.id','=','events.idcliente')
+                    ->select('users.usuario as user','events.id','events.start',
+                    'events.end','events.title','events.content','events.title','events.class',
+                    'events.estado','events.area','personas.nombre as cliente')
+                    ->where([['events.area',$area],['events.estado',$estado]])
+                    ->orderBy('events.start','desc')->paginate(12);
+                }
+            }else{
+                if($buscar!=''){
+                    if($criterio=='cliente'){
+                        $eventos = Event::join('users','users.id','=','events.idusuario')
+                        ->join('personas','personas.id','=','events.idcliente')
+                        ->select('users.usuario as user','events.id','events.start',
+                        'events.end','events.title','events.content','events.title','events.class',
+                        'events.estado','events.area','personas.nombre as cliente')
+                        ->where([
+                            ['events.area',$area],
+                            ['personas.nombre','like', '%'. $buscar . '%']])
+                        ->orderBy('events.start','desc')->paginate(12);
+
+                    }else{
+                        $eventos = Event::join('users','users.id','=','events.idusuario')
+                        ->join('personas','personas.id','=','events.idcliente')
+                        ->select('users.usuario as user','events.id','events.start',
+                        'events.end','events.title','events.content','events.title','events.class',
+                        'events.estado','events.area','personas.nombre as cliente')
+                        ->where([
+                            ['events.area',$area],
+                            ['events.'.$criterio, 'like', '%'. $buscar . '%']])
+                        ->orderBy('events.start','desc')->paginate(12);
+                    }
+                }else{
+                    $eventos = Event::join('users','users.id','=','events.idusuario')
+                    ->join('personas','personas.id','=','events.idcliente')
+                    ->select('users.usuario as user','events.id','events.start',
+                    'events.end','events.title','events.content','events.title','events.class',
+                    'events.estado','events.area','personas.nombre as cliente')
+                    ->where('events.area',$area)
+                    ->orderBy('events.start','desc')->paginate(12);
+                }
+            }
+        }else{
+            if($estado != ''){
+                if($buscar!=''){
+                    if($criterio == 'cliente'){
+                        $eventos = Event::join('users','users.id','=','events.idusuario')
+                        ->join('personas','personas.id','=','events.idcliente')
+                        ->select('users.usuario as user','events.id','events.start',
+                        'events.end','events.title','events.content','events.title','events.class',
+                        'events.estado','events.area','personas.nombre as cliente')
+                        ->where([
+                            ['events.estado',$estado],
+                            ['personas.nombre', 'like', '%'. $buscar . '%']])
+                        ->orderBy('events.start','desc')->paginate(12);
+                    }else{
+                        $eventos = Event::join('users','users.id','=','events.idusuario')
+                        ->join('personas','personas.id','=','events.idcliente')
+                        ->select('users.usuario as user','events.id','events.start',
+                        'events.end','events.title','events.content','events.title','events.class',
+                        'events.estado','events.area','personas.nombre as cliente')
+                        ->where([['events.estado',$estado],['events.'.$criterio, 'like', '%'. $buscar . '%']])
+                        ->orderBy('events.start','desc')->paginate(12);
+                    }
+                }else{
+                    $eventos = Event::join('users','users.id','=','events.idusuario')
+                    ->join('personas','personas.id','=','events.idcliente')
+                    ->select('users.usuario as user','events.id','events.start',
+                    'events.end','events.title','events.content','events.title','events.class',
+                    'events.estado','events.area','personas.nombre as cliente')
+                    ->where('events.estado',$estado)
+                    ->orderBy('events.start','desc')->paginate(12);
+                }
+            }else{
+                if($buscar!=''){
+                    if($criterio == 'cliente'){
+                        $eventos = Event::join('users','users.id','=','events.idusuario')
+                        ->join('personas','personas.id','=','events.idcliente')
+                        ->select('users.usuario as user','events.id','events.start',
+                        'events.end','events.title','events.content','events.title','events.class',
+                        'events.estado','events.area','personas.nombre as cliente')
+                        ->where('personas.nombre', 'like', '%'. $buscar . '%')
+                        ->orderBy('events.start','desc')->paginate(12);
+                    }else{
+                        $eventos = Event::join('users','users.id','=','events.idusuario')
+                        ->join('personas','personas.id','=','events.idcliente')
+                        ->select('users.usuario as user','events.id','events.start',
+                        'events.end','events.title','events.content','events.title','events.class',
+                        'events.estado','events.area','personas.nombre as cliente')
+                        ->where('events.'.$criterio, 'like', '%'. $buscar . '%')
+                        ->orderBy('events.start','desc')->paginate(12);
+                    }
+                }else{
+                    $eventos = Event::join('users','users.id','=','events.idusuario')
+                    ->join('personas','personas.id','=','events.idcliente')
+                    ->select('users.usuario as user','events.id','events.start',
+                    'events.end','events.title','events.content','events.title','events.class',
+                    'events.estado','events.area','personas.nombre as cliente')
+                    ->orderBy('events.start','desc')->paginate(12);
+                }
+            }
+        }
+
+        return [
+            'pagination' => [
+                'total'         => $eventos->total(),
+                'current_page'  => $eventos->currentPage(),
+                'per_page'      => $eventos->perPage(),
+                'last_page'     => $eventos->lastPage(),
+                'from'          => $eventos->firstItem(),
+                'to'            => $eventos->lastItem(),
+            ],
+            'actividades' => $eventos
+        ];
+
+    }
 }

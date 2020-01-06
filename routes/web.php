@@ -179,6 +179,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::delete('/event/{id}','EventController@destroy');
         Route::put('/event/completar', 'EventController@completar');
         Route::get('/event/obtenerEventsCliente','EventController@obtenerEventsCliente');
+        Route::get('/event/listarEventos', 'EventController@listarEventos');
 
         Route::get('/traslado', 'TrasladoController@index');
         Route::post('/traslado/registrar', 'TrasladoController@store');

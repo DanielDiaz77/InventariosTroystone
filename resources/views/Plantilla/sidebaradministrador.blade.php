@@ -68,6 +68,9 @@
             <li class="nav-item nav-dropdown">
                 <a class="nav-link nav-dropdown-toggle" href="#"><i class="icon-pie-chart"></i> Consultas</a>
                 <ul class="nav-dropdown-items">
+                    <li @click="menu=19" class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa fa-calendar"></i>Actividades</a>
+                    </li>
                     <li @click="menu=9" class="nav-item">
                         <a class="nav-link" href="#"><i class="icon-chart"></i>Ingresos</a>
                     </li>
