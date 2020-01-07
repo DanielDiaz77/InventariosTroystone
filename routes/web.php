@@ -95,6 +95,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/articulo/cambiarComprometido', 'ArticuloController@cambiarComprometido');
         Route::get('/articulo/listarArticuloCotizado', 'ArticuloController@listarArticuloCotizado');
         Route::put('/articulo/eliminarImg', 'ArticuloController@eliminarImagen');
+        Route::get('/articulo/selectBodega', 'ArticuloController@selectBodega');
+        Route::get('/articulo/listarExcelVenta','ArticuloController@listarExcelVenta');
 
         Route::get('/proveedor', 'ProveedorController@index');
         Route::post('/proveedor/registrar', 'ProveedorController@store');

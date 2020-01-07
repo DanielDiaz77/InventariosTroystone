@@ -8,6 +8,12 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class ArticulosExport implements FromCollection, WithHeadings
 {
+    protected $bodega;
+
+    public function __construct($bodega)
+    {
+        $this->bodega = $bodega;
+    }
     /**
     * @return \Illuminate\Support\Collection
     */
@@ -19,8 +25,9 @@ class ArticulosExport implements FromCollection, WithHeadings
                 'articulos.terminado','articulos.largo','articulos.alto','articulos.metros_cuadrados',
                 'articulos.espesor','articulos.precio_venta','articulos.ubicacion','articulos.stock',
                 'articulos.descripcion','articulos.observacion','articulos.origen','articulos.contenedor',
-                'articulos.fecha_llegada','articulos.condicion')
-            ->orderBy('articulos.id', 'desc')->get();
+                'articulos.fecha_llegada','articulos.comprometido')
+            ->where([['articulos.ubicacion',$this->bodega],['articulos.stock','>=',1]])
+            ->orderBy('articulos.id', 'asc')->get();
     }
 
     public function headings(): array{
@@ -42,7 +49,7 @@ class ArticulosExport implements FromCollection, WithHeadings
             'Origen',
             'Contenedor',
             'Fecha de llegada',
-            'Estado'
+            'Comprometido'
         ];
     }
 }

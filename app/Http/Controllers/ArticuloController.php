@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 use App\Articulo;
 use App\Categoria;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ArticulosExport;
+use App\Exports\ArticulosVentasExport;
 
 class ArticuloController extends Controller
 {
@@ -1181,8 +1183,22 @@ class ArticuloController extends Controller
         $articulo->save();
 
     }
-    public function listarExcel(){
-        return Excel::download(new ArticulosExport, 'lista-articulos.xlsx');
+    public function selectBodega(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $bodegas = Articulo::where('condicion',1)
+        ->select('ubicacion')->groupBy('ubicacion')->get();
+        return ['bodegas' => $bodegas];
+    }
+    public function listarExcel(Request $request){
+        $bodega = $request->bodega;
+        $mytime = Carbon::now('America/Mexico_City')->format('d-m-Y');
+        return Excel::download(new ArticulosExport($bodega), 'inventario-'.$bodega.'-'.$mytime.'.xlsx');
+    }
+    public function listarExcelVenta(Request $request){
+        $bodega = $request->bodega;
+        $mytime = Carbon::now('America/Mexico_City')->format('d-m-Y');
+        return Excel::download(new ArticulosVentasExport($bodega), 'ArticulosNoEntregados-'.$bodega.'-'.$mytime.'.xlsx');
     }
     public function cambiarComprometido(Request $request){
 

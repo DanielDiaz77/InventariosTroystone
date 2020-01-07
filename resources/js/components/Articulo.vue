@@ -50,7 +50,11 @@
                     </select>
                     <button class="btn btn-sm btn-info" type="button"><i class="fa fa-search" aria-hidden="true"></i>&nbsp; Filtros</button>
                 </div>
+                <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5">
+                    <button @click="abrirModal3()" class="btn btn-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
+                </div>
             </div>
+
             <div class="form-group mb-2 col-sm-2 float-right">
                 <label class="mb-1 ml-sm-5" for=""><strong>Total:</strong></label>
                 <p class="mb-1" v-text="totres"></p>
@@ -462,6 +466,51 @@
       <!-- /.modal-dialog -->
     </div>
     <!--Fin del modal-->
+
+    <!-- Modal exportar excel -->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal3}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-success modal-md " role="document">
+            <div class="modal-content content-export">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal3()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                </div>
+                <div class="modal-body ">
+                    <!-- <h3 class="mb-3">Generar reporte de ventas</h3> -->
+                    <div class="row d-flex justify-content-around">
+                        <div class="col-12 col-md-6 mb-2">
+                            <label for=""><strong>Ubicacion: </strong></label>
+                            <select class="form-control" v-model="bodegaReporte">
+                                <option value="" disabled>Seleccione una ubicación</option>
+                                <option v-for="bodega in arrayUbicaciones" :key="bodega.ubicacion" :value="bodega.ubicacion" v-text="bodega.ubicacion"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-5">
+                        <div v-if="bodegaReporte">
+                            <button type="button" class="btn btn-primary ml-5" @click="listarExcel(bodegaReporte)">Disponible</button>
+                        </div>
+                        <div v-if="bodegaReporte">
+                            <button type="button" class="btn btn-primary ml-5" @click="listarExcelVendido(bodegaReporte)">No Entregado</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal3()">Cerrar</button>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <!-- Fin exportar excel -->
+
+
+
   </main>
 </template>
 
@@ -501,6 +550,7 @@ export default {
             arrayArticulo: [],
             modal: 0,
             modal2: 0,
+            modal3: 0,
             tituloModal: '',
             tipoAccion: 0,
             errorArticulo: 0,
@@ -523,7 +573,9 @@ export default {
             btnComprometido : '',
             isEdition : false,
             showElim : false,
-            estadoArt : 1
+            estadoArt : 1,
+            arrayUbicaciones : [],
+            bodegaReporte : ""
         };
     },
     components: {
@@ -998,6 +1050,36 @@ export default {
                 }else if (result.dismiss === swal.DismissReason.cancel){
                 }
             })
+        },
+        abrirModal3(){
+            this.modal3 = 1;
+            this.tituloModal = "Generar Reporte de artículos";
+            this.selectBodega();
+        },
+        cerrarModal3(){
+            this.modal3 = 0;
+            this.tituloModal = "";
+            this.arrayUbicaciones = [];
+            this.bodegaReporte = "";
+        },
+        selectBodega(){
+            let me=this;
+            var url= '/articulo/selectBodega';
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.arrayUbicaciones = respuesta.bodegas;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        listarExcel(bodega){
+            window.open('/articulo/listarExcel?bodega=' + bodega);
+            this.cerrarModal3();
+        },
+        listarExcelVendido(bodega){
+            window.open('/articulo/listarExcelVenta?bodega=' + bodega);
+            this.cerrarModal3();
         }
     },
     mounted() {
