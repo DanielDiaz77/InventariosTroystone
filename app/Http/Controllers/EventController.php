@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
+use App\Exports\ActividadesExport;
+
 use Carbon\Carbon;
 use App\Event;
 use App\User;
@@ -133,7 +136,6 @@ class EventController extends Controller
             'actividades' => $eventos
         ];
     }
-
     public function listarEventos(Request $request){
 
         //if(!$request->ajax()) return redirect('/');
@@ -286,5 +288,10 @@ class EventController extends Controller
             'actividades' => $eventos
         ];
 
+    }
+    public function ListarExcel(Request $request){
+        $inicio = $request->inicio;
+        $fin = $request->fin;
+        return Excel::download(new ActividadesExport($inicio,$fin), 'actividades-'.$inicio.'-'.$fin.'.xlsx');
     }
 }

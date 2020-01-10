@@ -39,6 +39,9 @@
                         </select>
                         <button class="btn btn-primary mb-1"><li class="fa fa-map-marker"> Area</li></button>
                     </div>
+                    <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5">
+                        <button @click="abrirModal()" class="btn btn-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
+                    </div>
                 </div>
             </div>
             <div class="table-responsive col-md-12">
@@ -107,6 +110,45 @@
       </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
+      <!-- Modal exportar excel -->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-success modal-md " role="document">
+            <div class="modal-content content-export">
+                <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                </div>
+                <div class="modal-body ">
+                    <!-- <h3 class="mb-3">Generar reporte de ventas</h3> -->
+                    <div class="row d-flex justify-content-around">
+                        <div class="col-12 col-md-6 mb-2">
+                            <label for=""><strong>Inicio: </strong></label>
+                            <input type="date" class="form-control" v-model="fecha1">
+                        </div>
+                        <div class="col-12 col-md-6 mb-2">
+                            <label for=""><strong>Fin: </strong></label>
+                           <input type="date" class="form-control" v-model="fecha2">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-5" v-if="fecha1 && fecha2">
+                        <div>
+                            <button type="button" class="btn btn-primary ml-5" @click="listarExcel(fecha1,fecha2)">Descargar</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <!-- Fin exportar excel -->
   </main>
 </template>
 
@@ -128,7 +170,11 @@ export default {
             },
             offset : 3,
             criterio : 'cliente',
-            buscar : ''
+            buscar : '',
+            modal : 0,
+            tituloModal : "",
+            fecha1: "",
+            fecha2 : ""
         };
     },
     computed:{
@@ -185,7 +231,21 @@ export default {
             var datec = moment(date).format('DD MMM YYYY hh:mm:ss a');
             /* console.log(datec); */
             return datec;
-        }
+        },
+        abrirModal(){
+            this.modal = 1;
+            this.tituloModal = "Generar Reporte de actividades";
+        },
+        cerrarModal(){
+            this.modal = 0;
+            this.tituloModal = "";
+            this.fecha1 = "";
+            this.fecha2 = "";
+        },
+        listarExcel(inicio, fin){
+            window.open('/event/ExportExcel?inicio=' + inicio + '&fin=' + fin);
+            this.cerrarModal();
+        },
     },
     mounted() {
         this.listarActividad(1,this.buscar,this.criterio,this.estado,this.area);

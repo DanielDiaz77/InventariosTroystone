@@ -182,6 +182,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/event/completar', 'EventController@completar');
         Route::get('/event/obtenerEventsCliente','EventController@obtenerEventsCliente');
         Route::get('/event/listarEventos', 'EventController@listarEventos');
+        Route::get('/event/ExportExcel','EventController@listarExcel');
 
         Route::get('/traslado', 'TrasladoController@index');
         Route::post('/traslado/registrar', 'TrasladoController@store');
