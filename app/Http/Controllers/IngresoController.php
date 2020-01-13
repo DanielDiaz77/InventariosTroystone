@@ -154,11 +154,16 @@ class IngresoController extends Controller
         return ['detalles' => $detalles];
     }
 
-    public function getLastNum(){
+    public function getLastNum(Request $request){
+        if (!$request->ajax()) return redirect('/');
         $lastNum = Ingreso::select('num_comprobante')->get()->last();
-        $noComp = explode('"',$lastNum);
-        $SigNum = explode("-",$noComp[3]);
-        return ['SigNum' => $SigNum[2]];
-    }
 
+        if($lastNum != null){
+            $noComp = explode('"',$lastNum);
+            $SigNum = explode("-",$noComp[3]);
+            return  $SigNum[2] + 1;
+        }else{
+            return 1;
+        }
+    }
 }

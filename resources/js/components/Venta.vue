@@ -783,15 +783,15 @@
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
                                 </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,buscarA,bodega,acabado)" class="form-control" placeholder="Texto a buscar">
-                                <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscarA,buscarA,bodega,acabado)" class="form-control" placeholder="Terminado">
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="form-control" placeholder="Texto a buscar">
+                                <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="form-control" placeholder="Terminado">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="input-group">
                                 <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="btn btn-primary"><i class="fa fa-search"></i>Buscar</button>&nbsp;
                                 <template v-if="areaUs == 'GDL'">
-                                    <select class="form-control" v-model="bodega" @change="listarArticulo(1,buscarA,buscarA,bodega,acabado)">
+                                    <select class="form-control" v-model="bodega" @change="listarArticulo(1,buscarA,criterioA,bodega,acabado)">
                                         <option value="" disabled>Ubicacion</option>
                                         <option value="">Todas</option>
                                         <option value="Del Musico">Del Músico</option>

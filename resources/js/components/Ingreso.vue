@@ -105,18 +105,16 @@
                                     placeholder="Buscar Proveedores..." :onChange="getDatosProveedor"></v-select>
                         </div>
                     </div>&nbsp;
-                     <div class="col-md-3 text-center">
+                     <div class="col-md-3 text-center" v-if="rfc_proveedor">
                         <div class="form-group">
                             <label for=""><strong>RFC</strong></label>
-                            <!-- <p v-text="tipo_cliente"></p> -->
-                            <input type="text" readonly :value="rfc_proveedor" class="form-control col-md">
+                            <p v-text="rfc_proveedor"></p>
                         </div>
                     </div>
-                     <div class="col-md-3 text-center">
+                     <div class="col-md-3 text-center" v-if="contacto_prov">
                         <div class="form-group">
                             <label for=""><strong>Contacto</strong></label>
-                            <!-- <p v-text="rfc_cliente"></p> -->
-                            <input type="text" readonly :value="contacto_prov + '-' + tel_contacto" class="form-control col-md">
+                            <p style="font-size: 15px;">{{ contacto_prov  }} - {{ tel_contacto }}</p>
                         </div>
                     </div>
                 </div>
@@ -131,9 +129,10 @@
                             <label for=""><strong>Tipo Comprobante (*)</strong> </label>
                             <select v-model="tipo_comprobante" class="form-control">
                                 <option value="">Seleccione</option>
-                                <option value="NOTA">Nota</option>
+                                <option value="INGRESO">Ingreso</option>
+                                <!-- <option value="NOTA">Nota</option>
                                 <option value="FACTURA">Factura</option>
-                                <option value="TICKET">Ticket</option>
+                                <option value="TICKET">Ticket</option> -->
                             </select>
                         </div>
                     </div>
@@ -167,19 +166,19 @@
                      <div class="col-sm-2">
                         <div class="form-group">
                             <label for=""><strong>Fecha de arribo</strong> <span style="color:red;" v-show="fecha_llegada==''">(*Seleccione)</span></label>
-                            <input type="date" v-model="fecha_llegada" class="form-control" placeholder="Fecha de llegada"/>
+                            <input type="date" v-model="fecha_llegada" class="form-control"/>
                         </div>
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for=""><strong>Origen</strong> <span style="color:red;" v-show="origen==''">(*Ingrese el origen)</span></label>
-                            <input type="text" class="form-control" v-model="origen">
+                            <label for=""><strong>Origen</strong></label>
+                            <input type="text" class="form-control" v-model="origen" placeholder="Origen del material">
                         </div>
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for=""><strong>Contenedor</strong><span style="color:red;" v-show="contenedor==''">(*Ingrese el contenedor)</span></label>
-                            <input type="text" class="form-control" v-model="contenedor">
+                            <label for=""><strong>Contenedor</strong></label>
+                            <input type="text" class="form-control" v-model="contenedor" placeholder="Contenedor de origen">
                         </div>
                     </div>
                 </div>
@@ -188,7 +187,7 @@
                     <div class="col-sm-2">
                         <div class="form-group">
                             <label for=""><strong>No° Placa</strong> <span style="color:red;" v-show="codigo==0">(*Ingrese el no° de placa)</span></label>
-                            <input type="text" class="form-control" v-model="codigo">
+                            <input type="text" class="form-control" v-model="codigo" placeholder="No° de placa">
                         </div>
                     </div>
                     <div class="col-sm-2">
@@ -202,8 +201,8 @@
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for=""><strong>Código de material</strong><span style="color:red;" v-show="sku==''">(*Ingrese)</span></label>
-                            <input type="text" class="form-control" v-model="sku">
+                            <label for=""><strong>SKU</strong><span style="color:red;" v-show="sku==''">(*Ingrese)</span></label>
+                            <input type="text" class="form-control" v-model="sku" placeholder="SKU del material">
                         </div>
                     </div>
                     <div class="col-sm-2">
@@ -220,10 +219,10 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-sm-2 text-center">
+                     <div class="col-sm-2 text-center">
                         <div class="form-group row">
-                            <label for="inputFile" class="text-center"><strong>Imagen </strong></label>&nbsp;
-                            <input id="inputFile" type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
+                            <label for="inputFile" class="text-center"><strong>Descripción</strong></label>&nbsp;
+                            <input id="inputFile" type="text" v-model="descripcion_r" class="form-control" placeholder="Descripción del material">
                         </div>
                     </div>
                     <div class="col-sm-2 mt-3">
@@ -254,16 +253,16 @@
                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="alto">
                         </div>
                     </div>
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                         <div class="form-group">
-                            <label for=""><strong>Metros<sup>2</sup></strong><span style="color:red;" v-show="metros_cuadrados==0">(*Ingrese)</span></label>
+                            <label for=""><strong>Metros<sup>2</sup></strong></label>
                             <input type="number" readonly :value="calcularMts" class="form-control"/>
                         </div>
                     </div>
                     <div class="col-sm-1">
                         <div class="form-group">
                             <label for=""><strong>Cantidad</strong> <span style="color:red;" v-show="cantidad==0">(*Ingrese)</span></label>
-                            <input type="number" min="0" value="0" step="any" class="form-control" v-model="cantidad">
+                            <input type="number" min="0" value="0" step="any" class="form-control" v-model="cantidad" disabled>
                         </div>
                     </div>
                     <div class="col-sm-1">
@@ -294,6 +293,7 @@
                         <table class="table table-bordered table-striped table-sm table-hover">
                             <thead>
                                 <tr>
+                                    <th width="10px">No°</th>
                                     <th>Opciones</th>
                                     <th>Código de material</th>
                                     <th>No° Placa</th>
@@ -308,6 +308,7 @@
                             </thead>
                             <tbody v-if="arrayDetalle.length">
                                 <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
+                                    <td v-text="(index + 1)"></td>
                                     <td>
                                         <div class="form-inline">
                                             <button @click="eliminarDetalle(index)" type="button" class="btn btn-danger btn-sm">
@@ -326,31 +327,14 @@
                                     <td v-text="detalle.largo"></td>
                                     <td v-text="detalle.alto"></td>
                                     <td v-text="detalle.metros_cuadrados"></td>
-                                    <td>
-                                        <input v-model="detalle.cantidad" min="0" type="number" value="2" class="form-control">
-                                    </td>
+                                    <td v-text="detalle.cantidad"></td>
                                     <td>
                                         <input v-model="detalle.precio_venta" min="0" type="number" value="3" class="form-control">
                                     </td>
                                     <td>
-                                        <input v-model="detalle.descripcion_r" type="text" class="form-control" placeholder="Descripcion gral">
+                                        <input v-model="detalle.descripcion" type="text" class="form-control" placeholder="Descripcion gral">
                                     </td>
-                                    <!-- <td>
-                                       {{ detalle.precio_venta * detalle.cantidad }}
-                                    </td> -->
                                 </tr>
-                                <!-- <tr style="background-color: #CEECF5;">
-                                    <td colspan="4" align="right"><strong>Total Parcial:</strong></td>
-                                    <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
-                                </tr>
-                                <tr style="background-color: #CEECF5;">
-                                    <td colspan="4" align="right"><strong>Total Impuesto:</strong></td>
-                                    <td>$ {{total_impuesto=((total * impuesto)/(1+impuesto)).toFixed(2)}}</td>
-                                </tr>
-                                <tr style="background-color: #CEECF5;">
-                                    <td colspan="4" align="right"><strong>Total Neto:</strong></td>
-                                    <td>$ {{total=calcularTotal}}</td>
-                                </tr> -->
                             </tbody>
                             <tbody v-else>
                                 <tr>
@@ -485,7 +469,7 @@
                 </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <div class="col-md">
                             <div class="input-group">
                                 <select class="form-control col-md-3" v-model="criterioA">
@@ -493,11 +477,41 @@
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
                                 </select>
-                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(buscarA,criterioA)" class="form-control" placeholder="Texto a buscar">
-                                <button type="submit" @click="listarArticulo(buscarA,criterioA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodegaA,acabadoA)" class="form-control" placeholder="Texto a buscar">
+                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodegaA,acabadoA)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>&nbsp;
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- Filtros -->
+                    <div class="form-group row">
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <select class="form-control" v-model="criterioA">
+                                    <option value="sku">Código de material</option>
+                                    <option value="codigo">No° de placa</option>
+                                    <option value="descripcion">Descripción</option>
+                                </select>
+                                <input type="text" v-model="buscarA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodegaA,acabadoA)" class="form-control" placeholder="Texto a buscar">
+                                <input type="text" v-model="acabadoA" @keyup.enter="listarArticulo(1,buscarA,criterioA,bodegaA,acabadoA)" class="form-control" placeholder="Terminado">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodegaA,acabadoA)" class="btn btn-primary"><i class="fa fa-search"></i>Buscar</button>&nbsp;
+                                <select class="form-control" v-model="bodegaA" @change="listarArticulo(1,buscarA,criterioA,bodegaA,acabadoA)">
+                                    <option value="" disabled>Ubicacion</option>
+                                    <option value="">Todas</option>
+                                    <option value="Del Musico">Del Músico</option>
+                                    <option value="Escultores">Escultores</option>
+                                    <option value="Sastres">Sastres</option>
+                                    <option value="Mecanicos">Mecánicos</option>
+                                    <option value="Tractorista">Tractorista</option>
+                                    <option value="San Luis">San Luis</option>
+                                </select>
                             </div>
                         </div>
                     </div>
+                    <!-- Listado -->
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-sm text-center table-hover">
                             <thead>
@@ -509,47 +523,64 @@
                                 <th>Largo</th>
                                 <th>Alto</th>
                                 <th>Metros<sup>2</sup></th>
-                                <th>Stock</th>
+                                <th>Terminado</th>
                                 <th>Ubicacion</th>
                                 <th>Estado</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr v-for="articulo in arrayArticulo" :key="articulo.id">
-                                <td v-text="articulo.codigo"></td>
-                                <td v-text="articulo.sku"></td>
-                                <td v-text="articulo.nombre_categoria"></td>
-                                <td v-text="articulo.largo"></td>
-                                <td v-text="articulo.alto"></td>
-                                <td v-text="articulo.metros_cuadrados"></td>
-                                <td v-text="articulo.stock"></td>
-                                <td v-text="articulo.ubicacion"></td>
-                                <td>
-                                <div v-if="articulo.condicion == 1">
-                                    <span class="badge badge-success">Activo</span>
-                                </div>
-                                <div v-else-if="articulo.condicion == 3">
-                                    <span class="badge badge-success">Cortado</span>
-                                </div>
-                                <div v-else>
-                                    <span class="badge badge-danger">Desactivado</span>
-                                </div>
-                                </td>
-                            </tr>
+                            <tbody v-if="arrayArticulo.length">
+                                <tr v-for="articulo in arrayArticulo" :key="articulo.id">
+                                    <td v-text="articulo.codigo"></td>
+                                    <td v-text="articulo.sku"></td>
+                                    <td v-text="articulo.nombre_categoria"></td>
+                                    <td v-text="articulo.largo"></td>
+                                    <td v-text="articulo.alto"></td>
+                                    <td v-text="articulo.metros_cuadrados"></td>
+                                    <td v-text="articulo.terminado"></td>
+                                    <td v-text="articulo.ubicacion"></td>
+                                    <td>
+                                    <div v-if="articulo.condicion == 1">
+                                        <span class="badge badge-success">Activo</span>
+                                    </div>
+                                    <div v-else-if="articulo.condicion == 3">
+                                        <span class="badge badge-success">Cortado</span>
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-danger">Desactivado</span>
+                                    </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody v-else>
+                                <tr>
+                                    <td colspan="9" class="text-center">
+                                        <strong>NO hay artículos con ese criterio...</strong>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
+                    <!-- Paginacion MODAL -->
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item" v-if="paginationart.current_page > 1">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA,bodegaA,acabadoA)">Ant</a>
+                            </li>
+                            <li class="page-item" v-for="page in pagesNumberArt" :key="page" :class="[page == isActivedArt ? 'active' : '']">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA,bodegaA,acabadoA)" v-text="page"></a>
+                            </li>
+                            <li class="page-item" v-if="paginationart.current_page < paginationart.last_page">
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA,bodegaA,acabadoA)">Sig</a>
+                            </li>
+                        </ul>
+                    </nav>
                     <hr class="d-block d-sm-block d-md-none">
                     <div class="float-right d-block d-sm-block d-md-none">
                         <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
-                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
                     </div>
                 </div>
                 <div class="modal-footer d-none d-sm-none d-md-block">
                     <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                    <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarPersona()">Guardar</button>
-                    <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarPersona()">Actualizar</button>
                 </div>
             </div>
         <!-- /.modal-content -->
@@ -876,7 +907,7 @@ export default {
             proveedor: '',
             user: '',
             nombre: "",
-            tipo_comprobante: "FACTURA",
+            tipo_comprobante: "INGRESO",
             num_comprobante: "",
             impuesto: 0.16,
             idarticulo : 0,
@@ -909,11 +940,21 @@ export default {
                 'from'         : 0,
                 'to'           : 0,
             },
+            paginationart : {
+                'total'        : 0,
+                'current_page' : 0,
+                'per_page'     : 0,
+                'last_page'    : 0,
+                'from'         : 0,
+                'to'           : 0,
+            },
             offset : 3,
             criterio : 'num_comprobante',
             buscar : '',
             buscarA : '',
             criterioA : 'sku',
+            bodegaA : '',
+            acabadoA : '',
             idcategoria_r :0,
             sku : '',
             terminado : '',
@@ -932,7 +973,8 @@ export default {
             imagenMinatura : '',
             arrayCategoria : [],
             CodeDate : "",
-            sigNum : 0
+            sigNum : 0,
+            arrayCodigos : []
         };
     },
     components: {
@@ -956,6 +998,31 @@ export default {
                 var to = from + (this.offset * 2);
                 if(to >= this.pagination.last_page){
                     to = this.pagination.last_page;
+                }
+
+                var pagesArray = [];
+                while(from <= to) {
+                    pagesArray.push(from);
+                    from++;
+                }
+                return pagesArray;
+            },
+            isActivedArt: function(){
+                return this.paginationart.current_page;
+            },
+            pagesNumberArt: function() {
+                if(!this.paginationart.to) {
+                    return [];
+                }
+
+                var from = this.paginationart.current_page - this.offset;
+                if(from < 1) {
+                    from = 1;
+                }
+
+                var to = from + (this.offset * 2);
+                if(to >= this.paginationart.last_page){
+                    to = this.paginationart.last_page;
                 }
 
                 var pagesArray = [];
@@ -1056,10 +1123,26 @@ export default {
                 //Envia la petición para visualizar la data de esa página
                 me.listarIngreso(page,buscar,criterio);
         },
+        cambiarPaginaArt(page,buscar,criterio,bodega,acabado){
+            let me = this;
+            //Actualiza la página actual
+            me.paginationart.current_page = page;
+            //Envia la petición para visualizar la data de esa página
+            me.listarArticulo(page,buscar,criterio,bodega,acabado);
+        },
         encuentra(codigo){
             let sw = 0;
             for(var i=0; i<this.arrayDetalle.length;i++){
                 if(this.arrayDetalle[i].codigo==codigo){
+                    sw = true;
+                }
+            }
+            return sw;
+        },
+        encuentraCodigoSku(codigo){
+            let sw = 0;
+            for(var i=0; i<this.arrayCodigos.length;i++){
+                if(this.arrayCodigos[i].codigo==codigo){
                     sw = true;
                 }
             }
@@ -1071,14 +1154,21 @@ export default {
         },
         agregarDetalle(){
             let me = this;
-            if(me.codigo == 0 || me.precio_venta == 0 || me.cantidad == 0 || me.idcategoria_r == 0
-               || me.alto == 0 || me.largo == 0){
+            if(me.codigo == 0 || me.idcategoria_r == 0 || me.alto == 0 || me.largo == 0){
             }else{
-                if(me.encuentra(me.codigo)){
+                if(me.encuentraCodigoSku(me.codigo)){
                     Swal.fire({
                         type: 'error',
                         title: 'Error...',
-                        text: 'Este No° de placa ya esta en el listado!',
+                        text: 'Este No° de placa ya esta en el sistema!',
+                    });
+                    me.codigo = "";
+                }
+                else if(me.encuentra(me.codigo)){
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Error...',
+                        text: 'Este No° de placa ya esta en el listado del detalle!',
                     });
                     me.codigo = "";
                 }else{
@@ -1169,8 +1259,13 @@ export default {
                 'total' : this.total,
                 'data': this.arrayDetalle
             }).then(function(response) {
-            me.ocultarDetalle();
-            me.listarIngreso(1,'','num_comprobante');
+                me.ocultarDetalle();
+                Swal.fire({
+                    type: 'success',
+                    title: 'Completado...',
+                    text: 'Se ha registrado el ingreso con éxito!',
+                });
+                me.listarIngreso(1,'','num_comprobante');
             })
             .catch(function(error) {
                 console.log(error);
@@ -1248,9 +1343,21 @@ export default {
             this.ubicacion = '';
             this.arrayDetalle = [];
             this.idproveedor = 0;
-            this.num_comprobante = (parseInt(this.sigNum)+1);
+            this.num_comprobante = (parseInt(this.sigNum));
             this.selectCategoria();
+            this.getCodesSku();
 
+        },
+        getCodesSku(){
+            let me=this;
+            var url= '/articulo/getCodesSku';
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.arrayCodigos = respuesta.codigos;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         },
         ocultarDetalle(){
             this.listado = 1;
@@ -1316,17 +1423,22 @@ export default {
         },
         cerrarModal() {
             this.modal = 0;
+            this.bodegaA = "";
+            this.acabadoA = "";
+            this.criterioA = "sku";
         },
         abrirModal() {
             this.arrayArticulo=[];
             this.modal = 1;
             this.tituloModal = "Seleccionar Artículos";
+            this.listarArticulo(1,'','sku','','');
         },
-        listarArticulo (buscar,criterio){
+        listarArticulo (page,buscar,criterio,bodega,acabado){
             let me=this;
-            var url= '/articulo/listarArticulo?buscar=' + buscar + '&criterio='+ criterio;
+            var url= '/articulo/listarArticulo?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega + '&acabado=' + acabado;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
+                me.paginationart= respuesta.pagination;
                 me.arrayArticulo = respuesta.articulos.data;
             })
             .catch(function (error) {
@@ -1442,7 +1554,7 @@ export default {
             var url= '/ingreso/nextNum';
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
-                me.sigNum = respuesta.SigNum;
+                me.num_comprobante = respuesta;
             })
             .catch(function (error) {
                 console.log(error);
