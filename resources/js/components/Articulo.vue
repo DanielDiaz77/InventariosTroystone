@@ -32,15 +32,19 @@
 
                             </div>
                             <div class="input-group">
+
                                 <select class="form-control mb-1" v-model="bodega" @change="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)">
-                                    <option value="" disabled>Ubicacion</option>
-                                    <option value="">Todas</option>
-                                    <option value="Del Musico">Del Músico</option>
-                                    <option value="Escultores">Escultores</option>
-                                    <option value="Sastres">Sastres</option>
-                                    <option value="Mecanicos">Mecánicos</option>
-                                    <option value="Tractorista">Tractorista</option>
-                                    <option value="San Luis">San Luis</option>
+                                    <template v-if="zona=='GDL'">
+                                        <option value="">Todas</option>
+                                        <option value="Del Musico">Del Músico</option>
+                                        <option value="Escultores">Escultores</option>
+                                        <option value="Sastres">Sastres</option>
+                                        <option value="Mecanicos">Mecánicos</option>
+                                        <option value="Tractorista">Tractorista</option>
+                                    </template>
+                                    <template v-else>
+                                        <option value="San Luis">San Luis</option>
+                                    </template>
                                 </select>
                                 <button type="submit" @click="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)" class="btn btn-sm btn-primary mb-1"><i class="fa fa-search"></i>Buscar</button>
                             </div>
@@ -51,6 +55,13 @@
                                     <option value="3">Cortado</option>
                                 </select>
                                 <button class="btn btn-sm btn-info" type="button"><i class="fa fa-search" aria-hidden="true"></i>&nbsp; Filtros</button>
+                            </div>
+                            <div class="input-group input-group-sm ml-xl-5 mt-1 mt-md-0">
+                                <button class="btn btn-sm btn-danger" type="button"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp; Area</button>
+                                <select class="form-control" v-model="zona" @change="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)">
+                                    <option value="GDL">Guadalajara</option>
+                                    <option value="SLP">San Luis</option>
+                                </select>
                             </div>
                             <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5">
                                 <button @click="abrirModal3()" class="btn btn-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
@@ -757,7 +768,8 @@ export default {
             bodegaReporte : "",
             listado : 1,
             showNew : false,
-            remoFile : false
+            remoFile : false,
+            zona : "GDL"
         };
     },
     components: {
@@ -806,6 +818,17 @@ export default {
     methods: {
         listarArticulo (page,buscar,criterio,bodega,acabado,estado){
             let me=this;
+
+            if(me.zona == 'SLP'){
+                bodega = 'San Luis';
+                me.bodega = 'San Luis';
+            }else{
+                if(bodega == 'San Luis'){
+                    bodega = "";
+                    me.bodega = "";
+                }
+            }
+
             var url= '/articulo?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega='
             + bodega + '&acabado=' + acabado + '&estado=' + estado;
             axios.get(url).then(function (response) {
@@ -813,6 +836,7 @@ export default {
                 me.arrayArticulo = respuesta.articulos.data;
                 me.pagination= respuesta.pagination;
                 me.totres = respuesta.total;
+                /* me.zona = respuesta.userarea; */
             })
             .catch(function (error) {
                 console.log(error);

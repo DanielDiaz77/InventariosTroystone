@@ -18,6 +18,8 @@ class ArticuloController extends Controller
     public function index(Request $request){
         if(!$request->ajax()) return redirect('/');
 
+        $usarea = \Auth::user()->area;
+
         $buscar = $request->buscar;
         $criterio = $request->criterio;
         $bodega = $request->bodega;
@@ -45,9 +47,9 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where('articulos.stock','>',0)
+                        ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where('articulos.stock','>',0)->count();
+                        $total = Articulo::where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])->count();
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -59,12 +61,14 @@ class ArticuloController extends Controller
                             'articulos.comprometido','users.usuario')
                         ->where([
                             ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = Articulo::where([
                             ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']
                         ])->count();
                     }
                 }else{
@@ -79,12 +83,14 @@ class ArticuloController extends Controller
                             'articulos.comprometido','users.usuario')
                         ->where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','>',0]
+                            ['articulos.stock','>',0],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = Articulo::where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','>',0]
+                            ['articulos.stock','>',0],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])->count();
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
@@ -98,13 +104,15 @@ class ArticuloController extends Controller
                         ->where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                             ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = Articulo::where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                             ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])->count();
                     }
                 }
@@ -202,9 +210,9 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where('articulos.stock','<=',0)
+                        ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where('articulos.stock','<=',0)->count();
+                        $total = Articulo::where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis']])->count();
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -216,12 +224,14 @@ class ArticuloController extends Controller
                             'articulos.comprometido','users.usuario')
                         ->where([
                             ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = Articulo::where([
                             ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])->count();
                     }
                 }else{
@@ -236,12 +246,14 @@ class ArticuloController extends Controller
                             'articulos.comprometido','users.usuario')
                         ->where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','<=',0]
+                            ['articulos.stock','<=',0],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = Articulo::where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','<=',0]
+                            ['articulos.stock','<=',0],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])->count();
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
@@ -255,13 +267,15 @@ class ArticuloController extends Controller
                         ->where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                             ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = Articulo::where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                             ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])->count();
                     }
                 }
@@ -359,9 +373,9 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where('articulos.condicion',3)
+                        ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where('articulos.condicion',3)->count();
+                        $total = Articulo::where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])->count();
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -373,12 +387,14 @@ class ArticuloController extends Controller
                             'articulos.comprometido','users.usuario')
                         ->where([
                             ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = Articulo::where([
                             ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])->count();
                     }
                 }else{
@@ -393,12 +409,14 @@ class ArticuloController extends Controller
                             'articulos.comprometido','users.usuario')
                         ->where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.condicion',3]
+                            ['articulos.condicion',3],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = Articulo::where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.condicion',3]
+                            ['articulos.condicion',3],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])->count();
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
@@ -412,13 +430,15 @@ class ArticuloController extends Controller
                         ->where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                             ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = Articulo::where([
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                             ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
+                            ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']
                         ])->count();
                     }
                 }
@@ -522,7 +542,8 @@ class ArticuloController extends Controller
             ],
 
             'articulos' => $articulos,
-            'total' => $total
+            'total' => $total,
+            'userarea' => $usarea
         ];
     }
     public function buscarArticulo(Request $request){
@@ -911,7 +932,7 @@ class ArticuloController extends Controller
                 }
             }
         }
-        
+
         return [
             'pagination' => [
                 'total'         => $articulos->total(),
