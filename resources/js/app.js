@@ -41,7 +41,8 @@ Vue.component('tarea', require('./components/Tarea.vue').default);
 Vue.component('calendario', require('./components/Calendario.vue').default);
 Vue.component('traslado', require('./components/Traslado.vue').default);
 Vue.component('facturacion', require('./components/Facturacion.vue').default);
-Vue.component('consultaactividad', require('./components/ConsultaActividad.vue').default);
+Vue.component('consultaactividad', require('./components/ConsultaActividad.vue').default); //Consulta de eventos
+Vue.component('actividad', require('./components/Actividad.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -50,22 +51,47 @@ Vue.component('consultaactividad', require('./components/ConsultaActividad.vue')
 
 const app = new Vue({
     el: '#app',
-    data:{
-        menu : 0,
-        notifications : []
+    data: {
+        menu: 0,
+        notifications: [],
+        numActivities: 0
     },
-    created(){
+    created() {
         let me = this;
-        axios.post('notification/get').then(function(response){
-            //console.log(response.data);
+        axios.post('notification/get').then(function(response) {
             me.notifications = response.data;
-        }).catch(function(error){
+        }).catch(function(error) {
             console.log(error);
         });
 
         var userId = $('meta[name="userId"]').attr('content');
         Echo.private('App.User.' + userId).notification((notification) => {
-        me.notifications.unshift(notification);
+            me.notifications.unshift(notification);
         });
+
+        axios.get('/actividad/getActivitiesUser')
+            .then(function(response) {
+                var respuesta = response.data;
+                let numAct = respuesta.total;
+                me.numActivities = respuesta.total;
+                if (numAct != 0) {
+                    if (numAct == 1) {
+                        swal.fire(
+                            'Atención',
+                            `Tienes ${numAct} tarea pendiente por realizar!`,
+                            'warning'
+                        )
+                    } else {
+                        swal.fire(
+                            'Atención',
+                            `Tienes ${numAct} tareas pendientes por realizar!`,
+                            'warning'
+                        )
+                    }
+                }
+
+            }).catch(function(error) {
+                console.log(error);
+            });
     }
 });

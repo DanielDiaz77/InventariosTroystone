@@ -40,6 +40,7 @@
                     <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button"
                         aria-haspopup="true" aria-expanded="false">
                         {{-- <img src="img/favicon.png" class="img-avatar" alt="admin@bootstrapmaster.com"> --}}
+                        <i class="fa fa-sign-out" aria-hidden="true"></i>
                         <span class="d-md-down-none">{{Auth::user()->usuario}} </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">

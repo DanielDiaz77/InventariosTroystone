@@ -150,10 +150,24 @@ class UserController extends Controller
 
     public function selectUsuario(Request $request){
 
-        //if(!$request->ajax()) return redirect('/');
+        if(!$request->ajax()) return redirect('/');
 
         $usuarios = User::join('personas','users.id','=','personas.id')
         ->where([['condicion',1],['idrol','!=',3]])
+        ->select('users.id','personas.nombre')->orderBy('id','asc')->get();
+
+        return ['usuarios' => $usuarios];
+
+    }
+
+    public function selectUsuarioAct(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $actUser = \Auth::user()->id;
+
+        $usuarios = User::join('personas','users.id','=','personas.id')
+        ->where([['condicion',1],['users.id','!=',$actUser]])
         ->select('users.id','personas.nombre')->orderBy('id','asc')->get();
 
         return ['usuarios' => $usuarios];

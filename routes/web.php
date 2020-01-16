@@ -123,6 +123,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/user/desactivar', 'UserController@desactivar');
         Route::put('/user/activar', 'UserController@activar');
         Route::get('/user/selectUsuario', 'UserController@selectUsuario');
+        Route::get('/user/selectUsuarioAct', 'UserController@selectUsuarioAct');
 
         Route::get('/ingreso', 'IngresoController@index');
         Route::post('/ingreso/registrar', 'IngresoController@store');
@@ -198,6 +199,12 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/traslado/eliminarImg', 'TrasladoController@eliminarImagen');
 
 
+        Route::get('/actividad', 'ActivityController@index');
+        Route::post('/actividad/registrar', 'ActivityController@store');
+        Route::put('/actividad/actualizar', 'ActivityController@update');
+        Route::put('/actividad/desactivar', 'ActivityController@desactivar');
+        Route::put('/actividad/cambiarEstado','ActivityController@cambiarEstado');
+        Route::get('/actividad/getActivitiesUser','ActivityController@getActivitiesUser');
     });
 });
 

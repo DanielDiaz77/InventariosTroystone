@@ -51,6 +51,11 @@
             <li @click="menu=17" class="nav-item">
                 <a class="nav-link" href="#"><i class="fa fa-map-marker"></i> Traslados</a>
             </li>
+
+            <li @click="menu=20" class="nav-item">
+                <a class="nav-link" href="#"><i class="fa fa-tasks"></i> Tareas</a>
+            </li>
+
             {{-- <li @click="menu=11" class="nav-item">
                 <a class="nav-link" href="#"><i class="icon-book-open"></i> Ayuda <span class="badge badge-danger">PDF</span></a>
             </li>

@@ -75,6 +75,10 @@
                 <consultaactividad></consultaactividad>
             </template>
 
+            <template v-if="menu==20">
+                <actividad></actividad>
+            </template>
+
             <template v-if="menu==11">
                 <ayuda></ayuda>
             </template>
@@ -137,6 +141,10 @@
                 <facturacion></facturacion>
             </template>
 
+            <template v-if="menu==20">
+                <actividad></actividad>
+            </template>
+
         @elseif(Auth::user()->idrol == 3)
 
             <template v-if="menu==0">
@@ -181,6 +189,10 @@
 
             <template v-if="menu==12">
                 <acerca></acerca>
+            </template>
+
+            <template v-if="menu==20">
+                <actividad></actividad>
             </template>
         @else
 
