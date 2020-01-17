@@ -395,6 +395,7 @@
                         <table class="table table-bordered table-striped table-sm table-hover">
                             <thead>
                                 <tr>
+                                    <th width="10px">No°</th>
                                     <th>Detalles</th>
                                     <th>Código de material</th>
                                     <th>No° Placa</th>
@@ -403,13 +404,14 @@
                                     <th>Alto</th>
                                     <th>Metros <sup>2</sup></th>
                                     <th>Cantidad</th>
-                                    <th>Precio M<sup>2</sup></th>
+                                    <th>Contenedor</th>
                                     <th>Descripción</th>
                                     <th>Estado</th>
                                 </tr>
                             </thead>
                             <tbody v-if="arrayDetalle.length">
                                 <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
+                                    <td v-text="(index + 1)"></td>
                                     <td>
                                         <button type="button" @click="abrirModal3(index)" class="btn btn-success btn-sm">
                                             <i class="icon-eye"></i>
@@ -422,7 +424,7 @@
                                     <td v-text="detalle.alto"></td>
                                     <td v-text="detalle.metros_cuadrados"></td>
                                     <td v-text="detalle.cantidad"></td>
-                                    <td v-text="detalle.precio_compra"></td>
+                                    <td v-text="detalle.contenedor"></td>
                                     <td v-text="detalle.descripcion"></td>
                                     <td>
                                         <div v-if="detalle.condicion == 1">

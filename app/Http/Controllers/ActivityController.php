@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Activity;
 use App\User;
+use App\Comment;
 
 
 class ActivityController extends Controller
@@ -151,7 +152,8 @@ class ActivityController extends Controller
                 'from'          => $actividades->firstItem(),
                 'to'            => $actividades->lastItem(),
             ],
-            'actividades' => $actividades
+            'actividades' => $actividades,
+            'userid' => $user
         ];
 
 
@@ -205,5 +207,60 @@ class ActivityController extends Controller
         $userid = \Auth::user()->id;
         $total =  Activity::where([['activities.idreceptor',$userid],['activities.status',0]])->count();
         return ['total' => $total];
+    }
+    public function crearComment(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $userid = \Auth::user()->id;
+        try{
+            DB::beginTransaction();
+            $comment = new Comment(['user_id' => $userid, 'body' => $request->body]);
+            $activity = Activity::findOrFail($request->id); //Actividad a comentar
+            $activity->comments()->save($comment);
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollBack();
+        }
+    }
+    public function getComments(Request $request){
+
+        if (!$request->ajax()) return redirect('/');
+
+        $actividad = Activity::findOrFail($request->id); //ID actividad comentada
+
+        $comments = $actividad->comments()
+        ->join('users','users.id','comments.user_id')
+        ->leftjoin('personas', 'users.id','=','personas.id')
+        ->select('comments.id','comments.user_id as user','comments.body','comments.updated_at as fecha','personas.nombre')
+        ->orderBy('comments.updated_at','desc')
+        ->get();
+
+        return [
+            'comentarios' => $comments
+        ];
+
+    }
+    public function editComment(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            $comm= Comment::findOrFail($request->id);
+            $comm->body = $request->body;
+            $comm->save();
+
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollBack();
+        }
+    }
+    public function deleteComment(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            $comm = Comment::findOrFail($request->id);
+            $comm->delete();
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollBack();
+        }
     }
 }

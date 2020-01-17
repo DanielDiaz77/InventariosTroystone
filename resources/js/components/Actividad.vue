@@ -13,6 +13,7 @@
                     <i class="icon-plus"></i>&nbsp;Nuevo
                 </button>
             </div>
+            <!-- Nueva Actividad -->
             <template v-if="listado == 0">
                 <div class="card-body">
                     <div class="form-inline">
@@ -123,7 +124,9 @@
                     </nav>
                 </div>
             </template>
+            <!-- Fin nueva Actividad -->
 
+            <!-- Editar actividad -->
             <template v-if="listado == 1">
                 <div class="card-body">
                     <div class="form-group row">
@@ -181,22 +184,14 @@
                     <br><br><br><br><br>
                 </div>
             </template>
+            <!-- Fin editar actividad -->
 
-        </div>
-        <!-- Fin ejemplo de tabla Listado -->
-    </div>
-    <!--Inicio del modal agregar/actualizar-->
-    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-primary modal-lg" role="document">
-            <div class="modal-content content-category">
-                <div class="modal-header">
-                    <h4 class="modal-title" v-text="tituloModal"></h4>
-                    <button type="button" class="close" @click="cerrarModal()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12 text-right mb-0 mb-md-2">
-                            <template v-if="status == 0">
+            <!-- Ver actividad y segumiento -->
+            <template v-if="listado == 2">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <div class="col-12 text-center">
+                           <template v-if="status == 0">
                                 <span style="font-size: 20px;" class="badge badge-warning">
                                     Incompleta <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                 </span>
@@ -211,34 +206,108 @@
                                     Cancelada <i class="fa fa-times-circle-o" aria-hidden="true"></i>
                                 </span>
                             </template>
-                        </div>
+                        </div>&nbsp;
                         <div class="col-12 text-center">
-                            <h3 v-text="title"></h3>
-                        </div>
-                        <div class="col-12 text-center">
+                           <h3 v-text="title"></h3>
+                        </div>&nbsp;
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-12 mb-3 text-center">
                             <h5 v-text="content"></h5>
                         </div>
-                        <div class="col mt-3">
-                            <span style="font-size: 15px;"><strong>Fecha compromiso: </strong> {{ convertDate(end)}}</span>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-12 text-center mb-3">
+                           <span style="font-size: 15px;"><strong>Fecha compromiso: </strong> {{ convertDate(end)}}</span>
                         </div>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-12 text-center mb-3">
+                           <span style="font-size: 15px;"><strong>Creado por: </strong> {{ nom_emisor }} el dia {{ convertDate(start) }}</span>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center mt-3">
+                        <div class="col-12 col-md-8 col-lg-8 col-xl-6 offset-md-2 offset-xl-0">
+                            <div class="d-flex flex-column">
+                                <div>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h3>Comentarios </h3>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-primary rounded-circle" @click="newComment()"><i class="fa fa-plus-circle"></i></button>
+                                        </div>
+                                    </div>
+                                    <!-- New Comment Box -->
+                                    <div class="row d-flex justify-content-center">
+                                        <div class="col-8" :class="{'showNewComment' : CommentNew}" style="display: none;">
+                                            <!-- <form action method="post" enctype="multipart/form-data" class="form-horizontal"> -->
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Comentario</span>
+                                                    </div>
+                                                    <textarea class="form-control rounded-1" style="resize: none;" rows="8" maxlength="255" v-model="commentBody"></textarea>
+                                                </div>
+                                                <button class="btn btn-primary mt-2 float-right" @click="saveComment(activity_id)" v-if="commentBody && itsCommentNew">Guardar</button>
+                                                <button class="btn btn-primary mt-2 float-right" @click="updateComment(activity_id)" v-if="commentBody && itsCommentUpd">Actualizar</button>
+                                            <!-- </form> -->
+                                            <button class="btn btn-secondary mt-2 mr-1 float-right" @click="cancelComment()">Cancelar</button>
+                                        </div>
+                                    </div>
+                                    <!-- End new Comment Box -->
+                                    <hr>
+                                </div>
+                                <div>
+                                <div class="divtask" v-if="arrayComentarios.length">
+                                    <ul class="row" v-for="comment in arrayComentarios" :key="comment.id">
+                                            <li class="col-md-6" style="list-style:none;">
+                                                <div class="form-group d-flex justify-content-center">
+                                                    <div class="col-md my-3 pt-3 caja">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                 <h5 v-text="comment.nombre"></h5>
+                                                            </div>
+                                                            <div class="col-md">
+                                                                <p><small style="font-size:10px;" class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(comment.fecha) }}</small></p>
+                                                            </div>
+                                                            <div class="col-md">
+                                                                <template v-if="comment.user == user_id">
+                                                                    <button type="button" class="btn btn-sm btntask float-right" @click="editComment(comment)">
+                                                                        <i class="fa fa-pencil"></i>
+                                                                    </button>&nbsp;
+                                                                    <button type="button" class="btn btn-sm btntask float-right" @click="deleteComentario(comment.id,activity_id)">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>&nbsp;
+                                                                </template>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <p v-text="comment.body"></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                </div>
+                                <div v-else style="height: auto !important;">
+                                        <h5>Sin Comentaríos...</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-12 col-lg-6 mb-3">
+                            <button type="button" @click="cerrarVerAct()"  class="btn btn-secondary float-right">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <!-- Fin ver actividad y segumiento -->
 
-                        <div class="col mt-3">
-                            <span style="font-size: 15px;"><strong>Creado por: </strong> {{ nom_emisor }} el dia {{ convertDate(start) }}</span>
-                        </div>
-                    </div>
-                    <div class="modal-footer d-block d-sm-block d-md-none">
-                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                    </div>
-                </div>
-                <div class="modal-footer d-none d-sm-none d-md-block">
-                    <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
         </div>
-      <!-- /.modal-dialog -->
+        <!-- Fin ejemplo de tabla Listado -->
     </div>
-    <!--Fin del modal-->
   </main>
 </template>
 
@@ -261,7 +330,7 @@ export default {
             errorActividad: 0,
             errorMostrarMsjActividad: [],
             arrayReceptores : [],
-
+            arrayComentarios : [],
             pagination : {
                 'total'        : 0,
                 'current_page' : 0,
@@ -288,10 +357,14 @@ export default {
                 minDate: moment().subtract(120, 'minutes'),
                 maxDate: moment().add(7, 'days'),
             },
-            modal : 0,
-            tituloModal : "",
             nom_receptor : "",
-            nom_emisor : ""
+            nom_emisor : "",
+            commentBody : "",
+            CommentNew : 0,
+            itsCommentUpd : 0,
+            itsCommentNew : 0,
+            comment_id : 0,
+            user_id : 0
         };
     },
     computed:{
@@ -330,6 +403,7 @@ export default {
                 var respuesta= response.data;
                 me.arrayActividad = respuesta.actividades.data;
                 me.pagination= respuesta.pagination;
+                me.user_id = respuesta.userid;
             })
             .catch(function (error) {
                 console.log(error);
@@ -534,7 +608,8 @@ export default {
             });
         },
         verActividad(data = []){
-            this.modal = 1;
+            this.listado = 2;
+            this.activity_id = data['id'];
             this.start = data['start'];
             this.end = data['end'];
             this.title = data['title'];
@@ -542,10 +617,12 @@ export default {
             this.status = data['status'];
             this.nom_receptor = data['receptor'];
             this.nom_emisor = data['emisor'];
-            this.tituloModal = `Actividad para ${ this.nom_receptor }`;
+            this.tituloDetalle = `Actividad para ${ this.nom_receptor }`;
+            this.OpenDet = true;
+            this.getComments(data['id']);
         },
-        cerrarModal(){
-            this.modal = 0;
+        cerrarVerAct(){
+            this.listado = 0;
             this.start = "";
             this.end = "";
             this.title = "";
@@ -556,6 +633,14 @@ export default {
             this.tituloDetalle = "";
             this.nom_receptor = "";
             this.nom_emisor = "";
+            this.CommentNew = 0;
+            this.commentBody = "";
+            this.activity_id = 0;
+            this.arrayComentarios = [];
+            this.comment_id = 0;
+            this.itsCommentUpd = 0;
+            this.itsCommentNew = 0;
+            this.OpenDet = false;
         },
         convertDate(date){
             moment.locale('es');
@@ -563,6 +648,116 @@ export default {
             var datec = moment(date).format('DD MMM YYYY hh:mm:ss a');
             return datec;
         },
+        newComment(data = []){
+            this.CommentNew = 1;
+            this.commentBody = "";
+            this.itsCommentUpd = 0;
+            this.itsCommentNew = 1;
+        },
+        cancelComment(){
+            this.CommentNew = 0;
+            this.commentBody = "";
+            this.comment_id = 0;
+            this.itsCommentUpd = 0;
+            this.itsCommentNew = 0;
+        },
+        saveComment(id){
+            let me = this;
+
+            var actid = id;
+
+            axios.post('/actividad/crearComment',{
+                'id' : id,
+                'body' : this.commentBody
+            }).then(function(response) {
+                me.cancelComment();
+                me.getComments(actid);
+                swal.fire(
+                'Completado!',
+                'El comentario ha sido registrado con éxito.',
+                'success')
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        getComments(id){
+            let me = this;
+            var url= '/actividad/getComments?id=' + id;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.arrayComentarios = respuesta.comentarios;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        editComment(data = []){
+            this.comment_id = data['id'];
+            this.commentBody = data['body'];
+            this.CommentNew = 1;
+            this.itsCommentUpd = 1;
+            this.itsCommentNew = 0;
+        },
+        updateComment(id){
+
+            let me = this;
+            var actid = id;
+
+            axios.put("/actividad/editComment", {
+                id : this.comment_id,
+                body : this.commentBody
+            })
+            .then(function(response) {
+                me.cancelComment();
+                me.getComments(actid);
+                swal.fire(
+                'Completado!',
+                'El comentario ha sido actualizado con éxito.',
+                'success')
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        deleteComentario(id,actividad){
+            let me = this;
+            var actid = actividad;
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro eliminar este comentario?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/actividad/deleteComment', {
+                        'id' : id
+                    }).then(function(response) {
+                         me.getComments(actid);
+                        swalWithBootstrapButtons.fire(
+                            "Eliminado!",
+                            "El comentario ha sido eliminada con éxito.",
+                            "success"
+                        );
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
+        }
     },
     mounted() {
         this.listarActividades(1,this.buscar, this.criterio, this.estado);
@@ -590,5 +785,8 @@ export default {
     }
     .content-category{
         height: 350px !important;
+    }
+    .showNewComment {
+      display:block !important;
     }
 </style>

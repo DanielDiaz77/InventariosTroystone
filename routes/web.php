@@ -205,6 +205,11 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/actividad/desactivar', 'ActivityController@desactivar');
         Route::put('/actividad/cambiarEstado','ActivityController@cambiarEstado');
         Route::get('/actividad/getActivitiesUser','ActivityController@getActivitiesUser');
+        Route::post('/actividad/crearComment', 'ActivityController@crearComment');
+        Route::get('/actividad/getComments', 'ActivityController@getComments');
+        Route::put('/actividad/editComment','ActivityController@editComment');
+        Route::put('/actividad/deleteComment','ActivityController@deleteComment');
+
     });
 });
 
