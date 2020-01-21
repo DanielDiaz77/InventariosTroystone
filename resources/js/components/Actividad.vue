@@ -355,7 +355,7 @@ export default {
                 showClose: true,
                 daysOfWeekDisabled: [0],
                 minDate: moment().subtract(120, 'minutes'),
-                maxDate: moment().add(7, 'days'),
+                maxDate: moment().add(90, 'days'),
             },
             nom_receptor : "",
             nom_emisor : "",
