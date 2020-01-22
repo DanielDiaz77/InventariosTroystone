@@ -155,8 +155,8 @@
                             <select class="form-control" v-model="ubicacion">
                                 <option value='' disabled>Seleccione una bodega de descarga</option>
                                 <option value="Del Musico">Del Músico</option>
-                                <option value="Del Escultor">Escultor</option>
-                                <option value="Del Sastre">Sastre</option>
+                                <option value="Escultores">Escultores</option>
+                                <option value="Sastres">Sastres</option>
                                 <option value="Mecanicos">Mecánicos</option>
                                 <option value="Tractorista">Tractorista</option>
                                 <option value="San Luis">San Luis</option>
@@ -338,7 +338,7 @@
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="10" class="text-center">
+                                    <td colspan="11" class="text-center">
                                         <strong>NO hay artículos agregados...</strong>
                                     </td>
                                 </tr>

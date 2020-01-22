@@ -98,6 +98,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/articulo/selectBodega', 'ArticuloController@selectBodega');
         Route::get('/articulo/listarExcelVenta','ArticuloController@listarExcelVenta');
         Route::get('/articulo/getCodesSku','ArticuloController@getCodesSku');
+        Route::get('/articulo/listByCategory','ArticuloController@listByCategory');
+        Route::get('/articulo/listBySku','ArticuloController@listBySku');
 
         Route::get('/proveedor', 'ProveedorController@index');
         Route::post('/proveedor/registrar', 'ProveedorController@store');

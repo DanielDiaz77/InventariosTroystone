@@ -91,7 +91,14 @@
             </li>
 
             <li @click="menu=20" class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-tasks"></i> Tareas</a>
+                <a class="nav-link" href="#"><i class="fa fa-tasks"></i> Tareas
+                    <template v-if="numActivities != 0">
+                        <span class="badge badge-danger">@{{ numActivities }}</span>
+                    </template>
+                    <template v-else>
+                        <span class="badge badge-success">0</span>
+                    </template>
+                </a>
             </li>
 
             {{-- <li @click="menu=11" class="nav-item">

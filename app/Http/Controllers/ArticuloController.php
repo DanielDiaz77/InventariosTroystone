@@ -1340,11 +1340,508 @@ class ArticuloController extends Controller
         $articulo->file = $fileName;
         $articulo->save();
     }
-
     public function getCodesSku(Request $request){
         if(!$request->ajax()) return redirect('/');
         $codigos = Articulo::select('codigo')->get();
 
         return ['codigos' => $codigos];
+    }
+    public function listByCategory(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $category_id = $request->id;
+
+        $buscar = $request->buscar;
+
+        if($buscar != ''){
+            $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+            ->select('articulos.sku')
+            ->addSelect(DB::raw('COUNT(articulos.sku) as total'))
+            ->where([['categorias.id',$category_id],['articulos.sku','like', '%'. $buscar . '%']])
+            ->groupBy('articulos.sku')
+            ->paginate(12);
+        }else{
+            $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+            ->select('articulos.sku')
+            ->addSelect(DB::raw('COUNT(articulos.sku) as total'))
+            ->where('categorias.id',$category_id)
+            ->groupBy('articulos.sku')
+            ->paginate(12);
+        }
+
+        return [
+            'pagination' => [
+                'total'         => $articulos->total(),
+                'current_page'  => $articulos->currentPage(),
+                'per_page'      => $articulos->perPage(),
+                'last_page'     => $articulos->lastPage(),
+                'from'          => $articulos->firstItem(),
+                'to'            => $articulos->lastItem(),
+            ],
+
+            'articulos' => $articulos
+        ];
+
+
+    }
+    public function listBySku(Request $request){
+
+        //if(!$request->ajax()) return redirect('/');
+
+        $sku = $request->sku;
+
+        $estado = $request->estado;
+        $bodega = $request->bodega;
+        $acabado = $request->acabado;
+
+        $buscar = $request->buscar;
+        $criterio = $request->criterio;
+
+
+
+        if($estado == 1){
+            if($bodega == ''){
+                if($acabado == ''){
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([['articulos.sku',$sku],['articulos.stock','>',0]])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','>',0],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }else{
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','>',0],
+                            ['articulos.terminado',$acabado]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','>',0],
+                            ['articulos.terminado',$acabado],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }
+            }else{
+                if($acabado == ''){
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','>',0],
+                            ['articulos.ubicacion',$bodega]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','>',0],
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }else{
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','>',0],
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.terminado',$acabado]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','>',0],
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.terminado',$acabado],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }
+            }
+        }elseif($estado == 2){
+            if($bodega == ''){
+                if($acabado == ''){
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','<=',0],
+                            ['articulos.condicion','!=',3]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','<=',0],
+                            ['articulos.condicion','!=',3],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }else{
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.terminado',$acabado],
+                            ['articulos.stock','<=',0],
+                            ['articulos.condicion','!=',3]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.terminado',$acabado],
+                            ['articulos.stock','<=',0],
+                            ['articulos.condicion','!=',3],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }
+            }else{
+                if($acabado == ''){
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','<=',0],
+                            ['articulos.condicion','!=',3],
+                            ['articulos.ubicacion',$bodega]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','<=',0],
+                            ['articulos.condicion','!=',3],
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }else{
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','<=',0],
+                            ['articulos.condicion','!=',3],
+                            ['articulos.ubicacion',$bodega]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.stock','<=',0],
+                            ['articulos.condicion','!=',3],
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }
+            }
+        }elseif($estado == 3){
+            if($bodega == ''){
+                if($acabado == ''){
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.condicion',3]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.condicion',3],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }else{
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.condicion',3],
+                            ['articulos.terminado',$acabado]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.condicion',3],
+                            ['articulos.terminado',$acabado],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }
+            }else{
+                if($acabado == ''){
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.condicion',3],
+                            ['articulos.ubicacion',$bodega]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.condicion',3],
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }else{
+                    if($buscar == ''){
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.condicion',3],
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.terminado',$acabado]
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }else{
+                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                        ->leftjoin('users','articulos.idusuario','=','users.id')
+                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                            'articulos.comprometido','users.usuario')
+                        ->where([
+                            ['articulos.sku',$sku],
+                            ['articulos.condicion',3],
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.terminado',$acabado],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']
+                        ])
+                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                    }
+                }
+            }
+        }
+
+        /* BASE */
+        /* $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+        ->leftjoin('users','articulos.idusuario','=','users.id')
+        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+            'articulos.comprometido','users.usuario')
+        ->where([['articulos.sku',$sku]])
+        ->orderBy('articulos.id', 'desc')->paginate(12); */
+
+        return [
+            'pagination' => [
+                'total'         => $articulos->total(),
+                'current_page'  => $articulos->currentPage(),
+                'per_page'      => $articulos->perPage(),
+                'last_page'     => $articulos->lastPage(),
+                'from'          => $articulos->firstItem(),
+                'to'            => $articulos->lastItem(),
+            ],
+
+            'articulos' => $articulos
+        ];
     }
 }

@@ -20,7 +20,7 @@
             </a>
             </li>
             </div>
-            <div v-else>
+            <div v-else class="text-center m-2">
                 <a><span>No tiene notificaciones</span></a>
             </div>
         </div>
