@@ -29,7 +29,6 @@
                             <div class="input-group">
                                 <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)" class="form-control mb-1" placeholder="Texto a buscar">
                                 <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)" class="form-control mb-1" placeholder="Terminado">
-
                             </div>
                             <div class="input-group">
 
@@ -90,7 +89,8 @@
                                 <th>Bodega de descarga</th>
                                 <th>Estado</th>
                                 <th>Stock</th>
-                                <th>Comprometido</th>
+                                <th v-if="estadoArt!=2">Comprometido</th>
+                                <th v-else>Venta</th>
                             </tr>
                             </thead>
                             <tbody v-if="arrayArticulo.length">
@@ -141,13 +141,16 @@
                                         </div>
                                     </td>
                                     <td v-text="articulo.stock"></td>
-                                    <td>
+                                    <td v-if="estadoArt!=2">
                                         <div v-if="articulo.comprometido">
                                             <span class="badge badge-success">Si</span>
                                         </div>
                                         <div v-else>
                                             <span class="badge badge-danger">No</span>
                                         </div>
+                                    </td>
+                                    <td v-else>
+                                        {{ articulo.venta }}
                                     </td>
                                 </tr>
                             </tbody>
