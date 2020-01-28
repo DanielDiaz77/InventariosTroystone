@@ -165,7 +165,7 @@
                                 <div class="input-group-append">
                                     <span class="input-group-text">Detalles</span>
                                 </div>
-                                <textarea class="form-control rounded-0" style="resize: none;" rows="3" maxlength="256" v-model="content"></textarea>
+                                <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="content"></textarea>
                             </div> <br>
                         </div>
                         <div v-show="errorActividad" class="form-group row div-error d-flex justify-content-center">
@@ -246,7 +246,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">Comentario</span>
                                                     </div>
-                                                    <textarea class="form-control rounded-1" style="resize: none;" rows="8" maxlength="255" v-model="commentBody"></textarea>
+                                                    <textarea class="form-control rounded-1" rows="8" maxlength="255" v-model="commentBody"></textarea>
                                                 </div>
                                                 <button class="btn btn-primary mt-2 float-right" @click="saveComment(activity_id)" v-if="commentBody && itsCommentNew">Guardar</button>
                                                 <button class="btn btn-primary mt-2 float-right" @click="updateComment(activity_id)" v-if="commentBody && itsCommentUpd">Actualizar</button>
