@@ -11,8 +11,12 @@ class Activity extends Model
     protected $fillable = ['start','end','title','content','status','idemisor','idreceptor'];
 
 
-    public function usuario(){
+    /* public function usuario(){
         return $this->belongsTo('App\User');
+    } */
+
+    public function users(){
+        return $this->belongsToMany('App\User')->withTimestamps();
     }
 
     public function comments(){

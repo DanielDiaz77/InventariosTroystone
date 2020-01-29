@@ -13,29 +13,29 @@
                     <i class="icon-plus"></i>&nbsp;Nuevo
                 </button>
             </div>
-            <!-- Nueva Actividad -->
+            <!-- Listado de  Actividades -->
             <template v-if="listado == 0">
                 <div class="card-body">
                     <div class="form-inline">
                         <div class="form-group mb-2 col-12">
-                            <div class="input-group">
+                            <!-- <div class="input-group">
                                 <select class="form-control mb-1" v-model="criterio">
                                     <option value="title">Actividad</option>
                                     <option value="emisor">Emisor</option>
                                     <option value="receptor">Receptor</option>
                                 </select>
-                            </div>
-                            <div class="input-group">
+                            </div> -->
+                            <!-- <div class="input-group">
                                 <input type="text" v-model="buscar" @keyup.enter="listarActividades(1,buscar,criterio,estado)" class="form-control mb-1" placeholder="Texto a buscar">
-                            </div>
+                            </div> -->
                             <div class="input-group">
-                            <select class="form-control mb-1" v-model="estado" @change="listarActividades(1,buscar,criterio,estado)">
-                                <option value="0">Incompleta</option>
-                                <option value="1">Completada</option>
-                                <option value="2">Cancelada</option>
-                            </select>
-                            <button type="submit" @click="listarActividades(1,buscar,criterio,estado)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
-                        </div>
+                                <select class="form-control mb-1" v-model="estado" @change="listarActividades(1,buscar,criterio,estado)">
+                                    <option value="0">Incompleta</option>
+                                    <option value="1">Completada</option>
+                                    <option value="2">Cancelada</option>
+                                </select>
+                                <button class="btn btn-primary mb-1"><i class="fa fa-search"></i> Filtro</button>
+                            </div>
                         </div>
                     </div>
                     <div class="table-responsive col-md-12">
@@ -47,7 +47,6 @@
                                 <th>Actividad</th>
                                 <th>Detalles</th>
                                 <th>Fecha Compromiso</th>
-                                <th>Receptor</th>
                                 <th>Completado</th>
                                 <th>Estado</th>
                             </tr>
@@ -73,7 +72,6 @@
                                     <td v-text="actividad.title"></td>
                                     <td v-text="actividad.content"></td>
                                     <td> {{ convertDate(actividad.end) }} </td>
-                                    <td v-text="actividad.receptor"></td>
                                     <td class="text-center">
                                         <input type="checkbox" :id="'chk'+actividad.id" v-model="actividad.status"
                                             @change="cambiarEstado(actividad.id,actividad.status)" v-if="actividad.status != 2">
@@ -124,9 +122,9 @@
                     </nav>
                 </div>
             </template>
-            <!-- Fin nueva Actividad -->
+            <!-- Fin Listado de  Actividades -->
 
-            <!-- Editar actividad -->
+            <!-- Editar/Nueva actividad -->
             <template v-if="listado == 1">
                 <div class="card-body">
                     <div class="form-group row">
@@ -135,17 +133,25 @@
                         </div>&nbsp;
                     </div>
                     <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+
                         <div class="row d-flex justify-content-center">
-                            <div class="input-group input-group-sm col-12 col-md-12 col-lg-4 col-xl-3  mb-3">
+                            <div class="input-group input-group-sm col-12 col-lg-9 col-xl-6 mb-3">
                                 <div class="input-group-append">
-                                    <span class="input-group-text">Receptor</span>
+                                    <span class="input-group-text">Receptores</span>
                                 </div>
-                                <select class="form-control" v-model="idreceptor">
-                                    <option value="0" disabled>Seleccione un receptor</option>
-                                    <option v-for="receptor in arrayReceptores" :key="receptor.id" :value="receptor.id" v-text="receptor.nombre"></option>
-                                </select>
+                                <v-select multiple v-model="selectedUsers" :on-search="selectReceptor" label="nombre" :options="arrayReceptores" placeholder="Buscar usuarios...">
+                                </v-select>
                             </div>
-                            <div class="input-group input-group-sm col-12 col-lg-5 col-xl-3 col-md-12 mb-3">
+                        </div>
+
+                        <div class="row d-flex justify-content-center">
+                            <div class="input-group input-group-sm col-12 col-lg-9 col-xl-3  mb-3">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Titulo</span>
+                                </div>
+                                <input type="text" v-model="title" class="form-control" placeholder="Título de la actividad"/>
+                            </div>
+                            <div class="input-group input-group-sm col-12 col-lg-9 col-xl-3  mb-3">
                                 <div class="input-group-append">
                                     <span class="input-group-text">Fecha Compromiso </span>
                                 </div>
@@ -153,20 +159,9 @@
                             </div>
                         </div>
                         <div class="row d-flex justify-content-center">
-                            <div class="input-group input-group-sm col-12 col-lg-9 col-xl-6  mb-3">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">Titulo</span>
-                                </div>
-                                <input type="text" v-model="title" class="form-control" placeholder="Título de la actividad"/>
-                            </div>
-                        </div>
-                        <div class="row d-flex justify-content-center">
-                            <div class="input-group input-group-sm col-12 col-lg-9 col-xl-6 mb-3">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">Detalles</span>
-                                </div>
-                                <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="content"></textarea>
-                            </div> <br>
+                            <template class="justify-content-center">
+                                <editor :options="editorOptions" visible="true" mode="wysiwyg" v-model="content" Width="100%"/>
+                            </template>
                         </div>
                         <div v-show="errorActividad" class="form-group row div-error d-flex justify-content-center">
                             <div class="text-center text-error">
@@ -184,7 +179,7 @@
                     <br><br><br><br><br>
                 </div>
             </template>
-            <!-- Fin editar actividad -->
+            <!-- Fin editar/nueva actividad -->
 
             <!-- Ver actividad y segumiento -->
             <template v-if="listado == 2">
@@ -212,8 +207,16 @@
                         </div>&nbsp;
                     </div>
                     <div class="row d-flex justify-content-center">
-                        <div class="col-12 mb-3 text-center">
-                            <h5 v-text="content"></h5>
+                        <div class="col-12 col-sm-4 mb-3 text-center">
+                            <viewer :value="content" width="600px"/>
+                        </div>
+                        <div class="col-12 col-sm-2 text-center mb-3 mt-5">
+                            <h5 class="text-center">Actividad para: </h5>
+                            <ul id="involvedUsers" v-for="usuario in selectedUsers" :key="usuario.id">
+                                <li>
+                                    <span style="font-size: 15px;" class="badge badge-primary">{{usuario.nombre}}</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     <div class="row d-flex justify-content-center">
@@ -222,7 +225,7 @@
                         </div>
                     </div>
                     <div class="row d-flex justify-content-center">
-                        <div class="col-12 text-center mb-3">
+                        <div class="col-12 text-center">
                            <span style="font-size: 15px;"><strong>Creado por: </strong> {{ nom_emisor }} el dia {{ convertDate(start) }}</span>
                         </div>
                     </div>
@@ -240,7 +243,7 @@
                                     </div>
                                     <!-- New Comment Box -->
                                     <div class="row d-flex justify-content-center">
-                                        <div class="col-8" :class="{'showNewComment' : CommentNew}" style="display: none;">
+                                        <div class="col-12 col-sm-8" :class="{'showNewComment' : CommentNew}" style="display: none;">
                                             <!-- <form action method="post" enctype="multipart/form-data" class="form-horizontal"> -->
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
@@ -314,6 +317,14 @@
 <script>
 import moment from 'moment';
 import datePicker from 'vue-bootstrap-datetimepicker';
+import vSelect from 'vue-select';
+import 'tui-editor/dist/tui-editor.css';
+import 'tui-editor/dist/tui-editor-contents.css';
+import 'codemirror/lib/codemirror.css';
+import 'highlight.js/styles/github.css';
+import Editor from '@toast-ui/vue-editor/src/Editor.vue';
+import { Viewer } from '@toast-ui/vue-editor'
+
 Vue.use(datePicker);
 export default {
     data() {
@@ -364,37 +375,71 @@ export default {
             itsCommentUpd : 0,
             itsCommentNew : 0,
             comment_id : 0,
-            user_id : 0
+            user_id : 0,
+            selectedUsers : [],
+            editorOptions: {
+                useCommandShortcut: true,
+                useDefaultHTMLSanitizer: true,
+                usageStatistics: true,
+                hideModeSwitch: false,
+                language: 'es_MX',
+                toolbarItems: [
+                    'heading',
+                    'bold',
+                    'italic',
+                    'strike',
+                    'divider',
+                    'hr',
+                    'quote',
+                    'divider',
+                    'ul',
+                    'ol',
+                    'task',
+                    'indent',
+                    'outdent',
+                    'divider',
+                    'table',
+                    'link',
+                    'divider',
+                    'code',
+                    'codeblock'
+                ]
+            }
         };
     },
+    components: {
+        vSelect,
+        'editor': Editor,
+        'viewer': Viewer
+    },
     computed:{
-            isActived: function(){
-                return this.pagination.current_page;
-            },
-            //Calcula los elementos de la paginación
-            pagesNumber: function() {
-                if(!this.pagination.to) {
-                    return [];
-                }
-
-                var from = this.pagination.current_page - this.offset;
-                if(from < 1) {
-                    from = 1;
-                }
-
-                var to = from + (this.offset * 2);
-                if(to >= this.pagination.last_page){
-                    to = this.pagination.last_page;
-                }
-
-                var pagesArray = [];
-                while(from <= to) {
-                    pagesArray.push(from);
-                    from++;
-                }
-                return pagesArray;
-            }
+        isActived: function(){
+            return this.pagination.current_page;
         },
+        //Calcula los elementos de la paginación
+        pagesNumber: function() {
+            if(!this.pagination.to) {
+                return [];
+            }
+
+            var from = this.pagination.current_page - this.offset;
+            if(from < 1) {
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.pagination.last_page){
+                to = this.pagination.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        }
+    },
     methods: {
         listarActividades (page,buscar,criterio,estado){
             let me=this;
@@ -404,6 +449,7 @@ export default {
                 me.arrayActividad = respuesta.actividades.data;
                 me.pagination= respuesta.pagination;
                 me.user_id = respuesta.userid;
+
             })
             .catch(function (error) {
                 console.log(error);
@@ -420,14 +466,19 @@ export default {
             if (this.validarActividad()) {
                 return;
             }
-
             let me = this;
+
+            var ArrUsuarios = [];
+            for(let i = 0; i < this.selectedUsers.length; i++){
+                ArrUsuarios.push(this.selectedUsers[i]['id']);
+            }
+            //console.log(ArrUsuarios);
 
             axios.post("/actividad/registrar", {
                 title: this.title,
                 content: this.content,
                 end : this.end,
-                idreceptor : this.idreceptor
+                usuarios : ArrUsuarios
             })
             .then(function(response) {
                 me.cerrarDetalle();
@@ -446,6 +497,13 @@ export default {
                 return;
             }
             let me = this;
+
+            var ArrUsuarios = [];
+
+            for(let i = 0; i < this.selectedUsers.length; i++){
+                ArrUsuarios.push(this.selectedUsers[i]['id']);
+            }
+
             axios.put("/actividad/actualizar", {
                 id : this.activity_id,
                 start : this.start,
@@ -453,8 +511,8 @@ export default {
                 title : this.title,
                 content : this.content,
                 status : this.status,
-                idreceptor : this.idreceptor,
-                idemisor : this.idemisor
+                idemisor : this.idemisor,
+                usuarios : ArrUsuarios
             })
             .then(function(response) {
                 me.cerrarDetalle();
@@ -509,7 +567,7 @@ export default {
             this.errorMostrarMsjActividad = [];
 
             if (!this.title) this.errorMostrarMsjActividad.push("El titulo de la actividad no puede estar vacío.");
-            if (!this.idreceptor) this.errorMostrarMsjActividad.push("Seleccione un usuario para asignar la actividad.");
+            /* if (!this.selectedUsers.length) this.errorMostrarMsjActividad.push("Seleccione un usuario para asignar la actividad."); */
             if (!this.content) this.errorMostrarMsjActividad.push("El contenido de la actividad no puede estar vacio");
             if (!this.end) this.errorMostrarMsjActividad.push("Seleccione una fecha compromiso para la actividad.");
 
@@ -527,7 +585,7 @@ export default {
             this.TaskNew = true;
             this.TaskEdit = false;
             this.tituloDetalle = 'Crear Nueva Actividad';
-            this.selectReceptor();
+            //this.selectReceptor();
         },
         editTask(data = []){
             this.listado = 1;
@@ -543,7 +601,8 @@ export default {
             this.TaskNew = false;
             this.TaskEdit = true;
             this.tituloDetalle = 'Editar Actividad';
-            this.selectReceptor();
+            this.getUsers(data['id']);
+            //this.selectReceptor();
         },
         cerrarDetalle(){
             this.listado = 0;
@@ -560,6 +619,7 @@ export default {
             this.TaskNew = false;
             this.TaskEdit = false;
             this.arrayReceptores = [];
+            this.selectedUsers = [];
         },
         selectReceptor(){
             let me=this;
@@ -615,11 +675,21 @@ export default {
             this.title = data['title'];
             this.content = data['content'];
             this.status = data['status'];
-            this.nom_receptor = data['receptor'];
             this.nom_emisor = data['emisor'];
-            this.tituloDetalle = `Actividad para ${ this.nom_receptor }`;
             this.OpenDet = true;
+            this.getUsers(data['id']);
             this.getComments(data['id']);
+        },
+        getUsers(id){
+            let me = this;
+            var url= '/actividad/getUsers?id=' + id;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.selectedUsers = respuesta.usuarios;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         },
         cerrarVerAct(){
             this.listado = 0;
@@ -788,5 +858,8 @@ export default {
     }
     .showNewComment {
       display:block !important;
+    }
+    ul#involvedUsers li{
+        display:inline !important;
     }
 </style>

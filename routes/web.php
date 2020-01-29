@@ -212,6 +212,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/actividad/editComment','ActivityController@editComment');
         Route::put('/actividad/deleteComment','ActivityController@deleteComment');
 
+        Route::get('/actividad/getUsers', 'ActivityController@getUsers');
+
     });
 });
 

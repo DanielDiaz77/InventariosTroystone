@@ -19,6 +19,8 @@ class User extends Authenticatable
         'id', 'usuario', 'password', 'condicion', 'idrol','area'
     ];
 
+    protected $hidden = array('pivot');
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -34,6 +36,10 @@ class User extends Authenticatable
 
     public function persona(){
         return $this->belongsTo('App\Persona');
+    }
+
+    public function activities(){
+        return $this->belongsToMany('App\Activity')->withTimestamps();
     }
 
     /**
