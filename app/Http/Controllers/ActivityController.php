@@ -122,7 +122,10 @@ class ActivityController extends Controller
         if (!$request->ajax()) return redirect('/');
         $userid = \Auth::user()->id;
         $usuario = User::findOrFail($userid);
-        $total = $usuario->activities()->count();
+        $total = $usuario->activities()
+        ->where('activities.status',0)
+        ->count();
+
         return ['total' => $total];
     }
     public function crearComment(Request $request){
