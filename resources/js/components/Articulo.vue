@@ -12,6 +12,10 @@
                <!--  <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary" v-if="showNew">
                     <i class="icon-plus"></i>&nbsp;Nuevo
                 </button> -->
+                 <button type="button" @click="AskcortarPlaca()" class="btn btn-warning float-right" v-if="listado == 2 && stock >= 1">
+                    <i class="icon-crop"></i>&nbsp;Cortar
+                </button>
+
             </div>
             <!-- Listado -->
             <template v-if="listado==1">
@@ -114,7 +118,7 @@
                                                 </button>
                                             </template>
                                             <template v-else></template>&nbsp;
-                                            <button type="button" @click="abrirModal2('articulo','visualizar',articulo)" class="btn btn-success btn-sm">
+                                            <button type="button" @click="verArticulo(articulo)" class="btn btn-success btn-sm">
                                                 <i class="icon-eye"></i>
                                             </button> &nbsp;
                                         </div>
@@ -368,6 +372,361 @@
                 </div>
             </template>
             <!-- Fin Edit Articulo -->
+
+            <!-- Ver Articulo -->
+            <template v-if="listado==2">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <div class="col-12 text-center">
+                           <h3 v-text="tituloModal"></h3>
+                        </div>&nbsp;
+                    </div>
+                    <div class="col-12 d-flex justify-content-end">
+                        <div v-if="isEdition && estado">
+                            <label for=""><strong>Comprometido: </strong></label>
+                            <toggle-button @change="cambiarComprometido(articulo_id)" v-model="btnComprometido" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                        </div>&nbsp;
+                        <div v-if="usuario" class="mt-0 mt-md-1">
+                            <label for=""><strong>Actualizo: </strong> {{ usuario }} </label>
+                            <!-- <p v-text="usuario"></p> -->
+                        </div>&nbsp;
+                    </div>
+                    <div class="row">
+                        <div class="input-group input-group-sm col-12 col-lg-3  mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Código de material</span>
+                            </div>
+                            <p class="form-control" v-text="sku"></p>
+                        </div>
+                        <div class="input-group input-group-sm col-12 col-lg-3  mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">No° de placa</span>
+                            </div>
+                           <p class="form-control" v-text="codigo"></p>
+                        </div>
+
+                        <div class="input-group input-group-sm col-12 col-lg-3 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Material</span>
+                            </div>
+                            <p class="form-control" v-text="nombre_categoria"></p>
+                        </div>
+
+                        <div class="input-group input-group-sm col-12 col-lg-3  mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Terminado</span>
+                            </div>
+                           <p class="form-control" v-text="terminado"></p>
+                        </div>
+                         <div class="input-group input-group-sm col-12 col-lg-3  mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Ubicación</span>
+                            </div>
+                            <p class="form-control" v-text="ubicacion"></p>
+                        </div>
+                        <div class="input-group input-group-sm col-12 col-lg-4 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Fecha de llegada</span>
+                            </div>
+                            <p class="form-control" v-text="fecha_llegada"></p>
+                        </div>
+
+                        <div class="input-group input-group-sm col-12 col-lg-4  mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Contenedor</span>
+                            </div>
+                            <p class="form-control" v-text="contenedor"></p>
+                        </div>
+                        <div class="input-group input-group-sm col-12 col-lg-3  mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Origen</span>
+                            </div>
+                           <p class="form-control" v-text="origen"></p>
+                        </div>
+                        <div class="input-group input-group-sm col-12 col-lg-3  mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Precio m<sup>2</sup></span>
+                            </div>
+                            <p class="form-control" v-text="precio_venta"></p>
+                        </div>
+                        <div class="input-group input-group-sm col-12 col-lg-3 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Stock</span>
+                            </div>
+                            <p class="form-control" v-text="stock"></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-group input-group-sm col-12 col-lg-3 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Espesor</span>
+                            </div>
+                            <p class="form-control" v-text="espesor"></p>
+                        </div>
+                        <div class="input-group input-group-sm col-12 col-lg-3 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Largo</span>
+                            </div>
+                            <p class="form-control" v-text="largo"></p>
+                        </div>
+                        <div class="input-group input-group-sm col-12 col-lg-3 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Alto</span>
+                            </div>
+                            <p class="form-control" v-text="alto"></p>
+                        </div>
+                        <div class="input-group input-group-sm col-12 col-lg-3 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Metros<sup>2</sup></span>
+                            </div>
+                            <p class="form-control" v-text="metros_cuadrados"></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Descripción</span>
+                            </div>
+                            <textarea class="form-control rounded-0" style="background: #fff;" rows="3" maxlength="256" v-text="descripcion" disabled></textarea>
+                        </div>
+                        <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Observaciones</span>
+                            </div>
+                            <!-- <textarea class="form-control rounded-0" style="resize: none;" rows="3" maxlength="256" v-model="observacion"></textarea> -->
+                            <textarea class="form-control rounded-0" style="background: #fff;" rows="3" maxlength="256" v-text="observacion" disabled></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row d-flex justify-content-around">
+                        <div class="d-flex justify-content-center">
+                            <template v-if="imagenMinatura !='images/null'">
+                                <div>
+                                    <lightbox class="m-0" album="" :src="imagen">
+                                        <figure>
+                                            <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
+                                        </figure>
+                                    </lightbox>&nbsp;
+                                </div>
+                            </template>
+                        </div>
+                        <div class="d-none d-sm-none d-md-block">
+                            <barcode :value="codigo" :options="{format: 'EAN-13'}">
+                                Generando código de barras.
+                            </barcode>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <button type="button" @click="closeVer()" class="btn btn-secondary">Cerrar</button>
+                            <!-- <button type="button" class="btn btn-primary" @click="actualizarArticulo()">Actualizar</button> -->
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <!-- Fin Ver Articulo -->
+
+            <template v-if="listado == 3">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <div class="col-12 text-center">
+                           <h3 v-text="tituloModal"></h3>
+                        </div>&nbsp;
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-sm text-center table-hover">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th>No° Placa</th>
+                                        <th>Código de material</th>
+                                        <th>Material</th>
+                                        <th>Largo</th>
+                                        <th>Alto</th>
+                                        <th>Metros<sup>2</sup></th>
+                                        <th>Espesor</th>
+                                        <th>Terminado</th>
+                                        <th>Stock</th>
+                                        <th>Precio m<sup>2</sup></th>
+                                        <th>Ubicacion</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td v-text="codigo"></td>
+                                        <td v-text="sku"></td>
+                                        <td v-text="nombre_categoria"></td>
+                                        <td v-text="largo"></td>
+                                        <td v-text="alto"></td>
+                                        <td v-text="metros_cuadrados"></td>
+                                        <td v-text="espesor"></td>
+                                        <td v-text="terminado"></td>
+                                        <td v-text="stock"></td>
+                                        <td v-text="precio_venta"></td>
+                                        <td v-text="ubicacion"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-12 text-center">
+                           <h3 style="color:red;">Metros restantes: {{ calcularMtsRestantes }}</h3>
+                           <!-- <input type="number" readonly :value="calcularMtsRestantes" class="form-control"/> -->
+                        </div>&nbsp;
+                    </div>
+                    <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="row mb-2">
+                            <div class="col-12 col-sm-12 col-lg-6 border m-0">
+                                <h4 class="text-center pt-2">Placa A</h4>
+                                <div class="row">
+                                    <div class="col-12 col-sm-12 col-lg d-flex flex-column">
+                                       <div>
+                                            <span style="color:red;" v-show="codigoA==''">(*Ingrese el código, recuerde debe ser único)</span>
+                                       </div>
+                                       <div>
+                                           <div class="input-group input-group-sm">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">No° de placa</span>
+                                                </div>
+                                                <input type="text" v-model="codigoA" class="form-control" placeholder="Código de material"/>
+                                            </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-lg d-flex flex-column">
+                                       <div>
+                                            <span style="color:red;" v-show="metros_cuadradosA==''">(*Ingrese las medidas correctamente)</span>
+                                       </div>
+                                       <div>
+                                           <div class="input-group input-group-sm">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Metros<sup>2</sup></span>
+                                                </div>
+                                                <input type="number" readonly :value="calcularMtsA" class="form-control"/>
+                                            </div>
+                                       </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2 mb-2">
+                                    <div class="col-12 col-sm-12 col-lg-6 d-flex flex-column">
+                                       <div>
+                                            <span style="color:red;" v-show="largoA==''">(*Ingrese el largo de la mitad A)</span>
+                                       </div>
+                                       <div>
+                                           <div class="input-group input-group-sm">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Largo</span>
+                                                </div>
+                                                <input type="text" v-model="largoA" class="form-control" placeholder="Código de material"/>
+                                            </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-lg-6 d-flex flex-column">
+                                       <div>
+                                            <span style="color:red;" v-show="altoA==''">(*Ingrese el alto de la mitad A)</span>
+                                       </div>
+                                       <div>
+                                           <div class="input-group input-group-sm">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Alto</span>
+                                                </div>
+                                                <input type="text" v-model="altoA" class="form-control" placeholder="Código de material"/>
+                                            </div>
+                                       </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <button type="button" class="btn btn-primary float-right" v-if="!savedA" @click="registrarArticuloA()">Guardar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-12 col-lg-6 border m-0">
+                                <h4 class="text-center pt-2">Placa B</h4>
+                                <div class="row">
+                                    <div class="col-12 col-sm-12 col-lg d-flex flex-column">
+                                       <div>
+                                            <span style="color:red;" v-show="codigoB==''">(*Ingrese el código, recuerde debe ser único)</span>
+                                       </div>
+                                       <div>
+                                           <div class="input-group input-group-sm">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">No° de placa</span>
+                                                </div>
+                                                <input type="text" v-model="codigoB" class="form-control" placeholder="Código de material"/>
+                                            </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-lg d-flex flex-column">
+                                       <div>
+                                            <span style="color:red;" v-show="metros_cuadradosB==''">(*Ingrese las medidas correctamente)</span>
+                                       </div>
+                                       <div>
+                                           <div class="input-group input-group-sm">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Metros<sup>2</sup></span>
+                                                </div>
+                                                <input type="number" readonly :value="calcularMtsB" class="form-control"/>
+                                            </div>
+                                       </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2 mb-2">
+                                    <div class="col-12 col-sm-12 col-lg-6 d-flex flex-column">
+                                       <div>
+                                            <span style="color:red;" v-show="largoB==''">(*Ingrese el largo de la mitad A)</span>
+                                       </div>
+                                       <div>
+                                           <div class="input-group input-group-sm">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Largo</span>
+                                                </div>
+                                                <input type="text" v-model="largoB" class="form-control" placeholder="Código de material"/>
+                                            </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-lg-6 d-flex flex-column">
+                                       <div>
+                                            <span style="color:red;" v-show="altoB==''">(*Ingrese el alto de la mitad A)</span>
+                                       </div>
+                                       <div>
+                                           <div class="input-group input-group-sm">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Alto</span>
+                                                </div>
+                                                <input type="text" v-model="altoB" class="form-control" placeholder="Código de material"/>
+                                            </div>
+                                       </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <button type="button" class="btn btn-primary float-right" v-if="!savedB" @click="registrarArticuloB()">Guardar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6 text-center">
+                                <h5>La razón del corte de la placa es?</h5>
+                            </div>&nbsp;
+                            <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Observaciones</span>
+                                </div>
+                                <textarea class="form-control rounded-0"  rows="3" maxlength="256" v-model="observacion"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <button type="button" v-if="cutAvi" @click="closeVer()"  class="btn btn-secondary">Cancelar</button>
+                            <button type="button" class="btn btn-primary" @click="actualizarArticuloCortado()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
@@ -772,7 +1131,21 @@ export default {
             listado : 1,
             showNew : false,
             remoFile : false,
-            zona : "GDL"
+            zona : "GDL",
+            cutAvi : true,
+            codigoA : "",
+            codigoB : "",
+            largoA : 0,
+            largoB : 0,
+            altoA : 0,
+            altoB : 0,
+            metros_cuadradosA : 0,
+            metros_cuadradosB : 0,
+            savedA : 0,
+            savedB : 0,
+            precioA : 0,
+            precioB : 0
+
         };
     },
     components: {
@@ -816,7 +1189,27 @@ export default {
             },
             imagen(){
                 return this.imagenMinatura;
-            }
+            },
+            calcularMtsA : function(){
+                let me = this;
+                let resultado = 0;
+                resultado = resultado + (me.altoA * me.largoA);
+                me.metros_cuadradosA = resultado;
+                return resultado;
+            },
+            calcularMtsB : function(){
+                let me=this;
+                let resultado = 0;
+                resultado = resultado + (me.altoB * me.largoB);
+                me.metros_cuadradosB = resultado;
+                return resultado;
+            },
+            calcularMtsRestantes : function(){
+                let me=this;
+                let resultado = 0;
+                resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
+                return resultado;
+            },
         },
     methods: {
         listarArticulo (page,buscar,criterio,bodega,acabado,estado){
@@ -1380,7 +1773,216 @@ export default {
             this.showElim = false;
             this.tituloModal = "";
             this.listarArticulo(pagec,this.buscar,this.criterio,this.bodega,this.acabado,this.estadoArt);
-        }
+        },
+        verArticulo(data = []){
+            //this.selectCategoria();
+            this.listado = 2;
+            this.showNew = false;
+            this.tituloModal = `${ data['sku'] } - ${ data['codigo'] }`;
+            this.articulo_id = data['id'];
+            this.idcategoria = data['idcategoria'];
+            this.nombre_categoria = data['nombre_categoria'];
+            this.codigo = data['codigo'];
+            this.sku = data['sku'];
+            this.terminado = data['terminado'];
+            this.largo = data['largo'];
+            this.alto = data['alto'];
+            this.metros_cuadrados = data['metros_cuadrados'];
+            this.espesor = data['espesor'];
+            this.precio_venta = data['precio_venta'];
+            this.ubicacion = data['ubicacion'];
+            this.stock = data['stock'];
+            this.descripcion= data['descripcion'];
+            this.observacion = data['observacion'];
+            this.origen = data['origen'];
+            this.contenedor = data['contenedor'];
+            this.fecha_llegada = data['fecha_llegada'];
+            this.estado = data['condicion'];
+            this.comprometido = data['comprometido'];
+            this.usuario = data['usuario'];
+            this.isEdition = true;
+
+            if(this.comprometido == 1){
+                this.btnComprometido = true;
+            }else{
+                this.btnComprometido = false;
+            }
+
+            let hasImg = 'images/' + data['file'];
+
+            if(data['file']){
+                this.showElim = true;
+                this.imagenMinatura = 'images/' + data['file'];
+                this.remoFile = false;
+            }else{
+                this.showElim = false;
+                this.imagenMinatura = 'images/null';
+                this.remoFile = false;
+            }
+        },
+        closeVer(){
+            let pagec = this.pagination.current_page;
+            this.showNew = true;
+            this.listado = 1;
+            this.tituloModal = "";
+            this.idcategoria = 0;
+            this.codigo = '';
+            this.sku = '';
+            this.terminado = '';
+            this.largo = 0;
+            this.alto = 0;
+            this.metros_cuadrados = 0;
+            this.espesor = 0;
+            this.precio_venta  = 0;
+            this.ubicacion = '';
+            this.stock = 1;
+            this.descripcion= '';
+            this.observacion = '';
+            this.origen = '';
+            this.contenedor  = '';
+            this.fecha_llegada = '';
+            this.file = '';
+            this.errorArticulo = 0;
+            this.imagenMinatura = '';
+            this.btnComprometido = '';
+            this.comprometido = 0;
+            this.usuario = '';
+            this.isEdition = false;
+            this.file = "";
+            this.showElim = false;
+            this.tituloModal = "";
+            this.nombre_categoria = "";
+            this.listarArticulo(pagec,this.buscar,this.criterio,this.bodega,this.acabado,this.estadoArt);
+        },
+        AskcortarPlaca(){
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro de cortar esta placa? \n Este es un proceso irrevertible",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    this.viewCortarPlaca();
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
+        },
+        viewCortarPlaca(){
+            this.listado = 3;
+            this.tituloModal = `Cotar ${ this.sku } - ${ this.codigo }`;
+            this.codigoA = this.codigo + '-A';
+            this.largoA = this.largo;
+            this.altoA =  this.alto / 2;
+            this.codigoB = this.codigo + '-B';
+            this.largoB = this.largo;
+            this.altoB =  this.alto / 2;
+        },
+        registrarArticuloA(){
+            let me = this;
+            if(me.largoA == 0 || me.altoA == 0 || me.codigoA == ""){
+            }else{
+                axios.post("/articulo/registrar",{
+                    'idcategoria': this.idcategoria,
+                    'codigo': this.codigoA,
+                    'sku' : this.sku,
+                    'terminado' : this.terminado,
+                    'largo' : this.largoA,
+                    'alto' : this.altoA,
+                    'metros_cuadrados' : this.metros_cuadradosA,
+                    'espesor' : this.espesor,
+                    'precio_venta' : this.precioA,
+                    'ubicacion' : this.ubicacion,
+                    'stock': this.stock,
+                    'descripcion': this.descripcion,
+                    'observacion' : this.observacion,
+                    'origen' : this.origen,
+                    'contenedor' : this.contenedor,
+                    'fecha_llegada' : this.fecha_llegada
+                }).then(function (response) {
+                    Swal.fire(
+                        "Registrado!",
+                        `La mitad A guardada con éxito`,
+                        "success"
+                    )
+                    me.savedA = 1;
+                    me.cutAvi = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        registrarArticuloB(){
+            let me = this;
+            if(me.largoB == 0 || me.altoB == 0 || me.codigoB == ""){
+            }else{
+                axios.post("/articulo/registrar",{
+                    'idcategoria': this.idcategoria,
+                    'codigo': this.codigoB,
+                    'sku' : this.sku,
+                    'terminado' : this.terminado,
+                    'largo' : this.largoB,
+                    'alto' : this.altoB,
+                    'metros_cuadrados' : this.metros_cuadradosB,
+                    'espesor' : this.espesor,
+                    'precio_venta' : this.precioB,
+                    'ubicacion' : this.ubicacion,
+                    'stock': this.stock,
+                    'descripcion': this.descripcion,
+                    'observacion' : this.observacion,
+                    'origen' : this.origen,
+                    'contenedor' : this.contenedor,
+                    'fecha_llegada' : this.fecha_llegada
+                }).then(function (response) {
+                    Swal.fire(
+                        "Registrado!",
+                        `La mitad B guardada con éxito`,
+                        "success"
+                    )
+                    me.savedB = 1;
+                    me.cutAvi = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        actualizarArticuloCortado() {
+            if (this.savedA == 0 || this.savedB == 0) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Error...',
+                    text: 'Se deben guardar cambios en la placa A Y B!',
+                })
+                return;
+            }
+            let me = this;
+            axios.put("/articulo/actualizarCorte", {
+                'stock': this.stock,
+                'id': this.articulo_id,
+                'observacion' : this.observacion
+            })
+            .then(function(response) {
+                Swal.fire(
+                    "Completado!",
+                    `La placa ha sido cortada con éxito`,
+                    "success"
+                )
+               me.closeVer();
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
     },
     mounted() {
         this.listarArticulo(1,this.buscar, this.criterio,this.bodega,this.acabado,this.estadoArt);

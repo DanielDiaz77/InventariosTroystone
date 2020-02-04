@@ -1352,6 +1352,7 @@ class ArticuloController extends Controller
         $articulo = Articulo::findOrFail($request->id);
         $articulo->stock            =   $newStock;
         $articulo->condicion        =   '3';
+        $articulo->observacion      = $request->observacion;
         $articulo->save();
 
     }
