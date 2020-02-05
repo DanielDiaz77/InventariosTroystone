@@ -9,8 +9,11 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Cotizaciones
-          <button type="button" @click="mostrarDetalle()" class="btn btn-secondary">
+          <button type="button" @click="mostrarDetalle()" class="btn btn-secondary" v-if="listado==1">
             <i class="icon-plus"></i>&nbsp;Nuevo
+          </button>
+          <button type="button" @click="desactivarCotizacionEditar(cotizacion_id)" class="btn btn-warning float-right" v-if="listado==2">
+            <i class="icon-pencil"></i>&nbsp;<strong>Editar</strong>
           </button>
         </div>
         <!-- Listado -->
@@ -126,6 +129,12 @@
                             <label for=""><strong>Cliente (*)</strong></label>
                                 <v-select :on-search="selectCliente" label="nombre" :options="arrayCliente" placeholder="Buscar clientes..." :onChange="getDatosCliente">
                                 </v-select>
+                        </div>
+                    </div>&nbsp;
+                    <div class="col-md-2 text-center sinpadding" v-if="cliente">
+                        <div class="form-group">
+                            <label for=""><strong>Cliente</strong></label>
+                            <h6 for=""><strong v-text="cliente"></strong></h6>
                         </div>
                     </div>&nbsp;
                     <div class="col-md-2 text-center sinpadding" v-if="telefono_cliente">
@@ -336,7 +345,12 @@
                                         </button>
                                     </td>
                                     <td v-text="detalle.categoria"></td>
-                                    <td v-text="detalle.articulo"></td>
+                                    <template v-if="detalle.articulo">
+                                        <td v-text="detalle.articulo"></td>
+                                    </template>
+                                    <template v-else>
+                                        <td v-text="detalle.sku"></td>
+                                    </template>
                                     <td v-text="detalle.codigo"></td>
                                     <td v-text="detalle.terminado"></td>
                                     <td v-text="detalle.espesor"></td>
@@ -1830,6 +1844,7 @@ export default {
             me.telcontacto_cliente = val1.tel_company;
             me.obs_cliente = val1.observacion;
             me.cfdi_cliente =  val1.cfdi;
+            me.cliente =  val1.nombre;
         },
         buscarArticulo(){
             let me = this;
@@ -2881,6 +2896,53 @@ export default {
             }).catch(function (error) {
                 console.log(error);
             });
+        },
+        desactivarCotizacionEditar(id){
+
+            let me = this;
+
+            var numComp = me.num_comprobante;
+            var NewComp = numComp.split("-");
+
+            var Vigen = moment(me.vigencia).format('YYYY-MM-DD');
+
+            /* console.log(`Vigencia =  ${ Vigen }`); */
+
+            /* console.log(`New compNum =  ${ NewComp[2] }`); */
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro de editar esta cotizacion? \n La original será cancelada y generara una nueva!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/cotizacion/desactivar',{
+                        'id': id
+                    }).then(function (response) {
+                        me.getLastNum();
+                        me.num_comprobante =   NewComp[2] + "B";
+                        me.vigencia =  Vigen;
+                        me.listado = 0;
+
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
         }
     },
     mounted() {
