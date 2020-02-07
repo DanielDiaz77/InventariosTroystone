@@ -23,6 +23,7 @@
                         <div class="input-group">
                             <select class="form-control mb-1" v-model="criterio">
                                 <option value="nombre">Nombre</option>
+                                <option value="tipo">Tipo Cliente</option>
                                 <option value="rfc">RFC</option>
                                 <option value="email">Correo electrónico</option>
                             </select>

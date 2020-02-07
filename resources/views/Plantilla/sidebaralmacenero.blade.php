@@ -45,6 +45,14 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item nav-dropdown">
+                <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-address-book"></i> Clientes</a>
+                <ul class="nav-dropdown-items">
+                    <li @click="menu=21" class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa fa-sticky-note"></i> Recadero</a>
+                    </li>
+                </ul>
+            </li>
             <li @click="menu=16" class="nav-item">
                 <a class="nav-link" href="#"><i class="fa fa-calendar"></i> Actividades</a>
             </li>

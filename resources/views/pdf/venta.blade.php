@@ -261,7 +261,7 @@
 
 
                         <tr>
-                            <td class="td-b">{{ $det->articulo }}</td>
+                            <td class="td-b">{{ $det->articulo }} - {{ $det->terminado }}</td>
                             <td class="td-b">{{ $det->codigo }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
                             <td class="td-b">{{ $det->ubicacion }}</td>

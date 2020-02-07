@@ -596,7 +596,7 @@ class VentaController extends Controller
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
             ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
-                'articulos.sku as articulo','articulos.largo','articulos.alto',
+                'articulos.sku as articulo','articulos.largo','articulos.alto','articulos.terminado',
                 'articulos.metros_cuadrados','articulos.codigo','articulos.ubicacion')
             ->where('detalle_ventas.idventa',$id)
             ->orderBy('detalle_ventas.id','desc')->get();

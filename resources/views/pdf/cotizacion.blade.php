@@ -219,6 +219,7 @@
                     <thead>
                         <tr id="fa">
                             <th>MATERIAL</th>
+                            <th>TERMINADO</th>
                             <th>MEDIDAS</th>
                             <th>P U</th>
                             <th>METROS <sup>2</sup></th>
@@ -233,6 +234,7 @@
 
                         <tr>
                             <td class="td-b">{{ $det->articulo }}</td>
+                            <td class="td-b">{{ $det->terminado }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
                             <td class="td-b">{{ $det->precio }}</td>
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>

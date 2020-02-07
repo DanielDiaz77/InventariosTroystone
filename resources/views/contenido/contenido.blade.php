@@ -87,6 +87,10 @@
                 <acerca></acerca>
             </template>
 
+            <template v-if="menu==21">
+                <recadero></recadero>
+            </template>
+
         @elseif(Auth::user()->idrol == 2)
 
             <template v-if="menu==0">
@@ -145,6 +149,10 @@
                 <actividad></actividad>
             </template>
 
+            <template v-if="menu==21">
+                <recadero></recadero>
+            </template>
+
         @elseif(Auth::user()->idrol == 3)
 
             <template v-if="menu==0">
@@ -193,6 +201,9 @@
 
             <template v-if="menu==20">
                 <actividad></actividad>
+            </template>
+            <template v-if="menu==21">
+                <recadero></recadero>
             </template>
         @else
 

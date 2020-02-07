@@ -211,9 +211,18 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/actividad/getComments', 'ActivityController@getComments');
         Route::put('/actividad/editComment','ActivityController@editComment');
         Route::put('/actividad/deleteComment','ActivityController@deleteComment');
-
         Route::get('/actividad/getUsers', 'ActivityController@getUsers');
 
+        Route::get('/call','CallController@index');
+        Route::post('call/registrarCliente', 'CallController@storeCliente');
+        Route::post('call/registrarProveedor', 'CallController@storeProveedor');
+        Route::put('/call/actualizar', 'CallController@update');
+        Route::put('/call/desactivar', 'CallController@desactivar');
+        Route::post('/call/crearComment', 'CallController@crearComment');
+        Route::get('/call/getComments', 'CallController@getComments');
+        Route::put('/call/editComment','CallController@editComment');
+        Route::put('/call/deleteComment','CallController@deleteComment');
+        Route::put('/call/cambiarEstado','CallController@cambiarEstado');
     });
 });
 

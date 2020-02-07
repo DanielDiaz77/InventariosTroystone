@@ -22,14 +22,16 @@
                     <div class="form-group mb-2 col-12">
                         <div class="input-group">
                             <select class="form-control mb-1" v-model="criterio">
+                                <option value="cliente">Cliente</option>
+                                <option value="tipocliente">Tipo Cliente</option>
                                 <option value="fecha">Fecha</option>
-                                <option value="idcliente">Cliente</option>
                             </select>
                             <input type="text" v-model="buscar" @keyup.enter="listarTarea(1,buscar,criterio,estadoTask)" class="form-control mb-1" placeholder="Texto a buscar">
                         </div>
                         <div class="input-group">
                             <select class="form-control mb-1" v-model="estadoTask" @change="listarTarea(1,buscar,criterio,estadoTask)">
-                                <option value="">Pendiente</option>
+                                <option value="">Todo</option>
+                                <option value="0">Pendiente</option>
                                 <option value="1">Completado</option>
                                 <option value="2">Cancelado</option>
                             </select>
@@ -697,7 +699,7 @@ export default {
                 'to'           : 0,
             },
             offset : 3,
-            criterio : 'idcliente',
+            criterio : 'cliente',
             buscar : '',
             areaUs : "",
             estadoVn : "",
@@ -707,7 +709,7 @@ export default {
             dateAct : "",
             btnComp : false,
             isEdition : false,
-            estadoTask : '',
+            estadoTask : 0,
             arrayTareaT : [],
             arrayVentasT : [],
             btnNewTask : 1,
@@ -871,7 +873,7 @@ export default {
             this.btnComp = false;
             this.isEdition = false;
             this.iscompleted = false;
-            this.listarTarea(1,'','idcliente','');
+            this.listarTarea(1,'','idcliente',this.estadoTask);
         },
         cerrarModalDet(){
             this.modal = 0;
@@ -949,7 +951,7 @@ export default {
                 'fecha' : this.fecha
             }).then(function(response) {
                 me.cerrarModal();
-                me.listarTarea(1,'','idcliente','');
+                me.listarTarea(1,'','idcliente',me.estadoTask);
                 me.idcliente = 0;
                 me.nombre = "";
                 me.descripcion ="";
@@ -997,7 +999,7 @@ export default {
                 'fecha' : this.fecha
             }).then(function(response) {
                 me.cerrarModal();
-                me.listarTarea(1,'','idcliente','');
+                me.listarTarea(1,'','idcliente',me.estadoTask);
                 me.idcliente = 0;
                 me.nombre = "";
                 me.descripcion ="";
@@ -1151,7 +1153,7 @@ export default {
                     axios.put('/tarea/desactivar',{
                         'id': id
                     }).then(function (response) {
-                        me.listarTarea(1,'','idcliente','');
+                        me.listarTarea(1,'','idcliente',me.estadoTask);
                         swal.fire(
                         'Anulado!',
                         'La tarea ha sido anulado con éxito.',
@@ -1260,7 +1262,7 @@ export default {
             this.descripcion = "";
             this.tipo = "";
             this.fecha = "";
-            this.listarTarea(1,'','idcliente','');
+            this.listarTarea(1,'','idcliente',this.estadoTask);
             this.isComment = 0;
             this.paginationEvent = {
                 'total'        : 0,
