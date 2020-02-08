@@ -605,7 +605,14 @@ class VentaController extends Controller
 
         $ivaagregado = Venta::select('impuesto')->where('id',$id)->get();
 
-        $pdf = \PDF::loadView('pdf.venta',['venta' => $venta,'detalles'=>$detalles,'ivaVenta' =>$ivaagregado[0]->impuesto]);
+        $sumaMts = DB::table('articulos')
+        ->select(DB::raw('SUM(metros_cuadrados) as metros'))
+        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+        ->where('detalle_ventas.idventa',$id)
+        ->get();
+
+
+        $pdf = \PDF::loadView('pdf.venta',['venta' => $venta,'detalles'=>$detalles,'ivaVenta' =>$ivaagregado[0]->impuesto,'sumaMts' => $sumaMts[0]->metros]);
 
         return $pdf->stream('venta-'.$numventa[0]->num_comprobante.'.pdf');
     }
@@ -764,6 +771,7 @@ class VentaController extends Controller
         $numventa = Venta::select('num_comprobante')->where('id',$id)->get();
 
         $ivaagregado = Venta::select('impuesto')->where('id',$id)->get();
+
 
         $pdf = \PDF::loadView('pdf.entrega',['venta' => $venta,'detalles'=>$detalles,'ivaVenta' =>$ivaagregado[0]->impuesto]);
 

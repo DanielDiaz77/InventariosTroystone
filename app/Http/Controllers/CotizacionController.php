@@ -277,7 +277,17 @@ class CotizacionController extends Controller
 
         $ivaagregado = Cotizacion::select('impuesto')->where('id',$id)->get();
 
-        $pdf = \PDF::loadView('pdf.cotizacion',['cotizacion' => $cotizacion,'detalles'=>$detalles,'ivaCotizacion' =>$ivaagregado[0]->impuesto]);
+        $sumaMts = DB::table('articulos')
+        ->select(DB::raw('SUM(metros_cuadrados) as metros'))
+        ->leftJoin('detalle_cotizaciones','detalle_cotizaciones.idarticulo','articulos.id')
+        ->where('detalle_cotizaciones.idcotizacion',$id)
+        ->get();
+
+        $pdf = \PDF::loadView('pdf.cotizacion',
+            ['cotizacion' => $cotizacion,'detalles'=>$detalles,
+            'ivaCotizacion' =>$ivaagregado[0]->impuesto,
+            'sumaMts' => $sumaMts[0]->metros]);
+
 
         return $pdf->stream('cotizacion-'.$numcotizacion[0]->num_comprobante.'.pdf');
     }

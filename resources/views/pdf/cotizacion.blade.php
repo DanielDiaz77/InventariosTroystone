@@ -6,11 +6,13 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>Cotizacion</title>
     <style>
+        @page { margin-bottom: 20px !important; }
         body {
         /*position: relative;*/
         /*width: 16cm;  */
         /*height: 29.7cm; */
         margin:0;
+        margin-bottom: 20px !important;
         padding:0;
         top:0;
         bottom:0;
@@ -149,6 +151,7 @@
         },
         .table-b, .th-b, .td-b {
             border: 1px solid black;
+            text-align: center;
         }
     </style>
     <body>
@@ -218,21 +221,23 @@
                 <table id="facarticulo" class="table-b">
                     <thead>
                         <tr id="fa">
+                            <th>No°</th>
                             <th>MATERIAL</th>
                             <th>TERMINADO</th>
                             <th>MEDIDAS</th>
                             <th>P U</th>
                             <th>METROS <sup>2</sup></th>
                             <th>CANT.</th>
-                            <th>DESCUENTO</th>
+                            <th>DESC</th>
                             <th>SUBTOTAL</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($detalles as $det)
+                        @foreach ($detalles as $index => $det)
 
 
                         <tr>
+                            <td class="td-b">{{ ($index + 1)}}</td>
                             <td class="td-b">{{ $det->articulo }}</td>
                             <td class="td-b">{{ $det->terminado }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
@@ -252,10 +257,14 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
+                            <th></th>
                             <th class="th-b">SUBTOTAL</th>
                             <td class="th-b">{{ number_format(round($c->total/($c->impuesto + 1),2),2)}}</td>
                         </tr>
                         <tr>
+                            <th></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -269,6 +278,8 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
+                            <th>Total m <sup>2:</sup> {{  $sumaMts }}</th>
                             <th></th>
                             <th class="th-b">TOTAL</th>
                             <td class="th-b">{{ number_format($c->total,2) }}</td>

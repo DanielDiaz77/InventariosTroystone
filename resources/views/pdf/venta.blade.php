@@ -11,6 +11,7 @@
         /*width: 16cm;  */
         /*height: 29.7cm; */
         margin:0;
+        margin-bottom: 20px !important;
         padding:0;
         top:0;
         bottom:0;
@@ -149,6 +150,7 @@
         },
         .table-b, .th-b, .td-b {
             border: 1px solid black;
+            text-align: center;
         }
     </style>
     <body>
@@ -250,9 +252,9 @@
                             <th>MEDIDAS</th>
                             <th>UBICACION</th>
                             <th>P U</th>
-                            <th>METROS <sup>2</sup></th>
-                            <th>CANT.</th>
-                            <th>DESCUENTO</th>
+                            <th>M<sup>2</sup></th>
+                            <th width="15px">CANT.</th>
+                            <th width="15px">DESC</th>
                             <th>SUBTOTAL</th>
                         </tr>
                     </thead>
@@ -303,7 +305,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
+                            <th>Total m <sup>2:</sup> {{  $sumaMts }}</th>
                             <th></th>
                             <th class="th-b">TOTAL</th>
                             <td class="th-b">{{ number_format($v->total,2) }}</td>
