@@ -239,7 +239,13 @@ class TrasladoController extends Controller
 
         $numtraslado = Traslado::select('num_comprobante')->where('id',$id)->get();
 
-        $pdf = \PDF::loadView('pdf.traslado',['traslado' => $traslado,'detalles'=>$detalles]);
+        $sumaMts = DB::table('articulos')
+        ->select(DB::raw('SUM(metros_cuadrados) as metros'))
+        ->leftJoin('detalle_traslados','detalle_traslados.idarticulo','articulos.id')
+        ->where('detalle_traslados.idtraslado',$id)
+        ->get();
+
+        $pdf = \PDF::loadView('pdf.traslado',['traslado' => $traslado,'detalles'=>$detalles,'sumaMts' => $sumaMts[0]->metros]);
 
         return $pdf->stream('traslado-'.$numtraslado[0]->num_comprobante.'.pdf');
 

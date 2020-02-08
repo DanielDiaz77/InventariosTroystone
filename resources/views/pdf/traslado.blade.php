@@ -253,7 +253,7 @@
                             <th>No° PLACA</th>
                             <th>SKU</th>
                             <th>MEDIDAS</th>
-                            <th>METROS <sup>2</sup></th>
+                            <th>M <sup>2</sup></th>
                             <th>TERMINADO</th>
                             <th>Ubicacion Actual</th>
                             <th>Ubicacion Antes</th>
@@ -278,8 +278,10 @@
                     </tbody>
 
                 </table>
+                <p><strong>Total m <sup>2:</sup> {{  $sumaMts }} </strong></p>
                 @foreach ($traslado as $t)
                 <p>
+
                     <strong>UNA VEZ SALIDA LA MERCANCÍA NO EXISTEN CAMBIOS NI DEVOLUCIONES.</strong><br>
                     <strong>Fecha de registro: </strong>
                     <?php
