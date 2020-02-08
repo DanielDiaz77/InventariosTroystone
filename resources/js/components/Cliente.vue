@@ -47,7 +47,7 @@
                                 <th>Opciones</th>
                                 <th>Nombre</th>
                                 <th>No° de cliente</th>
-                                <th>Domicilio</th>
+                                <!-- <th>Domicilio</th> -->
                                 <th>Teléfono</th>
                                 <th>Contacto</th>
                                 <th>Teléfono Contacto</th>
@@ -58,7 +58,7 @@
                         </thead>
                         <tbody v-if="arrayPersona.length">
                             <tr v-for="persona in arrayPersona" :key="persona.id">
-                                <td>
+                                <td width="200px">
                                     <div class="form-inline">
                                         <div class="form-group mb-2 col-sm-10">
                                             <template v-if="persona.active">
@@ -90,7 +90,7 @@
                                 </td>
                                 <td v-text="persona.nombre"></td>
                                 <td v-text="persona.num_documento"></td>
-                                <td> {{ persona.ciudad}} {{persona.domicilio}}  </td>
+                               <!--  <td> {{ persona.ciudad}} {{persona.domicilio}}  </td> -->
                                 <td v-text="persona.telefono"></td>
                                 <td v-if="persona.company" v-text="persona.company"></td>
                                 <td v-else></td>

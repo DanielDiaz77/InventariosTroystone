@@ -20,23 +20,40 @@ class CallController extends Controller
         $buscar = $request->buscar;
         $criterio = $request->criterio;
         $estado = $request->estado;
+        $zona = $request->zona;
 
         $usrol = \Auth::user()->idrol;
         $usarea = \Auth::user()->area;
         $iduser = \Auth::user()->id;
 
-        $llamadas = Call::leftjoin('personas AS empleados', 'empleados.id','calls.idusuario')
-        ->leftjoin('personas AS clientes', 'clientes.id','=','calls.idcliente')
-        ->leftjoin('personas AS vendedores', 'clientes.idusuario','vendedores.id')
-        ->select('clientes.id as idcliente','clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.domicilio',
-            'clientes.company','clientes.tel_company','empleados.nombre as usuario','clientes.email','clientes.num_documento',
-            'clientes.idusuario as idvendedor','clientes.ciudad','calls.id','calls.body','calls.status','calls.area'
-            ,'calls.created_at as fecha','clientes.active','calls.idusuario as usercall','vendedores.nombre as agente')
-        ->where([
-                ['clientes.'.$criterio, 'like', '%'. $buscar . '%'],
-                ['calls.status',$estado]
-            ])
-        ->paginate(12);
+        if($zona == ''){
+            $llamadas = Call::leftjoin('personas AS empleados', 'empleados.id','calls.idusuario')
+            ->leftjoin('personas AS clientes', 'clientes.id','=','calls.idcliente')
+            ->leftjoin('personas AS vendedores', 'clientes.idusuario','vendedores.id')
+            ->select('clientes.id as idcliente','clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.domicilio',
+                'clientes.company','clientes.tel_company','empleados.nombre as usuario','clientes.email','clientes.num_documento',
+                'clientes.idusuario as idvendedor','clientes.ciudad','calls.id','calls.body','calls.status','calls.area'
+                ,'calls.created_at as fecha','clientes.active','calls.idusuario as usercall','vendedores.nombre as agente')
+            ->where([
+                    ['clientes.'.$criterio, 'like', '%'. $buscar . '%'],
+                    ['calls.status',$estado]
+                ])
+            ->paginate(12);
+        }else{
+            $llamadas = Call::leftjoin('personas AS empleados', 'empleados.id','calls.idusuario')
+            ->leftjoin('personas AS clientes', 'clientes.id','=','calls.idcliente')
+            ->leftjoin('personas AS vendedores', 'clientes.idusuario','vendedores.id')
+            ->select('clientes.id as idcliente','clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.domicilio',
+                'clientes.company','clientes.tel_company','empleados.nombre as usuario','clientes.email','clientes.num_documento',
+                'clientes.idusuario as idvendedor','clientes.ciudad','calls.id','calls.body','calls.status','calls.area'
+                ,'calls.created_at as fecha','clientes.active','calls.idusuario as usercall','vendedores.nombre as agente')
+            ->where([
+                    ['clientes.'.$criterio, 'like', '%'. $buscar . '%'],
+                    ['calls.status',$estado],
+                    ['calls.area',$zona]
+                ])
+            ->paginate(12);
+        }
 
         return [
             'pagination' => [
@@ -48,7 +65,8 @@ class CallController extends Controller
                 'to'            => $llamadas->lastItem(),
             ],
             'llamadas' => $llamadas,
-            'userid' => $iduser
+            'userid' => $iduser,
+            'userarea' => $usarea
         ];
 
     }

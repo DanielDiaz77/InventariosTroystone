@@ -25,15 +25,23 @@
                                 </select>
                             </div>
                             <div class="input-group">
-                                <input type="text" v-model="buscar" @keyup.enter="listarLlamadas(1,buscar,criterio,estado)" class="form-control mb-1" placeholder="Texto a buscar">
+                                <input type="text" v-model="buscar" @keyup.enter="listarLlamadas(1,buscar,criterio,estado,zona)" class="form-control mb-1" placeholder="Texto a buscar">
                             </div>
                             <div class="input-group">
-                                <select class="form-control mb-1" v-model="estado" @change="listarLlamadas(1,buscar,criterio,estado)">
+                                <select class="form-control mb-1" v-model="estado" @change="listarLlamadas(1,buscar,criterio,estado,zona)">
                                     <option value="Pendiente">Pendiente</option>
                                     <option value="Atendido">Completada</option>
                                     <option value="Cancelada">Cancelada</option>
                                 </select>
                                 <button class="btn btn-danger mb-1"><i class="fa fa-search"></i> Filtro</button>
+                            </div>
+                            <div class="input-group ml-5">
+                                <button class="btn btn-light mb-1"><i style="color:red;" class="fa fa-map-marker"></i> Area</button>
+                                <select class="form-control mb-1" v-model="zona" @change="listarLlamadas(1,buscar,criterio,estado,zona)">
+                                    <option value="">Todo</option>
+                                    <option value="GDL">Guadalajara</option>
+                                    <option value="SLP">San Luis</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -106,13 +114,13 @@
                     <nav>
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estado)">Ant</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estado,zona)">Ant</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estado)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estado,zona)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estado)">Sig</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estado,zona)">Sig</a>
                             </li>
                         </ul>
                     </nav>
@@ -722,6 +730,7 @@ export default {
             criterio : 'nombre',
             buscar : '',
             estado : 'Pendiente',
+            zona : "",
             listado : 0,
             tituloDetalle : "",
             OpenDet : false,
@@ -812,26 +821,27 @@ export default {
         }
     },
     methods: {
-        listarLlamadas (page,buscar,criterio,estado){
+        listarLlamadas (page,buscar,criterio,estado,zona){
             let me=this;
-            var url= '/call?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estado;
+            var url= '/call?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estado + '&zona='+ zona;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayLlamada = respuesta.llamadas.data;
                 me.pagination= respuesta.pagination;
                 me.user_id = respuesta.userid;
+                //me.zona = respuesta.userarea;
 
             })
             .catch(function (error) {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio,estado){
+        cambiarPagina(page,buscar,criterio,estado,zona){
             let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarLlamadas(page,buscar,criterio,estado);
+                me.listarLlamadas(page,buscar,criterio,estado,zona);
         },
         registrarLlamadaCliente() {
             if (this.validarCliente()) {
@@ -865,7 +875,7 @@ export default {
                 'Registrado!',
                 'La llamada de  ' + '<b>' + newName + '</b>' + ' ha sido registrado con éxito.',
                 'success')
-                me.listarLlamadas(1,'','nombre','Pendiente');
+                me.listarLlamadas(1,'','nombre','Pendiente',this.zona);
             })
             .catch(function(error) {
                 console.log(error);
@@ -901,7 +911,7 @@ export default {
                 'Compleado!',
                 'La llamda ha sido actualizada con éxito.',
                 'success')
-                me.listarLlamadas(1,'','nombre','Pendiente');
+                me.listarLlamadas(1,'','nombre','Pendiente',me.zona);
             })
             .catch(function(error) {
                 console.log(error);
@@ -930,7 +940,7 @@ export default {
                     axios.put('/call/desactivar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarLlamadas(1,'','nombre','Pendiente');
+                        me.listarLlamadas(1,'','nombre','Pendiente',me.zona);
                         swalWithBootstrapButtons.fire(
                             "Desactivado!",
                             "La actividad ha sido cancelada con éxito.",
@@ -978,7 +988,7 @@ export default {
                 'Registrado!',
                 'La llamada de  ' + '<b>' + newName + '</b>' + ' ha sido registrado con éxito.',
                 'success')
-                me.listarLlamadas(1,'','nombre','Pendiente');
+                me.listarLlamadas(1,'','nombre','Pendiente',me.zona);
             })
             .catch(function(error) {
                 console.log(error);
@@ -1025,7 +1035,7 @@ export default {
             this.TaskNew = false;
             this.TaskEdit = false;
             this.tabTitle = "Cliente";
-            this.listarLlamadas(1,'','nombre',this.estado);
+            this.listarLlamadas(1,'','nombre',this.estado,this.zona);
 
         },
         editTask(data = []){
@@ -1113,7 +1123,7 @@ export default {
             this.itsCommentUpd = 0;
             this.itsCommentNew = 0;
             this.OpenDet = false;
-            this.listarLlamadas(1,'','nombre',this.estado);
+            this.listarLlamadas(1,'','nombre',this.estado,this.zona);
         },
         abrirModalAC(){
             this.modal = 1;
@@ -1336,7 +1346,7 @@ export default {
 
     },
     mounted() {
-        this.listarLlamadas(1,this.buscar, this.criterio, this.estado);
+        this.listarLlamadas(1,this.buscar, this.criterio, this.estado, this.zona);
     }
 };
 </script>
