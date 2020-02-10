@@ -223,7 +223,7 @@ class TrasladoController extends Controller
     public function pdf(Request $request,$id){
 
         $traslado = Traslado::join('users','traslados.idusuario','=','users.id')
-        ->leftjoin('personas','traslados.idusuario','=','personas.idusuario')
+        ->leftjoin('personas','users.id','=','personas.id')
         ->select('traslados.id','traslados.tipo_comprobante','traslados.num_comprobante',
         'traslados.fecha_hora','traslados.nueva_ubicacion','traslados.entregado','traslados.estado',
         'traslados.file','traslados.observacion as comentario','personas.nombre as usuario')

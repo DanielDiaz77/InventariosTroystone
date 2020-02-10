@@ -7,6 +7,7 @@
     <title>Comprobante de traslado</title>
     <!-- Latest compiled and minified CSS -->
     <style>
+        @page { margin-bottom: 55px; }
         body {
             /*position: relative;*/
             /*width: 16cm;  */
@@ -254,7 +255,7 @@
                             <th>SKU</th>
                             <th>MEDIDAS</th>
                             <th>M <sup>2</sup></th>
-                            <th>TERMINADO</th>
+                            <th>TERM</th>
                             <th>Ubicacion Actual</th>
                             <th>Ubicacion Antes</th>
                         </tr>

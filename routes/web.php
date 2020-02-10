@@ -116,6 +116,11 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/cliente/getDocs', 'ClienteController@getDocs');
         Route::put('/cliente/eliminarDoc', 'ClienteController@eliminarDoc');
 
+        Route::post('/cliente/crearComment', 'ClienteController@crearComment');
+        Route::get('/cliente/getComments', 'ClienteController@getComments');
+        Route::put('/cliente/editComment','ClienteController@editComment');
+        Route::put('/cliente/deleteComment','ClienteController@deleteComment');
+
         Route::get('/rol', 'RolController@index');
         Route::get('/rol/selectRol', 'RolController@selectRol');
 

@@ -1143,10 +1143,13 @@ export default {
             var clienteUp =  this.nombre_cliente;
 
             var agent="";
+            var areaVend="";
+
             for(var i=0;i<this.arrayVendedores.length;i++){
                 if(this.arrayVendedores[i].id==this.idvendedor){
-                   //console.log(this.arrayVendedores[i].nombre);
+                   //console.log(`Usuario ${this.arrayVendedores[i].nombre} -  Area : ${this.arrayVendedores[i].area}`);
                    agent = this.arrayVendedores[i].nombre;
+                   areaVend = this.arrayVendedores[i].area;
                 }
             }
 
@@ -1165,7 +1168,8 @@ export default {
                 'id': this.idcliente,
                 'tipo': this.tipo_cliente,
                 'cfdi' : this.cfdi_cliente,
-                'idusuario' : this.idvendedor
+                'idusuario' : this.idvendedor,
+                'area' : areaVend
             })
             .then(function(response) {
                 me.cerrarModalAC();

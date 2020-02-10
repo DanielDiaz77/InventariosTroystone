@@ -74,6 +74,8 @@ class CallController extends Controller
 
         if(!$request->ajax()) return redirect('/');
 
+        $usarea = \Auth::user()->area;
+
         try{
             DB::beginTransaction();
 
@@ -90,6 +92,7 @@ class CallController extends Controller
             $persona->tipo = $request->tipo;
             $persona->idusuario = \Auth::user()->id;
             $persona->active = 3;
+            $persona->area = $usarea;
             $persona->save();
 
             $call = new Call();
@@ -172,6 +175,7 @@ class CallController extends Controller
         $persona->cfdi = $request->cfdi;
         $persona->active = $request->active;
         $persona->observacion = $request->observacion;
+        $persona->area = $request->area;
         $persona->save();
 
         $call = Call::findOrFail($request->idcall);

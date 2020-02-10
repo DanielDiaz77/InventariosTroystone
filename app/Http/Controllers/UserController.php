@@ -154,7 +154,7 @@ class UserController extends Controller
 
         $usuarios = User::join('personas','users.id','=','personas.id')
         ->where([['condicion',1],['idrol','!=',3]])
-        ->select('users.id','personas.nombre')->orderBy('id','asc')->get();
+        ->select('users.id','personas.nombre','users.area')->orderBy('id','asc')->get();
 
         return ['usuarios' => $usuarios];
 
@@ -168,7 +168,7 @@ class UserController extends Controller
 
         $usuarios = User::join('personas','users.id','=','personas.id')
         ->where([['condicion',1],['users.id','!=',$actUser]])
-        ->select('users.id','personas.nombre')->orderBy('id','asc')->get();
+        ->select('users.id','personas.nombre','users.area')->orderBy('id','asc')->get();
 
         return ['usuarios' => $usuarios];
 

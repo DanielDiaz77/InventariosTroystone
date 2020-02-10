@@ -29,15 +29,23 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio,status)" class="form-control mb-1" placeholder="Texto a buscar">
-                            <button type="submit" @click="listarPersona(1,buscar,criterio,status)" class="btn btn-primary mb-1"><i class="fa fa-search mb-1"></i></button>
+                            <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio,status,zona)" class="form-control mb-1" placeholder="Texto a buscar">
+                            <button type="submit" @click="listarPersona(1,buscar,criterio,status,zona)" class="btn btn-primary mb-1"><i class="fa fa-search mb-1"></i></button>
                         </div>
                         <div class="input-group" v-if="userrol == 1">
-                            <select class="form-control mb-1" v-model="status" @change="listarPersona(1,buscar,criterio,status)">
+                            <select class="form-control mb-1" v-model="status" @change="listarPersona(1,buscar,criterio,status,zona)">
                                 <option value="1">Activos</option>
                                 <option value="0">Eliminados</option>
                             </select>
                         </div>
+                        <div class="input-group ml-5">
+                                <button class="btn btn-light mb-1"><i style="color:red;" class="fa fa-map-marker"></i> Area</button>
+                                <select class="form-control mb-1" v-model="zona" @change="listarPersona(1,buscar,criterio,status,zona)">
+                                    <option value="">Todo</option>
+                                    <option value="GDL">Guadalajara</option>
+                                    <option value="SLP">San Luis</option>
+                                </select>
+                            </div>
                     </div>
                 </div>
                 <div class="table-responsive col-md-12">
@@ -52,14 +60,36 @@
                                 <th>Contacto</th>
                                 <th>Teléfono Contacto</th>
                                 <th>Tipo</th>
-                                <!-- <th>Observaciones</th> -->
+                                <th>Area</th>
                                 <th>Vendedor</th>
                             </tr>
                         </thead>
                         <tbody v-if="arrayPersona.length">
                             <tr v-for="persona in arrayPersona" :key="persona.id">
-                                <td width="200px">
-                                    <div class="form-inline">
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <div v-if="persona.active">
+                                            <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm m-1">
+                                                <i class="icon-pencil"></i>
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button type="button" @click="desactivarCliente(persona.id,persona.nombre)" class="btn btn-danger btn-sm m-1" v-if="persona.active">
+                                                <i class="icon-trash"></i>
+                                            </button>
+                                            <template v-if="userrol == 1">
+                                                <button type="button" @click="activarCliente(persona.id,persona.nombre)" class="btn btn-info btn-sm m-1" v-if="!persona.active">
+                                                    <i class="icon-check"></i>
+                                                </button>
+                                            </template>
+                                        </div>
+                                        <div>
+                                            <button type="button" @click="mostrarDetalle(persona)" class="btn btn-success btn-sm m-1">
+                                                <i class="icon-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="form-inline m-0 p-0">
                                         <div class="form-group mb-2 col-sm-10">
                                             <template v-if="persona.active">
                                                 <div class="input-group">
@@ -86,7 +116,7 @@
                                                 </button>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </td>
                                 <td v-text="persona.nombre"></td>
                                 <td v-text="persona.num_documento"></td>
@@ -97,7 +127,7 @@
                                 <td v-if="persona.tel_company" v-text="persona.tel_company"></td>
                                 <td v-else></td>
                                 <td v-text="persona.tipo"></td>
-                                <!-- <td v-text="persona.observacion"></td> -->
+                                <td v-text="persona.area"></td>
                                 <td v-text="persona.vendedor"></td>
                             </tr>
                         </tbody>
@@ -113,13 +143,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,status)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,status,zona)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,status)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,status,zona)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,status)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,status,zona)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -259,49 +289,68 @@
                 <div class="row mt-3">
                     <!-- Comentarios -->
                     <div class="col-12 col-md-8 col-lg-8 col-xl-6 offset-md-2 offset-xl-0">
-                         <div class="d-flex flex-column">
+                        <div class="d-flex flex-column">
                             <div>
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <h3>Comentarios de {{ nombre }}</h3>
+                                        <h3>Comentarios </h3>
                                     </div>
                                     <div>
-                                        <button class="btn btn-primary rounded-circle" @click="UpdateTask('newComment')"><i class="fa fa-plus-circle"></i></button>
+                                        <button class="btn btn-primary rounded-circle" @click="newComment()"><i class="fa fa-plus-circle"></i></button>
                                     </div>
                                 </div>
+                                <!-- New Comment Box -->
+                                <div class="row d-flex justify-content-center">
+                                    <div class="col-12" :class="{'showNewComment' : CommentNew}" style="display: none;">
+                                        <!-- <form action method="post" enctype="multipart/form-data" class="form-horizontal"> -->
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Comentario</span>
+                                                </div>
+                                                <textarea class="form-control rounded-1" rows="8" maxlength="255" v-model="commentBody"></textarea>
+                                            </div>
+                                            <button class="btn btn-primary mt-2 float-right" @click="saveComment(persona_id)" v-if="commentBody && itsCommentNew">Guardar</button>
+                                            <button class="btn btn-primary mt-2 float-right" @click="updateComment(persona_id)" v-if="commentBody && itsCommentUpd">Actualizar</button>
+                                        <!-- </form> -->
+                                        <button class="btn btn-secondary mt-2 mr-1 float-right" @click="cancelComment()">Cancelar</button>
+                                    </div>
+                                </div>
+                                <!-- End new Comment Box -->
                                 <hr>
                             </div>
                             <div>
-                               <div class="divtask" v-if="arrayCommentT.length">
-                                   <ul class="row" v-for="comment in arrayCommentT" :key="comment.id">
-                                        <li class="col-md-6" style="list-style:none;">
-                                            <div class="form-group">
-                                                <div class="col-md my-3 pt-3 caja">
-                                                    <div class="row">
-                                                        <div class="col-md">
-                                                            <h4 v-text="comment.clase"></h4>
-                                                            <p><small style="font-size:15px;" class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(comment.fecha) }}</small></p>
-                                                        </div>
-                                                        <div class="col-md">
-                                                            <button type="button" class="btn btn-sm btntask float-right" @click="UpdateTask('comment',comment)">
-                                                                    <i class="fa fa-pencil"></i>
-                                                                </button>&nbsp;
-                                                            <template v-if="comment.estado == 0 ">
-                                                                <button type="button" class="btn btn-sm btntask float-right" @click="desactivarComentario(comment.id)">
-                                                                    <i class="fa fa-trash"></i>
-                                                                </button>&nbsp;
-                                                            </template>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <p v-text="comment.descripcion"></p>
+                                <div class="divtask" v-if="arrayComentarios.length">
+                                    <ul class="row" v-for="comment in arrayComentarios" :key="comment.id">
+                                            <li class="col-12 col-md-10" style="list-style:none;">
+                                                <div class="form-group d-flex justify-content-center">
+                                                    <div class="col-md my-3 pt-3 caja">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                    <h5 v-text="comment.nombre"></h5>
+                                                            </div>
+                                                            <div class="col-md">
+                                                                <p><small style="font-size:10px;" class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(comment.fecha) }}</small></p>
+                                                            </div>
+                                                            <div class="col-md">
+                                                                <template v-if="comment.user == user_id">
+                                                                    <button type="button" class="btn btn-sm btntask float-right" @click="editComment(comment)">
+                                                                        <i class="fa fa-pencil"></i>
+                                                                    </button>&nbsp;
+                                                                    <button type="button" class="btn btn-sm btntask float-right" @click="deleteComentario(comment.id,persona_id)">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>&nbsp;
+                                                                </template>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <p v-text="comment.body"></p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                               </div>
-                               <div v-else style="height: auto !important;">
+                                            </li>
+                                        </ul>
+                                </div>
+                                <div v-else style="height: auto !important;">
                                     <h5>Sin Comentaríos...</h5>
                                 </div>
                             </div>
@@ -900,6 +949,7 @@ export default {
             userrol: "",
             company : "",
             tel_company : "",
+            area : "",
             arrayPersona: [],
             modal: 0,
             modal2 : 0,
@@ -917,6 +967,7 @@ export default {
             },
             offset : 3,
             criterio : 'nombre',
+            zona : "",
             buscar : '',
             arrayVendedores : [],
             listado : 1,
@@ -947,7 +998,15 @@ export default {
             dateAct : "",
             status : 1,
             arrayFiles : [],
-            docsArray : []
+            docsArray : [],
+
+            arrayComentarios : [],
+            commentBody : "",
+            CommentNew : 0,
+            itsCommentUpd : 0,
+            itsCommentNew : 0,
+            comment_id : 0,
+            user_id : 0
         };
     },
 
@@ -1016,16 +1075,17 @@ export default {
             },
         },
     methods: {
-        listarPersona (page,buscar,criterio,status){
+        listarPersona (page,buscar,criterio,status,zona){
             let me=this;
             me.btnNewCliente = 1;
-            var url= '/cliente?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&status='+ status;
+            var url= '/cliente?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&status='+ status+ '&zona='+ zona;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayPersona = respuesta.personas.data;
                 me.pagination= respuesta.pagination;
                 me.userid = respuesta.userid;
                 me.userrol = respuesta.userrol;
+                me.user_id = respuesta.userid;
                 /* console.log("Rol: " + respuesta.userrol);
                 console.log("ID: " + respuesta.userid); */
             })
@@ -1033,12 +1093,12 @@ export default {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio,status){
+        cambiarPagina(page,buscar,criterio,status,zona){
             let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarPersona(page,buscar,criterio,status);
+                me.listarPersona(page,buscar,criterio,status,zona);
         },
         registrarPersona() {
             if (this.validarPersona()) {
@@ -1052,6 +1112,13 @@ export default {
             var newName = this.nombre;
             var rand = Math.round(Math.random() * (99 - 999));
 
+            var areaVend="";
+            for(var i=0;i<this.arrayVendedores.length;i++){
+                if(this.arrayVendedores[i].id==this.userid){
+                   /* console.log(this.arrayVendedores[i].area); */
+                   areaVend = this.arrayVendedores[i].area;
+                }
+            }
 
 
             var numcomp = "C-".concat(date,rand);
@@ -1072,7 +1139,8 @@ export default {
                 'tipo': this.tipo,
                 'idusuario' : this.userid,
                 'observacion':this.observacion,
-                'cfdi' : this.cfdi
+                'cfdi' : this.cfdi,
+                'area' : areaVend
             })
             .then(function(response) {
                 swal.fire(
@@ -1080,7 +1148,7 @@ export default {
                 'El cliente ' + '<b>' + newName + '</b>' + ' ha sido registrado con éxito.',
                 'success')
                 me.cerrarModal();
-                me.listarPersona(1,'','nombre',1);
+                me.listarPersona(1,'','nombre',1,me.zona);
             })
             .catch(function(error) {
                 console.log(error);
@@ -1094,6 +1162,14 @@ export default {
             }
             let me = this;
             var clienteUp =  this.nombre;
+
+            var areaVend="";
+            for(var i=0;i<this.arrayVendedores.length;i++){
+                if(this.arrayVendedores[i].id==this.userid){
+                   /* console.log(this.arrayVendedores[i].area); */
+                   areaVend = this.arrayVendedores[i].area;
+                }
+            }
 
             axios.put("/cliente/actualizar", {
                 'nombre': this.nombre,
@@ -1110,7 +1186,8 @@ export default {
                 'tipo': this.tipo,
                 'cfdi' : this.cfdi,
                 'idusuario' : this.userid,
-                'observacion':this.observacion
+                'observacion':this.observacion,
+                'area' : areaVend
             })
             .then(function(response) {
                 me.cerrarModal();
@@ -1118,7 +1195,7 @@ export default {
                 'Actualizado!',
                 'El cliente ' + '<b>' + clienteUp + '</b>' + ' ha sido actualizado con éxito.',
                 'success')
-                me.listarPersona(page,'','nombre',1);
+                me.listarPersona(page,'','nombre',1,me.zona);
             })
             .catch(function(error) {
                 console.log(error);
@@ -1153,7 +1230,7 @@ export default {
             this.errorPersona = 0;
             this.tipo = "";
             this.observacion = "";
-            this.listarPersona(page,'','nombre',stat);
+            this.listarPersona(page,'','nombre',stat,this.zona);
         },
         abrirModal(modelo, accion, data = []) {
             switch (modelo) {
@@ -1270,6 +1347,7 @@ export default {
             this.obtenerVentas(idcliente);
             this.obtenerEventos(idcliente,1);
             this.getDocs(idcliente);
+            this.getComments(idcliente);
 
         },
         ocultarDetalle(){
@@ -1299,7 +1377,7 @@ export default {
             this.arrayVentasT = [];
             this.arrayCommentT = [];
             this.arrayActividadesT = [];
-            this.listarPersona(page,'','nombre',stat);
+            this.listarPersona(page,'','nombre',stat,this.zona);
         },
         obtenerTareas(idcliente){
             let me = this;
@@ -1542,7 +1620,7 @@ export default {
                     axios.put('/cliente/desactivar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarPersona(page,'','nombre',stat);
+                        me.listarPersona(page,'','nombre',stat,me.zona);
                         swalWithBootstrapButtons.fire(
                             "Eliminado!",
                             "El cliente " + "<b>" + name +"</b>" +" ha sido eliminado con éxito.",
@@ -1580,7 +1658,7 @@ export default {
                     axios.put('/cliente/activar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarPersona(page,'','nombre',stat);
+                        me.listarPersona(page,'','nombre',stat,me.zona);
                         swalWithBootstrapButtons.fire(
                             "Activado!",
                             "El cliente " + "<b>" + name +"</b>" +" ha sido activado con éxito.",
@@ -1687,12 +1765,121 @@ export default {
                 }else if (result.dismiss === swal.DismissReason.cancel){
                 }
             })
+        },
+
+        newComment(){
+            this.CommentNew = 1;
+            this.commentBody = "";
+            this.itsCommentUpd = 0;
+            this.itsCommentNew = 1;
+        },
+        cancelComment(){
+            this.CommentNew = 0;
+            this.commentBody = "";
+            this.comment_id = 0;
+            this.itsCommentUpd = 0;
+            this.itsCommentNew = 0;
+        },
+        saveComment(id){
+            let me = this;
+
+            var clienteid = id;
+
+            axios.post('/cliente/crearComment',{
+                'id' : id,
+                'body' : this.commentBody
+            }).then(function(response) {
+                me.cancelComment();
+                me.getComments(clienteid);
+                swal.fire(
+                'Completado!',
+                'El comentario ha sido registrado con éxito.',
+                'success')
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        getComments(id){
+            let me = this;
+            var url= '/cliente/getComments?id=' + id;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.arrayComentarios = respuesta.comentarios;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        editComment(data = []){
+            this.comment_id = data['id'];
+            this.commentBody = data['body'];
+            this.CommentNew = 1;
+            this.itsCommentUpd = 1;
+            this.itsCommentNew = 0;
+        },
+        updateComment(id){
+
+            let me = this;
+            var clienteid = id;
+
+            axios.put("/cliente/editComment", {
+                id : this.comment_id,
+                body : this.commentBody
+            })
+            .then(function(response) {
+                me.cancelComment();
+                me.getComments(clienteid);
+                swal.fire(
+                'Completado!',
+                'El comentario ha sido actualizado con éxito.',
+                'success')
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        deleteComentario(id,cliente){
+            let me = this;
+            var clienteid = cliente;
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro eliminar este comentario?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/cliente/deleteComment', {
+                        'id' : id
+                    }).then(function(response) {
+                         me.getComments(clienteid);
+                        swalWithBootstrapButtons.fire(
+                            "Eliminado!",
+                            "El comentario ha sido eliminada con éxito.",
+                            "success"
+                        );
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
         }
-
-
     },
     mounted() {
-        this.listarPersona(1,this.buscar, this.criterio,this.status);
+        this.listarPersona(1,this.buscar, this.criterio,this.status,this.zona);
     }
 };
 </script>

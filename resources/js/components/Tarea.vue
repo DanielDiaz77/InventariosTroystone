@@ -255,45 +255,71 @@
                 <div class="form-group row">
                     <!-- Comentarios -->
                     <div class="col-md-6">
-                        <div class="page-header">
-                            <h3 id="timeline">Comentarios de {{ cliente }} &nbsp;
-                                <button type="button" class="btn btn-primary btn-circle" @click="UpdateTask('newComment')">
-                                    <i class="fa fa-plus-circle"></i>
-                                </button>&nbsp;
-                            </h3>
-                            <hr>
-                        </div>
-                        <div class="divtask" v-if="arrayCommentT.length">
-                            <ul class="row" v-for="comment in arrayCommentT" :key="comment.id">
-                                <li class="col-md-6" style="list-style:none;">
-                                    <div class="form-group">
-                                        <div class="col-md my-3 pt-3 caja">
-                                            <div class="row">
-                                                <div class="col-md">
-                                                    <h4 v-text="comment.clase"></h4>
-                                                    <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(comment.fecha) }}</small></p>
-                                                </div>
-                                                <div class="col-md">
-                                                    <button type="button" class="btn btn-sm btntask float-right" @click="UpdateTask('comment',comment)">
-                                                            <i class="fa fa-pencil"></i>
-                                                        </button>&nbsp;
-                                                    <template v-if="comment.estado == 0 ">
-                                                        <button type="button" class="btn btn-sm btntask float-right" @click="desactivarComentario(comment.id)">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>&nbsp;
-                                                    </template>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <p v-text="comment.descripcion"></p>
-                                                </div>
-                                            </div>
-                                        </div>
+                       <div class="d-flex flex-column">
+                            <div>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h3>Comentarios </h3>
                                     </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div v-else>
-                            <h5>Sin Comentaríos...</h5>
+                                    <div>
+                                        <button class="btn btn-primary rounded-circle" @click="newComment()"><i class="fa fa-plus-circle"></i></button>
+                                    </div>
+                                </div>
+                                <!-- New Comment Box -->
+                                <div class="row d-flex justify-content-center">
+                                    <div class="col-12" :class="{'showNewComment' : CommentNew}" style="display: none;">
+                                        <!-- <form action method="post" enctype="multipart/form-data" class="form-horizontal"> -->
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Comentario</span>
+                                                </div>
+                                                <textarea class="form-control rounded-1" rows="8" maxlength="255" v-model="commentBody"></textarea>
+                                            </div>
+                                            <button class="btn btn-primary mt-2 float-right" @click="saveComment(idcliente)" v-if="commentBody && itsCommentNew">Guardar</button>
+                                            <button class="btn btn-primary mt-2 float-right" @click="updateComment(idcliente)" v-if="commentBody && itsCommentUpd">Actualizar</button>
+                                        <!-- </form> -->
+                                        <button class="btn btn-secondary mt-2 mr-1 float-right" @click="cancelComment()">Cancelar</button>
+                                    </div>
+                                </div>
+                                <!-- End new Comment Box -->
+                                <hr>
+                            </div>
+                            <div>
+                                <div class="divtask" v-if="arrayComentarios.length">
+                                    <ul class="row" v-for="comment in arrayComentarios" :key="comment.id">
+                                            <li class="col-12 col-md-10" style="list-style:none;">
+                                                <div class="form-group d-flex justify-content-center">
+                                                    <div class="col-md my-3 pt-3 caja">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                    <h5 v-text="comment.nombre"></h5>
+                                                            </div>
+                                                            <div class="col-md">
+                                                                <p><small style="font-size:10px;" class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(comment.fecha) }}</small></p>
+                                                            </div>
+                                                            <div class="col-md">
+                                                                <template v-if="comment.user == user_id">
+                                                                    <button type="button" class="btn btn-sm btntask float-right" @click="editComment(comment)">
+                                                                        <i class="fa fa-pencil"></i>
+                                                                    </button>&nbsp;
+                                                                    <button type="button" class="btn btn-sm btntask float-right" @click="deleteComentario(comment.id,idcliente)">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>&nbsp;
+                                                                </template>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <p v-text="comment.body"></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                </div>
+                                <div v-else style="height: auto !important;">
+                                    <h5>Sin Comentaríos...</h5>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- Historial -->
@@ -726,7 +752,15 @@ export default {
                 'from'         : 0,
                 'to'           : 0,
             },
-            iscompleted : false
+            iscompleted : false,
+
+            arrayComentarios : [],
+            commentBody : "",
+            CommentNew : 0,
+            itsCommentUpd : 0,
+            itsCommentNew : 0,
+            comment_id : 0,
+            user_id : 0
         };
     },
     components: {
@@ -804,6 +838,7 @@ export default {
                 var respuesta= response.data;
                 me.arrayTarea = respuesta.tareas.data;
                 me.pagination= respuesta.pagination;
+                me.user_id = respuesta.userid;
                 /* console.log(me.arrayTarea); */
             })
             .catch(function (error) {
@@ -1052,7 +1087,7 @@ export default {
                     });
 
                     swalWithBootstrapButtons.fire({
-                        title: "¿Tarea completada, desea añadir otra?",
+                        title: "Tarea completada \n ¿Desea añadir otra?",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonText: "Si!",
@@ -1065,7 +1100,7 @@ export default {
                             me.UpdateTask('newTaskComp');
                         }else if (result.dismiss === swal.DismissReason.cancel){
                             me.cerrarModal();
-
+                            /* me.UpdateTask('newTaskComp'); */
                         }
                     })
                 }else{
@@ -1101,7 +1136,7 @@ export default {
                     });
 
                     swalWithBootstrapButtons.fire({
-                        title: "¿Tarea completada, desea añadir otra?",
+                        title: "Tarea completada! \n ¿Desea añadir otra?",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonText: "Si!",
@@ -1113,7 +1148,14 @@ export default {
                             /* me.cerrarModal(); */
                             me.UpdateTask('newTaskComp');
                         }else if (result.dismiss === swal.DismissReason.cancel){
-                            me.cerrarModal();
+                            Swal.fire({
+                                position: 'top-end',
+                                type: 'success',
+                                title: 'Completado',
+                                showConfirmButton: false,
+                                timer: 1000
+                            });
+                            me.cerrarModalDet();
 
                         }
                     })
@@ -1245,6 +1287,7 @@ export default {
             this.nextTask = [];
             this.arrayVentasT = [];
             this.arrayCommentT = [];
+            this.arrayComentarios = [];
             this.arrayActividadesT = [];
             this.idcliente = '';
             this.cliente = '';
@@ -1309,6 +1352,7 @@ export default {
             });
 
             this.obtenerEventos(idcliente,1);
+            this.getComments(idcliente);
         },
 
         obtenerEventos(idcliente,page){
@@ -1472,6 +1516,117 @@ export default {
         },
         mostrarDetalle(){
             this.listado = 0;
+        },
+
+        newComment(){
+            this.CommentNew = 1;
+            this.commentBody = "";
+            this.itsCommentUpd = 0;
+            this.itsCommentNew = 1;
+        },
+        cancelComment(){
+            this.CommentNew = 0;
+            this.commentBody = "";
+            this.comment_id = 0;
+            this.itsCommentUpd = 0;
+            this.itsCommentNew = 0;
+        },
+        saveComment(id){
+            let me = this;
+
+            var clienteid = id;
+
+            axios.post('/cliente/crearComment',{
+                'id' : id,
+                'body' : this.commentBody
+            }).then(function(response) {
+                me.cancelComment();
+                me.getComments(clienteid);
+                swal.fire(
+                'Completado!',
+                'El comentario ha sido registrado con éxito.',
+                'success')
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        getComments(id){
+            let me = this;
+            var url= '/cliente/getComments?id=' + id;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.arrayComentarios = respuesta.comentarios;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        editComment(data = []){
+            this.comment_id = data['id'];
+            this.commentBody = data['body'];
+            this.CommentNew = 1;
+            this.itsCommentUpd = 1;
+            this.itsCommentNew = 0;
+        },
+        updateComment(id){
+
+            let me = this;
+            var clienteid = id;
+
+            axios.put("/cliente/editComment", {
+                id : this.comment_id,
+                body : this.commentBody
+            })
+            .then(function(response) {
+                me.cancelComment();
+                me.getComments(clienteid);
+                swal.fire(
+                'Completado!',
+                'El comentario ha sido actualizado con éxito.',
+                'success')
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        deleteComentario(id,cliente){
+            let me = this;
+            var clienteid = cliente;
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro eliminar este comentario?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/cliente/deleteComment', {
+                        'id' : id
+                    }).then(function(response) {
+                         me.getComments(clienteid);
+                        swalWithBootstrapButtons.fire(
+                            "Eliminado!",
+                            "El comentario ha sido eliminada con éxito.",
+                            "success"
+                        );
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
         }
     },
     mounted() {

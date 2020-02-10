@@ -249,7 +249,8 @@ class TareaController extends Controller
                 'from'         => $tareas->firstItem(),
                 'to'           => $tareas->lastItem(),
             ],
-            'tareas' => $tareas
+            'tareas' => $tareas,
+            'userid' => $usvend
         ];
     }
     public function store(Request $request){

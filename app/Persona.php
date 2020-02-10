@@ -24,4 +24,8 @@ class Persona extends Model
         return $this->morphMany(Document::class,'documentable');
     }
 
+    public function comments(){
+        return $this->morphMany(Comment::class,'commentable');
+    }
+
 }
