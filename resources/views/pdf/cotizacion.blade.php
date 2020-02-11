@@ -202,8 +202,10 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr><th>{{$c->nombre}}</th></tr>
+                        <tr><th><strong>Presente</strong></th></tr>
                         <tr>
-                        <th><p id="cliente">{{$c->nombre}}<br>
+                        <th>Contacto: {{ $c->contacto }} {{ $c->tel_company }} <br>
                             RFC: {{ $c->rfc }}<br>
                             Domicilio: {{ $c->domicilio }} {{$c->ciudad}}<br>
                             Teléfono: {{ $c->telefono }}<br>
@@ -222,11 +224,14 @@
                     <thead>
                         <tr id="fa">
                             <th>No°</th>
+                            <th>PLACA</th>
                             <th>MATERIAL</th>
                             <th>TERMINADO</th>
+                            <th>UBICACION</th>
                             <th>MEDIDAS</th>
+                            <th>MTS <sup>2</sup></th>
                             <th>P U</th>
-                            <th>METROS <sup>2</sup></th>
+
                             <th>CANT.</th>
                             <th>DESC</th>
                             <th>SUBTOTAL</th>
@@ -238,11 +243,13 @@
 
                         <tr>
                             <td class="td-b">{{ ($index + 1)}}</td>
+                            <td class="td-b">{{ $det->codigo }}</td>
                             <td class="td-b">{{ $det->articulo }}</td>
                             <td class="td-b">{{ $det->terminado }}</td>
+                            <td class="td-b">{{ $det->ubicacion }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
-                            <td class="td-b">{{ $det->precio }}</td>
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>
+                            <td class="td-b">{{ $det->precio }}</td>
                             <td class="td-b">{{ $det->cantidad }}</td>
                             <td class="td-b">{{ $det->descuento }}</td>
                             <td class="td-b">{{ number_format(((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento),2) }}</td>
@@ -252,6 +259,8 @@
                     <tfoot>
                         @foreach ($cotizacion as $c)
                         <tr>
+                            <th></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -270,6 +279,8 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
+                            <th></th>
                             <th class="th-b">IVA</th>
                             <td class="th-b">{{ number_format(round(($c->total/($c->impuesto + 1))*$c->impuesto,2),2) }}</td>
                         </tr>
@@ -279,11 +290,14 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th>Total m <sup>2:</sup> {{  $sumaMts }}</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
                             <th></th>
                             <th class="th-b">TOTAL</th>
                             <td class="th-b">{{ number_format($c->total,2) }}</td>
                         </tr>
+                        <tr><th class="th-b" colspan="11">Total m <sup>2:</sup> {{  $sumaMts }}</th></tr>
                         @endforeach
                     </tfoot>
 

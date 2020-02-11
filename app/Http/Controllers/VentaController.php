@@ -591,6 +591,7 @@ class VentaController extends Controller
             'ventas.num_cheque','ventas.banco','ventas.tipo_facturacion','ventas.pagado',
             'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
             'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial',
+            'personas.company as contacto','personas.tel_company',
             'ventas.observacionpriv','ventas.facturado','ventas.factura_env')
         ->where('ventas.id',$id)->take(1)->get();
 
@@ -757,7 +758,7 @@ class VentaController extends Controller
             'ventas.num_cheque','ventas.banco','ventas.tipo_facturacion','ventas.pagado',
             'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
             'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial',
-            'ventas.facturado','ventas.factura_env')
+            'personas.company as contacto','personas.tel_company','ventas.facturado','ventas.factura_env')
         ->where('ventas.id',$id)->take(1)->get();
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')

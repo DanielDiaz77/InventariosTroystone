@@ -6,6 +6,7 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>Comprobante de venta</title>
     <style>
+        @page { margin-bottom: 20px !important; }
         body {
         /*position: relative;*/
         /*width: 16cm;  */
@@ -228,8 +229,10 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr><th>{{$v->nombre}}</th></tr>
+                        <tr><th><strong>Presente</strong></th></tr>
                         <tr>
-                        <th><p id="cliente">{{$v->nombre}}<br>
+                        <th>Contacto: {{ $v->contacto }} {{ $v->tel_company }} <br>
                             RFC: {{ $v->rfc }}<br>
                             Domicilio: {{ $v->domicilio }} {{$v->ciudad}}<br>
                             Teléfono: {{ $v->telefono }}<br>
@@ -247,28 +250,30 @@
                 <table id="facarticulo" class="table-b">
                     <thead>
                         <tr id="fa">
+                            <th>No°</th>
                             <th>MATERIAL</th>
                             <th>No° PLACA</th>
                             <th>MEDIDAS</th>
-                            <th>UBICACION</th>
-                            <th>P U</th>
                             <th>M<sup>2</sup></th>
+                            <th>BODEGA</th>
+                            <th>P U</th>
                             <th width="15px">CANT.</th>
                             <th width="15px">DESC</th>
                             <th>SUBTOTAL</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($detalles as $det)
+                        @foreach ($detalles as $index => $det)
 
 
                         <tr>
+                            <td class="td-b">{{ ($index + 1)}}</td>
                             <td class="td-b">{{ $det->articulo }} - {{ $det->terminado }}</td>
                             <td class="td-b">{{ $det->codigo }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
+                            <td class="td-b">{{ $det->metros_cuadrados }}</td>
                             <td class="td-b">{{ $det->ubicacion }}</td>
                             <td class="td-b">{{ $det->precio }}</td>
-                            <td class="td-b">{{ $det->metros_cuadrados }}</td>
                             <td class="td-b">{{ $det->cantidad }}</td>
                             <td class="td-b">{{ $det->descuento }}</td>
                             <td class="td-b">{{ number_format(((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento),2) }}</td>
@@ -278,6 +283,7 @@
                     <tfoot>
                         @foreach ($venta as $v)
                         <tr>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -296,6 +302,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                             <th class="th-b">IVA</th>
                             <td class="th-b">{{ number_format(round(($v->total/($v->impuesto + 1))*$v->impuesto,2),2) }}</td>
                         </tr>
@@ -305,11 +312,13 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th>Total m <sup>2:</sup> {{  $sumaMts }}</th>
+                            <th></th>
+                            <th></th>
                             <th></th>
                             <th class="th-b">TOTAL</th>
                             <td class="th-b">{{ number_format($v->total,2) }}</td>
                         </tr>
+                        <tr><th class="th-b" colspan="10">Total m <sup>2:</sup> {{  $sumaMts }}</th></tr>
                         @endforeach
                     </tfoot>
 

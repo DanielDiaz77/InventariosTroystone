@@ -263,13 +263,13 @@ class CotizacionController extends Controller
             'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
             'cotizaciones.aceptado','cotizaciones.moneda','cotizaciones.tipo_cambio', 'cotizaciones.observacion',
             'cotizaciones.vigencia','personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
-            'personas.telefono','personas.email','users.usuario')
+            'personas.telefono','personas.email','personas.company as contacto','personas.tel_company','users.usuario')
         ->where('cotizaciones.id',$id)->take(1)->get();
 
         $detalles = DetalleCotizacion::join('articulos','detalle_cotizaciones.idarticulo','=','articulos.id')
             ->select('detalle_cotizaciones.cantidad','detalle_cotizaciones.precio','detalle_cotizaciones.descuento',
                 'articulos.sku as articulo','articulos.largo','articulos.alto','articulos.metros_cuadrados',
-                'articulos.terminado')
+                'articulos.terminado','articulos.codigo','articulos.ubicacion')
             ->where('detalle_cotizaciones.idcotizacion',$id)
             ->orderBy('detalle_cotizaciones.id','desc')->get();
 

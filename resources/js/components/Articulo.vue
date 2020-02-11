@@ -66,14 +66,19 @@
                                     <option value="SLP">San Luis</option>
                                 </select>
                             </div>
-                            <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5">
-                                <button @click="abrirModal3()" class="btn btn-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
+                            <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5" v-if="estadoArt==1">
+                                <button @click="listarExcelFiltros(criterio,buscar,acabado,bodega,zona)" class="btn btn-success btn-sm">Exportar <i class="fa fa-file-excel-o"></i></button>
                             </div>
                         </div>
 
                         <div class="form-group mb-2 col-sm-2 float-right">
-                            <label class="mb-1 ml-sm-5" for=""><strong>Total:</strong></label>
-                            <p class="mb-1" v-text="totres"></p>
+                            <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5">
+                                <button @click="abrirModal3()" class="btn btn-outline-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
+                            </div>
+
+                            <div class="input-group input-group-sm">
+                                <label class="mb-1 ml-sm-5" for=""><strong>Total: </strong> {{ totres }} </label>
+                            </div>
                         </div>
                     </div>
                     <div class="table-responsive col-md-12">
@@ -1982,6 +1987,13 @@ export default {
             .catch(function(error) {
                 console.log(error);
             });
+        },
+        listarExcelFiltros(criterio,buscar,acabado,bodega,zona){
+            /* $criterio,$buscar,$acabado,$bodega,$zona */
+           /*  console.log(`Criterio : ${ criterio } \n Buscar : ${ buscar } \n Bodega : ${ bodega } \n Acabado : ${ acabado } \n Zona : ${ zona }`);
+ */
+            window.open('/articulo/listarExcelFiltros?criterio=' + criterio + '&buscar=' + buscar +'&bodega=' + bodega + '&acabado=' + acabado + '&zona=' + zona);
+
         },
     },
     mounted() {

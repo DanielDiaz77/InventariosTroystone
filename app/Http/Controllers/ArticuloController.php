@@ -7,6 +7,7 @@ use App\Exports\ArticulosVentasExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use App\Exports\ArticulosExport;
+use App\Exports\ArticulosFiltrosExport;
 use Illuminate\Http\Request;
 use App\DetalleVenta;
 use App\Categoria;
@@ -1910,5 +1911,39 @@ class ArticuloController extends Controller
 
             'articulos' => $articulos
         ];
+    }
+    public function listarExcelFiltros(Request $request){
+
+        $criterio = $request->criterio;
+        $buscar = $request->buscar;
+        $bodega = $request->bodega;
+        $acabado = $request->acabado;
+        $zona = $request->zona;
+
+        $mytime = Carbon::now('America/Mexico_City')->format('d-m-Y');
+
+        if($buscar != null){
+            if($acabado != null){
+                $name = $buscar.'-'.$acabado.'-'.$mytime.'.xlsx';
+            }else{
+                $name = $buscar.'-'.$mytime.'.xlsx';
+            }
+        }else {
+            $name = 'articulos'.'-'.$mytime.'.xlsx';
+        }
+
+
+        /* $name = $buscar.'-'.$acabado.'-'.$mytime.'.xlsx'; */
+
+        return Excel::download(new ArticulosFiltrosExport($criterio,$buscar,$acabado,$bodega,$zona), $name);
+
+        /* return [
+            'criterio' => $criterio,
+            'buscar' => $buscar,
+            'bodega' => $bodega,
+            'acabado' => $acabado,
+            'zona' => $zona
+
+        ]; */
     }
 }
