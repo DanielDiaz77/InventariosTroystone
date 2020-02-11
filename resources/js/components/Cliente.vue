@@ -29,23 +29,31 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio,status,zona)" class="form-control mb-1" placeholder="Texto a buscar">
+                            <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio,status,zona,actives)" class="form-control mb-1" placeholder="Texto a buscar">
                             <button type="submit" @click="listarPersona(1,buscar,criterio,status,zona)" class="btn btn-primary mb-1"><i class="fa fa-search mb-1"></i></button>
                         </div>
                         <div class="input-group" v-if="userrol == 1">
-                            <select class="form-control mb-1" v-model="status" @change="listarPersona(1,buscar,criterio,status,zona)">
+                            <select class="form-control mb-1" v-model="status" @change="listarPersona(1,buscar,criterio,status,zona,actives)">
                                 <option value="1">Activos</option>
                                 <option value="0">Eliminados</option>
                             </select>
                         </div>
                         <div class="input-group ml-5">
-                                <button class="btn btn-light mb-1"><i style="color:red;" class="fa fa-map-marker"></i> Area</button>
-                                <select class="form-control mb-1" v-model="zona" @change="listarPersona(1,buscar,criterio,status,zona)">
-                                    <option value="">Todo</option>
-                                    <option value="GDL">Guadalajara</option>
-                                    <option value="SLP">San Luis</option>
-                                </select>
-                            </div>
+                            <button class="btn btn-light mb-1"><i style="color:red;" class="fa fa-map-marker"></i> Area</button>
+                            <select class="form-control mb-1" v-model="zona" @change="listarPersona(1,buscar,criterio,status,zona,actives)">
+                                <option value="">Todo</option>
+                                <option value="GDL">Guadalajara</option>
+                                <option value="SLP">San Luis</option>
+                            </select>
+                        </div>
+                        <div class="input-group ml-5">
+                            <button class="btn btn-light mb-1"><i style="color:blue;" class="fa fa-info"></i> Estado Ventas</button>
+                            <select class="form-control mb-1" v-model="actives" @change="listarPersona(1,buscar,criterio,status,zona,actives)">
+                                <option value="">Todo</option>
+                                <option value="Y">Activos</option>
+                                <option value="N">Inactivos</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive col-md-12">
@@ -89,34 +97,6 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <!-- <div class="form-inline m-0 p-0">
-                                        <div class="form-group mb-2 col-sm-10">
-                                            <template v-if="persona.active">
-                                                <div class="input-group">
-                                                    <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
-                                                        <i class="icon-pencil"></i>
-                                                    </button>
-                                                </div>&nbsp;
-                                                <div class="input-group">
-                                                    <button type="button" @click="desactivarCliente(persona.id,persona.nombre)" class="btn btn-danger btn-sm">
-                                                        <i class="icon-trash"></i>
-                                                    </button>
-                                                </div>&nbsp;
-                                            </template>
-                                            <template v-if="userrol == 1">
-                                                <div class="input-group" v-if="!persona.active">
-                                                    <button type="button" @click="activarCliente(persona.id,persona.nombre)" class="btn btn-info btn-sm">
-                                                        <i class="icon-check"></i>
-                                                    </button>
-                                                </div>&nbsp;
-                                            </template>
-                                            <div class="input-group">
-                                                <button type="button" @click="mostrarDetalle(persona)" class="btn btn-success btn-sm">
-                                                    <i class="icon-eye"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div> -->
                                 </td>
                                 <td v-text="persona.nombre"></td>
                                 <td v-text="persona.num_documento"></td>
@@ -143,13 +123,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,status,zona)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,status,zona,actives)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,status,zona)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,status,zona,actives)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,status,zona)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,status,zona,actives)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -1006,7 +986,8 @@ export default {
             itsCommentUpd : 0,
             itsCommentNew : 0,
             comment_id : 0,
-            user_id : 0
+            user_id : 0,
+            actives: "",
         };
     },
 
@@ -1075,10 +1056,11 @@ export default {
             },
         },
     methods: {
-        listarPersona (page,buscar,criterio,status,zona){
+        listarPersona (page,buscar,criterio,status,zona,actives){
             let me=this;
             me.btnNewCliente = 1;
-            var url= '/cliente?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&status='+ status+ '&zona='+ zona;
+            var url= '/cliente?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&status='
+                + status + '&zona='+ zona + '&actives='+ actives;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayPersona = respuesta.personas.data;
@@ -1093,12 +1075,12 @@ export default {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio,status,zona){
+        cambiarPagina(page,buscar,criterio,status,zona,actives){
             let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarPersona(page,buscar,criterio,status,zona);
+                me.listarPersona(page,buscar,criterio,status,zona,actives);
         },
         registrarPersona() {
             if (this.validarPersona()) {
@@ -1148,7 +1130,7 @@ export default {
                 'El cliente ' + '<b>' + newName + '</b>' + ' ha sido registrado con éxito.',
                 'success')
                 me.cerrarModal();
-                me.listarPersona(1,'','nombre',1,me.zona);
+                me.listarPersona(1,'','nombre',1,me.zona,'');
             })
             .catch(function(error) {
                 console.log(error);
@@ -1195,7 +1177,7 @@ export default {
                 'Actualizado!',
                 'El cliente ' + '<b>' + clienteUp + '</b>' + ' ha sido actualizado con éxito.',
                 'success')
-                me.listarPersona(page,'','nombre',1,me.zona);
+                me.listarPersona(page,'','nombre',1,me.zona,'');
             })
             .catch(function(error) {
                 console.log(error);
@@ -1230,7 +1212,7 @@ export default {
             this.errorPersona = 0;
             this.tipo = "";
             this.observacion = "";
-            this.listarPersona(page,'','nombre',stat,this.zona);
+            this.listarPersona(page,'','nombre',stat,this.zona,'');
         },
         abrirModal(modelo, accion, data = []) {
             switch (modelo) {
@@ -1377,7 +1359,7 @@ export default {
             this.arrayVentasT = [];
             this.arrayCommentT = [];
             this.arrayActividadesT = [];
-            this.listarPersona(page,'','nombre',stat,this.zona);
+            this.listarPersona(page,'','nombre',stat,this.zona,'');
         },
         obtenerTareas(idcliente){
             let me = this;
@@ -1620,7 +1602,7 @@ export default {
                     axios.put('/cliente/desactivar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarPersona(page,'','nombre',stat,me.zona);
+                        me.listarPersona(page,'','nombre',stat,me.zona,'');
                         swalWithBootstrapButtons.fire(
                             "Eliminado!",
                             "El cliente " + "<b>" + name +"</b>" +" ha sido eliminado con éxito.",
@@ -1658,7 +1640,7 @@ export default {
                     axios.put('/cliente/activar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarPersona(page,'','nombre',stat,me.zona);
+                        me.listarPersona(page,'','nombre',stat,me.zona,'');
                         swalWithBootstrapButtons.fire(
                             "Activado!",
                             "El cliente " + "<b>" + name +"</b>" +" ha sido activado con éxito.",
@@ -1879,7 +1861,7 @@ export default {
         }
     },
     mounted() {
-        this.listarPersona(1,this.buscar, this.criterio,this.status,this.zona);
+        this.listarPersona(1,this.buscar, this.criterio,this.status,this.zona,this.actives);
     }
 };
 </script>
