@@ -33,18 +33,33 @@ class CotizacionController extends Controller
                 ->orderBy('cotizaciones.id', 'desc')->paginate(12);
             }
             else{
-                $cotizaciones = Cotizacion::join('personas','cotizaciones.idcliente','=','personas.id')
-                ->join('users','cotizaciones.idusuario','=','users.id')
-                ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
-                'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
-                'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
-                'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                'cotizaciones.aceptado','personas.nombre','users.usuario')
-                ->where([
-                    ['cotizaciones.'.$criterio, 'like', '%'. $buscar . '%'],
-                    ['cotizaciones.estado','Anulada']
-                ])
-                ->orderBy('cotizaciones.id', 'desc')->paginate(12);
+                if($criterio == 'cliente'){
+                    $cotizaciones = Cotizacion::join('personas','cotizaciones.idcliente','=','personas.id')
+                    ->join('users','cotizaciones.idusuario','=','users.id')
+                    ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
+                    'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
+                    'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
+                    'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
+                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    ->where([
+                        ['personas.nombre', 'like', '%'. $buscar . '%'],
+                        ['cotizaciones.estado','Anulada']
+                    ])
+                    ->orderBy('cotizaciones.id', 'desc')->paginate(12);
+                }else{
+                    $cotizaciones = Cotizacion::join('personas','cotizaciones.idcliente','=','personas.id')
+                    ->join('users','cotizaciones.idusuario','=','users.id')
+                    ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
+                    'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
+                    'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
+                    'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
+                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    ->where([
+                        ['cotizaciones.'.$criterio, 'like', '%'. $buscar . '%'],
+                        ['cotizaciones.estado','Anulada']
+                    ])
+                    ->orderBy('cotizaciones.id', 'desc')->paginate(12);
+                }
             }
         }elseif($estadoC == "Vendida"){
             if ($buscar==''){
@@ -59,18 +74,33 @@ class CotizacionController extends Controller
                 ->orderBy('cotizaciones.id', 'desc')->paginate(12);
             }
             else{
-                $cotizaciones = Cotizacion::join('personas','cotizaciones.idcliente','=','personas.id')
-                ->join('users','cotizaciones.idusuario','=','users.id')
-                ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
-                'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
-                'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
-                'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                'cotizaciones.aceptado','personas.nombre','users.usuario')
-                ->where([
-                    ['cotizaciones.'.$criterio, 'like', '%'. $buscar . '%'],
-                    ['cotizaciones.estado','Vendida']
-                ])
-                ->orderBy('cotizaciones.id', 'desc')->paginate(12);
+                if($criterio == 'cliente'){
+                    $cotizaciones = Cotizacion::join('personas','cotizaciones.idcliente','=','personas.id')
+                    ->join('users','cotizaciones.idusuario','=','users.id')
+                    ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
+                    'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
+                    'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
+                    'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
+                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    ->where([
+                        ['personas.nombre', 'like', '%'. $buscar . '%'],
+                        ['cotizaciones.estado','Vendida']
+                    ])
+                    ->orderBy('cotizaciones.id', 'desc')->paginate(12);
+                }else{
+                    $cotizaciones = Cotizacion::join('personas','cotizaciones.idcliente','=','personas.id')
+                    ->join('users','cotizaciones.idusuario','=','users.id')
+                    ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
+                    'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
+                    'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
+                    'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
+                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    ->where([
+                        ['cotizaciones.'.$criterio, 'like', '%'. $buscar . '%'],
+                        ['cotizaciones.estado','Vendida']
+                    ])
+                    ->orderBy('cotizaciones.id', 'desc')->paginate(12);
+                }
             }
         }else{
             if ($buscar==''){
@@ -85,18 +115,33 @@ class CotizacionController extends Controller
                 ->orderBy('cotizaciones.id', 'desc')->paginate(12);
             }
             else{
-                $cotizaciones = Cotizacion::join('personas','cotizaciones.idcliente','=','personas.id')
-                ->join('users','cotizaciones.idusuario','=','users.id')
-                ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
-                'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
-                'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
-                'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                'cotizaciones.aceptado','personas.nombre','users.usuario')
-                ->where([
-                    ['cotizaciones.'.$criterio, 'like', '%'. $buscar . '%'],
-                    ['cotizaciones.estado','Registrado']
-                ])
-                ->orderBy('cotizaciones.id', 'desc')->paginate(12);
+                if($criterio == 'cliente'){
+                    $cotizaciones = Cotizacion::join('personas','cotizaciones.idcliente','=','personas.id')
+                    ->join('users','cotizaciones.idusuario','=','users.id')
+                    ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
+                    'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
+                    'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
+                    'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
+                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    ->where([
+                        ['personas.nombre', 'like', '%'. $buscar . '%'],
+                        ['cotizaciones.estado','Registrado']
+                    ])
+                    ->orderBy('cotizaciones.id', 'desc')->paginate(12);
+                }else{
+                    $cotizaciones = Cotizacion::join('personas','cotizaciones.idcliente','=','personas.id')
+                    ->join('users','cotizaciones.idusuario','=','users.id')
+                    ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
+                    'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
+                    'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
+                    'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
+                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    ->where([
+                        ['cotizaciones.'.$criterio, 'like', '%'. $buscar . '%'],
+                        ['cotizaciones.estado','Registrado']
+                    ])
+                    ->orderBy('cotizaciones.id', 'desc')->paginate(12);
+                }
             }
         }
 

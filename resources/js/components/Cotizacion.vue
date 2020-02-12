@@ -23,6 +23,7 @@
                     <div class="form-group mb-2 col-sm-10">
                         <div class="input-group">
                             <select class="form-control mb-1" v-model="criterio">
+                                <option value="cliente">Cliente</option>
                                 <option value="num_comprobante">No° Comprobante</option>
                                 <option value="fecha_hora">Fecha</option>
                             </select>
