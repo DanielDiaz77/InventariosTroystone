@@ -1177,7 +1177,8 @@ export default {
                 'Actualizado!',
                 'El cliente ' + '<b>' + clienteUp + '</b>' + ' ha sido actualizado con éxito.',
                 'success')
-                me.listarPersona(page,'','nombre',1,me.zona,'');
+                /* me.listarPersona(page,'','nombre',1,me.zona,''); */
+                me.listarPersona(page,me.buscar,me.criterio,me.status,me.zona,me.actives);
             })
             .catch(function(error) {
                 console.log(error);
@@ -1212,7 +1213,7 @@ export default {
             this.errorPersona = 0;
             this.tipo = "";
             this.observacion = "";
-            this.listarPersona(page,'','nombre',stat,this.zona,'');
+            this.listarPersona(page,this.buscar,this.criterio,this.status,this.zona,this.actives);
         },
         abrirModal(modelo, accion, data = []) {
             switch (modelo) {
@@ -1359,7 +1360,7 @@ export default {
             this.arrayVentasT = [];
             this.arrayCommentT = [];
             this.arrayActividadesT = [];
-            this.listarPersona(page,'','nombre',stat,this.zona,'');
+            this.listarPersona(page,me.buscar,me.criterio,me.status,me.zona,me.actives);
         },
         obtenerTareas(idcliente){
             let me = this;
@@ -1602,7 +1603,7 @@ export default {
                     axios.put('/cliente/desactivar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarPersona(page,'','nombre',stat,me.zona,'');
+                        me.listarPersona(page,me.buscar,me.criterio,me.status,me.zona,me.actives);
                         swalWithBootstrapButtons.fire(
                             "Eliminado!",
                             "El cliente " + "<b>" + name +"</b>" +" ha sido eliminado con éxito.",
@@ -1640,7 +1641,7 @@ export default {
                     axios.put('/cliente/activar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarPersona(page,'','nombre',stat,me.zona,'');
+                        me.listarPersona(page,me.buscar,me.criterio,me.status,me.zona,me.actives);
                         swalWithBootstrapButtons.fire(
                             "Activado!",
                             "El cliente " + "<b>" + name +"</b>" +" ha sido activado con éxito.",
