@@ -55,10 +55,14 @@ const app = new Vue({
     data: {
         menu: 0,
         notifications: [],
-        numActivities: 0
+        numActivities: 0,
+        userId: 0
     },
     created() {
         let me = this;
+
+        me.userId = $('meta[name="userId"]').attr('content');
+
         axios.post('notification/get').then(function(response) {
             me.notifications = response.data;
         }).catch(function(error) {

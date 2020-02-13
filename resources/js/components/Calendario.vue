@@ -165,16 +165,17 @@
                             </div>
                         </div>
                         <div class="form-group row m-0">
-                            <div class="col-9">
-                                <div class="input-group input-group-sm mb-3">
+                            <div class="col-12">
+                                <!-- <div class="input-group input-group-sm mb-3">
                                     <span class="input-group-addon btn btn-primary">Notas:</span>
                                     <textarea class="form-control custom-control rounded-0" v-model="content" rows="3" maxlength="256" style="resize:none"></textarea>
-                                </div>
-                                <!-- <label for=""><strong>Notas:</strong></label>
-                                <textarea placeholder="Contenido" class="form-control rounded-0 noresize" rows="3" maxlength="256" v-model="content"></textarea> -->
+                                </div> -->
+                                <template class="justify-content-center">
+                                    <editor :options="editorOptions" mode="wysiwyg" v-model="content" Width="100%"/>
+                                </template>
                             </div>
                             <template v-if="isEdition">
-                            <div class="col-md-2">
+                            <div class="col mt-2">
                                 <label for=""><strong>Actividad Completada:</strong></label>&nbsp;
                                  <toggle-button @change="cambiarEstadoEvent(eventid)" v-model="btnComp" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
@@ -262,7 +263,7 @@
                         </div>&nbsp; -->
                     </div>
                     <hr>
-                    <div :class="['col-md','caja2-' + clase,'m-0']">
+                    <div :class="['col-md','caja2-' + clase,'m-0','contentBox']">
                         <div class="row m-0 p-0">
                             <div class="col float-left">
                                 <p class="text-danger font-weight-bold" style="font-size: 25px;" v-if="area == 'GDL'">Guadalajara <i class="fa fa-map-marker" aria-hidden="true"></i></p>
@@ -298,7 +299,8 @@
                                 </button>&nbsp;
                             </div>
                             <div class="col-md-12">
-                                <p v-text="content"></p> <br>
+                                <!-- <p v-text="content"></p> <br> -->
+                                <viewer :value="content"/>
                             </div>
                         </div>
                     </div>
@@ -336,11 +338,17 @@ import datePicker from 'vue-bootstrap-datetimepicker';
 import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
 import vSelect from 'vue-select';
 import ToggleButton from 'vue-js-toggle-button';
+import 'tui-editor/dist/tui-editor.css';
+import 'tui-editor/dist/tui-editor-contents.css';
+import 'codemirror/lib/codemirror.css';
+import 'highlight.js/styles/github.css';
+import Editor from '@toast-ui/vue-editor/src/Editor.vue';
+import { Viewer } from '@toast-ui/vue-editor'
 Vue.use(datePicker);
 Vue.use(ToggleButton);
 //Vue.component('date-picker', VueBootstrapDatetimePicker);
 export default {
-    components: { VueCal,vSelect },
+    components: { VueCal,vSelect,'editor': Editor,'viewer': Viewer },
     data() {
         return {
             events: [],
@@ -363,7 +371,8 @@ export default {
                 showClear: true,
                 showClose: true,
                 daysOfWeekDisabled: [0],
-                minDate: moment().subtract(60, 'seconds'),
+                /* minDate: moment().subtract(60, 'seconds'), */
+                minDate : moment().startOf('month').format('YYYY-MM-DD hh:mm'),
                 maxDate: moment().add(60, 'days'),
             },
             isEdition : false,
@@ -387,7 +396,35 @@ export default {
             usrol : 0,
             usarea : "",
             usuario : "",
-            zona : ""
+            zona : "",
+            editorOptions: {
+                useCommandShortcut: true,
+                useDefaultHTMLSanitizer: true,
+                usageStatistics: true,
+                hideModeSwitch: false,
+                language: 'es_MX',
+                toolbarItems: [
+                    'heading',
+                    'bold',
+                    'italic',
+                    'strike',
+                    'divider',
+                    'hr',
+                    'quote',
+                    'divider',
+                    'ul',
+                    'ol',
+                    'task',
+                    'indent',
+                    'outdent',
+                    'divider',
+                    'table',
+                    'link',
+                    'divider',
+                    'code',
+                    'codeblock'
+                ]
+            },
         };
     },
     computed:{
@@ -395,8 +432,10 @@ export default {
             let me = this;
             let date = "";
             moment.locale('es');
-            date = moment().format('YYYY-MM-DD');
-            me.dateToday = moment().format('YYYY-MM-DD');
+            date = moment().startOf('month').format('YYYY-MM-DD hh:mm');
+            me.dateToday = moment().startOf('month').format('YYYY-MM-DD hh:mm');
+            /* date = moment().format('YYYY-MM-DD');
+            me.dateToday = moment().format('YYYY-MM-DD'); */
             return date;
         }
     },
@@ -440,6 +479,8 @@ export default {
             this.usuario = "";
             this.btnComp = false;
             this.area = this.usarea;
+            /* this.options.minDate = moment().subtract(5, 'minutes'); */
+            this.options.minDate = moment().startOf('month').format('YYYY-MM-DD hh:mm');
         },
         abriModalEditar(Event){
             this.modal = 1;
@@ -501,7 +542,8 @@ export default {
             this.isView = true;
             e.stopPropagation()
 
-            this.options.minDate = this.start;
+            /* this.options.minDate = this.start; */
+            this.options.minDate = moment().startOf('month').format('YYYY-MM-DD hh:mm');
 
             if(this.estado){
                 this.btnComp = true;
@@ -541,7 +583,8 @@ export default {
             this.btnComp = false;
             this.usuario = "";
             this.area = "";
-            this.options.minDate = moment().subtract(60, 'seconds').format('YYYY-MM-DD HH:mm:ss');
+            /* this.options.minDate = moment().subtract(60, 'seconds').format('YYYY-MM-DD HH:mm:ss'); */
+            this.options.minDate = moment().startOf('month').format('YYYY-MM-DD hh:mm');
             this.listarEventos(this.zona);
 
             /* console.log("MinDate at Close " + this.options.minDate); */
@@ -573,7 +616,8 @@ export default {
             this.area = "";
             this.isEdition = false;
             this.btnComp = false;
-            this.options.minDate = moment().format('YYYY-MM-DD HH:mm:ss');
+            /* this.options.minDate = moment().format('YYYY-MM-DD HH:mm:ss'); */
+            this.options.minDate = moment().startOf('month').format('YYYY-MM-DD hh:mm');
             this.listarEventos(this.zona);
 
             /* console.log("MinDate at Close " + this.options.minDate); */
@@ -757,7 +801,7 @@ export default {
       font-weight: bold;
     }
     .content-event{
-        height: 660px !important;
+        height: 760px !important;
     }
     .content-event2{
         height: 650px !important;
@@ -909,6 +953,9 @@ export default {
         -webkit-box-shadow: 0 1px 6px rgba(120, 85, 137, 0.726);
         box-shadow: 0 1px 6px rgba(120, 85, 137, 0.726);
         height: 250px;
+    }
+    .contentBox{
+        height: auto !important;
     }
 
 </style>

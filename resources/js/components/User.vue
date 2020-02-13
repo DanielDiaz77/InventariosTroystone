@@ -35,11 +35,11 @@
                         <tr>
                             <th>Opciones</th>
                             <th>Nombre</th>
-                            <th>Ciudad</th>
-                            <th>Domicilio</th>
+                            <!-- <th>Ciudad</th> -->
+                            <!-- <th>Domicilio</th> -->
                             <th>Teléfono</th>
                             <th>Correo electrónico</th>
-                            <th>RFC</th>
+                           <!--  <th>RFC</th> -->
                             <th>Usuario</th>
                             <th>Rol</th>
                             <th>Area</th>
@@ -63,11 +63,11 @@
                                 </template>
                             </td>
                             <td v-text="persona.nombre"></td>
-                            <td v-text="persona.ciudad"></td>
-                            <td v-text="persona.domicilio"></td>
+                            <!-- <td v-text="persona.ciudad"></td>
+                            <td v-text="persona.domicilio"></td> -->
                             <td v-text="persona.telefono"></td>
                             <td v-text="persona.email"></td>
-                            <td v-text="persona.rfc"></td>
+                           <!--  <td v-text="persona.rfc"></td> -->
                             <td v-text="persona.usuario"></td>
                             <td v-text="persona.rol"></td>
                             <td v-if="persona.area == 'GDL'">

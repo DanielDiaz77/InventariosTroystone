@@ -226,14 +226,13 @@
                             <th>No°</th>
                             <th>PLACA</th>
                             <th>MATERIAL</th>
-                            <th>TERMINADO</th>
-                            <th>UBICACION</th>
+                            <th>ACABADO</th>
+                            <th>BODEGA</th>
                             <th>MEDIDAS</th>
                             <th>MTS <sup>2</sup></th>
-                            <th>P U</th>
-
-                            <th>CANT.</th>
-                            <th>DESC</th>
+                            <th>P.U. x C</th>
+                            {{-- <th>CANT.</th> --}}
+                            {{-- <th>DESC</th> --}}
                             <th>SUBTOTAL</th>
                         </tr>
                     </thead>
@@ -249,9 +248,9 @@
                             <td class="td-b">{{ $det->ubicacion }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
                             <td class="td-b">{{ $det->metros_cuadrados }}</td>
-                            <td class="td-b">{{ $det->precio }}</td>
-                            <td class="td-b">{{ $det->cantidad }}</td>
-                            <td class="td-b">{{ $det->descuento }}</td>
+                            <td class="td-b">{{ $det->precio }} x {{ $det->cantidad }}</td>
+                           {{--  <td class="td-b">{{ $det->cantidad }}</td> --}}
+                            {{-- <td class="td-b">{{ $det->descuento }}</td> --}}
                             <td class="td-b">{{ number_format(((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento),2) }}</td>
                         </tr>
                         @endforeach
@@ -259,21 +258,20 @@
                     <tfoot>
                         @foreach ($cotizacion as $c)
                         <tr>
+                            {{-- <th></th> --}}
                             <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
-                            <th></th>
+
                             <th></th>
                             <th class="th-b">SUBTOTAL</th>
                             <td class="th-b">{{ number_format(round($c->total/($c->impuesto + 1),2),2)}}</td>
                         </tr>
                         <tr>
-                            <th></th>
-                            <th></th>
+                            {{-- <th></th> --}}
                             <th></th>
                             <th></th>
                             <th></th>
@@ -285,8 +283,7 @@
                             <td class="th-b">{{ number_format(round(($c->total/($c->impuesto + 1))*$c->impuesto,2),2) }}</td>
                         </tr>
                         <tr>
-                            <th></th>
-                            <th></th>
+                            {{-- <th></th> --}}
                             <th></th>
                             <th></th>
                             <th></th>

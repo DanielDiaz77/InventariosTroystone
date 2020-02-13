@@ -12,7 +12,7 @@ class Venta extends Model
         'lugar_entrega','entregado','estado','moneda','tipo_cambio',
         'observacion','num_cheque','banco','tipo_facturacion','pagado',
         'entrega_parcial','file', 'observacionpriv','facturado',
-        'factura_env'
+        'factura_env','pago_parcial','adeudo'
     ];
 
     public function usuario(){
@@ -21,5 +21,9 @@ class Venta extends Model
 
     public function cliente(){
         return $this->belongsTo('App\Persona');
+    }
+
+    public function deposits(){
+        return $this->morphMany(Deposit::class,'depositable');
     }
 }
