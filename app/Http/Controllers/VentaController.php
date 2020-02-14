@@ -6,6 +6,7 @@ use App\Articulo;
 use App\Venta;
 use App\DetalleVenta;
 use App\User;
+use App\Deposit;
 use App\Notifications\NotifyAdmin;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -14,6 +15,7 @@ use Barryvdh\DomPDF\PDF;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\VentasExport;
 use App\Exports\VentasExportDet;
+
 
 
 class VentaController extends Controller
@@ -817,12 +819,14 @@ class VentaController extends Controller
         $venta = Venta::join('personas','ventas.idcliente','=','personas.id')
         ->join('users','ventas.idusuario','=','users.id')
         ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-        'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
-        'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv',
-        'ventas.facturado','ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+            'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
+            'ventas.num_cheque','ventas.file','ventas.observacionpriv','ventas.facturado',
+            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','personas.nombre as cliente',
+            'personas.tipo','personas.rfc','personas.cfdi','personas.telefono',
+            'personas.company as contacto','personas.tel_company as tel_contacto')
         ->where('ventas.id','=',$id)
         ->orderBy('ventas.id', 'desc')->take(1)->get();
 
@@ -1191,7 +1195,6 @@ class VentaController extends Controller
         $venta->save();
 
     }
-
     public function ListarExcel(Request $request){
         $inicio = $request->inicio;
         $fin = $request->fin;
@@ -1213,11 +1216,92 @@ class VentaController extends Controller
         }
         $venta->save();
     }
-
     public function cambiarFacturacionEnv(Request $request){
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);
         $venta->factura_env = $request->estadoEn;
         $venta->save();
     }
+
+    public function crearDeposit(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $mytime = Carbon::now('America/Mexico_City');
+        $venta = Venta::findOrFail($request->id); //Venta a depositar
+
+        $adeudoAct = $venta->adeudo;
+
+        if($request->total < $adeudoAct){
+            try{
+                DB::beginTransaction();
+                $venta->adeudo = $venta->adeudo - $request->total;
+                $venta->pago_parcial = 1;
+                $venta->pagado = 0;
+                $venta->save();
+                $deposit = new Deposit(['venta_id' => $venta->id, 'total' => $request->total,'fecha_hora' => $mytime]);
+                $venta->deposits()->save($deposit);
+                DB::commit();
+            }catch(Exception $e){
+                DB::rollBack();
+            }
+        }elseif($request->total == $adeudoAct){
+            try{
+                DB::beginTransaction();
+                $venta->adeudo = 0;
+                $venta->pago_parcial = 1;
+                $venta->pagado = 1;
+                $venta->save();
+                $deposit = new Deposit(['venta_id' => $venta->id, 'total' => $request->total,'fecha_hora' => $mytime]);
+                $venta->deposits()->save($deposit);
+                DB::commit();
+            }catch(Exception $e){
+                DB::rollBack();
+            }
+        }
+    }
+    public function getDeposits(Request $request){
+
+        if (!$request->ajax()) return redirect('/');
+
+        $venta = Venta::findOrFail($request->id); //ID venta y sus depositos
+
+        $deposits = $venta->deposits()
+        ->select('deposits.id','deposits.venta_id as venta','deposits.total','deposits.fecha_hora as fecha')
+        ->orderBy('deposits.fecha_hora','desc')
+        ->get();
+
+        return [
+            'abonos' => $deposits
+        ];
+
+    }
+
+    public function deleteDeposit(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        try{
+            DB::beginTransaction();
+
+            $deposit = Deposit::findOrFail($request->id);
+            $deposit->delete();
+
+            $numDeposits = Deposit::where('venta_id',$request->idventa)->count();
+
+            if($numDeposits <= 0){
+                $venta = Venta::findOrFail($request->idventa);
+                $venta->pago_parcial = 0;
+                $venta->pagado = 0;
+                $venta->adeudo = $venta->total;
+                $venta->save();
+            }else{
+                $venta = Venta::findOrFail($request->idventa);
+                $venta->adeudo = $venta->adeudo + $request->total;
+                $venta->save();
+            }
+
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollBack();
+        }
+    }
+
 }

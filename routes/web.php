@@ -166,6 +166,9 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/entrega/eliminarImg', 'VentaController@eliminarImagen');
         Route::get('/venta/ExportExcel','VentaController@listarExcel');
         Route::get('/venta/ExportExcelDet','VentaController@listarExcelDet');
+        Route::post('/venta/crearDeposit', 'VentaController@crearDeposit');
+        Route::get('/venta/getDeposits', 'VentaController@getDeposits');
+        Route::put('/venta/eliminarDeposit','VentaController@deleteDeposit');
 
         Route::get('/cotizacion', 'CotizacionController@index');
         Route::post('/cotizacion/registrar', 'CotizacionController@store');
