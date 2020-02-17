@@ -29,6 +29,7 @@
                             </div>
                             <div class="input-group">
                                 <select class="form-control mb-1" v-model="estado" @change="listarLlamadas(1,buscar,criterio,estado,zona)">
+                                    <option value="">Todo</option>
                                     <option value="Pendiente">Pendiente</option>
                                     <option value="Atendido">Completada</option>
                                     <option value="Cancelada">Cancelada</option>
@@ -582,7 +583,7 @@
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">Teléfono</span>
                                                 </div>
-                                                <input type="text" v-model="tel_company_cliente" maxlength="13" class="form-control" placeholder="Teléfono de la persona física"/>
+                                                <input type="text" v-model="telefono_cliente" maxlength="13" class="form-control" placeholder="Teléfono de la persona física"/>
                                             </div>
                                             <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
                                                 <div class="input-group-append">
@@ -629,6 +630,12 @@
                                                     <option value="G28-Pago con tarjeta de debito">G28-Pago con tarjeta de debito</option>
                                                     <option value="P01-Por definir">P01-Por definir</option>
                                                 </select>
+                                            </div>
+                                            <div class="input-group input-group-sm col-12 col-lg-8 mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Observaciones</span>
+                                                </div>
+                                                <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion_cliente"></textarea>
                                             </div>
                                         </div>
                                         <div v-show="errorCliente" class="form-group row div-error">
@@ -697,6 +704,7 @@ export default {
             tel_company_cliente : "",
             rfc_cliente : "",
             cfdi_cliente: "",
+            observacion_cliente : "",
             active_cliente : 3,
             idvendedor : 0,
             errorCliente : 0,
@@ -1169,7 +1177,8 @@ export default {
                 'tipo': this.tipo_cliente,
                 'cfdi' : this.cfdi_cliente,
                 'idusuario' : this.idvendedor,
-                'area' : areaVend
+                'area' : areaVend,
+                'observacion' : this.observacion_cliente
             })
             .then(function(response) {
                 me.cerrarModalAC();

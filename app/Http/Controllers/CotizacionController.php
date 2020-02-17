@@ -6,10 +6,14 @@ use App\Articulo;
 use App\Cotizacion;
 use App\DetalleCotizacion;
 use App\User;
+use App\Persona;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\PDF;
+
+use App\Mail\MailCotizacion;
+use Illuminate\Support\Facades\Mail;
 
 class CotizacionController extends Controller
 {
@@ -28,7 +32,7 @@ class CotizacionController extends Controller
                 'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
                 'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
                 'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                'cotizaciones.aceptado','personas.nombre','users.usuario')
+                'cotizaciones.aceptado','personas.nombre','users.usuario','personas.email as EmailC')
                 ->where('cotizaciones.estado','Anulada')
                 ->orderBy('cotizaciones.id', 'desc')->paginate(12);
             }
@@ -40,7 +44,7 @@ class CotizacionController extends Controller
                     'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
                     'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
                     'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    'cotizaciones.aceptado','personas.nombre','users.usuario','personas.email as EmailC')
                     ->where([
                         ['personas.nombre', 'like', '%'. $buscar . '%'],
                         ['cotizaciones.estado','Anulada']
@@ -53,7 +57,7 @@ class CotizacionController extends Controller
                     'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
                     'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
                     'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    'cotizaciones.aceptado','personas.nombre','users.usuario','personas.email as EmailC')
                     ->where([
                         ['cotizaciones.'.$criterio, 'like', '%'. $buscar . '%'],
                         ['cotizaciones.estado','Anulada']
@@ -69,7 +73,7 @@ class CotizacionController extends Controller
                 'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
                 'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
                 'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                'cotizaciones.aceptado','personas.nombre','users.usuario')
+                'cotizaciones.aceptado','personas.nombre','users.usuario','personas.email as EmailC')
                 ->where('cotizaciones.estado','Vendida')
                 ->orderBy('cotizaciones.id', 'desc')->paginate(12);
             }
@@ -81,7 +85,7 @@ class CotizacionController extends Controller
                     'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
                     'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
                     'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    'cotizaciones.aceptado','personas.nombre','users.usuario','personas.email as EmailC')
                     ->where([
                         ['personas.nombre', 'like', '%'. $buscar . '%'],
                         ['cotizaciones.estado','Vendida']
@@ -94,7 +98,7 @@ class CotizacionController extends Controller
                     'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
                     'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
                     'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    'cotizaciones.aceptado','personas.nombre','users.usuario','personas.email as EmailC')
                     ->where([
                         ['cotizaciones.'.$criterio, 'like', '%'. $buscar . '%'],
                         ['cotizaciones.estado','Vendida']
@@ -110,7 +114,7 @@ class CotizacionController extends Controller
                 'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
                 'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
                 'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                'cotizaciones.aceptado','personas.nombre','users.usuario')
+                'cotizaciones.aceptado','personas.nombre','users.usuario','personas.email as EmailC')
                 ->where('cotizaciones.estado','Registrado')
                 ->orderBy('cotizaciones.id', 'desc')->paginate(12);
             }
@@ -122,7 +126,7 @@ class CotizacionController extends Controller
                     'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
                     'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
                     'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    'cotizaciones.aceptado','personas.nombre','users.usuario','personas.email as EmailC')
                     ->where([
                         ['personas.nombre', 'like', '%'. $buscar . '%'],
                         ['cotizaciones.estado','Registrado']
@@ -135,7 +139,7 @@ class CotizacionController extends Controller
                     'cotizaciones.fecha_hora','cotizaciones.vigencia','cotizaciones.impuesto','cotizaciones.total',
                     'cotizaciones.estado','cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion',
                     'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
-                    'cotizaciones.aceptado','personas.nombre','users.usuario')
+                    'cotizaciones.aceptado','personas.nombre','users.usuario','personas.email as EmailC')
                     ->where([
                         ['cotizaciones.'.$criterio, 'like', '%'. $buscar . '%'],
                         ['cotizaciones.estado','Registrado']
@@ -357,5 +361,56 @@ class CotizacionController extends Controller
         $cotizacion = Cotizacion::findOrFail($request->id);
         $cotizacion->observacion = $request->observacion;
         $cotizacion->save();
+    }
+
+    public function enviarCotizacionMail(Request $request){
+
+        $cotizacion =  Cotizacion::join('personas','cotizaciones.idcliente','=','personas.id')
+        ->join('users','cotizaciones.idusuario','=','users.id')
+        ->select('cotizaciones.id','cotizaciones.tipo_comprobante','cotizaciones.num_comprobante',
+            'cotizaciones.created_at','cotizaciones.impuesto','cotizaciones.total','cotizaciones.estado',
+            'cotizaciones.forma_pago','cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega',
+            'cotizaciones.aceptado','cotizaciones.moneda','cotizaciones.tipo_cambio', 'cotizaciones.observacion',
+            'cotizaciones.vigencia','personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
+            'personas.telefono','personas.email','personas.company as contacto','personas.tel_company','users.usuario')
+        ->where('cotizaciones.id',$request->id)->take(1)->get();
+
+        $detalles = DetalleCotizacion::join('articulos','detalle_cotizaciones.idarticulo','=','articulos.id')
+        ->select('detalle_cotizaciones.cantidad','detalle_cotizaciones.precio','detalle_cotizaciones.descuento',
+            'articulos.sku as articulo','articulos.largo','articulos.alto','articulos.metros_cuadrados',
+            'articulos.terminado','articulos.codigo','articulos.ubicacion')
+        ->where('detalle_cotizaciones.idcotizacion',$request->id)
+        ->orderBy('detalle_cotizaciones.id','desc')->get();
+
+        $numcotizacion = Cotizacion::select('num_comprobante')->where('id',$request->id)->get();
+
+        $ivaagregado = Cotizacion::select('impuesto')->where('id',$request->id)->get();
+
+        $sumaMts = DB::table('articulos')
+        ->select(DB::raw('SUM(metros_cuadrados) as metros'))
+        ->leftJoin('detalle_cotizaciones','detalle_cotizaciones.idarticulo','articulos.id')
+        ->where('detalle_cotizaciones.idcotizacion',$request->id)
+        ->get();
+
+        $pdf = \PDF::loadView('pdf.cotizacion',
+            ['cotizacion' => $cotizacion,'detalles'=>$detalles,
+            'ivaCotizacion' =>$ivaagregado[0]->impuesto,
+            'sumaMts' => $sumaMts[0]->metros]);
+
+        $data = array(
+            'name'      =>  $request->name
+        );
+
+        $email = $request->mail;
+
+        $numCot = $numcotizacion[0]->num_comprobante;
+
+        $usid = \Auth::user()->id;
+
+        $mailUs = Persona::select('email')->where('id',$usid)->get();
+
+        $emit = $mailUs[0]->email;
+
+        Mail::to($email)->send(new MailCotizacion($pdf->output(),$data,$numCot,$emit));
     }
 }

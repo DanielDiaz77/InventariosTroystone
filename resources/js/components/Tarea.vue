@@ -87,7 +87,7 @@
                                         <span class="badge badge-pill badge-secondary">{{ convertDate(tarea.fecha) }}</span>
                                     </div>
                                 </td>
-                                <td v-text="tarea.descripcion"></td>
+                                <td width="500px" v-text="tarea.descripcion"></td>
                                 <td v-text="tarea.tipo"></td>
                                 <td>
                                     <div v-if="tarea.estado == 1">
@@ -580,7 +580,7 @@
                         <input type="number" hidden :value="getFechaCode" class="form-control col-md"/>
                     </div>
                     <div class="form-group row">
-                        <template v-if="tipo == 'Llamada'">
+                        <template v-if="telefono_cliente">
                             <div class="col-md-3 text-center">
                                 <div class="form-group">
                                     <label for=""><strong>Teléfono</strong></label>
@@ -622,6 +622,8 @@
                                         <option value='' disabled>Seleccione(*)</option>
                                         <option value="Nota">Nota</option>
                                         <option value="Llamada">Llamada</option>
+                                        <option value="Whatsapp">Whatsapp</option>
+                                        <option value="Correo">Correo</option>
                                     </select>
                                 </div>
                             </div>

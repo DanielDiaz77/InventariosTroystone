@@ -591,25 +591,19 @@
                         </div>
                     </template>
                     <template v-else>
-                        <div class="col-md-2" v-if="!entregado_parcial && adeudo == 0 ">
+                        <div class="col-md-2" v-if="!entregado_parcial">
                             <div class="form-group">
                                 <label for=""><strong>Entregado 100%:</strong> </label>
-                                <div v-if="pagado">
+                                <div>
                                     <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
-                                </div>
-                                <div v-else>
-                                    <span class="badge badge-danger">Pendiente de pago</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2" v-if="!entregado && adeudo == 0 ">
+                        <div class="col-md-2" v-if="!entregado">
                             <div class="form-group">
                                 <label for=""><strong>Entregado Parcial:</strong> </label>
-                                <div v-if="pagado">
+                                <div>
                                     <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
-                                </div>
-                                <div v-else>
-                                    <span class="badge badge-danger">Pendiente de pago</span>
                                 </div>
                             </div>
                         </div>
@@ -627,7 +621,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="col-md-2">
+                        <div class="col-md-2">
                             <div class="form-group" v-if="!pagado">
                                 <label for=""><strong>Pagado Parcialmente: </strong> </label>
                                 <div v-if="estadoVn == 'Registrado'">
@@ -638,7 +632,7 @@
                                     <span class="badge badge-danger">Presupuesto cancelado</span>
                                 </div>
                             </div>
-                        </div> -->
+                        </div>
                     </template>
                     <template v-else>
                         <div class="col-md-2">

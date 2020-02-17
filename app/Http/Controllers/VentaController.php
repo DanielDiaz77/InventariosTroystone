@@ -29,8 +29,9 @@ class VentaController extends Controller
         $entregaEs = $request->estadoEntrega;
         $usrol = \Auth::user()->idrol;
         $usid = \Auth::user()->id;
+        $usarea = \Auth::user()->area;
 
-        if($usrol == 1){
+        if($usarea != 'SLP'){
             if($estadoV == "Anulada"){
                 if($criterio == "cliente"){
                     $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')

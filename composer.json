@@ -16,7 +16,8 @@
         "laravel/tinker": "^1.0",
         "maatwebsite/excel": "^3.1",
         "phpoffice/phpspreadsheet": "^1.10",
-        "pusher/pusher-php-server": "^4.0"
+        "pusher/pusher-php-server": "^4.0",
+        "s-ichikawa/laravel-sendgrid-driver": "^2.1"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

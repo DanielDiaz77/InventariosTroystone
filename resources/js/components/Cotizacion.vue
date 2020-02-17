@@ -64,9 +64,14 @@
                                     <button type="button" class="btn btn-success btn-sm" @click="verCotizacion(cotizacion.id)">
                                         <i class="icon-eye"></i>
                                     </button>&nbsp;
+
                                     <template v-if="cotizacion.estado=='Registrado'">
                                         <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfCotizacion(cotizacion.id)">
                                             <i class="fa fa-file-pdf-o"></i>
+                                        </button>&nbsp;
+                                        <button type="button" class="btn btn-outline-info btn-sm"
+                                            v-if="cotizacion.EmailC" @click="sendMailCot(cotizacion.id,cotizacion.EmailC,cotizacion.nombre)">
+                                            <i class="fa fa-share"></i>
                                         </button>&nbsp;
                                         <button type="button" class="btn btn-danger btn-sm" @click="desactivarCotizacion(cotizacion.id)">
                                             <i class="icon-trash"></i>
@@ -2944,6 +2949,22 @@ export default {
                 }else if (result.dismiss === swal.DismissReason.cancel){
                 }
             })
+        },
+        sendMailCot(id,mail,cliente){
+            let me = this;
+            axios.post('/cotizacion/enviarCotizacionMail',{
+                'id': id,
+                'mail' : mail,
+                'name' : cliente
+            }).then(function (response) {
+                Swal.fire({
+                    type: 'success',
+                    title: 'Enviado...',
+                    text: `La cotizacion del cliente ${ cliente } se envio correctamente al correo ${ mail }`,
+                })
+            }).catch(function (error) {
+                console.log(error);
+            });
         }
     },
     mounted() {

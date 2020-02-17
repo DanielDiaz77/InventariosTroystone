@@ -180,6 +180,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/cotizacion/nextNum','CotizacionController@getLastNum');
         Route::post('/cotizacion/actualizarObservacion', 'CotizacionController@actualizarObservacion');
         Route::put('/cotizacion/desactivarVenta', 'CotizacionController@desactivarVenta');
+        Route::post('/cotizacion/enviarCotizacionMail', 'CotizacionController@enviarCotizacionMail');
 
         Route::get('/tarea', 'TareaController@index');
         Route::post('/tarea/registrar', 'TareaController@store');
