@@ -157,6 +157,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/venta/obtenerVentasCliente','VentaController@obtenerVentasCliente');
         Route::put('/venta/cambiarFacturacion','VentaController@cambiarFacturacion');
         Route::put('/venta/cambiarFacturacionEnv','VentaController@cambiarFacturacionEnv');
+        Route::get('/ventaDeposit','VentaController@indexDeposit');
 
         Route::get('/entrega','VentaController@indexEntregas');
         Route::get('/entrega/pdf/{id}','VentaController@pdfEntrega');

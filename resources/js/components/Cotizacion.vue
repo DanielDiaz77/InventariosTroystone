@@ -69,10 +69,10 @@
                                         <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfCotizacion(cotizacion.id)">
                                             <i class="fa fa-file-pdf-o"></i>
                                         </button>&nbsp;
-                                        <button type="button" class="btn btn-outline-info btn-sm"
+                                        <!-- <button type="button" class="btn btn-outline-info btn-sm"
                                             v-if="cotizacion.EmailC" @click="sendMailCot(cotizacion.id,cotizacion.EmailC,cotizacion.nombre)">
                                             <i class="fa fa-share"></i>
-                                        </button>&nbsp;
+                                        </button>&nbsp; -->
                                         <button type="button" class="btn btn-danger btn-sm" @click="desactivarCotizacion(cotizacion.id)">
                                             <i class="icon-trash"></i>
                                         </button>
