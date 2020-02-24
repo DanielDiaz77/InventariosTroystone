@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Deposit extends Model
 {
-    protected $fillable = ['venta_id','total','fecha_hora'];
+    protected $fillable = ['total','fecha_hora'];
 
     public function depositable(){
         return $this->morphTo();
@@ -15,4 +15,9 @@ class Deposit extends Model
     public function venta(){
         return $this->belongsTo(Venta::class);
     }
+
+    public function project(){
+        return $this->belongsTo(Project::class);
+    }
+
 }

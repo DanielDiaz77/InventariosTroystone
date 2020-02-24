@@ -51,9 +51,15 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])
+                        ->where([
+                            ['articulos.stock','>',0],
+                            ['articulos.ubicacion','!=','San Luis']
+                        ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])->count();
+                        $total = Articulo::where([
+                            ['articulos.stock','>',0],
+                            ['articulos.ubicacion','!=','San Luis']
+                        ])->count();
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -136,7 +142,10 @@ class ArticuloController extends Controller
                             ['articulos.stock','>',0]
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where('articulos.ubicacion',$bodega)->count();
+                        $total = Articulo::where([
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.stock','>',0]
+                        ])->count();
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -152,7 +161,11 @@ class ArticuloController extends Controller
                             ['articulos.terminado','like', '%'. $acabado . '%']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.terminado','like', '%'. $acabado . '%']])->count();
+                        $total = Articulo::where([
+                            ['articulos.ubicacion',$bodega],
+                            ['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']
+                        ])->count();
                     }
                 }else{
                     if($acabado == ''){
@@ -225,9 +238,9 @@ class ArticuloController extends Controller
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
                         ->where([
-                            ['ventas.estado','Registrado'],
+                            ['articulos.stock','<=',0],
                             ['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.stock','<=',0]
+                            ['ventas.estado','Registrado']
                         ])->count();
                     }else{
                         $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
@@ -244,16 +257,16 @@ class ArticuloController extends Controller
                             ['articulos.stock','<=',0],
                             ['articulos.terminado','like', '%'. $acabado . '%'],
                             ['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado'],
+                            ['ventas.estado','Registrado']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
                         ->where([
-                            ['ventas.estado','Registrado'],
-                            ['articulos.ubicacion','!=','San Luis'],
                             ['articulos.stock','<=',0],
                             ['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis'],
+                            ['ventas.estado','Registrado']
                         ])->count();
                     }
                 }else{
@@ -272,16 +285,16 @@ class ArticuloController extends Controller
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                             ['articulos.stock','<=',0],
                             ['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado'],
+                            ['ventas.estado','Registrado']
                         ])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
                         ->where([
-                            ['ventas.estado','Registrado'],
                             ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
                             ['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis']
+                            ['articulos.ubicacion','!=','San Luis'],
+                            ['ventas.estado','Registrado']
                         ])->count();
 
                     }else{
@@ -365,6 +378,7 @@ class ArticuloController extends Controller
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
                         ->where([
                             ['articulos.ubicacion',$bodega],
+                            ['articulos.stock','<=',0],
                             ['articulos.terminado','like', '%'. $acabado . '%'],
                             ['ventas.estado','Registrado']
                         ])->count();
@@ -546,7 +560,8 @@ class ArticuloController extends Controller
                         $total = Articulo::where([
                             ['articulos.ubicacion',$bodega],
                             ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.condicion',3]])->count();
+                            ['articulos.condicion',3]
+                        ])->count();
                     }
                 }else{
                     if($acabado == ''){

@@ -91,6 +91,10 @@
                 <recadero></recadero>
             </template>
 
+            <template v-if="menu==22">
+                <project></project>
+            </template>
+
         @elseif(Auth::user()->idrol == 2)
 
             <template v-if="menu==0">
@@ -159,6 +163,10 @@
 
             <template v-if="menu==21">
                 <recadero></recadero>
+            </template>
+
+            <template v-if="menu==22">
+                <project></project>
             </template>
 
         @elseif(Auth::user()->idrol == 3)

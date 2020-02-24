@@ -15,14 +15,10 @@ class CreateDepositsTable extends Migration
     {
         Schema::create('deposits', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('venta_id');
             $table->decimal('total',11,2);
             $table->dateTime('fecha_hora');
             $table->morphs('depositable');
             $table->timestamps();
-            $table->foreign('venta_id')->references('id')->on('ventas')
-            ->onDelete('cascade')
-            ->onUpdate('cascade');
         });
     }
 

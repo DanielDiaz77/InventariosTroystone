@@ -694,7 +694,7 @@
                                                     <tr v-for="(deposito,index) in arrayDepositos" :key="deposito.id">
                                                         <td width="10px" v-text="index + 1"></td>
                                                         <td>
-                                                            <button type="button" class="btn btn-light btn-sm" @click="deleteDeposit(deposito.id,deposito.venta,deposito.total)">
+                                                            <button type="button" class="btn btn-light btn-sm" @click="deleteDeposit(deposito.id,venta_id,deposito.total)">
                                                                 <i class="icon-trash"></i>
                                                             </button> &nbsp;
                                                         </td>
@@ -2648,7 +2648,7 @@ export default {
                         }
                     }else if(result.dismiss === Swal.DismissReason.cancel){
                         this.verVenta(id);
-                        this.btnPagadoParcial = false;
+                        /* this.btnPagadoParcial = false; */
                     }
                 });
             }else{

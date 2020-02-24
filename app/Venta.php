@@ -26,4 +26,8 @@ class Venta extends Model
     public function deposits(){
         return $this->morphMany(Deposit::class,'depositable');
     }
+
+    public function projects(){
+        return $this->belongsToMany('App\Project')->withTimestamps();
+    }
 }

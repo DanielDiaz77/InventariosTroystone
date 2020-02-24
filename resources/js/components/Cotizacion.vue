@@ -317,6 +317,7 @@
                             <thead>
                                 <tr>
                                     <th>Opciones</th>
+                                    <th width="10px">No°</th>
                                     <th>Material</th>
                                     <th>Código de material</th>
                                     <th>No° Placa</th>
@@ -350,6 +351,7 @@
                                             <i class="icon-crop"></i>
                                         </button>
                                     </td>
+                                    <td >{{ index + 1 }} </td>
                                     <td v-text="detalle.categoria"></td>
                                     <template v-if="detalle.articulo">
                                         <td v-text="detalle.articulo"></td>
@@ -380,21 +382,21 @@
                                     </td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="13" align="right"><strong>Total Parcial:</strong></td>
+                                    <td colspan="14" align="right"><strong>Total Parcial:</strong></td>
                                     <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="13" align="right"><strong>Total IVA:</strong></td>
+                                    <td colspan="14" align="right"><strong>Total IVA:</strong></td>
                                     <td>$ {{total_impuesto=((total * parseFloat(impuesto))/(1+parseFloat(impuesto))).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="13" align="right"><strong>Total Neto:</strong></td>
+                                    <td colspan="14" align="right"><strong>Total Neto:</strong></td>
                                     <td>$ {{total=(calcularTotal.toFixed(2))}}</td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="14" class="text-center">
+                                    <td colspan="15" class="text-center">
                                         <strong>NO hay artículos agregados...</strong>
                                     </td>
                                 </tr>
@@ -503,6 +505,7 @@
                             <thead>
                                 <tr>
                                     <th>Detalles</th>
+                                    <th width="10px">No°</th>
                                     <th>Código de material</th>
                                     <th>No° Placa</th>
                                     <th>Terminado</th>
@@ -525,6 +528,7 @@
                                             <i class="icon-eye"></i>
                                         </button> &nbsp;
                                     </td>
+                                    <td >{{ index + 1 }} </td>
                                     <td v-text="detalle.sku"></td>
                                     <td v-text="detalle.codigo"></td>
                                     <td v-text="detalle.terminado"></td>
@@ -539,21 +543,21 @@
                                     <td>{{ (( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento) }}</td>
                                 </tr>
                                  <tr style="background-color: #CEECF5;">
-                                    <td colspan="12" align="right"><strong>Total Parcial:</strong></td>
+                                    <td colspan="13" align="right"><strong>Total Parcial:</strong></td>
                                     <td>$ {{total_parcial = (total / divImp).toFixed(2) }}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="12" align="right"><strong>Total Impuesto:</strong></td>
+                                    <td colspan="13" align="right"><strong>Total Impuesto:</strong></td>
                                     <td>$ {{total_impuesto=((total * impuesto)/(divImp)).toFixed(2)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
-                                    <td colspan="12" align="right"><strong>Total Neto:</strong></td>
+                                    <td colspan="13" align="right"><strong>Total Neto:</strong></td>
                                     <td>$ {{ total }} </td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="13" class="text-center">
+                                    <td colspan="14" class="text-center">
                                         <strong>NO hay artículos en este detalle...</strong>
                                     </td>
                                 </tr>
@@ -1993,6 +1997,10 @@ export default {
                                 observacion      : me.observacion,
                                 fecha_llegada    : me.fecha_llegada
                             });
+                            Swal.fire({
+                                type: 'success',
+                                title: `Añadido... ${ me.codigo } `,
+                            });
                             me.codigo = "";
                             me.sku = "";
                             me.idarticulo = "";
@@ -2426,6 +2434,10 @@ export default {
                         fecha_llegada    : data['fecha_llegada'],
                         cantidad: 1,
                         descuento : 0
+                    });
+                    Swal.fire({
+                        type: 'success',
+                        title: `Añadido... ${ data['codigo'] } `,
                     });
                 }
             }

@@ -171,6 +171,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/venta/getDeposits', 'VentaController@getDeposits');
         Route::put('/venta/eliminarDeposit','VentaController@deleteDeposit');
 
+        Route::get('/venta/getVentasClienteProject','VentaController@getVentasClienteProject');
+
         Route::get('/cotizacion', 'CotizacionController@index');
         Route::post('/cotizacion/registrar', 'CotizacionController@store');
         Route::put('/cotizacion/desactivar', 'CotizacionController@desactivar');
@@ -234,6 +236,25 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/call/editComment','CallController@editComment');
         Route::put('/call/deleteComment','CallController@deleteComment');
         Route::put('/call/cambiarEstado','CallController@cambiarEstado');
+
+        Route::get('/project', 'ProjectController@index');
+        Route::post('/project/registrar', 'ProjectController@store');
+        Route::get('/project/getSales', 'ProjectController@getVentas');
+
+        Route::put('/project/desactivar','ProjectController@desactivar');
+        Route::post('/project/cambiarEntrega','ProjectController@cambiarEntrega');
+        Route::post('/project/cambiarEntregaParcial','ProjectController@cambiarEntregaParcial');
+        Route::post('/project/cambiarPagado','ProjectController@cambiarPagado');
+        Route::post('/project/actualizarObservacion','ProjectController@actualizarObservacion');
+        Route::post('/project/actualizarObservacionPriv','ProjectController@actualizarObservacionPriv');
+        Route::post('/project/crearDeposit', 'ProjectController@crearDeposit');
+        Route::get('/project/getDeposits', 'ProjectController@getDeposits');
+        Route::put('/project/eliminarDeposit','ProjectController@deleteDeposit');
+        Route::get('/project/refreshProject', 'ProjectController@refreshProject');
+        Route::put('/project/actualizar', 'ProjectController@update');
+        Route::put('/project/filesupplo', 'ProjectController@filesUppload');
+        Route::get('/project/getDocs', 'ProjectController@getDocs');
+        Route::put('/project/eliminarDoc', 'ProjectController@eliminarDoc');
     });
 });
 
