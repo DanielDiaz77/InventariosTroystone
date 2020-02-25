@@ -276,7 +276,7 @@ class CotizacionController extends Controller
         'cotizaciones.moneda','cotizaciones.tipo_cambio','cotizaciones.observacion','cotizaciones.forma_pago',
         'cotizaciones.tiempo_entrega','cotizaciones.lugar_entrega','cotizaciones.aceptado','cotizaciones.vigencia',
         'personas.id as idcliente','personas.nombre','personas.tipo','personas.rfc','personas.company','personas.tel_company'
-        ,'users.usuario')
+        ,'users.usuario','personas.email as EmailC')
         ->where('cotizaciones.id','=',$id)
         ->orderBy('cotizaciones.id', 'desc')->take(1)->get();
 

@@ -633,13 +633,13 @@
                                                 </div>
                                                 <select class="form-control" v-model="tipo">
                                                     <option value="" disabled>Seleccione el tipo de cliente</option>
-                                                    <option value="PROSPECTO">PROSPECTO</option>
-                                                    <option value="PRIMER CONTACTO">PRIMER CONTACTO</option>
                                                     <option value="CLIENTE FINAL">CLIENTE FINAL</option>
                                                     <option value="CLIENTE MARMOLERO">CLIENTE MARMOLERO</option>
                                                     <option value="CLIENTE COCINERO">CLIENTE COCINERO</option>
                                                     <option value="CLIENTE ARQ">CLIENTE ARQ</option>
-                                                    <option value="GENERAL Y PAGOS">GENERAL Y PAGOS</option>
+                                                    <option value="DECORADORA">DECORADORA</option>
+                                                    <option value="MUEBLES Y DECORACION">MUEBLES Y DECORACIÓN</option>
+                                                    <option value="CLIENTE MAYOR">CLIENTE MAYOR</option>
                                                     <option value="NO PROMOVER">NO PROMOVER</option>
                                                 </select>
                                             </div>
@@ -736,13 +736,15 @@
                                                 </div>
                                                 <select class="form-control" v-model="tipo">
                                                     <option value="" disabled>Seleccione el tipo de cliente</option>
-                                                    <option value="PROSPECTO">PROSPECTO</option>
-                                                    <option value="PRIMER CONTACTO">PRIMER CONTACTO</option>
+                                                    <!-- <option value="PROSPECTO">PROSPECTO</option>
+                                                    <option value="PRIMER CONTACTO">PRIMER CONTACTO</option> -->
                                                     <option value="CLIENTE FINAL">CLIENTE FINAL</option>
                                                     <option value="CLIENTE MARMOLERO">CLIENTE MARMOLERO</option>
                                                     <option value="CLIENTE COCINERO">CLIENTE COCINERO</option>
                                                     <option value="CLIENTE ARQ">CLIENTE ARQ</option>
-                                                    <option value="GENERAL Y PAGOS">GENERAL Y PAGOS</option>
+                                                   <option value="DECORADORA">DECORADORA</option>
+                                                    <option value="MUEBLES Y DECORACION">MUEBLES Y DECORACIÓN</option>
+                                                    <option value="CLIENTE MAYOR">CLIENTE MAYOR</option>
                                                     <option value="NO PROMOVER">NO PROMOVER</option>
                                                 </select>
                                             </div>

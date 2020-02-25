@@ -130,9 +130,6 @@
                             <select v-model="tipo_comprobante" class="form-control">
                                 <option value="">Seleccione</option>
                                 <option value="INGRESO">Ingreso</option>
-                                <!-- <option value="NOTA">Nota</option>
-                                <option value="FACTURA">Factura</option>
-                                <option value="TICKET">Ticket</option> -->
                             </select>
                         </div>
                     </div>
@@ -278,6 +275,10 @@
                         </div>
                     </div>
 
+                    <div class="col-sm-2 text-center mt-4 ">
+                        <p class="mt-2 mb-1" style="font-size: 15px;"> Placas añadidas : <strong> {{ arrayDetalle.length }} </strong>  </p>
+                    </div>
+
                     <div class="col-md-12">
                         <div v-show="errorIngreso" class="form-group row div-error">
                             <div class="text-center text-error">
@@ -307,7 +308,7 @@
                                 </tr>
                             </thead>
                             <tbody v-if="arrayDetalle.length">
-                                <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
+                                <tr v-for="(detalle,index) in arrayDetalle.slice().reverse()" :key="detalle.id">
                                     <td v-text="(index + 1)"></td>
                                     <td>
                                         <div class="form-inline">
@@ -1385,6 +1386,7 @@ export default {
             this.errorMostrarMsjIngreso = [];
             this.idproveedor = 0;
             this.num_comprobante = 0;
+            this.descripcion_r = "";
             this.getLastNum();
         },
         verIngreso(id){

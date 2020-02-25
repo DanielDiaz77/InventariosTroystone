@@ -1,10 +1,10 @@
 <template>
   <main class="main">
     <!-- Breadcrumb -->
-    <ol class="breadcrumb">
+    <ol class="breadcrumb mb-0">
       <li class="breadcrumb-item"><a href="/">Escritorio</a> </li>
     </ol>
-    <div class="container-fluid">
+    <div class="container-fluid p-1">
       <!-- Ejemplo de tabla Listado -->
       <div class="card">
         <div class="card-header">
@@ -206,21 +206,9 @@
                             <h6 for=""><strong> {{obs_cliente}}</strong></h6>
                         </div>
                     </div>&nbsp;
-                     <!-- <div class="col-md-3 text-center" v-if="tipo_cliente">
-                        <div class="form-group">
-                            <label for=""><strong>Tipo de cliente</strong></label>
-                            <h6 for=""><strong v-text="tipo_cliente"></strong></h6>
-                        </div>
-                    </div>
-                     <div class="col-md-3 text-center" v-if="rfc_cliente">
-                        <div class="form-group">
-                            <label for=""><strong>RFC</strong></label>
-                            <h6 for=""><strong v-text="rfc_cliente"></strong></h6>
-                        </div>
-                    </div> -->
                 </div>
                 <div class="form-group row border">
-                    <div class="col-md-2 text-center">
+                    <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>Tipo Comprobante (*)</strong></label>
                             <select v-model="tipo_comprobante" class="form-control">
@@ -229,14 +217,14 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2 text-center">
+                    <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>Número de presupuesto (*)</strong></label>
-                            <div class="row">
-                                <div class="col">
+                            <div class="d-flex justify-content-center">
+                                <div>
                                     <input type="number" readonly :value="getFechaCode" class="form-control col-md"/>
                                 </div>
-                                <div class="col">
+                                <div>
                                     <input type="text" class="form-control col-md" v-model="num_comprobante" placeholder="000xx">
                                 </div>
                             </div>
@@ -255,7 +243,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2 text-center" v-if="forma_pago =='Cheque'">
+                    <div class="col-md-3 text-center" v-if="forma_pago =='Cheque'">
                         <div class="form-group">
                             <label for=""><strong>No° de Cheque</strong><span style="color:red;" v-show="num_cheque==0">(*Ingrese)</span></label>
                             <input type="number" min="0" class="form-control" v-model="num_cheque" placeholder="000xx">
@@ -271,7 +259,7 @@
                         <label for=""><strong>IVA (*)</strong></label>
                         <input type="text" class="form-control" v-model="impuesto">
                     </div>
-                    <div class="col-md-1 text-center">
+                    <!-- <div class="col-md-1 text-center">
                         <div class="form-group">
                             <label for=""><strong>Moneda</strong><span style="color:red;" v-show="moneda==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="moneda">
@@ -279,8 +267,8 @@
                                 <option value="Peso Mexicano">Peso Mexicano</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="col-md-2 text-center">
+                    </div> -->
+                    <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>Tiempo de entrega</strong><span style="color:red;" v-show="tiempo_entrega==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="tiempo_entrega">
@@ -292,7 +280,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2 text-center">
+                    <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>Lugar de entrega</strong><span style="color:red;" v-show="lugar_entrega==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="lugar_entrega">
@@ -302,7 +290,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2 text-center">
+                    <div class="col-md-3 text-center">
                         <div class="form-group">
                             <label for=""><strong>Tipo de facturación</strong><span style="color:red;" v-show="tipo_facturacion==''">(*Seleccione)</span></label>
                             <select class="form-control" v-model="tipo_facturacion">
@@ -310,6 +298,12 @@
                                 <option value="Publico General">Publico General</option>
                                 <option value="Cliente">Cliente</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center" v-if="arrayDetalle.length">
+                        <div class="form-group">
+                            <label for=""><strong>Total M<sup>2</sup> </strong></label>
+                            <p> {{ metrosTotales.toFixed(4) }} </p>
                         </div>
                     </div>
                     <div class="col-md-12 text-center">
@@ -333,13 +327,13 @@
                     </div>
                     <div class="col-sm-2 text-center">
                         <div class="form-group">
-                            <label for=""><strong>Cantidad</strong> <span style="color:red;" v-show="cantidad==0">(*Ingrese la cantidad)</span></label>
+                            <label for=""><strong>Cantidad</strong> <span style="color:red;" v-show="cantidad==0">(*Ingrese)</span></label>
                             <input type="number" min="0" value="0"  class="form-control" v-model="cantidad">
                         </div>
                     </div>
                     <div class="col-sm-2 text-center">
                         <div class="form-group">
-                            <label for=""><strong>Precio m<sup>2</sup></strong> <span style="color:red;" v-show="precio==0">(*Ingrese el precio)</span></label>
+                            <label for=""><strong>Precio m<sup>2</sup></strong> <span style="color:red;" v-show="precio==0">(*Ingrese)</span></label>
                             <input type="number" min="0" value="0" step="any" class="form-control" v-model="precio">
                         </div>
                     </div>
@@ -436,6 +430,10 @@
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="14" align="right"><strong>Total Neto:</strong></td>
                                     <td>$ {{total=(calcularTotal.toFixed(2))}}</td>
+                                </tr>
+                                <tr style="background-color: #CEECF5;">
+                                    <td colspan="14" align="right"><strong>Total Metros<sup>2</sup> : </strong></td>
+                                    <td> {{ metrosTotales.toFixed(4)}} </td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
@@ -607,6 +605,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </template>
                     <!-- Status Pagos -->
                     <template v-if="usrol != 1">
@@ -667,7 +666,7 @@
                             <p class="float-right" style="font-size: 20px;"><span class="badge badge-success">Pagado al 100 %</span></p>
                         </template>
                     </div>
-                    <div class="col-5">
+                    <div class="col-5"><!-- Abonos -->
                         <div id="accordion" v-if="pago_parcial" class="mb-2">
                             <div class="card m-0">
                                 <div class="card-header" id="headingOne">
@@ -779,6 +778,10 @@
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Neto:</strong></td>
                                     <td>$ {{ total}} </td>
+                                </tr>
+                                <tr style="background-color: #CEECF5;">
+                                    <td colspan="13" align="right"><strong>Total Metros<sup>2</sup> : </strong></td>
+                                    <td> {{ metrosTotales.toFixed(4)}} </td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
@@ -1708,6 +1711,14 @@ export default {
                 let resultado = 0;
                 for(var i=0;i<me.arrayDepositos.length;i++){
                     resultado += parseFloat(me.arrayDepositos[i].total);
+                }
+                return resultado;
+            },
+            metrosTotales : function(){
+                let me=this;
+                let resultado = 0;
+                for(var i=0;i<me.arrayDetalle.length;i++){
+                    resultado += parseFloat(me.arrayDetalle[i].metros_cuadrados);
                 }
                 return resultado;
             }
