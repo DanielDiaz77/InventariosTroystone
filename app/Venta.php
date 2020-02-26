@@ -12,7 +12,7 @@ class Venta extends Model
         'lugar_entrega','entregado','estado','moneda','tipo_cambio',
         'observacion','num_cheque','banco','tipo_facturacion','pagado',
         'entrega_parcial','file', 'observacionpriv','facturado',
-        'factura_env','pago_parcial','adeudo'
+        'factura_env','pago_parcial','adeudo','num_factura'
     ];
 
     public function usuario(){

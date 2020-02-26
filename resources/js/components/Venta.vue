@@ -21,6 +21,7 @@
                         <div class="input-group">
                             <select class="form-control mb-1" v-model="criterio">
                                 <option value="cliente">Cliente</option>
+                                <option value="user">Usuario</option>
                                 <option value="num_comprobante">No° Comprobante</option>
                                 <option value="fecha_hora">Fecha</option>
                                 <option value="forma_pago">Forma de pago</option>
@@ -580,7 +581,7 @@
                             <div class="form-group">
                                 <label for=""><strong>Entregado Parcial:</strong> </label>
                                 <div v-if="pagado">
-                                    <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                    <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled/>
                                 </div>
                                 <div v-else>
                                     <span class="badge badge-danger">Pendiente de pago</span>
@@ -601,7 +602,7 @@
                             <div class="form-group">
                                 <label for=""><strong>Entregado Parcial:</strong> </label>
                                 <div>
-                                    <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                    <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled/>
                                 </div>
                             </div>
                         </div>
@@ -1606,123 +1607,122 @@ export default {
         'barcode': VueBarcode
     },
     computed:{
-            isActived: function(){
-                return this.pagination.current_page;
-            },
-            //Calcula los elementos de la paginación
-            pagesNumber: function() {
-                if(!this.pagination.to) {
-                    return [];
-                }
-
-                var from = this.pagination.current_page - this.offset;
-                if(from < 1) {
-                    from = 1;
-                }
-
-                var to = from + (this.offset * 2);
-                if(to >= this.pagination.last_page){
-                    to = this.pagination.last_page;
-                }
-
-                var pagesArray = [];
-                while(from <= to) {
-                    pagesArray.push(from);
-                    from++;
-                }
-                return pagesArray;
-            },
-            isActivedArt: function(){
-                return this.paginationart.current_page;
-            },
-            pagesNumberArt: function() {
-                if(!this.paginationart.to) {
-                    return [];
-                }
-
-                var from = this.paginationart.current_page - this.offset;
-                if(from < 1) {
-                    from = 1;
-                }
-
-                var to = from + (this.offset * 2);
-                if(to >= this.paginationart.last_page){
-                    to = this.paginationart.last_page;
-                }
-
-                var pagesArray = [];
-                while(from <= to) {
-                    pagesArray.push(from);
-                    from++;
-                }
-                return pagesArray;
-            },
-            calcularTotal : function(){
-                let me=this;
-                let resultado = 0;
-                let subtotal = 0;
-                let iva = parseFloat(me.impuesto) + 1;
-                for(var i=0;i<me.arrayDetalle.length;i++){
-                    subtotal += (((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)-me.arrayDetalle[i].descuento);
-                    resultado = subtotal * iva;
-                }
-                return resultado;
-            },
-            imagen(){
-                return this.imagenMinatura;
-            },
-            calcularMts : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.alto * me.largo);
-                me.metros_cuadrados = resultado;
-                return resultado;
-            },
-            calcularMtsA : function(){
-                let me = this;
-                let resultado = 0;
-                resultado = resultado + (me.altoA * me.largoA);
-                me.metros_cuadradosA = resultado;
-                return resultado;
-            },
-            calcularMtsB : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.altoB * me.largoB);
-                me.metros_cuadradosB = resultado;
-                return resultado;
-            },
-            calcularMtsRestantes : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
-                return resultado;
-            },
-            getFechaCode : function(){
-                let me = this;
-                let date = "";
-                moment.locale('es');
-                date = moment().format('YYMMDD');
-                me.CodeDate = moment().format('YYMMDD');
-                return date;
-            },
-            calcularAbonos : function(){
-                let me=this;
-                let resultado = 0;
-                for(var i=0;i<me.arrayDepositos.length;i++){
-                    resultado += parseFloat(me.arrayDepositos[i].total);
-                }
-                return resultado;
-            },
-            metrosTotales : function(){
-                let me=this;
-                let resultado = 0;
-                for(var i=0;i<me.arrayDetalle.length;i++){
-                    resultado += parseFloat(me.arrayDetalle[i].metros_cuadrados);
-                }
-                return resultado;
-            }
+        isActived: function(){
+            return this.pagination.current_page;
         },
+        pagesNumber: function() {
+            if(!this.pagination.to) {
+                return [];
+            }
+
+            var from = this.pagination.current_page - this.offset;
+            if(from < 1) {
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.pagination.last_page){
+                to = this.pagination.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+        isActivedArt: function(){
+            return this.paginationart.current_page;
+        },
+        pagesNumberArt: function() {
+            if(!this.paginationart.to) {
+                return [];
+            }
+
+            var from = this.paginationart.current_page - this.offset;
+            if(from < 1) {
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.paginationart.last_page){
+                to = this.paginationart.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+        calcularTotal : function(){
+            let me=this;
+            let resultado = 0;
+            let subtotal = 0;
+            let iva = parseFloat(me.impuesto) + 1;
+            for(var i=0;i<me.arrayDetalle.length;i++){
+                subtotal += (((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)-me.arrayDetalle[i].descuento);
+                resultado = subtotal * iva;
+            }
+            return resultado;
+        },
+        imagen(){
+            return this.imagenMinatura;
+        },
+        calcularMts : function(){
+            let me=this;
+            let resultado = 0;
+            resultado = resultado + (me.alto * me.largo);
+            me.metros_cuadrados = resultado;
+            return resultado;
+        },
+        calcularMtsA : function(){
+            let me = this;
+            let resultado = 0;
+            resultado = resultado + (me.altoA * me.largoA);
+            me.metros_cuadradosA = resultado;
+            return resultado;
+        },
+        calcularMtsB : function(){
+            let me=this;
+            let resultado = 0;
+            resultado = resultado + (me.altoB * me.largoB);
+            me.metros_cuadradosB = resultado;
+            return resultado;
+        },
+        calcularMtsRestantes : function(){
+            let me=this;
+            let resultado = 0;
+            resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
+            return resultado;
+        },
+        getFechaCode : function(){
+            let me = this;
+            let date = "";
+            moment.locale('es');
+            date = moment().format('YYMMDD');
+            me.CodeDate = moment().format('YYMMDD');
+            return date;
+        },
+        calcularAbonos : function(){
+            let me=this;
+            let resultado = 0;
+            for(var i=0;i<me.arrayDepositos.length;i++){
+                resultado += parseFloat(me.arrayDepositos[i].total);
+            }
+            return resultado;
+        },
+        metrosTotales : function(){
+            let me=this;
+            let resultado = 0;
+            for(var i=0;i<me.arrayDetalle.length;i++){
+                resultado += parseFloat(me.arrayDetalle[i].metros_cuadrados);
+            }
+            return resultado;
+        }
+    },
     methods: {
         listarVenta (page,buscar,criterio,estadoVenta,estadoEntrega){
             let me=this;

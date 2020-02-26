@@ -1,10 +1,10 @@
 <template>
   <main class="main">
     <!-- Breadcrumb -->
-    <ol class="breadcrumb">
+    <ol class="breadcrumb mb-0">
       <li class="breadcrumb-item"><a href="/">Escritorio</a> </li>
     </ol>
-    <div class="container-fluid">
+    <div class="container-fluid p-1">
       <!-- Ejemplo de tabla Listado -->
       <div class="card">
         <div class="card-header">
@@ -17,6 +17,7 @@
                     <div class="form-group mb-2 col-12">
                         <div class="input-group">
                             <select class="form-control mb-1" v-model="criterio">
+                                <option value="cliente">Cliente</option>
                                 <option value="num_comprobante">No° Comprobante</option>
                                 <option value="fecha_hora">Fecha</option>
                                 <option value="entregado">Entregado 100%</option>
@@ -24,8 +25,17 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio)" class="form-control mb-1" placeholder="Texto a buscar">
-                            <button type="submit" @click="listarVenta(1,buscar,criterio)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                            <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio,estadoEntrega)" class="form-control mb-1" placeholder="Texto a buscar">
+                            <button type="submit" @click="listarVenta(1,buscar,criterio,estadoEntrega)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                        </div>
+                        <div class="input-group input-group-sm ml-sm-2 mr-sm-1 ml-md-2 ml-lg-5">
+                            <select class="form-control" id="tipofact" name="tipofact" v-model="estadoEntrega" @change="listarVenta(1,buscar,criterio,estadoEntrega)">
+                                <option value="">Todo</option>
+                                <option value="entregado">100%</option>
+                                <option value="entrega_parcial">Parcial</option>
+                                <option value="no_entregado">No entregado</option>
+                            </select>
+                            <button class="btn btn-sm btn-warning" type="button"><i class="fa fa-truck" aria-hidden="true"></i>&nbsp; Entregas </button>
                         </div>
                     </div>
                 </div>
@@ -45,13 +55,13 @@
                                 <th>Estado</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="text-center">
                             <tr v-for="venta in arrayVenta" :key="venta.id">
                                 <td>
                                     <button type="button" class="btn btn-success btn-sm" @click="verVenta(venta.id)">
                                         <i class="icon-eye"></i>
                                     </button>&nbsp;
-                                    <button type="button" class="btn btn-warning btn-sm" @click="entregarVenta(venta.id)">
+                                    <button type="button" class="btn btn-warning btn-sm" @click="entregarVenta(venta.id)" v-if="venta.entregado == 0">
                                         <i class="fa fa-truck"></i>
                                     </button>&nbsp;
                                     <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfEntrega(venta.id)">
@@ -71,13 +81,15 @@
                                     <span class="badge badge-warning">Parcial</span>
                                 </td>
                                 <td v-else>
-                                     <span class="badge badge-danger">No entregado</span>
+                                    <span class="badge badge-danger">No entregado</span>
                                 </td>
-                                <td v-if="venta.pagado">
-                                    <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                <td v-if="venta.adeudo == 0">
+                                    <span class="badge badge-success">PAGADO</span>
+                                   <!--  <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled /> -->
                                 </td>
                                 <td v-else>
-                                    <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                    <span class="badge badge-danger">NO PAGADO</span>
+                                    <!-- <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled /> -->
                                 </td>
                                 <td v-text="venta.estado "></td>
                             </tr>
@@ -87,13 +99,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoEntrega)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoEntrega)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoEntrega)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -169,25 +181,17 @@
                     <div class="col-md-1">
                         <div class="form-group">
                             <label for=""><strong>Entregado 100%:</strong> </label>
-                            <div v-if="pagado == 1">
+                            <div>
                                 <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
-                            <div v-else-if="estadoVn == 'Registrado'">
-                                <span class="badge badge-danger">Pendiente de pago</span>
-                            </div>
-                            <div v-else></div>
                         </div>
                     </div>
                     <div class="col-md-1">
                         <div class="form-group">
                             <label for=""><strong>Entregado Parcial:</strong> </label>
-                            <div v-if="pagado == 1">
-                                <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            <div>
+                                <toggle-button v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled/>
                             </div>
-                            <div v-else-if="estadoVn == 'Registrado'">
-                                <span class="badge badge-danger">Pendiente de pago</span>
-                            </div>
-                            <div v-else></div>
                         </div>
                     </div>
                 </div>
@@ -303,6 +307,7 @@
             </div>
         </template>
         <!-- Fin ver Entrega-->
+
         <!-- Actualizar Entrega -->
         <template v-else-if="listado==3">
             <div class="card-body">
@@ -366,30 +371,6 @@
                         <div class="form-group">
                             <label for=""><strong>Banco</strong></label>
                             <p v-text="banco"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-1">
-                        <div class="form-group">
-                            <label for=""><strong>Entregado 100%:</strong> </label>
-                            <div v-if="pagado == 1">
-                                <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
-                            </div>
-                            <div v-else-if="estadoVn == 'Registrado'">
-                                <span class="badge badge-danger">Pendiente de pago</span>
-                            </div>
-                            <div v-else></div>
-                        </div>
-                    </div>
-                    <div class="col-md-1">
-                        <div class="form-group">
-                            <label for=""><strong>Entregado Parcial:</strong> </label>
-                            <div v-if="pagado == 1">
-                                <toggle-button @change="cambiarEstadoEntregaParcial(venta_id)" v-model="btnEntregaParcial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
-                            </div>
-                            <div v-else-if="estadoVn == 'Registrado'">
-                                <span class="badge badge-danger">Pendiente de pago</span>
-                            </div>
-                            <div v-else></div>
                         </div>
                     </div>
                 </div>
@@ -502,7 +483,7 @@
                 <div class="form-group row">
                     <div class="col-md-8 order-md-1 order-2">
                         <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>&nbsp;
-                        <button type="button" class="btn btn-primary" @click="actualizarDetalle()">Actualizar</button>&nbsp;
+                        <button type="button" class="btn btn-primary" @click="actualizarDetalle(venta_id)">Actualizar</button>&nbsp;
                     </div>
                     <div class="col-md-4 order-md-2 order-1 float-right">
                         <div class="form-group row">
@@ -746,6 +727,7 @@ export default {
             offset : 3,
             criterio : 'num_comprobante',
             buscar : '',
+            estadoEntrega : 'no_entregado',
             buscarA : '',
             criterioA : 'sku',
             codigoA : "",
@@ -785,7 +767,6 @@ export default {
             isActived: function(){
                 return this.pagination.current_page;
             },
-            //Calcula los elementos de la paginación
             pagesNumber: function() {
                 if(!this.pagination.to) {
                     return [];
@@ -808,70 +789,14 @@ export default {
                 }
                 return pagesArray;
             },
-            calcularTotal : function(){
-                let me=this;
-                let resultado = 0;
-                for(var i=0;i<me.arrayDetalle.length;i++){
-                    resultado = resultado + (
-                        (
-
-                            ((((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)) - me.arrayDetalle[i].descuento) * (me.impuesto + 1))
-
-                        )
-                }
-                return resultado;
-            },
-            imagen(){
-                return this.imagenMinatura;
-            },
-            calcularMts : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.alto * me.largo);
-                me.metros_cuadrados = resultado;
-                return resultado;
-            },
-            calcularMtsA : function(){
-                let me = this;
-                let resultado = 0;
-                resultado = resultado + (me.altoA * me.largoA);
-                me.metros_cuadradosA = resultado;
-                return resultado;
-            },
-            calcularMtsB : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.altoB * me.largoB);
-                me.metros_cuadradosB = resultado;
-                return resultado;
-            },
-            calcularMtsRestantes : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
-                return resultado;
-            },
-            getFechaCode : function(){
-                let me = this;
-                let date = "";
-                moment.locale('es');
-                date = moment().format('YYMMDD');
-                me.CodeDate = moment().format('YYMMDD');
-                return date;
-            },
             imagen(){
                 return this.imagenMinatura;
             }
         },
     methods: {
-        listarVenta (page,buscar,criterio){
+        listarVenta (page,buscar,criterio,estadoEntrega){
             let me=this;
-
-            /* if(me.criterio == 'entregado'){
-                me.buscar = 1;
-            } */
-
-            var url= '/entrega?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/entrega?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estadoEntrega=' + estadoEntrega;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayVenta = respuesta.ventas.data;
@@ -881,14 +806,15 @@ export default {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio){
+        cambiarPagina(page,buscar,criterio,estadoEntrega){
             let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarVenta(page,buscar,criterio);
+                me.listarVenta(page,buscar,criterio,estadoEntrega);
         },
         ocultarDetalle(){
+
             this.listado = 1;
             this.codigo = "";
             this.idarticulo = 0;
@@ -909,7 +835,7 @@ export default {
             this.fecha_llegada = '';
             this.ubicacion = '';
             this.moneda = 'Peso Mexicano';
-            this.tipo_cambio = '0';
+            this.tipo_cambio = '';
             this.stock = 0;
             this.cliente = 0;
             this.categoria = 0;
@@ -927,6 +853,19 @@ export default {
             this.fileventa = "";
             this.imagenMinatura = "";
             this.showElim = false;
+            this.idcliente = 0;
+            this.tipo_comprobante = "Presupuesto";
+            this.impuesto = 0.16;
+            this.total = 0.0;
+            this.descuento = 0;
+            this.forma_pago = "Efectivo";
+            this.tiempo_entrega = "";
+            this.lugar_entrega = "";
+            this.entregado_parcial = 0;
+            this.banco = "";
+            this.num_cheque = 0;
+            this.tipo_facturacion = "";
+            this.arrayDetalle = [];
         },
         verVenta(id){
 
@@ -980,11 +919,11 @@ export default {
                 if(hasImg != 'entregas/null'){
                     me.imagenMinatura = '/entregas/'+ arrayVentaT[0]['file'];
                     me.showElim = true;
-                    console.log('Elim: '+me.showElim);
+                   /*  console.log('Elim: '+me.showElim); */
                 }else{
                     me.imagenMinatura = 'entregas/null';
                     me.showElim = false;
-                    console.log('Elim: '+me.showElim);
+                    /* console.log('Elim: '+me.showElim); */
                 }
 
                 if(me.entregado ==1){
@@ -1080,10 +1019,36 @@ export default {
                 'id': id,
                 'entregado' : this.entregado
             }).then(function (response) {
-                me.listarVenta(1,'','num_comprobante');
+                /* me.listarVenta(1,'','num_comprobante','',''); */
+                me.verVenta(id);
+                if(me.entregado == 1){
+                    swal.fire(
+                    'Completado!',
+                    'El presupuesto ha sido registrado con entregado al 100%.',
+                    'success')
+                }else{
+                    swal.fire(
+                    'Atención!',
+                    'El presupuesto ha sido registrado como no entregado.',
+                    'warning')
+                }
             }).catch(function (error) {
                 console.log(error);
             });
+            /* let me = this;
+            if(me.btnEntrega == true){
+                me.entregado = 1;
+            }else{
+                me.entregado = 0;
+            }
+            axios.post('/venta/cambiarEntrega',{
+                'id': id,
+                'entregado' : this.entregado
+            }).then(function (response) {
+                me.listarVenta(1,'','num_comprobante','','');
+            }).catch(function (error) {
+                console.log(error);
+            }); */
         },
         cambiarEstadoEntregaParcial(id){
             let me = this;
@@ -1096,7 +1061,7 @@ export default {
                 'id': id,
                 'entrega_parcial' : this.entregado_parcial
             }).then(function (response) {
-                me.listarVenta(1,'','num_comprobante');
+                me.listarVenta(1,'','num_comprobante','');
             }).catch(function (error) {
                 console.log(error);
             });
@@ -1207,41 +1172,57 @@ export default {
                 console.log(error);
             });
         },
-        actualizarDetalle(){
+        validarEntrega(){
+            var sw=0;
+            for(var i=0;i<this.arrayDetalle.length;i++){
+                if(this.arrayDetalle[i].entregadas > this.arrayDetalle[i].pendientes){
+                    sw=true;
+                }
+            }
+            return sw;
+        },
+        actualizarDetalle(id){
             let me = this;
-            axios.put('/entrega/updDetalle',{
-                'data': this.arrayDetalle
-            }).then(function(response) {
-                me.ocultarDetalle();
-                me.listarVenta(1,'','num_comprobante');
-                me.idcliente = 0;
-                me.tipo_comprobante = "Presupuesto";
-                me.num_comprobante = 0;
-                me.impuesto = 0.16;
-                me.total = 0.0;
-                me.idarticulo = 0;
-                me.articulo = "";
-                me.cantidad = 0;
-                me.precio = 0;
-                me.stock = 0;
-                me.observacion = "";
-                me.descuento = 0;
-                me.forma_pago = "Efectivo";
-                me.tiempo_entrega = "";
-                me.lugar_entrega = "";
-                me.entregado = 0;
-                me.entregado_parcial = 0;
-                me.moneda = "Peso Mexicano";
-                me.banco = "";
-                me.num_cheque = 0;
-                me.tipo_facturacion = "";
-                me.tipo_cambio = "";
-                me.arrayDetalle = [];
 
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
+            if(me.validarEntrega()){
+                Swal.fire({
+                    type: 'error',
+                    title: 'Error...',
+                    text: 'Estas intentando entregar mas articulos de los permitidos!',
+                });
+            }else{
+                var pendientes=0;
+                var entregadas = 0;
+                var totales = 0;
+
+                for(var i=0;i<me.arrayDetalle.length;i++){
+                    pendientes += parseFloat(me.arrayDetalle[i].pendientes);
+                    entregadas += parseFloat(me.arrayDetalle[i].entregadas);
+                    totales = pendientes - entregadas;
+                }
+                /* console.log(`pendientes ${ totales }`); */
+
+                axios.put('/entrega/updDetalle',{
+                    'idventa' : id,
+                    'data': this.arrayDetalle,
+                    'totales' : totales
+                }).then(function(response) {
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Compleado...',
+                        text: 'Se registro la entrega exitosamente!',
+                    });
+                    me.verVenta(id);
+                })
+                .catch(function(error) {
+                    console.log(error);
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Error...',
+                        text: 'Ocurrio un error inesperado!',
+                    });
+                });
+            }
         },
         obtenerImagen(e){
             let img = e.target.files[0];
@@ -1268,7 +1249,7 @@ export default {
                     text: 'La imagen ha sido actualizada!',
                 })
                 me.ocultarDetalle();
-                me.listarVenta(1,'','num_comprobante');
+                me.listarVenta(1,'','num_comprobante','');
             })
             .catch(function(error) {
                 console.log(error);
@@ -1298,7 +1279,7 @@ export default {
                     axios.put('/entrega/eliminarImg', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarVenta(1,'','num_comprobante');
+                        me.listarVenta(1,'','num_comprobante','');
                         me.imagenMinatura = 'images/null';
                         swalWithBootstrapButtons.fire(
                             "Elimada!",
@@ -1314,7 +1295,7 @@ export default {
         }
     },
     mounted() {
-        this.listarVenta(1,this.buscar, this.criterio);
+        this.listarVenta(1,this.buscar,this.criterio, this.estadoEntrega);
     }
 };
 </script>

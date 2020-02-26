@@ -8,7 +8,7 @@
       <!-- Ejemplo de tabla Listado -->
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Ventas
+          <i class="fa fa-align-justify"></i> Facturación
         </div>
         <!-- Listado -->
         <template v-if="listado==1">
@@ -17,6 +17,7 @@
                     <div class="form-group mb-2 col-12">
                         <div class="input-group">
                             <select class="form-control mb-1" v-model="criterio">
+                                <option value="cliente">Cliente</option>
                                 <option value="num_comprobante">No° Comprobante</option>
                                 <option value="fecha_hora">Fecha</option>
                                 <option value="forma_pago">Forma de pago</option>
@@ -31,17 +32,11 @@
                             <button type="submit" @click="listarVenta(1,buscar,criterio,estadoVenta,tipo_fact)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
                         </div>&nbsp;
                         <div class="input-group input-group-sm ml-xl-5">
-                            <!-- <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-sm">Tipo de facturación &nbsp; <i class="fa fa-arrow-right" aria-hidden="true"></i></span>
-                                <button class="btn btn-sm btn-info" type="button">Tipo de facturación &nbsp; <i class="fa fa-arrow-right" aria-hidden="true"></i></button>
-                            </div> -->
                             <select class="form-control" id="tipofact" name="tipofact" v-model="tipo_fact" @change="listarVenta(1,buscar,criterio,estadoVenta,tipo_fact)">
                                 <option value="Cliente">Cliente</option>
                                 <option value="Publico General">Publico General</option>
                             </select>
-                            <!-- <div class="input-group-prepend"> -->
-                                <button class="btn btn-sm btn-info" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp; Tipo de facturación </button>
-                            <!-- </div> -->
+                            <button class="btn btn-sm btn-info" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp; Tipo de facturación </button>
                         </div>
                     </div>
                 </div>
@@ -53,14 +48,17 @@
                                 <th>Atendió</th>
                                 <th>Cliente</th>
                                 <th>RFC</th>
-                                <th>Tipo Comprobante</th>
                                 <th>No° Comprobante</th>
                                 <th>Fecha Hora</th>
-                                <th>Impuesto</th>
+                                <!-- <th>Impuesto</th> -->
                                 <th>Total</th>
+                                <th>Pagado</th>
                                 <th>Forma de pago</th>
                                 <th>Facturación</th>
                                 <th>Facturado</th>
+                                <template v-if="estadoVenta == 1">
+                                    <th v-if="estadoVenta" >No° Factura</th>
+                                </template>
                                 <th>Factura Enviada</th>
 
                             </tr>
@@ -75,14 +73,21 @@
                                         <i class="fa fa-file-pdf-o"></i>
                                     </button>&nbsp;
                                 </td>
-                                 <td v-text="venta.usuario"></td>
+                                <td v-text="venta.usuario"></td>
                                 <td v-text="venta.nombre"></td>
                                 <td v-text="venta.rfccliente"></td>
-                                <td v-text="venta.tipo_comprobante"></td>
                                 <td v-text="venta.num_comprobante"></td>
                                 <td v-text="venta.fecha_hora"></td>
-                                <td v-text="venta.impuesto"></td>
+                                <!-- <td v-text="venta.impuesto"></td> -->
                                 <td v-text="venta.total"></td>
+                                <template>
+                                    <td v-if="venta.adeudo == 0">
+                                        <span class="badge badge-success">PAGADO</span>
+                                    </td>
+                                    <td v-else>
+                                        <span class="badge badge-danger">NO PAGADO</span>
+                                    </td>
+                                </template>
                                 <td v-text="venta.forma_pago"></td>
                                 <td v-text="venta.tipo_facturacion"></td>
                                 <td class="text-center">
@@ -95,6 +100,9 @@
                                         <label :for="'chk'+venta.id">No Facturado</label>
                                     </template>
                                 </td>
+                                <template v-if="estadoVenta == 1">
+                                    <td class="text-center" v-text="venta.num_factura" ></td>
+                                </template>
                                 <td class="text-center">
                                     <input type="checkbox" :id="'chkEn'+venta.id" v-model="venta.factura_env"
                                         @change="cambiarFacturacionEnv(venta.id,venta.factura_env,venta.num_comprobante)" :disabled="!venta.facturado">
@@ -671,44 +679,42 @@ export default {
         'barcode': VueBarcode
     },
     computed:{
-            isActived: function(){
-                return this.pagination.current_page;
-            },
-            //Calcula los elementos de la paginación
-            pagesNumber: function() {
-                if(!this.pagination.to) {
-                    return [];
-                }
-
-                var from = this.pagination.current_page - this.offset;
-                if(from < 1) {
-                    from = 1;
-                }
-
-                var to = from + (this.offset * 2);
-                if(to >= this.pagination.last_page){
-                    to = this.pagination.last_page;
-                }
-
-                var pagesArray = [];
-                while(from <= to) {
-                    pagesArray.push(from);
-                    from++;
-                }
-                return pagesArray;
-            },
-            imagen(){
-                return this.imagenMinatura;
-            },
-            calcularMts : function(){
-                let me=this;
-                let resultado = 0;
-                resultado = resultado + (me.alto * me.largo);
-                me.metros_cuadrados = resultado;
-                return resultado;
+        isActived: function(){
+            return this.pagination.current_page;
+        },
+        pagesNumber: function() {
+            if(!this.pagination.to) {
+                return [];
             }
 
+            var from = this.pagination.current_page - this.offset;
+            if(from < 1) {
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.pagination.last_page){
+                to = this.pagination.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
         },
+        imagen(){
+            return this.imagenMinatura;
+        },
+        calcularMts : function(){
+            let me=this;
+            let resultado = 0;
+            resultado = resultado + (me.alto * me.largo);
+            me.metros_cuadrados = resultado;
+            return resultado;
+        }
+    },
     methods: {
         listarVenta (page,buscar,criterio,estadoVenta,tipoFact){
             let me=this;
@@ -798,7 +804,6 @@ export default {
             this.btnPagado = false;
         },
         verVenta(id){
-
             let me = this;
             me.listado = 2;
 
@@ -970,38 +975,93 @@ export default {
             window.open('/venta/pdf/'+id);
         },
         cambiarFacturacion(id,estado,pr){
-            /* console.log('Cambiar el estado ' + estado + ' de la venta ' + id); */
-            let me = this;
-
-            var factip = me.tipo_fact;
-            var pageac = me.pagination.current_page;
-            var estadovt = me.estadoVenta;
-
             if(estado == true){
-                me.facturado = 1;
+                Swal.fire({
+                    title: 'Facturado',
+                    text:  `Ingrese el número de factura del presupuesto ${ pr }`,
+                    input: 'text',
+                    inputValue : '',
+                    position: 'center',
+                    inputPlaceholder: 'Número de factura',
+                    validationMessage : 'El número de factura es requerido',
+                    inputAttributes: {
+                        required: true
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar',
+                    cancelButtonText: 'Cancelar',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (data) => {
+                    },
+                    allowOutsideClick: () => Swal.isLoading()
+                    }).then((result) => {
+                    let numFact = result.value;
+                    if (result.value) {
+                        let me = this;
+                        var factip = me.tipo_fact;
+                        var pageac = me.pagination.current_page;
+                        var estadovt = me.estadoVenta;
+                        if(estado == true){
+                            me.facturado = 1;
+                        }else{
+                            me.facturado = 0;
+                        }
+                        axios.put('/venta/cambiarFacturacion',{
+                            'id': id,
+                            'estado' : this.facturado,
+                            'numFact' : numFact
+                        }).then(function (response) {
+                            if(estado == 1){
+                                swal.fire(
+                                'Completado!',
+                                'El presupuesto '+ pr + ' ha sido registrado con facturado.',
+                                'success')
+                            }else{
+                                swal.fire(
+                                'Atención!',
+                                'El presupuesto '+ pr +' ha sido registrado como no facturado.',
+                                'warning')
+                            }
+                            me.listarVenta(pageac,'','',estadovt,factip);
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                    }else if(result.dismiss === Swal.DismissReason.cancel){
+                        this.listarVenta(pageac,'','',estadovt,factip);
+                    }
+                });
             }else{
-                me.facturado = 0;
-            }
-            //console.log('Venta ' + id + ' marcada como ' + me.facturado);
-            axios.put('/venta/cambiarFacturacion',{
-                'id': id,
-                'estado' : this.facturado
-            }).then(function (response) {
-                if(estado == 1){
-                    swal.fire(
-                    'Completado!',
-                    'El presupuesto '+ pr + ' ha sido registrado con facturado.',
-                    'success')
+                let me = this;
+                var factip = me.tipo_fact;
+                var pageac = me.pagination.current_page;
+                var estadovt = me.estadoVenta;
+                if(estado == true){
+                    me.facturado = 1;
                 }else{
-                    swal.fire(
-                    'Atención!',
-                    'El presupuesto '+ pr +' ha sido registrado como no facturado.',
-                    'warning')
+                    me.facturado = 0;
                 }
-                me.listarVenta(pageac,'','',estadovt,factip);
-            }).catch(function (error) {
-                console.log(error);
-            });
+                axios.put('/venta/cambiarFacturacion',{
+                    'id': id,
+                    'estado' : this.facturado,
+                    'numFact' : ''
+                }).then(function (response) {
+                    if(estado == 1){
+                        swal.fire(
+                        'Completado!',
+                        'El presupuesto '+ pr + ' ha sido registrado con facturado.',
+                        'success')
+                    }else{
+                        swal.fire(
+                        'Atención!',
+                        'El presupuesto '+ pr +' ha sido registrado como no facturado.',
+                        'warning')
+                    }
+                    me.listarVenta(pageac,'','',estadovt,factip);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+
         },
         cambiarFacturacionEnv(id,estado,pr){
             /* console.log('Cambiar el estadoenv ' + estado + ' de la venta ' + id); */
