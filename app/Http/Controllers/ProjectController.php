@@ -727,7 +727,8 @@ class ProjectController extends Controller
                 $project->pagado_parcial = 1;
                 $project->pagado = 0;
                 $project->save();
-                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime]);
+                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime,
+                    'forma_pago' => $request->forma_pago]);
                 $project->deposits()->save($deposit);
                 DB::commit();
             }catch(Exception $e){
@@ -740,7 +741,8 @@ class ProjectController extends Controller
                 $project->pagado_parcial = 1;
                 $project->pagado = 1;
                 $project->save();
-                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime]);
+                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime,
+                    'forma_pago' => $request->forma_pago]);
                 $project->deposits()->save($deposit);
                 DB::commit();
             }catch(Exception $e){
@@ -755,7 +757,7 @@ class ProjectController extends Controller
         $project = Project::findOrFail($request->id); //ID project y sus depositos
 
         $deposits = $project->deposits()
-        ->select('deposits.id','deposits.total','deposits.fecha_hora as fecha')
+        ->select('deposits.id','deposits.total','deposits.fecha_hora as fecha','deposits.forma_pago')
         ->orderBy('deposits.fecha_hora','desc')
         ->get();
 

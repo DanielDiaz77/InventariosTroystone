@@ -70,7 +70,9 @@
                     </template>
                 </a>
             </li>
-
+            <li class="nav-item">
+                <a class="nav-link" target="_blank" href="http://herramientas.inventariostroystone.com/public/"><i class="fa fa-wrench"></i> TroyTools</a>
+            </li>
             {{-- <li @click="menu=11" class="nav-item">
                 <a class="nav-link" href="#"><i class="icon-book-open"></i> Ayuda <span class="badge badge-danger">PDF</span></a>
             </li>

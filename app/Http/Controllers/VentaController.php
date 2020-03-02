@@ -42,7 +42,7 @@ class VentaController extends Controller
                         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                         'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                         'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                     ->where([
                         ['personas.nombre', 'like', '%'. $buscar . '%'],
                         ['ventas.estado',$estadoV]
@@ -57,7 +57,7 @@ class VentaController extends Controller
                         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                         'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                         'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                     ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado',$estadoV]])
                     ->orderBy('ventas.id', 'desc')->paginate(12);
                 }else{
@@ -70,7 +70,7 @@ class VentaController extends Controller
                         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                         'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                         'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where('ventas.estado',$estadoV)
                         ->orderBy('ventas.id', 'desc')->paginate(12);
                     }
@@ -83,7 +83,7 @@ class VentaController extends Controller
                         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                         'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                         'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                             ['ventas.estado',$estadoV]
@@ -103,7 +103,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',1]
@@ -118,7 +118,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entrega_parcial',1]
@@ -133,7 +133,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',0],
@@ -149,7 +149,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([['ventas.estado','Registrado']])
                         ->orderBy('ventas.id', 'desc')->paginate(12);
                     }
@@ -165,7 +165,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -182,7 +182,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -199,7 +199,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -217,7 +217,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado']
@@ -234,7 +234,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
                                 ['ventas.entregado',1]])
                             ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -248,7 +248,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
                                 ['ventas.entrega_parcial',1]])
                             ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -262,7 +262,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
                                 ['ventas.entregado',0],['ventas.entrega_parcial',0]])
                             ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -276,7 +276,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado']])
                             ->orderBy('ventas.id', 'desc')->paginate(12);
                         }
@@ -290,7 +290,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -307,7 +307,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -324,7 +324,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -342,7 +342,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado']
@@ -363,7 +363,7 @@ class VentaController extends Controller
                         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                         'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                         'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                     ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado',$estadoV],
                         ['ventas.idusuario',$usid]])
                     ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -376,7 +376,7 @@ class VentaController extends Controller
                         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                         'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                         'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                     ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado',$estadoV],
                         ['ventas.idusuario',$usid]])
                     ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -390,7 +390,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([['ventas.estado',$estadoV],['ventas.idusuario',$usid]])
                         ->orderBy('ventas.id', 'desc')->paginate(12);
                     }
@@ -403,7 +403,7 @@ class VentaController extends Controller
                         'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                         'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                         'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                        'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                             ['ventas.estado',$estadoV],
@@ -424,7 +424,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',1],
@@ -440,7 +440,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entrega_parcial',1],
@@ -456,7 +456,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',0],
@@ -473,7 +473,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([['ventas.estado','Registrado'],['ventas.idusuario',$usid]])
                         ->orderBy('ventas.id', 'desc')->paginate(12);
                     }
@@ -489,7 +489,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -507,7 +507,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -525,7 +525,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -544,7 +544,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -562,7 +562,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
                                 ['ventas.entregado',1],['ventas.idusuario',$usid]])
                             ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -576,7 +576,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
                                 ['ventas.entrega_parcial',1],['ventas.idusuario',$usid]])
                             ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -590,7 +590,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
                                 ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.idusuario',$usid]])
                             ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -604,7 +604,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
                                 ['ventas.idusuario',$usid]])
                             ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -619,7 +619,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -637,7 +637,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -655,7 +655,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -674,7 +674,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -723,7 +723,7 @@ class VentaController extends Controller
                     'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                     'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
                     'ventas.factura_env','personas.rfc as rfccliente','ventas.adeudo',
-                    'ventas.num_factura')
+                    'ventas.num_factura','ventas.auto_entrega')
                 ->where([['ventas.adeudo',0],['ventas.facturado',$estadoV],
                     ['ventas.tipo_facturacion',$tipoFact],['ventas.estado','Registrado'],
                     ['ventas.idusuario',$usid]])
@@ -737,7 +737,7 @@ class VentaController extends Controller
                     'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                     'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                     'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                    'ventas.factura_env','ventas.adeudo','ventas.num_factura')
+                    'ventas.factura_env','ventas.adeudo','ventas.num_factura','ventas.auto_entrega')
                 ->where([['ventas.adeudo',0],['personas.nombre', 'like', '%'. $buscar . '%'],
                     ['ventas.facturado',$estadoV],['ventas.tipo_facturacion',$tipoFact],
                     ['ventas.estado','Registrado'],['ventas.idusuario',$usid]])
@@ -751,7 +751,7 @@ class VentaController extends Controller
                     'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                     'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                     'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                    'ventas.factura_env','ventas.adeudo','ventas.num_factura')
+                    'ventas.factura_env','ventas.adeudo','ventas.num_factura','ventas.auto_entrega')
                 ->where([['ventas.adeudo',0],['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                     ['ventas.facturado',$estadoV],['ventas.tipo_facturacion',$tipoFact],
                     ['ventas.estado','Registrado'],['ventas.idusuario',$usid]])
@@ -768,7 +768,7 @@ class VentaController extends Controller
                     'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                     'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
                     'ventas.factura_env','personas.rfc as rfccliente','ventas.adeudo',
-                    'ventas.num_factura')
+                    'ventas.num_factura','ventas.auto_entrega')
                 ->where([['ventas.adeudo',0],['ventas.facturado',$estadoV],
                     ['ventas.tipo_facturacion',$tipoFact],['ventas.estado','Registrado']])
                 ->orderBy('ventas.id', 'desc')->paginate(12);
@@ -781,7 +781,7 @@ class VentaController extends Controller
                     'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                     'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                     'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                    'ventas.factura_env','ventas.adeudo','ventas.num_factura')
+                    'ventas.factura_env','ventas.adeudo','ventas.num_factura','ventas.auto_entrega')
                 ->where([['ventas.adeudo',0],['personas.nombre', 'like', '%'. $buscar . '%'],
                     ['ventas.facturado',$estadoV],['ventas.tipo_facturacion',$tipoFact],
                     ['ventas.estado','Registrado']])
@@ -795,7 +795,7 @@ class VentaController extends Controller
                     'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                     'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                     'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                    'ventas.factura_env','ventas.adeudo','ventas.num_factura')
+                    'ventas.factura_env','ventas.adeudo','ventas.num_factura','ventas.auto_entrega')
                 ->where([['ventas.adeudo',0],['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                     ['ventas.facturado',$estadoV],['ventas.tipo_facturacion',$tipoFact],
                     ['ventas.estado','Registrado']
@@ -850,6 +850,7 @@ class VentaController extends Controller
             $venta->tipo_facturacion = $request->tipo_facturacion;
             $venta->facturado = 0;
             $venta->factura_env = 0;
+            $venta->auto_entrega = 0;
             $venta->save();
 
             $detalles = $request->data;//Array de detalles
@@ -911,6 +912,7 @@ class VentaController extends Controller
             $venta->pago_parcial = 0;
             $venta->facturado = 0;
             $venta->factura_env = 0;
+            $venta->auto_entrega = 0;
             $venta->save();
 
             $detalles = DetalleVenta::select('idarticulo','cantidad')
@@ -942,7 +944,7 @@ class VentaController extends Controller
             'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
             'ventas.num_cheque','ventas.file','ventas.observacionpriv','ventas.facturado',
             'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','personas.nombre as cliente',
-            'personas.tipo','personas.rfc','personas.cfdi','personas.telefono',
+            'personas.tipo','personas.rfc','personas.cfdi','personas.telefono','ventas.auto_entrega',
             'personas.company as contacto','personas.tel_company as tel_contacto')
         ->where('ventas.id','=',$id)
         ->orderBy('ventas.id', 'desc')->take(1)->get();
@@ -982,7 +984,7 @@ class VentaController extends Controller
             'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial',
             'personas.company as contacto','personas.tel_company',
             'ventas.observacionpriv','ventas.facturado','ventas.factura_env',
-            'ventas.pago_parcial','ventas.adeudo')
+            'ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
         ->where('ventas.id',$id)->take(1)->get();
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
@@ -1062,11 +1064,13 @@ class VentaController extends Controller
             $venta = Venta::findOrFail($request->id);
             $venta->pagado = $request->pagado;
             $venta->adeudo = 0;
+            $venta->auto_entrega = 1;
             $venta->save();
         }else{
             $venta = Venta::findOrFail($request->id);
             $venta->pagado = $request->pagado;
             $venta->adeudo = $venta->total;
+            $venta->auto_entrega = 0;
             $venta->save();
         }
 
@@ -1098,170 +1102,171 @@ class VentaController extends Controller
         $entregaEs = $request->estadoEntrega;
         $usrol = \Auth::user()->idrol;
 
-
-        if($usrol != 1){
-            if($entregaEs == ''){
-                if($buscar == ''){
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada']])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }elseif($criterio == 'cliente'){
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],
-                        ['personas.nombre', 'like', '%'. $buscar . '%']])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }else{
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],
-                        ['ventas.'.$criterio, 'like', '%'. $buscar . '%']])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }
-            }elseif($entregaEs == 'entregado'){
-                if($buscar == ''){
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],['ventas.entregado',1]])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }elseif($criterio == 'cliente'){
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],['ventas.entregado',1],
-                        ['personas.nombre', 'like', '%'. $buscar . '%']])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }else{
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],['ventas.entregado',1],
-                        ['ventas.'.$criterio, 'like', '%'. $buscar . '%']])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }
-            }elseif($entregaEs == 'entrega_parcial'){
-                if($buscar == ''){
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',1]])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }elseif($criterio == 'cliente'){
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',1],
-                        ['personas.nombre', 'like', '%'. $buscar . '%']])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }else{
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',1],
-                        ['ventas.'.$criterio, 'like', '%'. $buscar . '%']])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }
-            }elseif($entregaEs == 'no_entregado'){
-                if($buscar == ''){
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',0],
-                        ['ventas.entregado',0]])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }elseif($criterio == 'cliente'){
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',0],
-                        ['ventas.entregado',0],['personas.nombre', 'like', '%'. $buscar . '%']])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }else{
-                    $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                    ->join('users','ventas.idusuario','=','users.id')
-                    ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                        'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                        'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                        'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                        'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
-                        'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
-                        'ventas.factura_env','ventas.adeudo')
-                    ->where([['ventas.pagado',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',0],
-                        ['ventas.entregado',0],['ventas.'.$criterio, 'like', '%'. $buscar . '%']])
-                    ->orderBy('ventas.id', 'desc')->paginate(12);
-                }
+        if($entregaEs == ''){
+            if($buscar == ''){
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }elseif($criterio == 'cliente'){
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],
+                    ['personas.nombre', 'like', '%'. $buscar . '%']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }else{
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],
+                    ['ventas.'.$criterio, 'like', '%'. $buscar . '%']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
             }
+        }elseif($entregaEs == 'entregado'){
+            if($buscar == ''){
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],['ventas.entregado',1]])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }elseif($criterio == 'cliente'){
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],['ventas.entregado',1],
+                    ['personas.nombre', 'like', '%'. $buscar . '%']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }else{
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],['ventas.entregado',1],
+                    ['ventas.'.$criterio, 'like', '%'. $buscar . '%']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }
+        }elseif($entregaEs == 'entrega_parcial'){
+            if($buscar == ''){
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',1]])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }elseif($criterio == 'cliente'){
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',1],
+                    ['personas.nombre', 'like', '%'. $buscar . '%']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }else{
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',1],
+                    ['ventas.'.$criterio, 'like', '%'. $buscar . '%']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }
+        }elseif($entregaEs == 'no_entregado'){
+            if($buscar == ''){
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',0],
+                    ['ventas.entregado',0]])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }elseif($criterio == 'cliente'){
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',0],
+                    ['ventas.entregado',0],['personas.nombre', 'like', '%'. $buscar . '%']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }else{
+                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                ->join('users','ventas.idusuario','=','users.id')
+                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                    'ventas.num_cheque','ventas.tipo_facturacion','ventas.pagado','personas.nombre',
+                    'ventas.entrega_parcial','users.usuario','ventas.observacionpriv','ventas.facturado',
+                    'ventas.factura_env','ventas.adeudo','ventas.auto_entrega')
+                ->where([['ventas.auto_entrega',1],['ventas.estado','!=','Anulada'],['ventas.entrega_parcial',0],
+                    ['ventas.entregado',0],['ventas.'.$criterio, 'like', '%'. $buscar . '%']])
+                ->orderBy('ventas.id', 'desc')->paginate(12);
+            }
+        }
+
+        /* if($usrol != 1){
+
         }else{
             if($entregaEs == ''){
                 if($buscar == ''){
@@ -1423,7 +1428,7 @@ class VentaController extends Controller
                     ->orderBy('ventas.id', 'desc')->paginate(12);
                 }
             }
-        }
+        } */
 
         return [
             'pagination' => [
@@ -1470,7 +1475,8 @@ class VentaController extends Controller
             'ventas.num_cheque','ventas.banco','ventas.tipo_facturacion','ventas.pagado',
             'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
             'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial',
-            'personas.company as contacto','personas.tel_company','ventas.facturado','ventas.factura_env')
+            'personas.company as contacto','personas.tel_company','ventas.facturado',
+            'ventas.factura_env','ventas.auto_entrega')
         ->where('ventas.id',$id)->take(1)->get();
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
@@ -1597,7 +1603,8 @@ class VentaController extends Controller
             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
             'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
             'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv',
-            'ventas.facturado','ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+            'ventas.facturado','ventas.factura_env','ventas.pago_parcial','ventas.adeudo',
+            'ventas.auto_entrega')
         ->where('ventas.idcliente','=',$idcliente)
         ->orderBy('ventas.fecha_hora','desc')->paginate(5);
 
@@ -1675,7 +1682,8 @@ class VentaController extends Controller
                 $venta->pago_parcial = 1;
                 $venta->pagado = 0;
                 $venta->save();
-                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime]);
+                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime,
+                    'forma_pago' => $request->forma_pago]);
                 $venta->deposits()->save($deposit);
                 DB::commit();
             }catch(Exception $e){
@@ -1687,8 +1695,10 @@ class VentaController extends Controller
                 $venta->adeudo = 0;
                 $venta->pago_parcial = 1;
                 $venta->pagado = 1;
+                $venta->auto_entrega = 1;
                 $venta->save();
-                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime]);
+                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime,
+                    'forma_pago' => $request->forma_pago]);
                 $venta->deposits()->save($deposit);
                 DB::commit();
             }catch(Exception $e){
@@ -1703,7 +1713,7 @@ class VentaController extends Controller
         $venta = Venta::findOrFail($request->id); //ID venta y sus depositos
 
         $deposits = $venta->deposits()
-        ->select('deposits.id','deposits.total','deposits.fecha_hora as fecha')
+        ->select('deposits.id','deposits.total','deposits.fecha_hora as fecha','deposits.forma_pago')
         ->orderBy('deposits.fecha_hora','desc')
         ->get();
 
@@ -1764,7 +1774,7 @@ class VentaController extends Controller
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                 ->where([
                     ['personas.nombre', 'like', '%'. $buscar . '%'],
                     ['ventas.estado',$estadoV]
@@ -1780,7 +1790,7 @@ class VentaController extends Controller
                     'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                     'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                     'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                     ->where('ventas.estado',$estadoV)
                     ->orderBy('ventas.id', 'desc')->paginate(12);
                 }else{
@@ -1792,7 +1802,7 @@ class VentaController extends Controller
                     'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                     'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                     'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                     ->where([
                         ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                         ['ventas.estado',$estadoV]
@@ -1812,7 +1822,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',1]
@@ -1827,7 +1837,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',1],
@@ -1843,7 +1853,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',1],
@@ -1859,7 +1869,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',1],
@@ -1877,7 +1887,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entrega_parcial',1]
@@ -1892,7 +1902,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entrega_parcial',1],
@@ -1908,7 +1918,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entrega_parcial',1],
@@ -1924,7 +1934,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entrega_parcial',1],
@@ -1942,7 +1952,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',0],
@@ -1958,7 +1968,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',0],
@@ -1975,7 +1985,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',0],
@@ -1993,7 +2003,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([
                             ['ventas.estado','Registrado'],
                             ['ventas.entregado',0],
@@ -2012,7 +2022,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([['ventas.estado','Registrado']])
                         ->orderBy('ventas.id', 'desc')->paginate(12);
                     }elseif($estadoAdeu == 'Pagado'){
@@ -2024,7 +2034,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([['ventas.estado','Registrado'],['ventas.pagado',1],['ventas.adeudo',0]])
                         ->orderBy('ventas.id', 'desc')->paginate(12);
                     }elseif($estadoAdeu == 'Abonado'){
@@ -2036,7 +2046,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([['ventas.estado','Registrado'],['ventas.pago_parcial',1]])
                         ->orderBy('ventas.id', 'desc')->paginate(12);
                     }elseif($estadoAdeu == 'NoAbono'){
@@ -2048,7 +2058,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                         ->where([['ventas.estado','Registrado'],['ventas.total','ventas.adeudo']])
                         ->orderBy('ventas.id', 'desc')->paginate(12);
                     }
@@ -2066,7 +2076,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2082,7 +2092,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2099,7 +2109,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2116,7 +2126,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2136,7 +2146,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2152,7 +2162,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2170,7 +2180,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2188,7 +2198,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2207,7 +2217,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2224,7 +2234,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2242,7 +2252,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2260,7 +2270,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2280,7 +2290,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado']
@@ -2295,7 +2305,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2311,7 +2321,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2327,7 +2337,7 @@ class VentaController extends Controller
                             'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                             'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                             'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['personas.nombre', 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2347,7 +2357,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2363,7 +2373,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2380,7 +2390,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2416,7 +2426,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2432,7 +2442,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2449,7 +2459,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2466,7 +2476,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2485,7 +2495,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2502,7 +2512,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2520,7 +2530,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2538,7 +2548,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2558,7 +2568,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado']
@@ -2573,7 +2583,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2589,7 +2599,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2605,7 +2615,7 @@ class VentaController extends Controller
                                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                                 'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
                                 'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
                             ->where([
                                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
                                 ['ventas.estado','Registrado'],
@@ -2649,7 +2659,8 @@ class VentaController extends Controller
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
                 'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv',
-                'ventas.facturado','ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                'ventas.facturado','ventas.factura_env','ventas.pago_parcial','ventas.adeudo',
+                'ventas.auto_entrega')
             ->where([
                 ['ventas.estado','Registrado'],
                 ['ventas.'.$criterio, 'like', '%'. $buscar . '%']
@@ -2664,7 +2675,8 @@ class VentaController extends Controller
                 'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
                 'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
                 'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv',
-                'ventas.facturado','ventas.factura_env','ventas.pago_parcial','ventas.adeudo')
+                'ventas.facturado','ventas.factura_env','ventas.pago_parcial','ventas.adeudo',
+                'ventas.auto_entrega')
             ->where([
                     ['ventas.idcliente','=',$idcliente],
                     ['ventas.estado','Registrado']
@@ -2684,5 +2696,12 @@ class VentaController extends Controller
             ],
             'ventas' => $ventas
         ];
+    }
+
+    public function autorizarEntrega(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $venta = Venta::findOrFail($request->id);
+        $venta->auto_entrega = $request->auto_entrega;
+        $venta->save();
     }
 }

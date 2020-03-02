@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Deposit extends Model
 {
-    protected $fillable = ['total','fecha_hora'];
+    protected $fillable = ['total','fecha_hora','forma_pago'];
 
     public function depositable(){
         return $this->morphTo();

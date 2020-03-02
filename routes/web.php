@@ -158,6 +158,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/venta/cambiarFacturacion','VentaController@cambiarFacturacion');
         Route::put('/venta/cambiarFacturacionEnv','VentaController@cambiarFacturacionEnv');
         Route::get('/ventaDeposit','VentaController@indexDeposit');
+        Route::put('/venta/autorizarEntrega','VentaController@autorizarEntrega');
 
         Route::get('/entrega','VentaController@indexEntregas');
         Route::get('/entrega/pdf/{id}','VentaController@pdfEntrega');

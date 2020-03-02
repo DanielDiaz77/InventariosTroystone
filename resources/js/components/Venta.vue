@@ -117,14 +117,15 @@
                                 <td v-else>
                                     <span class="badge badge-danger">No entregado</span>
                                 </td>
-                                 <td v-if="venta.adeudo == 0">
-                                    <span class="badge badge-success">100% Pagado</span>
-                                    <!-- <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled /> -->
-                                </td>
-                                <td v-else>
-                                    <span class="badge badge-danger">No Pagado</span>
-                                   <!--  <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled /> -->
-                                </td>
+                                <template v-if="venta.adeudo == 0">
+                                    <td><span class="badge badge-success">100% Pagado</span></td>
+                                </template>
+                                <template v-else-if="venta.total == venta.adeudo">
+                                    <td><span class="badge badge-danger">No Pagado</span></td>
+                                </template>
+                                <template v-else-if="(venta.total - venta.adeudo) < venta.total">
+                                    <td><span class="badge badge-warning">Pagado Parcialmente</span></td>
+                                </template>
                                 <td v-if="venta.estado =='Registrado'">
                                     <span class="badge badge-success">Activa</span>
                                 </td>
@@ -564,16 +565,34 @@
                             <p v-text="banco"></p>
                         </div>
                     </div>
+                    <!-- Autorizar entrega -->
+                    <template v-if="usrol == 1">
+                        <div class="col-md-2" v-if="entregado == 0 && entregado_parcial == 0">
+                            <div class="form-group">
+                                <label for=""><strong>Autorizar Entrega:</strong> </label>
+                                <div>
+                                    <toggle-button @change="autorizarEntrega(venta_id,num_comprobante)" v-model="btnAutoEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="col-md-2" v-if="auto_entrega">
+                            <div class="form-group">
+                                <span class="badge badge-success">Entrega autorizada</span>
+                            </div>
+                        </div>
+                    </template>
                     <!-- Status Entregas -->
                     <template v-if="usrol != 1">
-                        <div class="col-md-2" v-if="adeudo == 0 && entregado_parcial == 0">
+                        <div class="col-md-2" v-if="entregado_parcial == 0">
                             <div class="form-group">
                                 <label for=""><strong>Entregado 100%:</strong> </label>
-                                <div v-if="pagado">
+                                <div v-if="auto_entrega">
                                     <toggle-button @change="cambiarEstadoEntrega(venta_id)" v-model="btnEntrega" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                                 </div>
                                 <div v-else>
-                                    <span class="badge badge-danger">Pendiente de pago</span>
+                                    <span class="badge badge-danger">Pendiente de pago o autorización</span>
                                 </div>
                             </div>
                         </div>
@@ -686,6 +705,7 @@
                                                     <tr>
                                                         <th width="10px">No°</th>
                                                         <th width="20px">Opciones</th>
+                                                        <th>Forma de pago</th>
                                                         <th>Fecha</th>
                                                         <th>Total</th>
                                                     </tr>
@@ -698,21 +718,22 @@
                                                                 <i class="icon-trash"></i>
                                                             </button> &nbsp;
                                                         </td>
+                                                        <td v-text="deposito.forma_pago"></td>
                                                         <td>{{ convertDateVenta(deposito.fecha) }}</td>
                                                         <td v-text="deposito.total"></td>
                                                     </tr>
                                                     <tr style="background-color: #CEECF5;">
-                                                        <td colspan="3" align="right"><strong>Abonado:</strong></td>
+                                                        <td colspan="4" align="right"><strong>Abonado:</strong></td>
                                                         <td>$ {{ calcularAbonos }}</td>
                                                     </tr>
                                                     <tr style="background-color: #CEECF5;">
-                                                        <td colspan="3" align="right"><strong>Adeudo:</strong></td>
+                                                        <td colspan="4" align="right"><strong>Adeudo:</strong></td>
                                                         <td>$ {{ adeudo }} </td>
                                                     </tr>
                                                 </tbody>
                                                 <tbody v-else>
                                                     <tr>
-                                                        <td colspan="14" class="text-center">
+                                                        <td colspan="5" class="text-center">
                                                             <strong>NO hay artículos en este detalle...</strong>
                                                         </td>
                                                     </tr>
@@ -1448,6 +1469,60 @@
     </div>
     <!-- Fin exportar excel -->
 
+    <!-- Modal crear abono -->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal6}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-md " role="document">
+            <div class="modal-content content-deposit">
+                <!-- <div class="modal-header">
+                    <h4 class="modal-title" v-text="tituloModal"></h4>
+                    <button type="button" class="close" @click="cerrarModal6(venta_id)" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div> -->
+                <div class="modal-body ">
+                    <h3 class="mb-3">Adeudo actual: {{ adeudo }}</h3>
+                    <div class="row d-flex justify-content-around">
+                        <div class="col-12 mb-2">
+                            <!-- <label for=""><strong>Forma de pago: </strong></label>
+                            <input type="date" class="form-control" v-model="fecha1"> -->
+                            <div class="form-group">
+                                <h5 for=""><strong>Forma de pago </strong><span style="color:red;" v-show="forma_pagoab==''">(*Seleccione)</span></h5>
+                                <select class="form-control" v-model="forma_pagoab" v-if="otroFormPayab == false">
+                                    <option value='' disabled>Seleccione la forma de pago</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta">Tarjeta</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                    <option value="Mixto">Mixto</option>
+                                </select>
+                                <div class="form-check float-left mt-1">
+                                    <input class="form-check-input" type="checkbox" id="chkOtherPayab" v-model="otroFormPayab">
+                                    <label class="form-check-label p-0 m-0" for="chkOtherPayab"><strong>Otro</strong></label>
+                                </div>
+                                <input class="form-control rounded-0"  maxlength="35" placeholder="Ingresa la forma de pago" v-model="forma_pagoab" v-if="otroFormPayab == true"></input>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <h5 for=""><strong> $ Abono: </strong></h5>
+                            <input type="number" step="any" min="1" class="form-control" v-model="totalab">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12 justify-content-center d-flex">
+                            <button type="button" class="btn btn-primary mr-2" @click="saveDeposit(venta_id,adeudo,totalab)">Guardar</button>
+                            <button type="button" class="btn btn-secondary" @click="cerrarModal6(venta_id)">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+               <!--  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal6(venta_id)">Cancelar</button>
+                </div> -->
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <!-- Fin Modal crear abono -->
+
   </main>
 </template>
 <script>
@@ -1524,6 +1599,7 @@ export default {
             modal3: 0,
             modal4: 0,
             modal5: 0,
+            modal6: 0,
             ind : '',
             tituloModal: "",
             tipoAccion: 0,
@@ -1599,7 +1675,12 @@ export default {
             facturado : 0,
             factura_env: 0,
             estadoEntrega : "",
-            arrayDepositos : []
+            arrayDepositos : [],
+            forma_pagoab : "",
+            otroFormPayab : false,
+            totalab : 0,
+            btnAutoEntrega : false,
+            auto_entrega : 0
         };
     },
     components: {
@@ -2121,10 +2202,12 @@ export default {
             this.facturado = 0;
             this.arrayDepositos = [];
             this.getLastNum();
-            this.listarVenta(1,'','num_comprobante','','');
+            /* 1,buscar,criterio,estadoVenta,estadoEntrega */
+
+            this.listarVenta(this.pagination.current_page,
+                this.buscar, this.criterio,this.estadoVenta,this.estadoEntrega);
         },
         verVenta(id){
-
             let me = this;
             me.listado = 2;
 
@@ -2171,6 +2254,7 @@ export default {
                 me.pago_parcial = arrayVentaT[0]['pago_parcial'];
                 me.facturado = arrayVentaT[0]['facturado'];
                 me.factura_env = arrayVentaT[0]['factura_env'];
+                me.auto_entrega = arrayVentaT[0]['auto_entrega'];
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('dddd DD MMM YYYY hh:mm:ss a');
@@ -2181,23 +2265,33 @@ export default {
 
                 if(me.entregado ==1){
                     me.btnEntrega = true;
-                    me.btnEntregaParcial = false;
+                }else{
+                     me.btnEntrega = false;
                 }
 
                 if(me.entregado_parcial ==1){
                     me.btnEntregaParcial = true;
-                    me.btnEntrega = false;
+                }else{
+                    me.btnEntregaParcial = false;
                 }
 
-                if(me.pagado ==1){
+                if(arrayVentaT[0]['pagado'] ==1){
                     me.btnPagado = true;
+                }else{
+                    me.btnPagado = false;
+                }
+
+                if(arrayVentaT[0]['pago_parcial'] == 1){
+                    me.btnPagadoParcial = true;
+                    me.getDeposits(me.venta_id);
+                }else{
                     me.btnPagadoParcial = false;
                 }
 
-                if(me.pago_parcial == 1){
-                    me.btnPagadoParcial = true;
-                    me.btnPagado = false;
-                    me.getDeposits(me.venta_id);
+                if(arrayVentaT[0]['auto_entrega'] == 1){
+                    me.btnAutoEntrega = true;
+                }else{
+                    me.btnAutoEntrega = false;
                 }
             })
             .catch(function (error) {
@@ -2609,66 +2703,6 @@ export default {
                 console.log(error);
             });
         },
-        cambiarEstadoPagadoParcial(id,adeudo){
-            if(this.btnPagadoParcial == true){
-                Swal.fire({
-                    title: 'Abono',
-                    text:  `$ ${ adeudo } restantes`,
-                    input: 'number',
-                    inputValue : 0,
-                    position: 'center',
-                    inputPlaceholder: '$ Cantidad abonada',
-                    validationMessage : 'El monto del abono es requerido',
-                    inputAttributes: {
-                        min: 1,
-                        step : 'any',
-                        required: true
-                    },
-                    showCancelButton: true,
-                    confirmButtonText: 'Guardar',
-                    cancelButtonText: 'Cancelar',
-                    showLoaderOnConfirm: true,
-                    preConfirm: (data) => {
-                    },
-                    allowOutsideClick: () => Swal.isLoading()
-                }).then((result) => {
-                    let abono = parseFloat(result.value);
-                    if (result.value) {
-                        if(abono > adeudo){
-                            swal.fire(
-                            'Atención!',
-                            'Estas intentando abonar mas que el adeudo.',
-                            'error');
-                           this.verVenta(id);
-                        }else{
-                            let me = this;
-                            axios.post('/venta/crearDeposit',{
-                                'id' : id,
-                                'total' : abono
-                            }).then(function(response) {
-                                me.verVenta(id);
-                                me.btnPagadoParcial = true;
-                                swal.fire(
-                                'Completado!',
-                                'El abono ha sido registrado con éxito.',
-                                'success')
-                            })
-                            .catch(function(error) {
-                                console.log(error);
-                            });
-                        }
-                    }else if(result.dismiss === Swal.DismissReason.cancel){
-                        this.verVenta(id);
-                        /* this.btnPagadoParcial = false; */
-                    }
-                });
-            }else{
-                swal.fire(
-                'Atención!',
-                'Marcado sin pago.',
-                'error');
-            }
-        },
         editObservacion(){
             let me = this;
             me.obsEditable = 1;
@@ -2786,6 +2820,82 @@ export default {
                     //this.verVenta(idventa);
                 }
             })
+        },
+        cambiarEstadoPagadoParcial(id,adeudo){
+            this.modal6 = 1;
+            this.tituloModal = 'Crear Abono';
+            this.forma_pagoab = '';
+            this.totalab = 0;
+        },
+        cerrarModal6(id){
+            this.modal6 = 0;
+            this.forma_pagoab = '';
+            this.verVenta(id);
+            this.otroFormPayab =  false;
+        },
+        saveDeposit(id,adeudo,total){
+            let abono = parseFloat(total);
+            if(this.forma_pagoab == ''){
+                swal.fire(
+                'Atención!',
+                'Ingrese la forma de pago.',
+                'error');
+            }else{
+                if(abono > adeudo){
+                    swal.fire(
+                    'Error!',
+                    'El abono no puede ser mayor que el adeudo.',
+                    'error');
+                    this.totalab = 0;
+                }else{
+                    let me = this;
+                    axios.post('/venta/crearDeposit',{
+                        'id' : id,
+                        'total' : abono,
+                        'forma_pago' : this.forma_pagoab
+                    }).then(function(response) {
+                        me.modal6 = 0;
+                        me.forma_pagoab = '';
+                        me.otroFormPayab =  false;
+                        me.verVenta(id);
+                        swal.fire(
+                        'Completado!',
+                        'El abono ha sido registrado con éxito.',
+                        'success');
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+                }
+
+            }
+        },
+        autorizarEntrega(id,pr){
+            let me = this;
+            if(me.btnAutoEntrega == true){
+                me.auto_entrega = 1;
+            }else{
+                me.auto_entrega = 0;
+            }
+            axios.put('/venta/autorizarEntrega',{
+                'id': id,
+                'auto_entrega' : this.auto_entrega
+            }).then(function (response) {
+                me.verVenta(id);
+                if(me.auto_entrega == 1){
+                    swal.fire(
+                    'Completado!',
+                    `El presupuesto ${ pr } ha sido autorizado para entrega con éxito.`,
+                    'success')
+                }else{
+                    swal.fire(
+                    'Atención!',
+                    `El presupuesto ${ pr } ha sido marcado como no autorizado para entrega.`,
+                    'warning')
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
         }
     },
     mounted() {
@@ -2835,5 +2945,8 @@ export default {
     .content-export{
         /* width: auto !important; */
         height: 380px !important;
+    }
+    .content-deposit {
+        height: 340px !important;
     }
 </style>

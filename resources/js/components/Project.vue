@@ -12,6 +12,7 @@
           <button type="button" @click="mostrarDetalle()" class="btn btn-secondary" v-if="listado==1">
             <i class="icon-plus"></i>&nbsp;Nuevo
           </button>
+          <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary float-right" v-if="listado==2">Volver</button>
         </div>
         <!-- Listado -->
         <template v-if="listado==1">
@@ -104,14 +105,15 @@
                                 <td v-else>
                                     <span class="badge badge-danger">No entregado</span>
                                 </td>
-                                 <td v-if="project.adeudo == 0">
-                                    <span class="badge badge-success">100% Pagado</span>
-                                    <!-- <toggle-button :value="true" :labels="{checked: 'Si', unchecked: 'No'}" disabled /> -->
-                                </td>
-                                <td v-else>
-                                    <span class="badge badge-danger">No Pagado</span>
-                                   <!--  <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled /> -->
-                                </td>
+                                <template v-if="project.adeudo == 0">
+                                    <td><span class="badge badge-success">100% Pagado</span></td>
+                                </template>
+                                <template v-else-if="project.total == project.adeudo">
+                                    <td><span class="badge badge-danger">No Pagado</span></td>
+                                </template>
+                                <template v-else-if="(project.total - project.adeudo) < project.total">
+                                    <td><span class="badge badge-warning">Pagado Parcialmente</span></td>
+                                </template>
                                 <td v-if="project.estado =='Registrado'">
                                     <span class="badge badge-success">Activa</span>
                                 </td>
@@ -595,6 +597,7 @@
                                                     <tr>
                                                         <th width="10px">No°</th>
                                                         <th width="20px">Opciones</th>
+                                                        <th>Forma de pago</th>
                                                         <th>Fecha</th>
                                                         <th>Total</th>
                                                     </tr>
@@ -607,21 +610,22 @@
                                                                 <i class="icon-trash"></i>
                                                             </button> &nbsp;
                                                         </td>
+                                                        <td v-text="deposito.forma_pago"></td>
                                                         <td>{{ convertDateVenta(deposito.fecha) }}</td>
                                                         <td v-text="deposito.total"></td>
                                                     </tr>
                                                     <tr style="background-color: #CEECF5;">
-                                                        <td colspan="3" align="right"><strong>Abonado:</strong></td>
+                                                        <td colspan="4" align="right"><strong>Abonado:</strong></td>
                                                         <td>$ {{ calcularAbonos }}</td>
                                                     </tr>
                                                     <tr style="background-color: #CEECF5;">
-                                                        <td colspan="3" align="right"><strong>Adeudo:</strong></td>
+                                                        <td colspan="4" align="right"><strong>Adeudo:</strong></td>
                                                         <td>$ {{ adeudo }} </td>
                                                     </tr>
                                                 </tbody>
                                                 <tbody v-else>
                                                     <tr>
-                                                        <td colspan="14" class="text-center">
+                                                        <td colspan="5" class="text-center">
                                                             <strong>NO hay abonos registrados...</strong>
                                                         </td>
                                                     </tr>
@@ -1023,6 +1027,49 @@
     </div>
     <!--Fin del modal-->
 
+        <!-- Modal crear abono -->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal2}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-md " role="document">
+            <div class="modal-content content-deposit">
+                <div class="modal-body ">
+                    <h3 class="mb-3">Adeudo actual: {{ adeudo }}</h3>
+                    <div class="row d-flex justify-content-around">
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <h5 for=""><strong>Forma de pago </strong><span style="color:red;" v-show="forma_pagoab==''">(*Seleccione)</span></h5>
+                                <select class="form-control" v-model="forma_pagoab" v-if="otroFormPayab == false">
+                                    <option value='' disabled>Seleccione la forma de pago</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta">Tarjeta</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                    <option value="Mixto">Mixto</option>
+                                </select>
+                                <div class="form-check float-left mt-1">
+                                    <input class="form-check-input" type="checkbox" id="chkOtherPayab" v-model="otroFormPayab">
+                                    <label class="form-check-label p-0 m-0" for="chkOtherPayab"><strong>Otro</strong></label>
+                                </div>
+                                <input class="form-control rounded-0"  maxlength="35" placeholder="Ingresa la forma de pago" v-model="forma_pagoab" v-if="otroFormPayab == true"></input>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <h5 for=""><strong> $ Abono: </strong></h5>
+                            <input type="number" step="any" min="1" class="form-control" v-model="totalab">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12 justify-content-center d-flex">
+                            <button type="button" class="btn btn-primary mr-2" @click="saveDeposit(id_project,adeudo,totalab)">Guardar</button>
+                            <button type="button" class="btn btn-secondary" @click="cerrarModal2(id_project)">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <!-- Fin Modal crear abono -->
+
 
   </main>
 </template>
@@ -1123,6 +1170,7 @@ export default {
                 ]
             },
             modal : 0,
+            modal2 : 0,
             tituloModal: "",
             arrayPresupuestosT : [],
             pagination : {
@@ -1160,7 +1208,9 @@ export default {
             editProjectCont : 0,
             arrayFiles : [],
             docsArray : [],
-
+            forma_pagoab : "",
+            otroFormPayab : false,
+            totalab : 0
         };
     },
     components: {
@@ -1562,6 +1612,7 @@ export default {
             this.getVentasProject(data['id']);
             this.listado = 2;
             this.editProjectCont = 0;
+            this.getDocs(data['id']);
 
             if(this.entregado == 1){
                 this.btnEntrega = true;
@@ -1581,7 +1632,6 @@ export default {
 
             if(this.pagado_parcial == 1){
                 this.btnPagadoParcial = true;
-                this.btnPagado = false;
                 this.getDeposits(this.id_project);
             }else{
                 this.btnPagadoParcial = false;
@@ -1750,67 +1800,6 @@ export default {
                 }
             })
         },
-        cambiarEstadoPagadoParcial(id,adeudo){
-            if(this.btnPagadoParcial == true){
-                Swal.fire({
-                    title: 'Abono',
-                    text:  `$ ${ adeudo } restantes`,
-                    input: 'number',
-                    inputValue : 0,
-                    position: 'center',
-                    inputPlaceholder: '$ Cantidad abonada',
-                    validationMessage : 'El monto del abono es requerido',
-                    inputAttributes: {
-                        min: 1,
-                        step : 'any',
-                        required: true
-                    },
-                    showCancelButton: true,
-                    confirmButtonText: 'Guardar',
-                    cancelButtonText: 'Cancelar',
-                    showLoaderOnConfirm: true,
-                    preConfirm: (data) => {
-                    },
-                    allowOutsideClick: () => Swal.isLoading()
-                }).then((result) => {
-                    let abono = parseFloat(result.value);
-                    if (result.value) {
-                        if(abono > adeudo){
-                            swal.fire(
-                            'Atención!',
-                            'Estas intentando abonar mas que el adeudo.',
-                            'error');
-                           /* this.btnPagadoParcial = false; */
-                        }else{
-                            let me = this;
-                            axios.post('/project/crearDeposit',{
-                                'id' : id,
-                                'total' : abono
-                            }).then(function(response) {
-                                /* me.verVenta(id); */
-                                me.refreshProject(id);
-                                me.btnPagadoParcial = true;
-                                swal.fire(
-                                'Completado!',
-                                'El abono ha sido registrado con éxito.',
-                                'success')
-                            })
-                            .catch(function(error) {
-                                console.log(error);
-                            });
-                        }
-                    }else if(result.dismiss === Swal.DismissReason.cancel){
-                        this.refreshProject(id);
-                    }
-                });
-            }else{
-                swal.fire(
-                'Atención!',
-                'Marcado sin pago.',
-                'error');
-                this.refreshProject(id);
-            }
-        },
         getDeposits(id){
             let me = this;
             var url= '/project/getDeposits?id=' + id;
@@ -1860,6 +1849,55 @@ export default {
                     this.refreshProject(idproject);
                 }
             })
+        },
+        cambiarEstadoPagadoParcial(id,adeudo){
+            this.modal2 = 1;
+            this.tituloModal = 'Crear Abono';
+            this.forma_pagoab = '';
+            this.totalab = 0;
+        },
+        cerrarModal2(id){
+            this.modal2 = 0;
+            this.forma_pagoab = '';
+            this.refreshProject(id);
+            this.otroFormPayab =  false;
+        },
+        saveDeposit(id,adeudo,total){
+            let abono = parseFloat(total);
+            if(this.forma_pagoab == ''){
+                swal.fire(
+                'Atención!',
+                'Ingrese la forma de pago.',
+                'error');
+            }else{
+                if(abono > adeudo){
+                    swal.fire(
+                    'Error!',
+                    'El abono no puede ser mayor que el adeudo.',
+                    'error');
+                    this.totalab = 0;
+                }else{
+                    let me = this;
+                    axios.post('/project/crearDeposit',{
+                        'id' : id,
+                        'total' : abono,
+                        'forma_pago' : this.forma_pagoab
+                    }).then(function(response) {
+                        me.modal2 = 0;
+                        me.forma_pagoab = '';
+                        me.otroFormPayab =  false;
+                        me.refreshProject(id);
+                        swal.fire(
+                        'Completado!',
+                        'El abono ha sido registrado con éxito.',
+                        'success');
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+                }
+
+            }
         },
         refreshProject(id){
             let me = this;
