@@ -44,6 +44,7 @@
                                         <option value="Sastres">Sastres</option>
                                         <option value="Mecanicos">Mecánicos</option>
                                         <option value="Tractorista">Tractorista</option>
+                                        <option value="Bodega L">Bodega L</option>
                                     </template>
                                     <template v-else>
                                         <option value="San Luis">San Luis</option>
@@ -281,6 +282,7 @@
                                     <option value="Mecanicos">Mecánicos</option>
                                     <option value="Tractorista">Tractorista</option>
                                     <option value="San Luis">San Luis</option>
+                                    <option value="Bodega L">Bodega L</option>
                                 </select>
                             </div>
                             <div class="input-group input-group-sm col-12 col-lg-3  mb-3">
@@ -832,6 +834,7 @@
                                     <option value="Mecanicos">Mecánicos</option>
                                     <option value="Tractorista">Tractorista</option>
                                     <option value="San Luis">San Luis</option>
+                                    <option value="Bodega L">Bodega L</option>
                                 </select>
                             </div>
                         </div>

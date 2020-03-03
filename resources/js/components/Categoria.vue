@@ -189,6 +189,7 @@
                                     <option value="Mecanicos">Mecánicos</option>
                                     <option value="Tractorista">Tractorista</option>
                                     <option value="San Luis">San Luis</option>
+                                    <option value="Bodega L">Bodega L</option>
                             </select>
                             <button type="submit" @click="listarArticulosCategoria(sku,1,buscar_art,criterio_art,bodega_art,acabado_art,estado_art)" class="btn btn-sm btn-primary mb-1"><i class="fa fa-search"></i>Buscar</button>
                         </div>

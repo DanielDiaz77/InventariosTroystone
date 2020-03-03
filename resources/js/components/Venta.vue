@@ -930,6 +930,7 @@
                                         <option value="Mecanicos">Mecánicos</option>
                                         <option value="Tractorista">Tractorista</option>
                                         <option value="San Luis">San Luis</option>
+                                        <option value="Bodega L">Bodega L</option>
                                     </select>
                                 </template>
                             </div>

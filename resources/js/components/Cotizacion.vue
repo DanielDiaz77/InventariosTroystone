@@ -959,6 +959,7 @@
                                         <option value="Mecanicos">Mecánicos</option>
                                         <option value="Tractorista">Tractorista</option>
                                         <option value="San Luis">San Luis</option>
+                                        <option value="Bodega L">Bodega L</option>
                                     </select>
                                 </template>
                                 <button type="submit" @click="listarArticulo(1,buscarA,criterioA,bodega,acabado)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>&nbsp;
