@@ -18,25 +18,46 @@ class IngresoController extends Controller
 
         $buscar = $request->buscar;
         $criterio = $request->criterio;
+        $estado = $request->estado;
 
-        if ($buscar==''){
-            $ingresos = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
-            ->join('users','ingresos.idusuario','=','users.id')
-            ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
-            'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
-            'personas.nombre','users.usuario')
-            ->orderBy('ingresos.id', 'desc')->paginate(12);
+        if($estado == ''){
+            if ($buscar==''){
+                $ingresos = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
+                ->join('users','ingresos.idusuario','=','users.id')
+                ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
+                'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
+                'personas.nombre','users.usuario')
+                ->orderBy('ingresos.id', 'desc')->paginate(12);
+            }
+            else{
+                $ingresos = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
+                ->join('users','ingresos.idusuario','=','users.id')
+                ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
+                'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
+                'personas.nombre','users.usuario')
+                ->where('ingresos.'.$criterio, 'like', '%'. $buscar . '%')
+                ->orderBy('ingresos.id', 'desc')->paginate(12);
+            }
+        }else{
+            if ($buscar==''){
+                $ingresos = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
+                ->join('users','ingresos.idusuario','=','users.id')
+                ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
+                'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
+                'personas.nombre','users.usuario')
+                ->where('ingresos.estado',$estado)
+                ->orderBy('ingresos.id', 'desc')->paginate(12);
+            }
+            else{
+                $ingresos = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
+                ->join('users','ingresos.idusuario','=','users.id')
+                ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
+                'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
+                'personas.nombre','users.usuario')
+                ->where([['ingresos.'.$criterio, 'like', '%'. $buscar . '%'],['ingresos.estado',$estado]])
+                ->orderBy('ingresos.id', 'desc')->paginate(12);
+            }
         }
-        else{
-            $ingresos = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
-            ->join('users','ingresos.idusuario','=','users.id')
-            ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
-            'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
-            'personas.nombre','users.usuario')
-            ->where('ingresos.'.$criterio, 'like', '%'. $buscar . '%')
-            ->orderBy('ingresos.id', 'desc')->paginate(12);
-        }
-
 
         return [
             'pagination' => [
@@ -165,5 +186,38 @@ class IngresoController extends Controller
         }else{
             return 1;
         }
+    }
+
+    public function pdf(Request $request,$id){
+
+        $ingreso = Ingreso::join('users','ingresos.idusuario','=','users.id')
+        ->leftjoin('personas','users.id','=','personas.id')
+        ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
+        'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
+        'personas.nombre','personas.nombre as usuario')
+        ->where('ingresos.id',$id)->take(1)->get();
+
+        $detalles = DetalleIngreso::join('articulos','detalle_ingresos.idarticulo','=','articulos.id')
+        ->leftJoin('categorias','articulos.idcategoria','=','categorias.id')
+        ->select('detalle_ingresos.cantidad','detalle_ingresos.precio_compra','articulos.sku','articulos.codigo',
+            'articulos.espesor','articulos.largo','articulos.alto','articulos.metros_cuadrados','articulos.descripcion',
+            'articulos.idcategoria','articulos.terminado','articulos.ubicacion','articulos.file','articulos.origen',
+            'articulos.contenedor','articulos.fecha_llegada','articulos.observacion','articulos.condicion',
+            'categorias.nombre as categoria')
+        ->where('detalle_ingresos.idingreso',$id)
+        ->orderBy('detalle_ingresos.id','desc')->get();
+
+        $numIngreso = Ingreso::select('num_comprobante')->where('id',$id)->get();
+
+        $sumaMts = DB::table('articulos')
+        ->select(DB::raw('SUM(metros_cuadrados) as metros'))
+        ->leftJoin('detalle_ingresos','detalle_ingresos.idarticulo','articulos.id')
+        ->where('detalle_ingresos.idingreso',$id)
+        ->get();
+
+        $pdf = \PDF::loadView('pdf.ingreso',['ingreso' => $ingreso,'detalles'=>$detalles,'sumaMts' => $sumaMts[0]->metros]);
+
+        return $pdf->stream('Ingreso-'.$numIngreso[0]->num_comprobante.'.pdf');
+
     }
 }

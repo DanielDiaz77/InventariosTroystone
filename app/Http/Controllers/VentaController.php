@@ -1004,10 +1004,17 @@ class VentaController extends Controller
         ->where('detalle_ventas.idventa',$id)
         ->get();
 
+        $ventaD = Venta::findOrFail($id); //ID venta y sus depositos
+        $deposits = $ventaD->deposits()
+        ->select(DB::raw('SUM(deposits.total) as abonos'))
+        ->get();
 
-        $pdf = \PDF::loadView('pdf.venta',['venta' => $venta,'detalles'=>$detalles,'ivaVenta' =>$ivaagregado[0]->impuesto,'sumaMts' => $sumaMts[0]->metros]);
+        $pdf = \PDF::loadView('pdf.venta',['venta' => $venta,'detalles'=> $detalles,
+            'ivaVenta' => $ivaagregado[0]->impuesto,'sumaMts' => $sumaMts[0]->metros,'abonos' => $deposits[0]->abonos]);
 
         return $pdf->stream('venta-'.$numventa[0]->num_comprobante.'.pdf');
+
+
     }
     public function cambiarEntrega(Request $request){
 

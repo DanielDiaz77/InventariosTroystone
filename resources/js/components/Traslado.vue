@@ -57,10 +57,10 @@
                                                 <button type="button" class="btn btn-success btn-sm" @click="verTraslado(traslado.id)">
                                                 <i class="icon-eye"></i>
                                                 </button>&nbsp;
-                                                <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfTraslado(traslado.id)">
-                                                    <i class="fa fa-file-pdf-o"></i>
-                                                </button>&nbsp;
                                                 <template v-if="traslado.estado=='Registrado'">
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfTraslado(traslado.id)">
+                                                        <i class="fa fa-file-pdf-o"></i>
+                                                    </button>&nbsp;
                                                     <button type="button" class="btn btn-danger btn-sm" @click="anularTraslado(traslado.id)">
                                                         <i class="icon-trash"></i>
                                                     </button>

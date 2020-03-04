@@ -194,10 +194,12 @@
                     if($v->estado == 'Anulada'){
                         echo "Anulado";
                     }else{
-                        if($v->pagado){
+                        if($v->adeudo == 0){
                             echo "Pagado";
-                        }else{
+                        }elseif($v->adeudo == $v->total){
                             echo "Pendiente de pago";
+                        }elseif(($v->total - $v->adeudo) < $v->total){
+                            echo "Pagado parcialmente";
                         }
                         if($v->entregado){
                             echo " y Entregado";
@@ -208,14 +210,6 @@
                         }
                     }
                     @endphp
-                    {{-- <p><strong>Estado: </strong> {{ $v->pagado? "Pagado" : "Pendiente de pago" }} --}}
-                    {{-- @php
-                        if ($v->entregado){
-                            echo " y Entregado";
-                        }else{
-                            echo " y no entregado";
-                        }
-                    @endphp --}}
                 </p>
             </div>
         </header>
@@ -318,6 +312,31 @@
                             <th class="th-b">TOTAL</th>
                             <td class="th-b">{{ number_format($v->total,2) }}</td>
                         </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="th-b">Abonado</th>
+                            <td class="th-b">{{ number_format($abonos,2) }}</td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="th-b">Adeudo</th>
+                            <td class="th-b">{{ number_format($v->adeudo,2) }}</td>
+                        </tr>
+                        {{-- <tr><th class="th-b" colspan="10">Abonos:  {{  $abonos }}</th></tr> --}}
                         <tr><th class="th-b" colspan="10">Total m <sup>2:</sup> {{  $sumaMts }}</th></tr>
                         @endforeach
                     </tfoot>

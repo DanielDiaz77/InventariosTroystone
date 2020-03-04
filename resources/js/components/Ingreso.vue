@@ -24,9 +24,17 @@
                             <option value="estado">Estado</option>
                         </select>
                         <div class="input-group">
-                            <input type="text" v-model="buscar" @keyup.enter="listarIngreso(1,buscar,criterio)" class="form-control mb-1" placeholder="Texto a buscar">
-                            <button type="submit" @click="listarIngreso(1,buscar,criterio)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                            <input type="text" v-model="buscar" @keyup.enter="listarIngreso(1,buscar,criterio,estadoIn)" class="form-control mb-1" placeholder="Texto a buscar">
+                            <button type="submit" @click="listarIngreso(1,buscar,criterio,estadoIn)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
                         </div>
+                        <div class="input-group ml-2">
+                            <button type="submit" @click="listarIngreso(1,buscar,criterio,estadoIn)" class="btn btn-outline-info mb-1"><i class="fa fa-question"></i> Estado</button>
+                        </div>
+                        <select class="form-control mb-1" v-model="estadoIn" @change="listarIngreso(1,buscar,criterio,estadoIn)">
+                            <option value="">Todo</option>
+                            <option value="Registrado">Registrados</option>
+                            <option value="Anulado">Anulados</option>
+                        </select>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -51,6 +59,9 @@
                                             <i class="icon-eye"></i>
                                         </button>&nbsp;
                                         <template v-if="ingreso.estado=='Registrado'">
+                                            <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfIngreso(ingreso.id)">
+                                                <i class="fa fa-file-pdf-o"></i>
+                                            </button>&nbsp;
                                             <button type="button" class="btn btn-danger btn-sm" @click="desactivarIngreso(ingreso.id)">
                                                 <i class="icon-trash"></i>
                                             </button>
@@ -80,13 +91,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoIn)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoIn)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio, estadoIn)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -299,12 +310,13 @@
                                     <th>Opciones</th>
                                     <th>Código de material</th>
                                     <th>No° Placa</th>
+                                    <th>Terminado</th>
                                     <th>Espesor</th>
                                     <th>largo</th>
                                     <th>Alto</th>
                                     <th>Metros <sup>2</sup></th>
                                     <th>Cantidad</th>
-                                    <th>Precio</th>
+                                    <th>Ubicación</th>
                                     <th>Descripción</th>
                                 </tr>
                             </thead>
@@ -321,18 +333,20 @@
                                             </button> &nbsp;
                                         </div>
                                     </td>
-                                    <td v-text="detalle.sku"></td>
+                                    <!-- <td v-text="detalle.sku"></td> -->
+                                    <td>
+                                        <input v-model="detalle.sku" type="text" class="form-control">
+                                    </td>
                                     <td>
                                         <input v-model="detalle.codigo" type="text" class="form-control">
                                     </td>
+                                    <td v-text="detalle.terminado"></td>
                                     <td v-text="detalle.espesor"></td>
                                     <td v-text="detalle.largo"></td>
                                     <td v-text="detalle.alto"></td>
                                     <td v-text="detalle.metros_cuadrados"></td>
                                     <td v-text="detalle.cantidad"></td>
-                                    <td>
-                                        <input v-model="detalle.precio_venta" min="0" type="number" value="3" class="form-control">
-                                    </td>
+                                    <td v-text="detalle.ubicacion"></td>
                                     <td>
                                         <input v-model="detalle.descripcion" type="text" class="form-control" placeholder="Descripcion gral">
                                     </td>
@@ -340,7 +354,7 @@
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="11" class="text-center">
+                                    <td colspan="12" class="text-center">
                                         <strong>NO hay artículos agregados...</strong>
                                     </td>
                                 </tr>
@@ -405,10 +419,11 @@
                                     <th>largo</th>
                                     <th>Alto</th>
                                     <th>Metros <sup>2</sup></th>
+                                    <th>Terminado</th>
                                     <th>Cantidad</th>
                                     <th>Contenedor</th>
                                     <th>Descripción</th>
-                                    <th>Estado</th>
+                                    <th>Cantidad</th>
                                 </tr>
                             </thead>
                             <tbody v-if="arrayDetalle.length">
@@ -425,25 +440,16 @@
                                     <td v-text="detalle.largo"></td>
                                     <td v-text="detalle.alto"></td>
                                     <td v-text="detalle.metros_cuadrados"></td>
+                                    <td v-text="detalle.terminado"></td>
                                     <td v-text="detalle.cantidad"></td>
                                     <td v-text="detalle.contenedor"></td>
                                     <td v-text="detalle.descripcion"></td>
-                                    <td>
-                                        <div v-if="detalle.condicion == 1">
-                                            <span class="badge badge-success">Activo</span>
-                                        </div>
-                                        <div v-else-if="detalle.condicion ==3">
-                                            <span class="badge badge-warning">Cortado</span>
-                                        </div>
-                                        <div v-else>
-                                            <span class="badge badge-danger">Desactivado</span>
-                                        </div>
-                                    </td>
+                                    <td v-text="detalle.stock"></td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="11" class="text-center">
+                                    <td colspan="13" class="text-center">
                                         <strong>NO hay artículos en este detalle...</strong>
                                     </td>
                                 </tr>
@@ -956,6 +962,7 @@ export default {
             },
             offset : 3,
             criterio : 'num_comprobante',
+            estadoIn : '',
             buscar : '',
             buscarA : '',
             criterioA : 'sku',
@@ -1066,9 +1073,9 @@ export default {
             }
         },
     methods: {
-        listarIngreso (page,buscar,criterio){
+        listarIngreso (page,buscar,criterio,estado){
             let me=this;
-            var url= '/ingreso?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/ingreso?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado=' + estado;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayIngreso = respuesta.ingresos.data;
@@ -1122,12 +1129,12 @@ export default {
 
 
         },
-        cambiarPagina(page,buscar,criterio){
+        cambiarPagina(page,buscar,criterio,estado){
             let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarIngreso(page,buscar,criterio);
+                me.listarIngreso(page,buscar,criterio,estado);
         },
         cambiarPaginaArt(page,buscar,criterio,bodega,acabado){
             let me = this;
@@ -1271,7 +1278,7 @@ export default {
                     title: 'Completado...',
                     text: 'Se ha registrado el ingreso con éxito!',
                 });
-                me.listarIngreso(1,'','num_comprobante');
+                me.listarIngreso(1,'','num_comprobante','Registrado');
             })
             .catch(function(error) {
                 console.log(error);
@@ -1300,7 +1307,7 @@ export default {
                     axios.put('/ingreso/desactivar',{
                         'id': id
                     }).then(function (response) {
-                        me.listarIngreso(1,'','num_comprobante');
+                        me.listarIngreso(1,'','num_comprobante','Anulado');
                         swal(
                         'Anulado!',
                         'El ingreso ha sido anulado con éxito.',
@@ -1566,10 +1573,13 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
-        }
+        },
+        pdfIngreso(id){
+            window.open('/ingreso/pdf/'+id);
+        },
     },
     mounted() {
-        this.listarIngreso(1,this.buscar, this.criterio);
+        this.listarIngreso(1,this.buscar, this.criterio,this.estadoIn);
         this.getLastNum();
     }
 };

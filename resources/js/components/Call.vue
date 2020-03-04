@@ -432,7 +432,7 @@
                                 <strong> Asignado a  : {{ agente }}</strong>
                             </div>
                         </div>
-                        <div class="col-12 col-sm-8 mb-3 text-center">
+                        <div class="col-12 col-sm-8 mb-3">
                             <viewer :value="body" width="600px"/>
                         </div>
                     </div>
