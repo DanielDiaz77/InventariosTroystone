@@ -321,7 +321,7 @@
                                 </tr>
                             </thead>
                             <tbody v-if="arrayDetalle.length">
-                                <tr v-for="(detalle,index) in arrayDetalle.slice().reverse()" :key="detalle.id">
+                                <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
                                     <td v-text="(index + 1)"></td>
                                     <td>
                                         <div class="form-inline">
@@ -346,7 +346,19 @@
                                     <td v-text="detalle.alto"></td>
                                     <td v-text="detalle.metros_cuadrados"></td>
                                     <td v-text="detalle.cantidad"></td>
-                                    <td v-text="detalle.ubicacion"></td>
+                                   <!--  <td v-text="detalle.ubicacion"></td> -->
+                                   <td>
+                                       <select class="form-control" v-model="detalle.ubicacion">
+                                            <option value='' disabled>Seleccione una bodega de descarga</option>
+                                            <option value="Del Musico">Del Músico</option>
+                                            <option value="Escultores">Escultores</option>
+                                            <option value="Sastres">Sastres</option>
+                                            <option value="Mecanicos">Mecánicos</option>
+                                            <option value="Tractorista">Tractorista</option>
+                                            <option value="San Luis">San Luis</option>
+                                            <option value="Bodega L">Bodega L</option>
+                                        </select>
+                                   </td>
                                     <td>
                                         <input v-model="detalle.descripcion" type="text" class="form-control" placeholder="Descripcion gral">
                                     </td>
@@ -421,9 +433,9 @@
                                     <th>Metros <sup>2</sup></th>
                                     <th>Terminado</th>
                                     <th>Cantidad</th>
+                                    <th>Ubicacion</th>
                                     <th>Contenedor</th>
                                     <th>Descripción</th>
-                                    <th>Cantidad</th>
                                 </tr>
                             </thead>
                             <tbody v-if="arrayDetalle.length">
@@ -442,9 +454,10 @@
                                     <td v-text="detalle.metros_cuadrados"></td>
                                     <td v-text="detalle.terminado"></td>
                                     <td v-text="detalle.cantidad"></td>
+                                    <td v-text="detalle.ubicacion"></td>
                                     <td v-text="detalle.contenedor"></td>
                                     <td v-text="detalle.descripcion"></td>
-                                    <td v-text="detalle.stock"></td>
+
                                 </tr>
                             </tbody>
                             <tbody v-else>
@@ -1163,6 +1176,7 @@ export default {
         },
         eliminarDetalle(index){
             let me = this;
+           /*  console.log(`Index : ${ index }`); */
             me.arrayDetalle.splice(index,1);
         },
         agregarDetalle(){
