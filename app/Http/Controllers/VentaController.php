@@ -2704,7 +2704,6 @@ class VentaController extends Controller
             'ventas' => $ventas
         ];
     }
-
     public function autorizarEntrega(Request $request){
         if (!$request->ajax()) return redirect('/');
         $venta = Venta::findOrFail($request->id);

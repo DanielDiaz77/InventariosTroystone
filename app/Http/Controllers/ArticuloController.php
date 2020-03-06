@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use App\Articulo;
 use App\Venta;
 use App\User;
+use App\Link;
 
 
 class ArticuloController extends Controller
@@ -784,7 +785,47 @@ class ArticuloController extends Controller
 
         if(!$request->ajax()) return redirect('/');
 
-        if($request->file != ""){
+        try{
+            DB::beginTransaction();
+
+            $articulo = Articulo::findOrFail($request->id);
+            $articulo->idcategoria      =   $request->idcategoria;
+            $articulo->codigo           =   $request->codigo;
+            $articulo->sku              =   $request->sku;
+            $articulo->nombre           =   $request->nombre;
+            $articulo->terminado        =   $request->terminado;
+            $articulo->largo            =   $request->largo;
+            $articulo->alto             =   $request->alto;
+            $articulo->metros_cuadrados =   $request->metros_cuadrados;
+            $articulo->espesor          =   $request->espesor;
+            $articulo->precio_venta     =   $request->precio_venta;
+            $articulo->ubicacion        =   $request->ubicacion;
+            $articulo->contenedor       =   $request->contenedor;
+            $articulo->stock            =   $request->stock;
+            $articulo->descripcion      =   $request->descripcion;
+            $articulo->observacion      =   $request->observacion;
+            $articulo->origen           =   $request->origen;
+            $articulo->fecha_llegada    =   $request->fecha_llegada;
+            $articulo->file             =   $request->file;
+            $articulo->condicion        =   '1';
+            $articulo->save();
+
+            $enlaces = $request->enlaces;
+            $userid = \Auth::user()->id;
+
+            //Recorro todos los elementos
+            foreach($enlaces as $ep=>$enl){
+                $link = new Link(['user_id' => $userid, 'url' => $enl['url'], 'direction' => $enl['direction']]);
+                $articulo->links()->save($link);
+            }
+
+            DB::commit();
+
+        }catch(Exception $e){
+            DB::rollBack();
+        }
+
+        /* if($request->file != ""){
 
             $directoryName = 'images';
 
@@ -861,7 +902,7 @@ class ArticuloController extends Controller
             $articulo->fecha_llegada    =   $request->fecha_llegada;
             $articulo->condicion        =   '1';
             $articulo->save();
-        }
+        } */
     }
     public function desactivar(Request $request){
         if(!$request->ajax()) return redirect('/');
@@ -1470,7 +1511,7 @@ class ArticuloController extends Controller
     }
     public function listBySku(Request $request){
 
-        //if(!$request->ajax()) return redirect('/');
+        if(!$request->ajax()) return redirect('/');
 
         $sku = $request->sku;
 
@@ -1960,5 +2001,33 @@ class ArticuloController extends Controller
             'zona' => $zona
 
         ]; */
+    }
+    public function getLinks(Request $request){
+
+        if (!$request->ajax()) return redirect('/');
+
+        $articulo = Articulo::findOrFail($request->id);
+
+        $links = $articulo->links()
+        ->join('users','users.id','links.user_id')
+        ->leftjoin('personas', 'users.id','=','personas.id')
+        ->select('links.id','links.user_id as user','links.url','links.updated_at as fecha',
+            'links.direction','personas.nombre')
+        ->orderBy('links.updated_at','desc')
+        ->get();
+
+        return ['links' => $links];
+
+    }
+    public function deleteLink(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            $link = Link::findOrFail($request->id);
+            $link->delete();
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollBack();
+        }
     }
 }

@@ -814,6 +814,7 @@ Vue.use(ToggleButton);
                 this.imagenMinatura = "";
                 this.listarTraslado(1,'','num_comprobante','');
                 this.btnNewTask = 1;
+                this.btnEntrega = false;
             },
             obtenerImagen(e){
                 let img = e.target.files[0];
@@ -1020,7 +1021,7 @@ Vue.use(ToggleButton);
                     /* moment.locale('es');
                     me.fecha_registro=moment(fechaform).format('dddd DD MMM YYYY hh:mm:ss a'); */
 
-                    if(me.entregado ==1){
+                    if(arrayTrasladoT[0]['entregado'] == 1){
                         me.btnEntrega = true;
                     }
 
@@ -1141,6 +1142,7 @@ Vue.use(ToggleButton);
                     'id': id,
                     'entregado' : this.entregado
                 }).then(function (response) {
+                    me.verTraslado(id);
                     if(me.entregado == 1){
                         Swal.fire(
                             "Completado!",

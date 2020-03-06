@@ -101,6 +101,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/articulo/listByCategory','ArticuloController@listByCategory');
         Route::get('/articulo/listBySku','ArticuloController@listBySku');
         Route::get('/articulo/listarExcelFiltros','ArticuloController@listarExcelFiltros');
+        Route::get('/articulo/getLinks','ArticuloController@getLinks');
+        Route::put('/articulo/deleteLink','ArticuloController@deleteLink');
 
         Route::get('/proveedor', 'ProveedorController@index');
         Route::post('/proveedor/registrar', 'ProveedorController@store');

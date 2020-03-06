@@ -127,6 +127,13 @@
                                             <button type="button" @click="verArticulo(articulo)" class="btn btn-success btn-sm">
                                                 <i class="icon-eye"></i>
                                             </button> &nbsp;
+                                           <!--  <template v-if="articulo.file">
+                                                <lightbox class="m-0" album="" :src="'https://drive.google.com/uc?id='+articulo.file">
+                                                    <button type="button" class="btn btn-outline-success btn-sm">
+                                                        <i class="fa fa-picture-o"></i>
+                                                    </button>&nbsp;
+                                                </lightbox>
+                                            </template> -->
                                         </div>
                                     </td>
                                     <td v-text="articulo.codigo"></td>
@@ -315,11 +322,12 @@
                                 </div>
                                 <input type="number" min="1" v-model="stock" class="form-control" placeholder="" disabled/>
                             </div>
-                            <div class="input-group input-group-sm col-12 col-lg-3">
-                                <div class="custom-file">
-                                    <label class="custom-file-label">Imagen </label>
-                                    <input type="file" class="custom-file-input form-control-sm" :src="imagen" @change="obtenerImagen">
+
+                            <div class="input-group input-group-sm col-12 col-lg-3 mb-3">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Imagen</span>
                                 </div>
+                                <input type="text" v-model="file" class="form-control" placeholder="ID Drive Imagen"/>
                             </div>
                             <div class="input-group input-group-sm col-12 col-lg-4 mb-3">
                                 <div class="input-group-append">
@@ -333,10 +341,30 @@
                                 </div>
                                 <textarea class="form-control rounded-0" style="resize: none;" rows="3" maxlength="256" v-model="observacion"></textarea>
                             </div>
+                            <div class="col-12 col-lg-4 mb-3">
+                                <barcode :value="codigo" :options="{format: 'EAN-13'}">
+                                    Generando código de barras.
+                                </barcode>
+                            </div>
 
                         </div>
-                        <div class="form-group row d-flex justify-content-around">
+                        <div v-show="errorArticulo" class="form-group row div-error">
+                            <div class="text-center text-error">
+                            <div v-for="error in errorMostrarMsjArticulo" :key="error" v-text="error"></div>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group row d-flex justify-content-around">
                             <div class="d-flex justify-content-center">
+                                <template v-if="imagenMinatura !=''">
+                                    <div>
+                                        <lightbox class="m-0" album="" :src="'https://drive.google.com/uc?id='+file">
+                                            <figure>
+                                                <img width="300" height="200" class="img-responsive img-fluid imgcenter"
+                                                    :src="'https://drive.google.com/uc?id='+file" alt="Foto del artículo">
+                                            </figure>
+                                        </lightbox>&nbsp;
+                                    </div>
+                                </template>
                                 <template v-if="imagenMinatura !='images/null'">
                                     <div>
                                         <lightbox class="m-0" album="" :src="imagen">
@@ -362,10 +390,87 @@
                                     Generando código de barras.
                                 </barcode>
                             </div>
+                        </div> -->
+                        <div class="form-group row" v-if="arrayImagenes.length">
+                            <div class="col-12 d-flex justify-content-start b-b-1">
+                                <div><h3>Imagenes Actuales</h3></div>
+                            </div>
+                            <div class="col-12 col-md-12 mt-2">
+                                <div>
+                                    <div class="form-inline">
+                                        <div v-for="img in arrayImagenes" :key="img.id">
+                                            <div class="card mt-1 mr-3" style="width:200px">
+                                                <div class="card-body p-0">
+                                                    <template v-if="img.direction">
+                                                        <lightbox class="m-0" album="" :src="'https://drive.google.com/uc?id='+img.direction">
+                                                            <figure class="m-0">
+                                                                <img class="img-responsive img-fluid imglink" width="200" height="100"
+                                                                    :src="'https://drive.google.com/uc?id='+img.direction" alt="Foto del enlace">
+                                                            </figure>
+                                                        </lightbox>
+                                                    </template>
+                                                    <template v-else>
+                                                        <span class="badge badge-danger">URL NO VALIDA O ARCHIVO DAÑADO</span>
+                                                    </template>
+                                                </div>
+                                                <div class="card-footer p-2">
+                                                    <span style="font-size:12px"> Registrado el {{ convertDate(img.fecha) }}</span>&nbsp;
+                                                    <span style="font-size:12px">por {{ img.nombre }} </span>
+                                                    <button class="btn btn-danger btn-sm btnElimImg" type="button" @click="eliminarImgLink(img.id,articulo_id)">Eliminar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div v-show="errorArticulo" class="form-group row div-error">
-                            <div class="text-center text-error">
-                            <div v-for="error in errorMostrarMsjArticulo" :key="error" v-text="error"></div>
+                        <div class="form-group row">
+                            <div class="col-12 d-flex justify-content-start b-b-1">
+                                <div><h3>Añadir Imagenes</h3></div>
+                                <div>
+                                    <button type="button" class="btn btn-primary rounded-circle btn-sm ml-2" @click="agregarLink()">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-6 mt-2" v-if="arrayLinks.length">
+                                <div class="form-inline mt-1 col-12" v-for="(link,index) in arrayLinks" :key="link.id">
+                                    <div class="input-group input-group-sm col-10">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Enlace {{ index + 1 }} </span>
+                                        </div>
+                                        <input type="text" v-model="link.url" class="form-control" placeholder="Enlace GoogleDrive" @change="getImageDrive(index,link.url)"/>
+                                    </div>
+                                    <button type="button" class="btn btn-success btn-sm mr-1" @click="getImageDrive(index,link.url)" v-if="link.url != ''">
+                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" @click="eliminarLink(index)">&times;</button>
+                                </div>
+                            </div>
+                            <div class="col-6 mt-2" v-if="arrayLinks.length">
+                                <div>
+                                    <div class="form-inline">
+                                        <div v-for="(link,index) in arrayLinks" :key="link.id">
+                                            <div class="card m-0 mr-3">
+                                                <div class="card-body p-0">
+                                                    <template v-if="link.direction">
+                                                        <lightbox class="m-0" album="" :src="'https://drive.google.com/uc?id='+link.direction">
+                                                            <figure class="m-0">
+                                                                <img class="img-responsive img-fluid imglink" width="200" height="100"
+                                                                    :src="'https://drive.google.com/uc?id='+link.direction" alt="Foto del enlace">
+                                                            </figure>
+                                                        </lightbox>
+                                                    </template>
+                                                    <template v-else>
+                                                        <span class="badge badge-danger">VALIDAR LA IMAGEN</span>
+                                                    </template>
+                                                </div>
+                                                <div class="card-footer p-2">Imagen enlace {{ index + 1 }}</div>
+                                                <!-- <span>Imagen enlace {{ index + 1 }} </span> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -490,27 +595,33 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                        <div class="input-group input-group-sm col-12 col-lg-4 mb-3">
                             <div class="input-group-append">
                                 <span class="input-group-text">Descripción</span>
                             </div>
                             <textarea class="form-control rounded-0" style="background: #fff;" rows="3" maxlength="256" v-text="descripcion" disabled></textarea>
                         </div>
-                        <div class="input-group input-group-sm col-12 col-lg-6 mb-3">
+                        <div class="input-group input-group-sm col-12 col-lg-4 mb-3">
                             <div class="input-group-append">
                                 <span class="input-group-text">Observaciones</span>
                             </div>
                             <!-- <textarea class="form-control rounded-0" style="resize: none;" rows="3" maxlength="256" v-model="observacion"></textarea> -->
                             <textarea class="form-control rounded-0" style="background: #fff;" rows="3" maxlength="256" v-text="observacion" disabled></textarea>
                         </div>
+                        <div class="col-12 col-lg-4 mb-3">
+                            <barcode :value="codigo" :options="{format: 'EAN-13'}">
+                                Generando código de barras.
+                            </barcode>
+                        </div>
                     </div>
-                    <div class="form-group row d-flex justify-content-around">
+                    <!-- <div class="form-group row d-flex justify-content-around">
                         <div class="d-flex justify-content-center">
-                            <template v-if="imagenMinatura !='images/null'">
+                            <template v-if="imagenMinatura !=''">
                                 <div>
-                                    <lightbox class="m-0" album="" :src="imagen">
+                                    <lightbox class="m-0" album="" :src="'https://drive.google.com/uc?id='+file">
                                         <figure>
-                                            <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
+                                            <img width="300" height="200" class="img-responsive img-fluid imgcenter"
+                                                :src="'https://drive.google.com/uc?id='+file" alt="Foto del artículo">
                                         </figure>
                                     </lightbox>&nbsp;
                                 </div>
@@ -521,6 +632,40 @@
                                 Generando código de barras.
                             </barcode>
                         </div>
+                    </div> -->
+                    <div class="form-group row">
+                        <div class="col-12 d-flex justify-content-start b-b-1">
+                            <div><h3>Imagenes</h3></div>
+                        </div>
+                        <div class="col-12 col-md-12 mt-2" v-if="arrayImagenes.length">
+                            <div>
+                                <div class="form-inline">
+                                    <div v-for="img in arrayImagenes" :key="img.id">
+                                        <div class="card mt-1 mr-3" style="width:200px">
+                                            <div class="card-body p-0">
+                                                <template v-if="img.direction">
+                                                    <lightbox class="m-0" album="" :src="'https://drive.google.com/uc?id='+img.direction">
+                                                        <figure class="m-0">
+                                                            <img class="img-responsive img-fluid imglink" width="200" height="100"
+                                                                :src="'https://drive.google.com/uc?id='+img.direction" alt="Foto del enlace">
+                                                        </figure>
+                                                    </lightbox>
+                                                </template>
+                                                <template v-else>
+                                                    <span class="badge badge-danger">URL NO VALIDA O ARCHIVO DAÑADO</span>
+                                                </template>
+                                            </div>
+                                            <div class="card-footer p-2">
+                                                <span style="font-size:12px"> Registrado el {{ convertDate(img.fecha) }}</span>&nbsp;
+                                                <span style="font-size:12px">por {{ img.nombre }} </span>
+                                                <button class="btn btn-danger btn-sm btnElimImg" @click="eliminarImgLink(img.id,articulo_id)">Eliminar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-12 mt-2" v-else><h4>Añade imagenes del articulo!</h4></div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-12">
@@ -532,6 +677,7 @@
             </template>
             <!-- Fin Ver Articulo -->
 
+            <!-- Cortar Placa -->
             <template v-if="listado == 3">
                 <div class="card-body">
                     <div class="form-group row">
@@ -734,298 +880,10 @@
                     </div>
                 </div>
             </template>
+            <!-- Fin Cortar Placa -->
         </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
-    <!--Inicio del modal agregar/actualizar-->
-    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-primary modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" v-text="tituloModal"></h4>
-                    <button type="button" class="close" @click="cerrarModal()" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-                        <div class="form-group row" v-if="isEdition && estado">
-                            <label class="col-md-3 form-control-label" for="text-input">Comprometido: </label>
-                            <div class="col-md-3">
-                                <toggle-button @change="cambiarComprometido(articulo_id)" v-model="btnComprometido" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
-                            </div>
-                            <label class="col-md-3 form-control-label" for="text-input">Actualizo: </label>
-                            <p  class="col-md-3" v-text="usuario"></p>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Material</label>
-                            <div class="col-md-9">
-                            <select class="form-control" v-model="idcategoria">
-                                <option value="0" disabled>Seleccione un material</option>
-                                <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                            </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Código</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="codigo" class="form-control" placeholder="Código de barras"/>
-                                <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                                    Generando código de barras.
-                                </barcode>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Código de material</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="sku" class="form-control" placeholder="Código de material"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Terminado</label>
-                            <div class="col-md-9">
-                                <select class="form-control" v-model="terminado">
-                                    <option value='' disabled>Seleccione un de terminado</option>
-                                    <option value="Pulido">Pulido</option>
-                                    <option value="Al Corte">Al Corte</option>
-                                    <option value="Leather">Leather</option>
-                                    <option value="Mate">Mate</option>
-                                    <option value="Seda">Seda</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Largo</label>
-                            <div class="col-md-9">
-                                <input type="number" v-model="largo" min="1" class="form-control" placeholder=""/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Alto</label>
-                            <div class="col-md-9">
-                                <input type="number" min="1" v-model="alto" class="form-control" placeholder=""/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Metros<sup>2</sup></label>
-                            <div class="col-md-9">
-                                <input type="number" readonly :value="calcularMts" class="form-control"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Espesor</label>
-                            <div class="col-md-9">
-                                <input type="number" min="1" v-model="espesor" class="form-control" placeholder=""/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Precio m<sup>2</sup></label>
-                            <div class="col-md-9">
-                                <input type="number" min="1" value="0" step="any" v-model="precio_venta" class="form-control" placeholder=""/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Bodega de descarga</label>
-                            <div class="col-md-9">
-                                <select class="form-control" v-model="ubicacion">
-                                    <option value="" disabled>Seleccione una bodega de descarga</option>
-                                    <option value="Del Musico">Del Músico</option>
-                                    <option value="Escultores">Escultores</option>
-                                    <option value="Sastres">Sastres</option>
-                                    <option value="Mecanicos">Mecánicos</option>
-                                    <option value="Tractorista">Tractorista</option>
-                                    <option value="San Luis">San Luis</option>
-                                    <option value="Bodega L">Bodega L</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Stock</label>
-                            <div class="col-md-9">
-                                <input type="number" min="1" v-model="stock" class="form-control" placeholder=""/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
-                            <div class="col-md-9">
-                                <input type="email" v-model="descripcion" class="form-control" placeholder="Ingrese descripción"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="email-input">observacion</label>
-                            <div class="col-md-9">
-                                <input type="email" v-model="observacion" class="form-control" placeholder="Ingrese las observaciones"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Origen</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="origen" class="form-control" placeholder="Origen"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Contenedor</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="contenedor" class="form-control" placeholder="Contenedor"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Fecha de llegada</label>
-                            <div class="col-md-9">
-                                <input type="date" v-model="fecha_llegada" class="form-control" placeholder="Fecha de llegada"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Imagen</label>
-                            <div class="col-md-9">
-                                <input type="file" :src="imagen" @change="obtenerImagen" class="form-control-file">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <template v-if="imagenMinatura !='images/null'">
-                                <div class="col-3"></div>
-                                <div class="col-5">
-                                    <lightbox class="m-0" album="" :src="imagen">
-                                        <figure>
-                                            <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
-                                        </figure>
-                                    </lightbox>&nbsp;
-                                </div>
-                                <div class="col-1" v-if="showElim">
-                                    <button type="button" class="btn btn-danger btn-circle float-left" aria-label="Eliminar imagen" @click="eliminarImagen(articulo_id,imagen)">
-                                        <i class="fa fa-times"></i>
-                                    </button>&nbsp;
-                                </div>
-                                <div class="col-3"></div>
-                            </template>
-                        </div>
-                        <div v-show="errorArticulo" class="form-group row div-error">
-                            <div class="text-center text-error">
-                            <div v-for="error in errorMostrarMsjArticulo" :key="error" v-text="error"></div>
-                            </div>
-                        </div>
-                    </form>
-                    <hr class="d-block d-sm-block d-md-none">
-                    <div class="float-right d-block d-sm-block d-md-none">
-                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarArticulo()">Guardar</button>
-                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarArticulo()">Actualizar</button>
-                    </div>
-                </div>
-                <div class="modal-footer d-none d-sm-none d-md-block">
-                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarArticulo()">Guardar</button>
-                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarArticulo()">Actualizar</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!--Fin del modal-->
-
-     <!--Inicio del modal Visualizar articulo-->
-    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal2}" data-spy="scroll"  role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-info modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal + sku"></h4>
-            <button type="button" class="close" @click="cerrarModal2()" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-              <h1 class="text-center" v-text="sku"></h1>
-                <template v-if="file">
-                    <!-- <lightbox class="m-0" album="" :src="'http://inventariostroystone.com/images/'+file"> -->
-                    <lightbox class="m-0" album="" :src="'images/'+file">
-                        <!-- <img class="img-responsive img-fluid imgcenter" width="500px" :src="'http://inventariostroystone.com/images/'+file"> -->
-                        <img class="img-responsive img-fluid imgcenter" width="500px" :src="'images/'+file">
-                    </lightbox>&nbsp;
-                </template>
-                <table class="table table-bordered table-striped table-sm text-center table-hover">
-                    <thead>
-                        <tr class="text-center">
-                            <th class="text-center" colspan="2">Detalle del artículo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <tr >
-                        <td><strong>CODIGO DE MATERIAL</strong></td>
-                        <td v-text="sku"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>TERMINADO</strong></td>
-                        <td v-text="terminado"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>LARGO</strong></td>
-                        <td v-text="largo"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ALTO</strong></td>
-                        <td v-text="alto"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>METROS<sup>2</sup> </strong></td>
-                        <td v-text="metros_cuadrados"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td v-text="espesor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>PRECIO</strong></td>
-                        <td v-text="precio_venta"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>BODEGA DE DESCARGA</strong></td>
-                        <td v-text="ubicacion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>STOCK</strong></td>
-                        <td v-text="stock"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>DESCRIPCION</strong></td>
-                        <td v-text="descripcion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>OBSERVACIONES</strong></td>
-                        <td v-text="observacion"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>CONTENEDOR</strong></td>
-                        <td v-text="contenedor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>ESPESOR</strong></td>
-                        <td v-text="espesor"></td>
-                    </tr>
-                    <tr >
-                        <td><strong>FECHA DE LLEGADA</strong></td>
-                        <td v-text="fecha_llegada"></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <barcode :value="codigo" :options="{formar: 'EAN-13'}">
-                            Sin código de barras.
-                    </barcode>
-                </div>
-                <hr class="d-block d-sm-block d-md-none">
-                <div class="float-right d-block d-sm-block d-md-none">
-                    <button type="button" class="btn btn-secondary float-right" @click="cerrarModal2()">Cerrar</button>
-                </div>
-          </div>
-          <div class="modal-footer d-none d-sm-none d-md-block">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal2()">Cerrar</button>
-          </div>
-        </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!--Fin del modal-->
 
     <!-- Modal exportar excel -->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal3}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
@@ -1069,8 +927,6 @@
     </div>
     <!-- Fin exportar excel -->
 
-
-
   </main>
 </template>
 
@@ -1079,6 +935,7 @@
 import VueBarcode from 'vue-barcode';
 import VueLightbox from 'vue-lightbox';
 import ToggleButton from 'vue-js-toggle-button';
+import moment from 'moment';
 Vue.component("Lightbox",VueLightbox);
 Vue.use(ToggleButton);
 export default {
@@ -1152,8 +1009,9 @@ export default {
             savedA : 0,
             savedB : 0,
             precioA : 0,
-            precioB : 0
-
+            precioB : 0,
+            arrayLinks : [],
+            arrayImagenes : []
         };
     },
     components: {
@@ -1217,7 +1075,7 @@ export default {
                 let resultado = 0;
                 resultado = me.metros_cuadrados - (me.metros_cuadradosA + me.metros_cuadradosB);
                 return resultado;
-            },
+            }
         },
     methods: {
         listarArticulo (page,buscar,criterio,bodega,acabado,estado){
@@ -1311,7 +1169,6 @@ export default {
                     'fecha_llegada' : this.fecha_llegada,
                     'file' : this.file
                 }).then(function (response) {
-                    me.cerrarModal();
                     me.listarArticulo(1,'','sku','','',1);
                 }).catch(function (error) {
                     console.log(error);
@@ -1348,7 +1205,8 @@ export default {
                 'contenedor' : this.contenedor,
                 'fecha_llegada' : this.fecha_llegada,
                 'file' : this.file,
-                'id': this.articulo_id
+                'id': this.articulo_id,
+                'enlaces' : this.arrayLinks
             })
             .then(function(response) {
                 Swal.fire(
@@ -1452,118 +1310,6 @@ export default {
 
             return this.errorArticulo;
         },
-        cerrarModal() {
-            this.modal = 0;
-            this.tituloModal = "";
-            this.idcategoria = 0;
-            this.codigo = '';
-            this.sku = '';
-            this.terminado = '';
-            this.largo = 0;
-            this.alto = 0;
-            this.metros_cuadrados = 0;
-            this.espesor = 0;
-            this.precio_venta  = 0;
-            this.ubicacion = '';
-            this.stock = 1;
-            this.descripcion= '';
-            this.observacion = '';
-            this.origen = '';
-            this.contenedor  = '';
-            this.fecha_llegada = '';
-            this.file = '';
-            this.errorArticulo = 0;
-            this.imagenMinatura = '';
-            this.btnComprometido = '';
-            this.comprometido = 0;
-            this.usuario = '';
-            this.isEdition = false;
-            this.file = "";
-            this.showElim = false;
-            this.listarArticulo(1,'','sku','','',1);
-
-        },
-        abrirModal(modelo, accion, data = []) {
-            switch (modelo) {
-                case "articulo": {
-                    switch (accion) {
-                        case "registrar": {
-                            this.modal = 1;
-                            this.tituloModal = "Registrar Artículo";
-                            this.idcategoria = 0;
-                            this.codigo = '';
-                            this.sku = '';
-                            this.terminado = '';
-                            this.largo = 0;
-                            this.alto = 0;
-                            this.metros_cuadrados = 0;
-                            this.espesor = 2;
-                            this.precio_venta = 0;
-                            this.ubicacion = '';
-                            this.stock = 1;
-                            this.descripcion= '';
-                            this.observacion = '';
-                            this.origen = '';
-                            this.contenedor = '';
-                            this.fecha_llegada = '';
-                            this.file = '';
-                            this.tipoAccion = 1;
-                            this.imagenMinatura = 'images/null';
-                            this.showElim = false;
-                            break;
-                        }
-                        case "actualizar": {
-                            this.modal = 1;
-                            this.tituloModal = "Actualizar Artículo";
-                            this.tipoAccion = 2;
-                            this.articulo_id = data['id'];
-                            this.idcategoria = data['idcategoria'];
-                            this.codigo = data['codigo'];
-                            this.sku = data['sku'];
-                            this.terminado = data['terminado'];
-                            this.largo = data['largo'];
-                            this.alto = data['alto'];
-                            this.metros_cuadrados = data['metros_cuadrados'];
-                            this.espesor = data['espesor'];
-                            this.precio_venta = data['precio_venta'];
-                            this.ubicacion = data['ubicacion'];
-                            this.stock = data['stock'];
-                            this.descripcion= data['descripcion'];
-                            this.observacion = data['observacion'];
-                            this.origen = data['origen'];
-                            this.contenedor = data['contenedor'];
-                            this.fecha_llegada = data['fecha_llegada'];
-                            /* this.imagenMinatura = 'http://inventariostroystone.com/images/' + data['file']; */
-                            this.estado = data['condicion'];
-                            this.comprometido = data['comprometido'];
-                            this.usuario = data['usuario'];
-                            this.isEdition = true;
-
-                            if(this.comprometido == 1){
-                                this.btnComprometido = true;
-                            }else{
-                                this.btnComprometido = false;
-                            }
-
-                            let hasImg = 'images/' + data['file'];
-
-                            console.log("HasImg: " + hasImg);
-
-                            if(hasImg != 'images/null'){
-                                this.showElim = true;
-                                this.imagenMinatura = 'images/' + data['file'];
-                            }else{
-                                this.showElim = false;
-                                this.imagenMinatura = 'images/null';
-                            }
-
-                            break;
-                        }
-                    }
-                }
-            }
-            this.selectCategoria();
-        },
         cambiarComprometido(id){
           let me = this;
             if(me.btnComprometido == true){
@@ -1579,58 +1325,6 @@ export default {
             }).catch(function (error) {
                 console.log(error);
             });
-        },
-        abrirModal2(modelo, accion, data = []) {
-            switch (modelo) {
-                case "articulo": {
-                    switch (accion) {
-                        case "visualizar": {
-                            this.modal2 = 1;
-                            this.tituloModal = "Detalle de artículo ";
-                            this.idcategoria = data['idcategoria'];
-                            this.codigo = data['codigo'];
-                            this.sku = data['sku'];
-                            this.terminado = data['terminado'];
-                            this.largo = data['largo'];
-                            this.alto = data['alto'];
-                            this.metros_cuadrados = data['metros_cuadrados'];
-                            this.espesor = data['espesor'];
-                            this.precio_venta = data['precio_venta'];
-                            this.ubicacion = data['ubicacion'];
-                            this.stock = data['stock'];
-                            this.descripcion= data['descripcion'];
-                            this.observacion = data['observacion'];
-                            this.origen = data['origen'];
-                            this.contenedor  = data['contenedor'];
-                            this.fecha_llegada = data['fecha_llegada'];
-                            this.file = data['file'];
-                            break;
-                        }
-                    }
-                }
-            }
-            this.selectCategoria();
-        },
-        cerrarModal2() {
-            this.modal2 = 0;
-            this.tituloModal = "";
-            this.idcategoria = 0;
-            this.codigo = '';
-            this.sku = '';
-            this.terminado = '';
-            this.largo = 0;
-            this.alto = 0;
-            this.metros_cuadrados = 0;
-            this.espesor = 0;
-            this.ubicacion = '';
-            this.stock = 1;
-            this.descripcion= '';
-            this.observacion = '';
-            this.origen = '';
-            this.fecha_llegada = '';
-            this.file = '';
-            this.errorArticulo = 0;
-            this.imagenMinatura = '';
         },
         eliminarImagen(id,imagen){
             var arreglo = imagen.split("/",2);
@@ -1729,6 +1423,7 @@ export default {
             this.comprometido = data['comprometido'];
             this.usuario = data['usuario'];
             this.isEdition = true;
+            this.file = data['file'];
 
             if(this.comprometido == 1){
                 this.btnComprometido = true;
@@ -1739,6 +1434,14 @@ export default {
             let hasImg = 'images/' + data['file'];
 
             if(data['file']){
+                this.imagenMinatura = 'https://drive.google.com/uc?id='+data['file'];
+            }else{
+                this.imagenMinatura = '';
+            }
+
+            this.getLinks(data['id']);
+
+            /* if(data['file']){
                 this.showElim = true;
                 this.imagenMinatura = 'images/' + data['file'];
                 this.remoFile = false;
@@ -1746,7 +1449,7 @@ export default {
                 this.showElim = false;
                 this.imagenMinatura = 'images/null';
                 this.remoFile = false;
-            }
+            } */
 
         },
         closeEdit(){
@@ -1781,6 +1484,7 @@ export default {
             this.showElim = false;
             this.tituloModal = "";
             this.listarArticulo(pagec,this.buscar,this.criterio,this.bodega,this.acabado,this.estadoArt);
+            this.arrayLinks = [];
         },
         verArticulo(data = []){
             //this.selectCategoria();
@@ -1809,6 +1513,7 @@ export default {
             this.comprometido = data['comprometido'];
             this.usuario = data['usuario'];
             this.isEdition = true;
+            this.file = data['file'];
 
             if(this.comprometido == 1){
                 this.btnComprometido = true;
@@ -1816,7 +1521,14 @@ export default {
                 this.btnComprometido = false;
             }
 
-            let hasImg = 'images/' + data['file'];
+            if(data['file']){
+                this.imagenMinatura = 'https://drive.google.com/uc?id='+data['file'];
+            }else{
+                this.imagenMinatura = '';
+            }
+
+            this.getLinks(data['id']);
+            /* let hasImg = 'images/' + data['file'];
 
             if(data['file']){
                 this.showElim = true;
@@ -1826,7 +1538,7 @@ export default {
                 this.showElim = false;
                 this.imagenMinatura = 'images/null';
                 this.remoFile = false;
-            }
+            } */
         },
         closeVer(){
             let pagec = this.pagination.current_page;
@@ -1992,12 +1704,75 @@ export default {
             });
         },
         listarExcelFiltros(criterio,buscar,acabado,bodega,zona){
-            /* $criterio,$buscar,$acabado,$bodega,$zona */
-           /*  console.log(`Criterio : ${ criterio } \n Buscar : ${ buscar } \n Bodega : ${ bodega } \n Acabado : ${ acabado } \n Zona : ${ zona }`);
- */
             window.open('/articulo/listarExcelFiltros?criterio=' + criterio + '&buscar=' + buscar +'&bodega=' + bodega + '&acabado=' + acabado + '&zona=' + zona);
-
         },
+        convertDate(date){
+            moment.locale('es');
+            let me=this;
+            var datec = moment(date).format('DD MMM YYYY hh:mm:ss a');
+            return datec;
+        },
+        agregarLink(){
+            let me = this;
+            me.arrayLinks.push({ url : '', direction : ''});
+        },
+        eliminarLink(index){
+            let me = this;
+            me.arrayLinks.splice(index,1);
+        },
+        getImageDrive(index,url){
+            var convert1 = url.split("d/");
+            var convert2 = convert1[1].split("/");
+            this.arrayLinks[index]['direction'] = convert2[0];
+        },
+        getLinks(id){
+            let me = this;
+            var url= '/articulo/getLinks?id=' + id;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.arrayImagenes = respuesta.links;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        eliminarImgLink(id,idarticulo){
+            let me = this;
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro eliminar esta imagen?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/articulo/deleteLink', {
+                        'id' : id
+                    }).then(function(response) {
+                         me.getLinks(idarticulo);
+                        swalWithBootstrapButtons.fire(
+                            "Eliminado!",
+                            "La imagen ha sido eliminada con éxito.",
+                            "success"
+                        );
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            });
+        }
     },
     mounted() {
         this.listarArticulo(1,this.buscar, this.criterio,this.bodega,this.acabado,this.estadoArt);
@@ -2040,5 +1815,14 @@ export default {
         text-align: center;
         font-size: 13px;
         line-height: 1.42857;
+    }
+    .imglink{
+        max-width : 200px !important;
+        max-height: 150px !important;
+    }
+    .btnElimImg{
+        width: 50%;
+        font-size: 12px;
+        float: right;
     }
 </style>

@@ -16,4 +16,7 @@ class Articulo extends Model
         return $this->belongsTo('App\Categoria');
     }
 
+    public function links(){
+        return $this->morphMany(Link::class,'linkable');
+    }
 }
