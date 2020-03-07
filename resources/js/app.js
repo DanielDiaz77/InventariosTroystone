@@ -45,6 +45,7 @@ Vue.component('consultaactividad', require('./components/ConsultaActividad.vue')
 Vue.component('actividad', require('./components/Actividad.vue').default);
 Vue.component('recadero', require('./components/Call.vue').default);
 Vue.component('project', require('./components/Project.vue').default);
+Vue.component('galeria', require('./components/Galeria.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

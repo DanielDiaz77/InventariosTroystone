@@ -34,11 +34,12 @@
                         </div>
                         <div class="input-group" v-if="userrol == 1">
                             <select class="form-control mb-1" v-model="status" @change="listarPersona(1,buscar,criterio,status,zona,actives)">
+                                <option value="">Todos</option>
                                 <option value="1">Activos</option>
                                 <option value="0">Eliminados</option>
                             </select>
                         </div>
-                        <div class="input-group ml-5">
+                        <div class="input-group ml-5" v-if="userrol == 1">
                             <button class="btn btn-light mb-1"><i style="color:red;" class="fa fa-map-marker"></i> Area</button>
                             <select class="form-control mb-1" v-model="zona" @change="listarPersona(1,buscar,criterio,status,zona,actives)">
                                 <option value="">Todo</option>
@@ -978,7 +979,7 @@ export default {
             errorTarea: 0,
             errorMostrarMsjTarea: [],
             dateAct : "",
-            status : 1,
+            status : '',
             arrayFiles : [],
             docsArray : [],
 

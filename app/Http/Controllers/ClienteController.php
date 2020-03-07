@@ -14,15 +14,433 @@ class ClienteController extends Controller
         if(!$request->ajax()) return redirect('/');
 
         $usrol = \Auth::user()->idrol;
-        $usid = \Auth::user()->id;
-        $usvend = \Auth::user()->id;
+        $usarea = \Auth::user()->area;
+
         $buscar = $request->buscar;
         $criterio = $request->criterio;
         $estado = $request->status;
         $zona = $request->zona;
         $actives = $request->actives;
 
-        if($actives == ''){
+        if($usrol == 1){
+            if($buscar == ''){
+                if($zona == ''){
+                    if($estado == ''){
+                        if($actives == ''){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'Y'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNotNull('ventas.id')
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'N'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNull('ventas.id')
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }
+                    }else{
+                        if($actives == ''){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->where([['personas.active',$estado]])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'Y'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNotNull('ventas.id')
+                            ->where([['personas.active',$estado]])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'N'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNull('ventas.id')
+                            ->where([['personas.active',$estado]])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }
+                    }
+                }else{
+                    if($estado == ''){
+                        if($actives == ''){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->where([['personas.area',$zona]])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'Y'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNotNull('ventas.id')
+                            ->where([['personas.area',$zona]])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'N'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNull('ventas.id')
+                            ->where([['personas.area',$zona]])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }
+                    }else{
+                        if($actives == ''){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->where([['personas.active',$estado],['personas.area',$zona]])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'Y'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNotNull('ventas.id')
+                            ->where([['personas.active',$estado],['personas.area',$zona]])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'N'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNull('ventas.id')
+                            ->where([['personas.active',$estado],['personas.area',$zona]])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }
+                    }
+                }
+            }
+            else{
+                if($zona == ''){
+                    if($estado == ''){
+                        if($actives == ''){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->where([['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'Y'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNotNull('ventas.id')
+                            ->where([['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'N'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNull('ventas.id')
+                            ->where([['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }
+                    }else{
+                        if($actives == ''){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->where([['personas.active',$estado],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'Y'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNotNull('ventas.id')
+                            ->where([['personas.active',$estado],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'N'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNull('ventas.id')
+                            ->where([['personas.active',$estado],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }
+                    }
+                }else{
+                    if($estado == ''){
+                        if($actives == ''){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->where([['personas.area',$zona],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'Y'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNotNull('ventas.id')
+                            ->where([['personas.area',$zona],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'N'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNull('ventas.id')
+                            ->where([['personas.area',$zona],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }
+                    }else{
+                        if($actives == ''){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->where([['personas.active',$estado],['personas.area',$zona],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'Y'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNotNull('ventas.id')
+                            ->where([['personas.active',$estado],['personas.area',$zona],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }elseif($actives == 'N'){
+                            $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                            ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                            ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                            ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                                'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                                'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                            ->whereNull('ventas.id')
+                            ->where([['personas.active',$estado],['personas.area',$zona],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                            ->orderBy('id', 'desc')->paginate(12);
+                        }
+                    }
+                }
+            }
+        }else{
+            if($buscar == ''){
+                if($estado == ''){
+                    if($actives == ''){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->where([['personas.area',$usarea]])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }elseif($actives == 'Y'){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                        ->whereNotNull('ventas.id')
+                        ->where([['personas.area',$usarea]])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }elseif($actives == 'N'){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                        ->whereNull('ventas.id')
+                        ->where([['personas.area',$usarea]])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }
+                }else{
+                    if($actives == ''){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->where([['personas.active',$estado],['personas.area',$usarea]])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }elseif($actives == 'Y'){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                        ->whereNotNull('ventas.id')
+                        ->where([['personas.active',$estado],['personas.area',$usarea]])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }elseif($actives == 'N'){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                        ->whereNull('ventas.id')
+                        ->where([['personas.active',$estado],['personas.area',$usarea]])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }
+                }
+            }
+            else{
+                if($estado == ''){
+                    if($actives == ''){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->where([['personas.area',$usarea],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }elseif($actives == 'Y'){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                        ->whereNotNull('ventas.id')
+                        ->where([['personas.area',$usarea],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }elseif($actives == 'N'){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                        ->whereNull('ventas.id')
+                        ->where([['personas.area',$usarea],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }
+                }else{
+                    if($actives == ''){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->where([['personas.active',$estado],['personas.area',$usarea],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }elseif($actives == 'Y'){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                        ->whereNotNull('ventas.id')
+                        ->where([['personas.active',$estado],['personas.area',$usarea],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }elseif($actives == 'N'){
+                        $personas = Persona::leftjoin('users','personas.idusuario','=','users.id')
+                        ->leftjoin('ventas','ventas.idcliente','=','personas.id')
+                        ->select('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario as vendedor','users.id as idvendedor')
+                        ->groupBy('personas.id','personas.nombre','personas.ciudad','personas.domicilio','personas.email','personas.num_documento',
+                            'personas.company','personas.tel_company','personas.telefono','personas.rfc','personas.tipo','personas.area',
+                            'personas.active','personas.cfdi','personas.observacion','users.usuario','users.id')
+                        ->whereNull('ventas.id')
+                        ->where([['personas.active',$estado],['personas.area',$usarea],['personas.'.$criterio, 'like', '%'. $buscar . '%']])
+                        ->orderBy('id', 'desc')->paginate(12);
+                    }
+                }
+            }
+        }
+
+
+        /* if($actives == ''){
             if($usrol == 2){
                 if($buscar==''){
                     if($zona == ''){
@@ -340,7 +758,7 @@ class ClienteController extends Controller
                     }
                 }
             }
-        }
+        } */
 
 
         return [
@@ -353,8 +771,7 @@ class ClienteController extends Controller
                 'to'            => $personas->lastItem(),
             ],
             'personas' => $personas,
-            'userrol' => $usrol,
-            'userid' => $usid
+            'userrol' => $usrol
         ];
     }
 

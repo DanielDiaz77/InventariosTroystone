@@ -95,6 +95,10 @@
                 <project></project>
             </template>
 
+            <template v-if="menu==23">
+                <galeria></galeria>
+            </template>
+
         @elseif(Auth::user()->idrol == 2)
 
             <template v-if="menu==0">
@@ -169,6 +173,10 @@
                 <project></project>
             </template>
 
+            <template v-if="menu==23">
+                <galeria></galeria>
+            </template>
+
         @elseif(Auth::user()->idrol == 3)
 
             <template v-if="menu==0">
@@ -221,6 +229,11 @@
             <template v-if="menu==21">
                 <recadero></recadero>
             </template>
+
+            <template v-if="menu==23">
+                <galeria></galeria>
+            </template>
+
         @else
 
         @endif
