@@ -848,19 +848,21 @@ class ClienteController extends Controller
         if (!$request->ajax()) return redirect('/');
 
         $usrol = \Auth::user()->idrol;
+
         if($usrol == 2){
+            $usarea = \Auth::user()->area;
             $usvend = \Auth::user()->id;
 
             $filtro = $request->filtro;
 
             $clientes = Persona::where([
                 ['nombre','like','%'.$filtro.'%'],
-                ['idusuario',$usvend],
+                ['area',$usarea],
                 ['active',1]
             ])
             ->orWhere([
                 ['rfc','like','%'.$filtro.'%'],
-                ['idusuario',$usvend],
+                ['area',$usarea],
                 ['active',1]
             ])
             ->select('id','nombre','rfc','tipo','telefono','company','tel_company','observacion','cfdi','num_documento')
