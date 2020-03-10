@@ -12,12 +12,62 @@ use App\Link;
 class GalleryController extends Controller
 {
     public function index(Request $request){
-        $galerias = Gallery::join('users','users.id','galleries.user_id')
-        ->leftjoin('personas', 'users.id','=','personas.id')
-        ->select('galleries.id','galleries.nombre','galleries.descripcion',
-            'galleries.lote','galleries.cover','galleries.fecha_hora',
-            'galleries.estado','galleries.area','personas.nombre as usuario')
-        ->orderBy('galleries.fecha_hora','desc')->paginate(12);
+        $buscar = $request->buscar;
+        $criterio = $request->criterio;
+        $estado = $request->estado;
+
+        if($buscar == ''){
+            if($estado == ''){
+                $galerias = Gallery::join('users','users.id','galleries.user_id')
+                ->leftjoin('personas', 'users.id','=','personas.id')
+                ->select('galleries.id','galleries.nombre','galleries.descripcion',
+                    'galleries.lote','galleries.cover','galleries.fecha_hora',
+                    'galleries.estado','galleries.area','personas.nombre as usuario')
+                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+            }elseif($estado == 'Vigente'){
+                $galerias = Gallery::join('users','users.id','galleries.user_id')
+                ->leftjoin('personas', 'users.id','=','personas.id')
+                ->select('galleries.id','galleries.nombre','galleries.descripcion',
+                    'galleries.lote','galleries.cover','galleries.fecha_hora',
+                    'galleries.estado','galleries.area','personas.nombre as usuario')
+                ->where([['galleries.estado','Vigente']])
+                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+            }elseif($estado == 'Desactivada'){
+                $galerias = Gallery::join('users','users.id','galleries.user_id')
+                ->leftjoin('personas', 'users.id','=','personas.id')
+                ->select('galleries.id','galleries.nombre','galleries.descripcion',
+                    'galleries.lote','galleries.cover','galleries.fecha_hora',
+                    'galleries.estado','galleries.area','personas.nombre as usuario')
+                ->where([['galleries.estado','Desactivada']])
+                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+            }
+        }else{
+            if($estado == ''){
+                $galerias = Gallery::join('users','users.id','galleries.user_id')
+                ->leftjoin('personas', 'users.id','=','personas.id')
+                ->select('galleries.id','galleries.nombre','galleries.descripcion',
+                    'galleries.lote','galleries.cover','galleries.fecha_hora',
+                    'galleries.estado','galleries.area','personas.nombre as usuario')
+                ->where([['galleries.'.$criterio, 'like', '%'. $buscar . '%']])
+                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+            }elseif($estado == 'Vigente'){
+                $galerias = Gallery::join('users','users.id','galleries.user_id')
+                ->leftjoin('personas', 'users.id','=','personas.id')
+                ->select('galleries.id','galleries.nombre','galleries.descripcion',
+                    'galleries.lote','galleries.cover','galleries.fecha_hora',
+                    'galleries.estado','galleries.area','personas.nombre as usuario')
+                ->where([['galleries.estado','Vigente'],['galleries.'.$criterio, 'like', '%'. $buscar . '%']])
+                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+            }elseif($estado == 'Desactivada'){
+                $galerias = Gallery::join('users','users.id','galleries.user_id')
+                ->leftjoin('personas', 'users.id','=','personas.id')
+                ->select('galleries.id','galleries.nombre','galleries.descripcion',
+                    'galleries.lote','galleries.cover','galleries.fecha_hora',
+                    'galleries.estado','galleries.area','personas.nombre as usuario')
+                ->where([['galleries.estado','Desactivada'],['galleries.'.$criterio, 'like', '%'. $buscar . '%']])
+                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+            }
+        }
 
         return [
             'pagination' => [
@@ -28,7 +78,8 @@ class GalleryController extends Controller
                 'from'          => $galerias->firstItem(),
                 'to'            => $galerias->lastItem(),
             ],
-            'galerias' => $galerias
+            'galerias' => $galerias,
+            'request' => $request->all()
         ];
     }
 
@@ -49,6 +100,7 @@ class GalleryController extends Controller
             $galeria->fecha_hora  = $mytime;
             $galeria->area        = $request->area;
             $galeria->estado      = 'Vigente';
+            $galeria->save();
 
             $enlaces = $request->enlaces;
             $userid = \Auth::user()->id;
@@ -68,28 +120,42 @@ class GalleryController extends Controller
     public function update(Request $request){
         if(!$request->ajax()) return redirect('/');
 
+
+
         try{
             DB::beginTransaction();
-
-            $galeria              = Gallery::findOrFail($request->id);
+            $galeria = Gallery::findOrFail($request->id);
+            $galeria->user_id     = $galeria->user_id;
             $galeria->nombre      = $request->nombre;
             $galeria->descripcion = $request->descripcion;
+            $galeria->fecha_hora  = $galeria->fecha_hora;
             $galeria->lote        = $request->lote;
             $galeria->cover       = $request->cover;
             $galeria->area        = $request->area;
+            $galeria->estado      = 'Vigente';
+            $galeria->save();
 
             $enlaces = $request->enlaces;
-            $userid = \Auth::user()->id;
 
-            //Recorro todos los elementos
-            foreach($enlaces as $ep=>$enl){
-                $link = new Link(['user_id' => $userid, 'url' => $enl['url'], 'direction' => $enl['direction']]);
-                $galeria->links()->save($link);
+            if(sizeof($enlaces) > 0){
+                $userid = \Auth::user()->id;
+                foreach($enlaces as $ep=>$enl){
+                    $link = new Link(['user_id' => $userid, 'url' => $enl['url'], 'direction' => $enl['direction']]);
+                    $galeria->links()->save($link);
+                }
             }
             DB::commit();
         }catch(Exception $e){
             DB::rollBack();
         }
+
+
+        $galeriaUp = Gallery::findOrFail($galeria->id);
+
+        return [
+            'request' => $request->all(),
+            'gallery' => $galeriaUp
+        ];
     }
 
     public function desactivar(Request $request){
@@ -97,7 +163,20 @@ class GalleryController extends Controller
         try{
             DB::beginTransaction();
             $galeria = Gallery::findOrFail($request->id);
-            $galeria->estado = $request->estado;
+            $galeria->estado = 'Desactivada';
+            $galeria->save();
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollBack();
+        }
+    }
+
+    public function activar(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            $galeria = Gallery::findOrFail($request->id);
+            $galeria->estado = 'Vigente';
             $galeria->save();
             DB::commit();
         }catch(Exception $e){
@@ -133,5 +212,18 @@ class GalleryController extends Controller
         }catch(Exception $e){
             DB::rollBack();
         }
+    }
+
+    public function refreshGallery(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $galery = Gallery::join('users','users.id','galleries.user_id')
+        ->leftjoin('personas', 'users.id','=','personas.id')
+        ->select('galleries.id','galleries.nombre','galleries.descripcion',
+            'galleries.lote','galleries.cover','galleries.fecha_hora',
+            'galleries.estado','galleries.area','personas.nombre as usuario')
+        ->where('galleries.id',$request->id)->first();
+
+        return [ 'galery' => $galery ];
     }
 }

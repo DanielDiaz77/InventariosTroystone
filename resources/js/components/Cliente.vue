@@ -313,7 +313,7 @@
                                                                 <p><small style="font-size:10px;" class="text-muted"><i class="fa fa-clock-o"></i> {{ convertDate(comment.fecha) }}</small></p>
                                                             </div>
                                                             <div class="col-md">
-                                                                <template v-if="comment.user == user_id">
+                                                                <template v-if="comment.user == userid">
                                                                     <button type="button" class="btn btn-sm btntask float-right" @click="editComment(comment)">
                                                                         <i class="fa fa-pencil"></i>
                                                                     </button>&nbsp;
@@ -989,7 +989,6 @@ export default {
             itsCommentUpd : 0,
             itsCommentNew : 0,
             comment_id : 0,
-            user_id : 0,
             actives: "",
         };
     },
@@ -1070,7 +1069,6 @@ export default {
                 me.pagination= respuesta.pagination;
                 me.userid = respuesta.userid;
                 me.userrol = respuesta.userrol;
-                me.user_id = respuesta.userid;
                 /* console.log("Rol: " + respuesta.userrol);
                 console.log("ID: " + respuesta.userid); */
             })
@@ -1131,7 +1129,7 @@ export default {
                 swal.fire(
                 'Registrado!',
                 'El cliente ' + '<b>' + newName + '</b>' + ' ha sido registrado con éxito.',
-                'success')
+                'success');
                 me.cerrarModal();
                 me.listarPersona(1,'','nombre',1,me.zona,'');
             })
@@ -1151,7 +1149,6 @@ export default {
             var areaVend="";
             for(var i=0;i<this.arrayVendedores.length;i++){
                 if(this.arrayVendedores[i].id==this.userid){
-                   /* console.log(this.arrayVendedores[i].area); */
                    areaVend = this.arrayVendedores[i].area;
                 }
             }

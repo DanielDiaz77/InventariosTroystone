@@ -15,6 +15,7 @@ class ClienteController extends Controller
 
         $usrol = \Auth::user()->idrol;
         $usarea = \Auth::user()->area;
+        $usid = \Auth::user()->id;
 
         $buscar = $request->buscar;
         $criterio = $request->criterio;
@@ -771,7 +772,9 @@ class ClienteController extends Controller
                 'to'            => $personas->lastItem(),
             ],
             'personas' => $personas,
-            'userrol' => $usrol
+            'userrol' => $usrol,
+            'userid' => $usid
+
         ];
     }
 

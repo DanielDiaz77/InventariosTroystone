@@ -259,6 +259,15 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/project/filesupplo', 'ProjectController@filesUppload');
         Route::get('/project/getDocs', 'ProjectController@getDocs');
         Route::put('/project/eliminarDoc', 'ProjectController@eliminarDoc');
+
+        Route::get('/gallery', 'GalleryController@index');
+        Route::post('/gallery/registrar', 'GalleryController@store');
+        Route::get('/gallery/getLinks','GalleryController@getLinks');
+        Route::put('/gallery/deleteLink','GalleryController@deleteLink');
+        Route::put('/gallery/actualizar', 'GalleryController@update');
+        Route::put('/gallery/desactivar', 'GalleryController@desactivar');
+        Route::put('/gallery/activar', 'GalleryController@activar');
+        Route::get('/gallery/refreshGallery', 'GalleryController@refreshGallery');
     });
 });
 
