@@ -12,7 +12,7 @@
                <!--  <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary" v-if="showNew">
                     <i class="icon-plus"></i>&nbsp;Nuevo
                 </button> -->
-                 <button type="button" @click="AskcortarPlaca()" class="btn btn-warning float-right" v-if="listado == 2 && stock >= 1">
+                <button type="button" @click="AskcortarPlaca()" class="btn btn-warning float-right" v-if="listado == 2 && stock >= 1">
                     <i class="icon-crop"></i>&nbsp;Cortar
                 </button>
 
@@ -152,6 +152,9 @@
                                         </div>
                                         <div v-else-if="articulo.condicion == 3">
                                             <span class="badge badge-warning">Cortado</span>
+                                        </div>
+                                        <div v-else-if="articulo.condicion == 4">
+                                            <span style="color:#fff" class="badge badge-info">En traslado</span>
                                         </div>
                                         <div v-else>
                                             <span class="badge badge-danger">Desactivado</span>
@@ -936,6 +939,7 @@ import VueBarcode from 'vue-barcode';
 import VueLightbox from 'vue-lightbox';
 import ToggleButton from 'vue-js-toggle-button';
 import moment from 'moment';
+import $ from 'jquery';
 Vue.component("Lightbox",VueLightbox);
 Vue.use(ToggleButton);
 export default {
@@ -1572,6 +1576,17 @@ export default {
             this.showElim = false;
             this.tituloModal = "";
             this.nombre_categoria = "";
+            this.cutAvi = true;
+            this.codigoA = "";
+            this.codigoB = "";
+            this.largoA = 0;
+            this.largoB = 0;
+            this.altoA = 0;
+            this.altoB = 0;
+            this.metros_cuadradosA = 0;
+            this.metros_cuadradosB = 0;
+            this.savedA = 0;
+            this.savedB = 0;
             this.listarArticulo(pagec,this.buscar,this.criterio,this.bodega,this.acabado,this.estadoArt);
         },
         AskcortarPlaca(){

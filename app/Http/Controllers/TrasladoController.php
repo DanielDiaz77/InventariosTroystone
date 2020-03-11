@@ -142,7 +142,8 @@ class TrasladoController extends Controller
                 $detalle->save();
 
                 $articulo = Articulo::findOrFail($det['idarticulo']);
-                $articulo->ubicacion = $traslado->nueva_ubicacion;
+                $articulo->condicion = '4';
+                /* $articulo->ubicacion = $traslado->nueva_ubicacion; */
                 $articulo->save();
             }
 
@@ -174,6 +175,7 @@ class TrasladoController extends Controller
 
                 $articulo = Articulo::findOrFail($det['idarticulo']);
                 $articulo->ubicacion = $det['ubicacion'];
+                $articulo->condicion = '1';
                 $articulo->save();
             }
 
@@ -253,9 +255,56 @@ class TrasladoController extends Controller
 
     public function cambiarEntrega(Request $request){
         if (!$request->ajax()) return redirect('/');
-        $traslado = Traslado::findOrFail($request->id);
-        $traslado->entregado = $request->entregado;
-        $traslado->save();
+        $entStatus = $request->entregado;
+
+        if($entStatus == 1){
+            try{
+                DB::beginTransaction();
+
+                $traslado = Traslado::findOrFail($request->id);
+                $traslado->entregado = 1;
+                $traslado->save();
+
+                $detalles = DetalleTraslado::select('idarticulo','ubicacion')
+                    ->where('idtraslado',$request->id)->get();
+
+                foreach($detalles as $ep=>$det){
+
+                    $articulo = Articulo::findOrFail($det['idarticulo']);
+                    $articulo->ubicacion = $traslado->nueva_ubicacion;
+                    $articulo->condicion = '1';
+                    $articulo->save();
+                }
+
+                DB::commit();
+
+            }catch(Exception $e){
+                DB::rollBack();
+            }
+        }else{
+            try{
+                DB::beginTransaction();
+
+                $traslado = Traslado::findOrFail($request->id);
+                $traslado->entregado = 0;
+                $traslado->save();
+
+                $detalles = DetalleTraslado::select('idarticulo','ubicacion')
+                    ->where('idtraslado',$request->id)->get();
+
+                foreach($detalles as $ep=>$det){
+                    $articulo = Articulo::findOrFail($det['idarticulo']);
+                    $articulo->ubicacion = $det['ubicacion'];
+                    $articulo->condicion = '4';
+                    $articulo->save();
+                }
+
+                DB::commit();
+
+            }catch(Exception $e){
+                DB::rollBack();
+            }
+        }
     }
 
     public function actualizarObservacion(Request $request){

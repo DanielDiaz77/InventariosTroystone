@@ -197,9 +197,6 @@
                                                     <button @click="eliminarDetalle(index)" type="button" class="btn btn-danger btn-sm">
                                                         <i class="icon-close"></i>
                                                     </button>&nbsp;
-                                                    <!-- <button type="button" @click="abrirModal2(index)" class="btn btn-success btn-sm">
-                                                        <i class="icon-eye"></i>
-                                                    </button> &nbsp; -->
                                                 </div>
                                             </td>
                                             <td v-text="detalle.categoria"></td>
@@ -219,7 +216,7 @@
                                     </tbody>
                                     <tbody v-else>
                                         <tr>
-                                            <td colspan="11" class="text-center">
+                                            <td colspan="12" class="text-center">
                                                 <strong>NO hay artículos agregados...</strong>
                                             </td>
                                         </tr>
