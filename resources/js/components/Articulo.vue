@@ -21,7 +21,7 @@
             <template v-if="listado==1">
                 <div class="card-body">
                     <div class="form-inline">
-                        <div class="form-group mb-2 col-sm-10">
+                        <div class="form-group mb-2 col-sm-9">
                             <div class="input-group">
                                 <select class="form-control mb-1" v-model="criterio">
                                     <option value="descripcion">Descripción</option>
@@ -72,13 +72,16 @@
                             </div>
                         </div>
 
-                        <div class="form-group mb-2 col-sm-2 float-right">
+                        <div class="form-group mb-2 col-sm-3 float-right">
                             <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5">
                                 <button @click="abrirModal3()" class="btn btn-outline-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
                             </div>
 
                             <div class="input-group input-group-sm">
-                                <label class="mb-1 ml-sm-5" for=""><strong>Total: </strong> {{ totres }} </label>
+                                <label class="mb-1 ml-sm-5" for=""><strong>Total: </strong>&nbsp; {{ totres }} </label>
+                            </div>
+                            <div class="input-group input-group-sm">
+                                <label class="mb-1 ml-sm-5" for=""><strong>Metros <sup>2</sup>: </strong>&nbsp; {{ sumaMts }} </label>
                             </div>
                         </div>
                     </div>
@@ -989,6 +992,7 @@ export default {
             bodega : '',
             acabado : '',
             totres : 0,
+            sumaMts : 0,
             buscar : '',
             arrayCategoria : [],
             btnComprometido : '',
@@ -1102,6 +1106,9 @@ export default {
                 me.arrayArticulo = respuesta.articulos.data;
                 me.pagination= respuesta.pagination;
                 me.totres = respuesta.total;
+                var mts = respuesta.sumaMts[0]['metros'];
+                //console.log(mts);
+                me.sumaMts = mts;
                 /* me.zona = respuesta.userarea; */
             })
             .catch(function (error) {

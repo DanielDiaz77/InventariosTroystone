@@ -52,15 +52,14 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.stock','>',0],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])
+                        ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([
-                            ['articulos.stock','>',0],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])->count();
+
+                        $total = Articulo::where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])->get();
+
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -70,17 +69,16 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])
+                        ->where([['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([
-                            ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']
-                        ])->count();
+
+                        $total = Articulo::where([['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])->get();
                     }
                 }else{
                     if($acabado == ''){
@@ -92,17 +90,17 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','>',0],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
+                            ['articulos.ubicacion','!=','San Luis']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','>',0],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])->count();
+
+                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
+                            ['articulos.ubicacion','!=','San Luis']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
+                            ['articulos.ubicacion','!=','San Luis']])->get();
+
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -112,19 +110,16 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])->count();
+
+                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis']])->get();
                     }
                 }
             }else{
@@ -138,15 +133,14 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.stock','>',0]
-                        ])
+                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','>',0]])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.stock','>',0]
-                        ])->count();
+
+                        $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.stock','>',0]])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','>',0]])->get();
+
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -156,17 +150,16 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
-                        ])
+                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
-                        ])->count();
+
+                        $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','>',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%']])->get();
                     }
                 }else{
                     if($acabado == ''){
@@ -178,18 +171,17 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.stock','>',0]
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','>',0]])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
 
-                        $total = Articulo::where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.stock','>',0]
-                        ])->count();
+                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','>',0]])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','>',0]])->get();
+
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -199,20 +191,16 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
 
-                        $total = Articulo::where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
-                        ])->count();
+                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%']])->get();
                     }
                 }
             }
@@ -230,19 +218,21 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'ventas.num_comprobante as venta','users.usuario')
-                        ->where([
-                            ['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']
-                        ])
+                        ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
+                            ['ventas.estado','Registrado']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
+
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([
-                            ['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']
-                        ])->count();
+                        ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
+                            ['ventas.estado','Registrado']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
+                        ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
+                            ['ventas.estado','Registrado']])->get();
+
                     }else{
                         $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
                         ->join('ventas','detalle_ventas.idventa','ventas.id')
@@ -254,21 +244,20 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'ventas.num_comprobante as venta','users.usuario')
-                        ->where([
-                            ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']
-                        ])
+                        ->where([['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
+
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([
-                            ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']
-                        ])->count();
+                        ->where([['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
+                        ->where([['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])->get();
                     }
                 }else{
                     if($acabado == ''){
@@ -282,21 +271,21 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'ventas.num_comprobante as venta','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
+                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
+
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']
-                        ])->count();
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
+                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
+                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])->get();
+
 
                     }else{
                         $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
@@ -309,23 +298,24 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'ventas.num_comprobante as venta','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
+                            ['ventas.estado','Registrado']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
+
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']
-                        ])->count();
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
+                            ['ventas.estado','Registrado']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
+                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
+                            ['ventas.estado','Registrado']])->get();
+
                     }
                 }
             }else{
@@ -341,20 +331,17 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'ventas.num_comprobante as venta','users.usuario')
-                        ->where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.stock','<=',0],
-                            ['ventas.estado','Registrado']
-                        ])
+                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
 
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.stock','<=',0],
-                            ['ventas.estado','Registrado']
-                        ])->count();
+                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
+                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado']])->get();
 
                     }else{
                         $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
@@ -367,22 +354,19 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'ventas.num_comprobante as venta','users.usuario')
-                        ->where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['ventas.estado','Registrado']
-                        ])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado'],
+                            ['articulos.terminado','like', '%'. $acabado . '%']])->orderBy('articulos.id', 'desc')->paginate(12);
 
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['ventas.estado','Registrado']
-                        ])->count();
+                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado'],
+                            ['articulos.terminado','like', '%'. $acabado . '%']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
+                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado'],
+                            ['articulos.terminado','like', '%'. $acabado . '%']])->get();
                     }
                 }else{
                     if($acabado == ''){
@@ -396,22 +380,20 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'ventas.num_comprobante as venta','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.stock','<=',0],
-                            ['ventas.estado','Registrado']
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','<=',0],['ventas.estado','Registrado']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
 
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.stock','<=',0],
-                            ['ventas.estado','Registrado']
-                        ])->count();
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','<=',0],['ventas.estado','Registrado']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','<=',0],['ventas.estado','Registrado']])->get();
 
                     }else{
                         $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
@@ -424,24 +406,23 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'ventas.num_comprobante as venta','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['ventas.estado','Registrado']
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['ventas.estado','Registrado']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
 
                         $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
                         ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['ventas.estado','Registrado']
-                        ])->count();
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['ventas.estado','Registrado']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['ventas.estado','Registrado']])->get();
                     }
                 }
             }
@@ -459,7 +440,12 @@ class ArticuloController extends Controller
                             'articulos.comprometido','users.usuario')
                         ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
+
                         $total = Articulo::where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])->get();
+
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -469,17 +455,15 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([
-                            ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])->count();
+                        ->where([['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']])->orderBy('articulos.id', 'desc')->paginate(12);
+
+                        $total = Articulo::where([['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion','!=','San Luis']])->get();
                     }
                 }else{
                     if($acabado == ''){
@@ -491,17 +475,17 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.condicion',3],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
+                            ['articulos.ubicacion','!=','San Luis']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.condicion',3],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])->count();
+
+                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
+                            ['articulos.ubicacion','!=','San Luis']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
+                            ['articulos.ubicacion','!=','San Luis']])->get();
+
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -511,19 +495,16 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion','!=','San Luis'],
+                            ['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']
-                        ])->count();
+
+                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
+                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
+                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis']])->get();
                     }
                 }
             }else{
@@ -537,12 +518,14 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.condicion',3]
-                        ])
+                        ->where([['articulos.ubicacion',$bodega],['articulos.condicion',3]])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
+
                         $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.condicion',3]])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.ubicacion',$bodega],['articulos.condicion',3]])->get();
+
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -552,17 +535,16 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
-                        ])
+                        ->where([['articulos.ubicacion',$bodega],['articulos.condicion',3],
+                            ['articulos.terminado','like', '%'. $acabado . '%']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
-                        $total = Articulo::where([
-                            ['articulos.ubicacion',$bodega],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.condicion',3]
-                        ])->count();
+
+                        $total = Articulo::where([['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion',$bodega],['articulos.condicion',3]])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.terminado','like', '%'. $acabado . '%'],
+                            ['articulos.ubicacion',$bodega],['articulos.condicion',3]])->get();
                     }
                 }else{
                     if($acabado == ''){
@@ -574,18 +556,17 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.condicion',3]
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.condicion',3]])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
 
-                        $total = Articulo::where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.condicion',3]
-                        ])->count();
+                        $total = Articulo::where([['articulos.ubicacion', $bodega],['articulos.condicion',3],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.ubicacion', $bodega],['articulos.condicion',3],
+                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']])->get();
+
                     }else{
                         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
                         ->leftjoin('users','articulos.idusuario','=','users.id')
@@ -595,20 +576,16 @@ class ArticuloController extends Controller
                             'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
                             'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
                             'articulos.comprometido','users.usuario')
-                        ->where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
-                        ])
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
+                            ['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%']])
                         ->orderBy('articulos.id', 'desc')->paginate(12);
 
-                        $total = Articulo::where([
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%'],
-                            ['articulos.ubicacion', $bodega],
-                            ['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%']
-                        ])->count();
+                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
+                            ['articulos.ubicacion', $bodega],['articulos.terminado','like', '%'. $acabado . '%']])->count();
+
+                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
+                            ['articulos.ubicacion', $bodega],['articulos.terminado','like', '%'. $acabado . '%']])->get();
                     }
                 }
             }
@@ -626,7 +603,8 @@ class ArticuloController extends Controller
 
             'articulos' => $articulos,
             'total' => $total,
-            'userarea' => $usarea
+            'userarea' => $usarea,
+            'sumaMts' => $sumaMts
         ];
     }
     public function buscarArticulo(Request $request){

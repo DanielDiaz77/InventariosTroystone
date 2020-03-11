@@ -12,7 +12,7 @@
           <button type="button" @click="mostrarDetalle()" class="btn btn-secondary" v-if="listado==1">
             <i class="icon-plus"></i>&nbsp;Nuevo
           </button>
-          <template v-if="estadoVn=='Registrado' && listado==2">
+          <template v-if="listado==2">
                 <!-- <button type="button" class="btn btn-info float-right ml-2"
                     @click="sendMailCot(cotizacion_id,email_cliente,cliente)" v-if="email_cliente">
                     <i class="fa fa-share"></i> Enviar
