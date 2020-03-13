@@ -7,6 +7,7 @@ use App\Venta;
 use App\DetalleVenta;
 use App\User;
 use App\Deposit;
+use App\Document;
 use App\Notifications\NotifyAdmin;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -893,9 +894,7 @@ class VentaController extends Controller
             DB::commit();
 
         }catch(Exception $e){
-
             DB::rollBack();
-
         }
     }
     public function desactivar(Request $request){
@@ -2709,5 +2708,71 @@ class VentaController extends Controller
         $venta = Venta::findOrFail($request->id);
         $venta->auto_entrega = $request->auto_entrega;
         $venta->save();
+    }
+    public function filesUppload(Request $request){
+
+        if (!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            $directoryName = 'facturasfiles';
+
+            if(!is_dir($directoryName)){
+                mkdir($directoryName, 0777);
+            }
+
+            $archivos = $request->filesdata;//Array de archivos
+
+            $docs = array();
+            foreach($archivos as $ar=>$file){
+                $exploded = explode(',', $file['url']);
+                $decoded = base64_decode($exploded[1]);
+                $extn = explode('/', $file['tipo']);
+                $extension = $extn[1];
+                $fileName = str_random().'.'.$extension;
+                $path = public_path($directoryName).'/'.$fileName;
+                file_put_contents($path,$decoded);
+
+                $docum = new Document(['url' => $fileName, 'tipo' => $extension ]);
+                $venta = Venta::findOrFail($request->id);
+                $venta->documents()->save($docum);
+                DB::commit();
+            }
+
+        }catch(Exception $e){
+            DB::rollBack();
+        }
+    }
+    public function getDocs(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $venta = Venta::findOrFail($request->id); //ID dueño de los archivos
+        $files = $venta->documents()->get();
+
+        return [
+            'documentos' => $files
+        ];
+    }
+    public function eliminarDoc(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        $directoryName = 'facturasfiles';
+        try{
+            DB::beginTransaction();
+
+            $doc= Document::findOrFail($request->id);
+            $img = $doc->url;
+
+
+            if($img != null){
+                $image_path = public_path($directoryName).'/'.$img;
+                if(file_exists($image_path)){
+                    unlink($image_path);
+                }
+            }
+
+            $doc->delete();
+            DB::commit();
+
+        }catch(Exception $e){
+            DB::rollBack();
+        }
     }
 }

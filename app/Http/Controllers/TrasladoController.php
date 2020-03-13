@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TrasladosExport;
 use Carbon\Carbon;
 use App\Traslado;
 use App\DetalleTraslado;
@@ -401,5 +403,9 @@ class TrasladoController extends Controller
 
     }
 
+    public function excelTraslado($id,Request $request){
+        $numtraslado = $request->num_traslado;
+        return Excel::download(new TrasladosExport($id), 'traslado-'.$numtraslado.'.xlsx');
+    }
 
 }

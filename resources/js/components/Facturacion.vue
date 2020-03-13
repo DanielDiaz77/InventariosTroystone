@@ -145,12 +145,50 @@
         <template v-else-if="listado==2">
             <div class="card-body">
                 <div class="form-group row border">
-                    <div class="col-md-3">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h4>Cliente </h4>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md">
+                        <div class="d-flex flex-column">
+                            <div class="p-0"><p><strong v-text="cliente"></strong></p></div>
+                            <div class="p-0"><p><u v-text="tipo_cliente"></u></p></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md">
+                        <div class="d-flex flex-column">
+                            <div class="p-0"><p> <strong>Teléfono:</strong> {{ telefono_cliente }}</p></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md">
+                        <div class="d-flex flex-column">
+                            <div class="p-0">
+                                <p> <strong>RFC:</strong> {{ rfc_cliente }}
+                                <span style="color:red;" v-show="!rfc_cliente">(*Complete esta información)</span>
+                                </p>
+                            </div>
+                            <div class="p-0">
+                                <p> <strong>Uso CFDI: </strong> {{ cfdi_cliente }}
+                                    <span style="color:red;" v-show="!cfdi_cliente">(*Complete esta información)</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md">
+                        <div class="d-flex flex-column" v-if="contacto_cliente">
+                            <div class="p-0"><p> <strong>Contacto:</strong> {{ contacto_cliente }}</p></div>
+                            <div class="p-0"><p> <strong>Tel Contacto: </strong> {{ telcontacto_cliente }}</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row border">
+                    <!-- <div class="col-md-3">
                         <div class="form-group">
                             <label for="">Cliente</label>
                             <p v-text="cliente"></p>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="">Tipo Comprobante</label>
@@ -334,7 +372,63 @@
                         <label for="exampleFormControlTextarea2">Observaciones Internas</label>
                         <textarea class="form-control rounded-0" rows="3" maxlength="256" readonly v-model="observacionpriv"></textarea>
                     </div>&nbsp;
+                    <!-- Files Upploader -->
+                    <div class="col-md-6 mt-3" v-if="facturado == 1">
+                        <div class="page-header">
+                            <h3 id="timeline">Facturas  {{ num_comprobante }} &nbsp;</h3>
+                        </div>
+                        <div class="divdocs form-inline" v-if="docsArray.length">
+                            <div v-for="file in docsArray" :key="file.id" class="d-flex justify-content-around">
+                                <div>
+                                    <template v-if="file.tipo != 'pdf'">
+                                        <div class="d-flex justify-content-center">
+                                            <div>
+                                                <lightbox class="m-0" album="" :src="'facturasfiles/'+file.url">
+                                                    <figure class="figure">
+                                                        <img :src="'facturasfiles/'+file.url" width="150" height="100" class="figure-img img-fluid rounded" alt="File CAPTION">
+                                                        <figcaption class="figure-caption text-right" v-text="file.url"></figcaption>
+                                                    </figure>
+                                                </lightbox>&nbsp;
+                                            </div>
+                                            <div>
+                                                <button @click="eliminarFile(file.id,venta_id)" class="btn btn-transparent text-danger rounded-circle"><i class="fa fa-times fa-2x"></i></button>
+                                            </div>
+                                        </div>
+
+                                    </template>
+                                    <template v-else>
+                                        <div class="d-flex justify-content-center">
+                                            <div>
+                                                <figure class="figure">
+                                                    <img @click="downloadDoc(file.url)" src="img/PDFICON.png" width="100" height="70" class="figure-img img-fluid rounded" alt="File CAPTION">
+                                                    <figcaption class="figure-caption text-right" v-text="file.url"></figcaption>
+                                                </figure>
+                                            </div>
+                                            <div>
+                                                <button @click="eliminarFile(file.id,venta_id)" class="btn btn-transparent text-danger rounded-circle"><i class="fa fa-times fa-2x"></i></button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else style="height: auto !important;">
+                            <h5>Sin archivos adjuntos...</h5>
+                        </div>
+                        <hr>
+                        <div>
+                            <form action method="post" enctype="multipart/form-data" class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Subir Archivos</label>
+                                    <input type="file" class="form-control" placeholder="Subir Archivos"
+                                        multiple accept="image/png,image/jpeg,image/jpg,application/pdf" @change="fieldChange">
+                                </div>
+                                    <button v-if="arrayFiles.length" @click="guardarFiles()" type="button" class="btn btn-sm btn-primary">Guardar</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="form-group row">
                     <div class="col-md-12">
                         <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
@@ -599,6 +693,12 @@ export default {
         return {
             venta_id: 0,
             cliente: '',
+            tipo_cliente : '',
+            telefono_cliente : '',
+            rfc_cliente: '',
+            cfdi_cliente : '',
+            contacto_cliente : '',
+            telcontacto_cliente : '',
             user: '',
             tipo_comprobante: "PRESUPUESTO",
             num_comprobante: "",
@@ -672,6 +772,8 @@ export default {
             factura_env : 0,
             tipo_fact : "Cliente",
             usrol : 0,
+            arrayFiles : [],
+            docsArray : [],
         };
     },
     components: {
@@ -802,6 +904,13 @@ export default {
             this.pagado = 0;
             this.btnEntrega =  false;
             this.btnPagado = false;
+            this.facturado = 0;
+            this.tipo_cliente = '';
+            this.telefono_cliente = '';
+            this.rfc_cliente= '';
+            this.cfdi_cliente = '';
+            this.contacto_cliente = '';
+            this.telcontacto_cliente = '';
         },
         verVenta(id){
             let me = this;
@@ -820,7 +929,13 @@ export default {
                 var total_parcial = 0;
 
                 me.venta_id = arrayVentaT[0]['id'];
-                me.cliente = arrayVentaT[0]['nombre'];
+                me.cliente = arrayVentaT[0]['cliente'];
+                me.rfc_cliente = arrayVentaT[0]['rfc'];
+                me.tipo_cliente = arrayVentaT[0]['tipo'];
+                me.contacto_cliente = arrayVentaT[0]['contacto'];
+                me.telcontacto_cliente = arrayVentaT[0]['tel_contacto'];
+                me.telefono_cliente = arrayVentaT[0]['telefono'];
+                me.cfdi_cliente = arrayVentaT[0]['cfdi'];
                 me.tipo_comprobante=arrayVentaT[0]['tipo_comprobante'];
                 me.num_comprobante=arrayVentaT[0]['num_comprobante'];
                 me.user=arrayVentaT[0]['usuario'];
@@ -840,6 +955,7 @@ export default {
                 me.num_cheque = arrayVentaT[0]['num_cheque'];
                 me.banco = arrayVentaT[0]['banco'];
                 me.pagado = arrayVentaT[0]['pagado'];
+                me.facturado = arrayVentaT[0]['facturado'];
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
@@ -869,6 +985,8 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
+
+            this.getDocs(id);
         },
         abrirModal2(index){
             let me = this;
@@ -1097,7 +1215,93 @@ export default {
                 console.log(error);
             });
 
-        }
+        },
+        eliminarFile(id,idventa){
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro eliminar este documento?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/venta/eliminarDoc', {
+                        'id' : id
+                    }).then(function(response) {
+                        swalWithBootstrapButtons.fire(
+                            "Eliminado!",
+                            "El documento ha sido eliminada con éxito.",
+                            "success"
+                        );
+                        me.getDocs(idventa);
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+                }
+            })
+        },
+        downloadDoc(file){
+            window.open('facturasfiles/'+file);
+        },
+        fieldChange(e){
+            let selectedFilesTemp = e.target.files;
+            for(var i=0;i<selectedFilesTemp.length;i++){
+                let upFile = e.target.files[i];
+                let type = e.target.files[i]["type"];
+                this.cargarFiles(upFile,type);
+            }
+        },
+        cargarFiles(img,type){
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.arrayFiles.push({
+                    url : e.target.result,
+                    tipo : type
+                });
+            }
+            reader.readAsDataURL(img);
+        },
+        guardarFiles(){
+            let me = this;
+            var venta = this.venta_id;
+            axios.put('/venta/filesupplo',{
+                'id' : this.venta_id,
+                'filesdata': this.arrayFiles
+            }).then(function(response) {
+                swal.fire(
+                'Completado!',
+                'Los archivos fueron guardados con éxito.',
+                'success');
+                me.arrayFiles = [];
+                me.getDocs(venta);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        },
+        getDocs(idventa){
+            let me = this;
+            var url= '/venta/getDocs?id=' + idventa;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.docsArray = respuesta.documentos;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
     },
     mounted() {
         this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta,this.tipo_fact);

@@ -286,7 +286,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">SUBTOTAL</th>
-                            <td class="th-b">{{ number_format(round($v->total/($v->impuesto + 1),2),2)}}</td>
+                            <td class="th-b">{{ number_format($v->total/($v->impuesto + 1),4)}}</td>
                         </tr>
                         <tr>
                             <th></th>
@@ -298,7 +298,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">IVA</th>
-                            <td class="th-b">{{ number_format(round(($v->total/($v->impuesto + 1))*$v->impuesto,2),2) }}</td>
+                            <td class="th-b">{{ number_format(($v->total/($v->impuesto + 1)*$v->impuesto),4) }}</td>
                         </tr>
                         <tr>
                             <th></th>
@@ -310,7 +310,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">TOTAL</th>
-                            <td class="th-b">{{ number_format($v->total,2) }}</td>
+                            <td class="th-b">{{ number_format($v->total,4) }}</td>
                         </tr>
                         <tr>
                             <th></th>
@@ -322,7 +322,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">Abonado</th>
-                            <td class="th-b">{{ number_format($abonos,2) }}</td>
+                            <td class="th-b">{{ number_format($abonos,4) }}</td>
                         </tr>
                         <tr>
                             <th></th>
@@ -334,7 +334,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">Adeudo</th>
-                            <td class="th-b">{{ number_format($v->adeudo,2) }}</td>
+                            <td class="th-b">{{ number_format($v->adeudo,4) }}</td>
                         </tr>
                         {{-- <tr><th class="th-b" colspan="10">Abonos:  {{  $abonos }}</th></tr> --}}
                         <tr><th class="th-b" colspan="10">Total m <sup>2:</sup> {{  $sumaMts }}</th></tr>

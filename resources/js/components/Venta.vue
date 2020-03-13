@@ -235,7 +235,7 @@
                     <div class="col-md-2 text-center">
                         <div class="form-group">
                             <label for=""><strong>Forma de pago</strong><span style="color:red;" v-show="forma_pago==''">(*Seleccione)</span></label>
-                            <select class="form-control" v-model="forma_pago">
+                            <select class="form-control" v-model="forma_pago" v-if="otroFormPay == false">
                                 <option value='' disabled>Seleccione la forma de pago</option>
                                 <option value="Efectivo">Efectivo</option>
                                 <option value="Tarjeta">Tarjeta</option>
@@ -243,6 +243,11 @@
                                 <option value="Cheque">Cheque</option>
                                 <option value="Mixto">Mixto</option>
                             </select>
+                            <div class="form-check float-left mt-1">
+                                <input class="form-check-input" type="checkbox" id="chkOtherPay" v-model="otroFormPay">
+                                <label class="form-check-label p-0 m-0" for="chkOtherPay"><strong>Otro</strong></label>
+                            </div>
+                            <textarea class="form-control rounded-0" rows="2" maxlength="256" v-model="forma_pago" v-if="otroFormPay == true"></textarea>
                         </div>
                     </div>
                     <div class="col-md-3 text-center" v-if="forma_pago =='Cheque'">
@@ -423,15 +428,15 @@
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="14" align="right"><strong>Total Parcial:</strong></td>
-                                    <td>$ {{total_parcial=(total-total_impuesto).toFixed(2)}}</td>
+                                    <td>$ {{total_parcial=(total-total_impuesto).toFixed(4)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="14" align="right"><strong>Total IVA:</strong></td>
-                                    <td>$ {{total_impuesto=((total * parseFloat(impuesto))/(1+parseFloat(impuesto))).toFixed(2)}}</td>
+                                    <td>$ {{total_impuesto=((total * parseFloat(impuesto))/(1+parseFloat(impuesto))).toFixed(4)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="14" align="right"><strong>Total Neto:</strong></td>
-                                    <td>$ {{total=(calcularTotal.toFixed(2))}}</td>
+                                    <td>$ {{total=(calcularTotal.toFixed(4))}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="14" align="right"><strong>Total Metros<sup>2</sup> : </strong></td>
@@ -791,15 +796,15 @@
                                 </tr>
                                  <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Parcial:</strong></td>
-                                    <td>$ {{total_parcial = (total / divImp).toFixed(2) }}</td>
+                                    <td>$ {{total_parcial = (total / divImp).toFixed(4) }}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Impuesto:</strong></td>
-                                    <td>$ {{total_impuesto=((total * impuesto)/(divImp)).toFixed(2)}}</td>
+                                    <td>$ {{total_impuesto=((total * impuesto)/(divImp)).toFixed(4)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Neto:</strong></td>
-                                    <td>$ {{ total}} </td>
+                                    <td>$ {{total=(calcularTotal.toFixed(4))}} </td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Metros<sup>2</sup> : </strong></td>
@@ -1678,6 +1683,7 @@ export default {
             estadoEntrega : "",
             arrayDepositos : [],
             forma_pagoab : "",
+            otroFormPay : false,
             otroFormPayab : false,
             totalab : 0,
             btnAutoEntrega : false,
@@ -2007,17 +2013,16 @@ export default {
                 this.num_cheque = 0;
                 this.banco = '';
             }
-
             let me = this;
-
             var numcomp = "V-".concat(me.CodeDate,"-",me.num_comprobante);
+            var totalDem = parseFloat(this.total).toFixed(4);
 
             axios.post('/venta/registrar',{
                 'idcliente': this.idcliente,
                 'tipo_comprobante': this.tipo_comprobante,
                 'num_comprobante' : numcomp,
                 'impuesto' : this.impuesto,
-                'total' : this.total,
+                'total' : totalDem,
                 'forma_pago' : this.forma_pago,
                 'tiempo_entrega' : this.tiempo_entrega,
                 'lugar_entrega' : this.lugar_entrega,
@@ -2032,34 +2037,6 @@ export default {
             }).then(function(response) {
                 me.ocultarDetalle();
                 me.listarVenta(1,'','num_comprobante','','');
-                me.idcliente = 0;
-                me.tipo_cliente = "";
-                me.rfc_cliente = "";
-                me.cfdi_cliente = "";
-                me.tipo_comprobante = "Presupuesto";
-                me.num_comprobante = 0;
-                me.impuesto = 0.16;
-                me.total = 0.0;
-                me.idarticulo = 0;
-                me.articulo = "";
-                me.cantidad = 0;
-                me.precio = 0;
-                me.stock = 0;
-                me.observacion = "";
-                me.observacionpriv = "";
-                me.descuento = 0;
-                me.forma_pago = "Efectivo";
-                me.tiempo_entrega = "";
-                me.lugar_entrega = "";
-                me.entregado = 0;
-                me.entregado_parcial = 0;
-                me.moneda = "Peso Mexicano";
-                me.banco = "";
-                me.num_cheque = 0;
-                me.tipo_facturacion = "";
-                me.tipo_cambio = "";
-                me.arrayDetalle = [];
-
             })
             .catch(function(error) {
                 console.log(error);
@@ -2203,8 +2180,17 @@ export default {
             this.facturado = 0;
             this.arrayDepositos = [];
             this.getLastNum();
-            /* 1,buscar,criterio,estadoVenta,estadoEntrega */
-
+            this.tipo_comprobante = "PRESUPUESTO",
+            this.impuesto = 0.16;
+            this.total = 0.0;
+            this.descuento = 0;
+            this.forma_pago = "Efectivo";
+            this.tiempo_entrega = "";
+            this.lugar_entrega = "";
+            this.banco = "";
+            this.num_cheque = 0;
+            this.tipo_facturacion = "";
+            this.otroFormPay = false;
             this.listarVenta(this.pagination.current_page,
                 this.buscar, this.criterio,this.estadoVenta,this.estadoEntrega);
         },

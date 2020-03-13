@@ -1709,9 +1709,6 @@ export default {
                 console.log(error);
             });
         },
-        /* eliminarFile(id){
-            console.log("Eliminar el documento " + id);
-        }, */
         eliminarFile(id,idcliente){
             var cliente = idcliente;
             const swalWithBootstrapButtons = Swal.mixin({

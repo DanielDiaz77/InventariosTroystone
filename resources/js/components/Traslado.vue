@@ -61,6 +61,10 @@
                                                     <button type="button" class="btn btn-outline-danger btn-sm" @click="pdfTraslado(traslado.id)">
                                                         <i class="fa fa-file-pdf-o"></i>
                                                     </button>&nbsp;
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        @click="excelTraslado(traslado.id,traslado.num_comprobante)">
+                                                        <i class="fa fa-file-excel-o"></i>
+                                                    </button>&nbsp;
                                                     <button type="button" class="btn btn-danger btn-sm" @click="anularTraslado(traslado.id)">
                                                         <i class="icon-trash"></i>
                                                     </button>
@@ -707,7 +711,6 @@ Vue.use(ToggleButton);
             }
         },
         methods: {
-
             listarTraslado(page,buscar,criterio,estadoTraslado){
                 let me=this;
                 me.btnNewTask = 1;
@@ -1197,6 +1200,9 @@ Vue.use(ToggleButton);
             pdfTraslado(id){
                 window.open('/traslado/pdf/'+id);
             },
+            excelTraslado(id,num_comp){
+                 window.open('/traslado/excel/'+ id+'?num_traslado=' + num_comp);
+            }
 
         },
         mounted() {

@@ -174,8 +174,10 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/venta/crearDeposit', 'VentaController@crearDeposit');
         Route::get('/venta/getDeposits', 'VentaController@getDeposits');
         Route::put('/venta/eliminarDeposit','VentaController@deleteDeposit');
-
         Route::get('/venta/getVentasClienteProject','VentaController@getVentasClienteProject');
+        Route::put('/venta/filesupplo', 'VentaController@filesUppload');
+        Route::get('/venta/getDocs', 'VentaController@getDocs');
+        Route::put('/venta/eliminarDoc', 'VentaController@eliminarDoc');
 
         Route::get('/cotizacion', 'CotizacionController@index');
         Route::post('/cotizacion/registrar', 'CotizacionController@store');
@@ -216,6 +218,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::post('/traslado/actualizarObservacion','TrasladoController@actualizarObservacion');
         Route::put('/traslado/updImagen','TrasladoController@updImage');
         Route::put('/traslado/eliminarImg', 'TrasladoController@eliminarImagen');
+        Route::get('/traslado/excel/{id}','TrasladoController@excelTraslado');
 
 
         Route::get('/actividad', 'ActivityController@index');
