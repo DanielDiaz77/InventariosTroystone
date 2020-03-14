@@ -16,6 +16,9 @@
                     <li @click="menu=2" class="nav-item">
                         <a class="nav-link" href="#"><i class="icon-bag"></i> Artículos</a>
                     </li>
+                    <li @click="menu=23" class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa fa-picture-o" aria-hidden="true"></i> Galería</a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item nav-dropdown">

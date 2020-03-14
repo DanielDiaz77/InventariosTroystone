@@ -16,6 +16,9 @@
                     <li @click="menu=17" class="nav-item">
                         <a class="nav-link" href="#"><i class="fa fa-map-marker"></i> Traslados</a>
                     </li>
+                    <li @click="menu=23" class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa fa-picture-o" aria-hidden="true"></i> Galería</a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item nav-dropdown" v-if="userId == 7">
