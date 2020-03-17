@@ -28,4 +28,8 @@ class Persona extends Model
         return $this->morphMany(Comment::class,'commentable');
     }
 
+    public function credits(){
+        return $this->morphMany(Credit::class,'creditable');
+    }
+
 }

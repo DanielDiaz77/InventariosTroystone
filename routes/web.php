@@ -124,6 +124,11 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/cliente/editComment','ClienteController@editComment');
         Route::put('/cliente/deleteComment','ClienteController@deleteComment');
 
+        Route::post('/cliente/crearCredit', 'ClienteController@crearCredit');
+        Route::get('/cliente/getCredits', 'ClienteController@getCredits');
+        Route::put('/cliente/deleteCredit','ClienteController@deleteCredit');
+        Route::get('/cliente/getCreditsPay', 'ClienteController@getCreditsPay');
+
         Route::get('/rol', 'RolController@index');
         Route::get('/rol/selectRol', 'RolController@selectRol');
 
@@ -178,6 +183,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/venta/filesupplo', 'VentaController@filesUppload');
         Route::get('/venta/getDocs', 'VentaController@getDocs');
         Route::put('/venta/eliminarDoc', 'VentaController@eliminarDoc');
+        Route::post('/venta/crearDepositCredit', 'VentaController@crearDepositCredit');
 
         Route::get('/cotizacion', 'CotizacionController@index');
         Route::post('/cotizacion/registrar', 'CotizacionController@store');
@@ -262,6 +268,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/project/filesupplo', 'ProjectController@filesUppload');
         Route::get('/project/getDocs', 'ProjectController@getDocs');
         Route::put('/project/eliminarDoc', 'ProjectController@eliminarDoc');
+        Route::post('/project/crearDepositCredit', 'ProjectController@crearDepositCredit');
 
         Route::get('/gallery', 'GalleryController@index');
         Route::post('/gallery/registrar', 'GalleryController@store');

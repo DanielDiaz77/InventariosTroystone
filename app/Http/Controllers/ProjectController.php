@@ -10,6 +10,7 @@ use App\Project;
 use App\Deposit;
 use App\Venta;
 use App\User;
+use App\Credit;
 
 class ProjectController extends Controller
 {
@@ -773,7 +774,19 @@ class ProjectController extends Controller
             DB::beginTransaction();
 
             $deposit = Deposit::findOrFail($request->id);
-            $deposit->delete();
+            //$deposit->delete();
+
+            if($deposit->forma_pago == 'Nota de crédito'){
+                $creditos = $deposit->credits()->select('credits.id')->get();
+                foreach($creditos as $det){
+                    $credit = Credit::findOrFail($det['id']);
+                    $credit->estado = 'Vigente';
+                    $credit->save();
+                }
+                $deposit->delete();
+            }else{
+                $deposit->delete();
+            }
 
             $project = Project::findOrFail($request->idproject);
             $numDeposits = $project->deposits()->count();
@@ -882,6 +895,63 @@ class ProjectController extends Controller
 
         }catch(Exception $e){
             DB::rollBack();
+        }
+    }
+    public function crearDepositCredit(Request $request){
+
+        if (!$request->ajax()) return redirect('/');
+
+        $mytime = Carbon::now('America/Mexico_City');
+
+        $project = Project::findOrFail($request->id); //Project a depositar
+
+        $adeudoAct = $project->adeudo;
+
+        $creditos = $request->creditos;
+
+        if($request->total < $adeudoAct){
+            try{
+                DB::beginTransaction();
+                $project->adeudo = $project->adeudo - $request->total;
+                $project->pagado_parcial = 1;
+                $project->pagado = 0;
+                $project->save();
+                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime,
+                    'forma_pago' => $request->forma_pago]);
+                $project->deposits()->save($deposit);
+
+                $deposit->credits()->attach($creditos);
+                foreach($creditos as $det){
+                    $credit = Credit::findOrFail($det);
+                    $credit->estado = 'Abonada';
+                    $credit->save();
+                }
+
+                DB::commit();
+            }catch(Exception $e){
+                DB::rollBack();
+            }
+        }elseif($request->total == $adeudoAct){
+            try{
+                DB::beginTransaction();
+                $project->adeudo = 0;
+                $project->pagado_parcial = 1;
+                $project->pagado = 1;
+                $project->save();
+                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime,
+                    'forma_pago' => $request->forma_pago]);
+                $project->deposits()->save($deposit);
+
+                $deposit->credits()->attach($creditos);
+                foreach($creditos as $det){
+                    $credit = Credit::findOrFail($det);
+                    $credit->estado = 'Abonada';
+                    $credit->save();
+                }
+                DB::commit();
+            }catch(Exception $e){
+                DB::rollBack();
+            }
         }
     }
 }

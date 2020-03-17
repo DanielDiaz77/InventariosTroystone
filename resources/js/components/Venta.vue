@@ -26,25 +26,32 @@
                                 <option value="fecha_hora">Fecha</option>
                                 <option value="forma_pago">Forma de pago</option>
                             </select>
-                            <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega)" class="form-control mb-1" placeholder="Texto a buscar...">
+                            <input type="text" v-model="buscar" @keyup.enter="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega,estadoPago)" class="form-control mb-1" placeholder="Texto a buscar...">
                         </div>
                         <div class="input-group">
-                            <select class="form-control mb-1" v-model="estadoVenta" @change="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega)">
+                            <select class="form-control mb-1" v-model="estadoVenta" @change="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega,estadoPago)">
                                 <option value="">Activa</option>
                                 <option value="Anulada">Cancelada</option>
                             </select>
-                            <button type="submit" @click="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
+                            <button type="submit" @click="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega,estadoPago)" class="btn btn-primary mb-1"><i class="fa fa-search"></i> Buscar</button>
                         </div>
                         <div class="input-group input-group-sm ml-sm-2 mr-sm-1 ml-md-2 ml-lg-5" v-if="estadoVenta!='Anulada'">
-                            <select class="form-control" id="tipofact" name="tipofact" v-model="estadoEntrega" @change="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega)">
+                            <select class="form-control" id="tipofact" name="tipofact" v-model="estadoEntrega" @change="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega,estadoPago)">
                                 <option value="">Todo</option>
                                 <option value="entregado">100%</option>
                                 <option value="entrega_parcial">Parcial</option>
                                 <option value="no_entregado">No entregado</option>
                             </select>
-                            <!-- <div class="input-group-prepend"> -->
-                                <button class="btn btn-sm btn-warning" type="button"><i class="fa fa-truck" aria-hidden="true"></i>&nbsp; Entregas </button>
-                            <!-- </div> -->
+                            <button class="btn btn-sm btn-warning" type="button"><i class="fa fa-truck" aria-hidden="true"></i>&nbsp; Entregas </button>
+                        </div>
+                        <div class="input-group input-group-sm ml-sm-2 mr-sm-1 ml-md-2 ml-lg-5" v-if="estadoVenta!='Anulada'">
+                            <select class="form-control" id="tipofact" name="tipofact" v-model="estadoPago" @change="listarVenta(1,buscar,criterio,estadoVenta,estadoEntrega,estadoPago)">
+                                <option value="">Todo</option>
+                                <option value="pagado">Pagado 100%</option>
+                                <option value="parcial">Pagado Parcial</option>
+                                <option value="nopagado">No Pagado</option>
+                            </select>
+                            <button class="btn btn-sm btn-success" type="button"><i class="fa fa-money" aria-hidden="true"></i>&nbsp; Pagos </button>
                         </div>
                         <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5" v-if="estadoVenta!='Anulada'">
                              <button @click="abrirModal5()" class="btn btn-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
@@ -146,13 +153,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoVenta,estadoEntrega)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoVenta,estadoEntrega,estadoPago)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoVenta,estadoEntrega)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoVenta,estadoEntrega,estadoPago)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoVenta,estadoEntrega)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoVenta,estadoEntrega,estadoPago)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -346,7 +353,7 @@
                     </div>
                     <div class="col-sm-2 text-center">
                         <div class="form-group">
-                            <label for=""><strong>Descuento (%)</strong></label>
+                            <label for=""><strong>Descuento ($)</strong></label>
                             <input type="number" min="0" value="0" class="form-control" v-model="descuento">
                         </div>
                     </div>
@@ -767,7 +774,7 @@
                                     <th>Metros <sup>2</sup></th>
                                     <th>Cantidad</th>
                                     <th>Precio m<sup>2</sup></th>
-                                    <th>Descuento </th>
+                                    <th>Descuento ($)</th>
                                     <th>Ubicacion</th>
                                     <th>SubTotal</th>
 
@@ -1475,6 +1482,33 @@
     </div>
     <!-- Fin exportar excel -->
 
+    <!-- Modal Seleccionar tipo de abono -->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal7}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-md " role="document">
+            <div class="modal-content content-askdep">
+                <div class="modal-body ">
+                    <div class="row d-flex justify-content-around">
+                        <div class="col-12 mb-3">
+                            <h3 class="text-center">Selecciona la forma de pago</h3>
+                            <div class="justify-content-center d-flex mt-5">
+                                <button type="button" class="btn btn-primary mr-2" @click="pagoCredit(venta_id,adeudo,idcliente)">Nota de crédito</button>
+                                <button type="button" class="btn btn-primary" @click="pagoOtro(venta_id,adeudo)">Otros</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4 mb-0">
+                        <div class="col-12 justify-content-center d-flex">
+                            <button type="button" class="btn btn-secondary" @click="cerrarModal7(venta_id)">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <!-- Modal Seleccionar tipo de abono -->
+
     <!-- Modal crear abono -->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal6}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-md " role="document">
@@ -1504,7 +1538,7 @@
                                     <input class="form-check-input" type="checkbox" id="chkOtherPayab" v-model="otroFormPayab">
                                     <label class="form-check-label p-0 m-0" for="chkOtherPayab"><strong>Otro</strong></label>
                                 </div>
-                                <input class="form-control rounded-0"  maxlength="35" placeholder="Ingresa la forma de pago" v-model="forma_pagoab" v-if="otroFormPayab == true"></input>
+                                <input class="form-control rounded-0"  maxlength="35" placeholder="Ingresa la forma de pago" v-model="forma_pagoab" v-if="otroFormPayab == true">
                             </div>
                         </div>
                         <div class="col-12 mb-2">
@@ -1528,6 +1562,123 @@
     <!-- /.modal-dialog -->
     </div>
     <!-- Fin Modal crear abono -->
+
+    <!-- Modal crear abono con nota credito -->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal8}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg " role="document">
+            <div class="modal-content content-creditPay">
+                <div class="modal-body">
+                    <h3 class="mb-3">Adeudo actual: {{ adeudo }}</h3>
+                    <div class="row d-flex justify-content-around">
+                        <div class="col-12 mb-2">
+                            <h4>Notas de crédito : </h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-sm table-hover table-responsive-xl">
+                                    <thead>
+                                        <tr>
+                                            <th>Opciones</th>
+                                            <th>No° de Nota</th>
+                                            <th>Monto</th>
+                                            <th>Forma de pago</th>
+                                            <th>Fecha</th>
+                                            <th>Observaciones</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody v-if="arrayCreditos.length">
+                                        <tr v-for="credito in arrayCreditos" :key="credito.id">
+                                            <td v-if="credito.estado == 'Vigente'">
+                                                <button type="button" class="btn btn-success btn-sm" @click="addDetalleCredito(credito)">
+                                                    <i class="icon-plus"></i>
+                                                </button>&nbsp;
+                                            </td>
+                                            <td v-text="credito.num_documento"></td>
+                                            <td v-text="credito.total"></td>
+                                            <td v-text="credito.forma_pago"></td>
+                                            <td>{{ convertDateVenta(credito.fecha_hora) }}</td>
+                                            <td v-text="credito.observacion"></td>
+                                            <td v-text="credito.estado"></td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody v-else>
+                                        <tr>
+                                            <td colspan="7" class="text-center">
+                                                <strong>Aún no tienes notas de credito con este cliente...</strong>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav>
+                                <ul class="pagination">
+                                    <li class="page-item" v-if="paginationcred.current_page > 1">
+                                        <a class="page-link" href="#" @click.prevent="cambiarPaginaCre(idcliente,paginationcred.current_page - 1)">Ant</a>
+                                    </li>
+                                    <li class="page-item" v-for="page in pagesNumberCre" :key="page" :class="[page == isActivedCre ? 'active' : '']">
+                                        <a class="page-link" href="#" @click.prevent="cambiarPaginaCre(idcliente,page)" v-text="page"></a>
+                                    </li>
+                                    <li class="page-item" v-if="paginationcred.current_page < paginationcred.last_page">
+                                        <a class="page-link" href="#" @click.prevent="cambiarPaginaCre(idcliente,paginationcred.current_page + 1)">Sig</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="col-12">
+                            <template v-if="selectedCredits.length"><h5>Notas de seleccionadas: </h5></template>
+                            <template v-else><h5 style="color:red;">Selecciona al menos una nota de crédito: </h5></template>
+                            <div class="form-inline" v-if="selectedCredits.length">
+                                <div v-for="(credit,index) in selectedCredits" :key="credit.id" class="d-flex justify-content-around mr-1">
+                                    <table class="table table-bordered table-striped table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Opciones</th>
+                                                <th>No° de Nota</th>
+                                                <th>Monto</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                 <td width="10px">
+                                                    <button @click="eliminarDetalleCredito(index)" type="button" class="btn btn-danger btn-sm">
+                                                        <i class="icon-close"></i>
+                                                    </button>&nbsp;
+                                                </td>
+                                                <td v-text="credit.num_documento"></td>
+                                                <td v-text="credit.total"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="form-group">
+                                <h5 for=""><strong>Forma de pago </strong></h5>
+                                <select class="form-control" v-model="forma_pagoab">
+                                    <option value="Nota de crédito">Nota de crédito</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <h5 for=""><strong> $ Abono: </strong></h5>
+                            <input type="number" step="any" min="1" class="form-control" disabled :value="TotalAbonoCredito">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12 justify-content-center d-flex">
+                            <button type="button" class="btn btn-primary mr-2"
+                                @click="guardarAbonoCredit(venta_id,adeudo,totalab)" v-if="selectedCredits.length"> Guardar
+                            </button>
+                            <button type="button" class="btn btn-secondary" @click="cerrarModal8(venta_id)">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <!-- Fin Modal crear abono con nota credito -->
 
   </main>
 </template>
@@ -1606,6 +1757,8 @@ export default {
             modal4: 0,
             modal5: 0,
             modal6: 0,
+            modal7: 0,
+            modal8: 0,
             ind : '',
             tituloModal: "",
             tipoAccion: 0,
@@ -1666,6 +1819,7 @@ export default {
             areaUs : "",
             acabado : "",
             estadoVenta : "",
+            estadoPago : "",
             usrol : 0,
             fecha1 : "",
             fecha2 : "",
@@ -1687,7 +1841,17 @@ export default {
             otroFormPayab : false,
             totalab : 0,
             btnAutoEntrega : false,
-            auto_entrega : 0
+            auto_entrega : 0,
+            arrayCreditos : [],
+            paginationcred : {
+                'total'        : 0,
+                'current_page' : 0,
+                'per_page'     : 0,
+                'last_page'    : 0,
+                'from'         : 0,
+                'to'           : 0,
+            },
+            selectedCredits : []
         };
     },
     components: {
@@ -1736,6 +1900,31 @@ export default {
             var to = from + (this.offset * 2);
             if(to >= this.paginationart.last_page){
                 to = this.paginationart.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+        isActivedCre: function(){
+            return this.paginationcred.current_page;
+        },
+        pagesNumberCre: function() {
+            if(!this.paginationcred.to) {
+                return [];
+            }
+
+            var from = this.paginationcred.current_page - this.offset;
+            if(from < 1) {
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.paginationcred.last_page){
+                to = this.paginationcred.last_page;
             }
 
             var pagesArray = [];
@@ -1809,12 +1998,22 @@ export default {
                 resultado += parseFloat(me.arrayDetalle[i].metros_cuadrados);
             }
             return resultado;
+        },
+        TotalAbonoCredito : function(){
+            let me=this;
+            let resultado = 0;
+            for(var i=0;i<me.selectedCredits.length;i++){
+                resultado += parseFloat(me.selectedCredits[i].total);
+            }
+            me.totalab = resultado;
+            return resultado;
         }
     },
     methods: {
-        listarVenta (page,buscar,criterio,estadoVenta,estadoEntrega){
+        listarVenta (page,buscar,criterio,estadoVenta,estadoEntrega,estadoPago){
             let me=this;
-            var url= '/venta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&estado='+ estadoVenta + '&estadoEntrega=' + estadoEntrega;
+            var url= '/venta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio +
+                '&estado='+ estadoVenta + '&estadoEntrega=' + estadoEntrega + '&estadoPagado=' + estadoPago;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayVenta = respuesta.ventas.data;
@@ -1890,12 +2089,10 @@ export default {
 
 
         },
-        cambiarPagina(page,buscar,criterio,estadoVenta,estadoEntrega){
+        cambiarPagina(page,buscar,criterio,estadoVenta,estadoEntrega,estadoPago){
             let me = this;
-                //Actualiza la página actual
-                me.pagination.current_page = page;
-                //Envia la petición para visualizar la data de esa página
-                me.listarVenta(page,buscar,criterio,estadoVenta,estadoEntrega);
+            me.pagination.current_page = page;
+            me.listarVenta(page,buscar,criterio,estadoVenta,estadoEntrega,estadoPago);
         },
         cambiarPaginaArt(page,buscar,criterio,bodega,acabado){
             let me = this;
@@ -2004,11 +2201,9 @@ export default {
             }
         },
         registrarVenta(){
-
             if (this.validarVenta()) {
                 return;
             }
-
             if(this.forma_pago != 'Cheque'){
                 this.num_cheque = 0;
                 this.banco = '';
@@ -2036,7 +2231,12 @@ export default {
                 'data': this.arrayDetalle
             }).then(function(response) {
                 me.ocultarDetalle();
-                me.listarVenta(1,'','num_comprobante','','');
+                me.listarVenta(1,'','num_comprobante','','','');
+                Swal.fire({
+                    type: 'success',
+                    title: 'Registrado...',
+                    text: 'La venta ha sido registrada con éxito!!',
+                });
             })
             .catch(function(error) {
                 console.log(error);
@@ -2065,12 +2265,12 @@ export default {
                     axios.put('/venta/desactivar',{
                         'id': id
                     }).then(function (response) {
-                        me.listarVenta(1,'','num_comprobante','','');
-                        swal(
-                        'Anulado!',
-                        'La venta ha sido anulado con éxito.',
-                        'success'
-                        )
+                        me.listarVenta(1,'','num_comprobante','','','');
+                        Swal.fire({
+                            type: 'success',
+                            title: 'Anulado...',
+                            text: 'La venta ha sido anulado con éxito!!',
+                        });
                     }).catch(function (error) {
                         console.log(error);
                     });
@@ -2192,7 +2392,7 @@ export default {
             this.tipo_facturacion = "";
             this.otroFormPay = false;
             this.listarVenta(this.pagination.current_page,
-                this.buscar, this.criterio,this.estadoVenta,this.estadoEntrega);
+                this.buscar, this.criterio,this.estadoVenta,this.estadoEntrega,this.estadoPago);
         },
         verVenta(id){
             let me = this;
@@ -2242,6 +2442,7 @@ export default {
                 me.facturado = arrayVentaT[0]['facturado'];
                 me.factura_env = arrayVentaT[0]['factura_env'];
                 me.auto_entrega = arrayVentaT[0]['auto_entrega'];
+                me.idcliente = arrayVentaT[0]['idcliente'];
 
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('dddd DD MMM YYYY hh:mm:ss a');
@@ -2323,11 +2524,11 @@ export default {
         agregarDetalleModal(data =[]){
             let me=this;
             if(me.encuentra(data['id'])){
-            Swal.fire({
-                type: 'error',
-                title: 'Lo siento...',
-                text: 'Este No° de placa ya esta en el listado!!',
-            })
+                Swal.fire({
+                    type: 'error',
+                    title: 'Lo siento...',
+                    text: 'Este No° de placa ya esta en el listado!!',
+                })
             }
             else{
                 me.arrayDetalle.push({
@@ -2613,8 +2814,7 @@ export default {
             axios.post('/venta/cambiarEntrega',{
                 'id': id,
                 'entregado' : this.entregado
-            }).then(function (response) {
-                /* me.listarVenta(1,'','num_comprobante','',''); */
+            }).then(function (response){
                 me.verVenta(id);
                 if(me.entregado == 1){
                     swal.fire(
@@ -2642,7 +2842,6 @@ export default {
                 'id': id,
                 'entrega_parcial' : this.entregado_parcial
             }).then(function (response) {
-                /* me.listarVenta(1,'','num_comprobante','',''); */
                 me.verVenta(id);
                 if(me.entregado_parcial == 1){
                     swal.fire(
@@ -2673,7 +2872,6 @@ export default {
                 'id': id,
                 'pagado' : this.pagado
             }).then(function (response) {
-                /* me.listarVenta(1,'','num_comprobante','',''); */
                 me.verVenta(id);
                 if(me.pagado == 1){
                     swal.fire(
@@ -2795,11 +2993,11 @@ export default {
                         'total' : total
                     }).then(function (response) {
                         me.verVenta(idventa);
-                        swal(
-                        'Eliminado!',
-                        'El abono ha sido eliminado con éxito.',
-                        'success'
-                        )
+                        Swal.fire({
+                            type: 'success',
+                            title: 'Eliminado...',
+                            text: 'El abono ha sido eliminado con éxito!!',
+                        });
                     }).catch(function (error) {
                         console.log(error);
                     });
@@ -2809,7 +3007,7 @@ export default {
             })
         },
         cambiarEstadoPagadoParcial(id,adeudo){
-            this.modal6 = 1;
+            this.modal7 = 1;
             this.tituloModal = 'Crear Abono';
             this.forma_pagoab = '';
             this.totalab = 0;
@@ -2883,10 +3081,124 @@ export default {
             }).catch(function (error) {
                 console.log(error);
             });
+        },
+        cerrarModal7(){
+            this.modal7 = 0;
+            if(this.pago_parcial == 0)
+                this.btnPagadoParcial =  false;
+            else
+                this.btnPagadoParcial = true;
+
+        },
+        pagoOtro(id,adeudo){
+            this.modal7 = 0;
+            this.modal6 = 1;
+            this.tituloModal = 'Crear Abono';
+            this.forma_pagoab = '';
+            this.totalab = 0;
+        },
+        pagoCredit(id,adeudo,idcliente){
+            this.modal7 = 0;
+            this.modal8 = 1;
+            this.tituloModal = 'Crear Abono';
+            this.forma_pagoab = 'Nota de crédito';
+            this.totalab = 0;
+            this.getCredits(idcliente,1);
+        },
+        getCredits(id,page){
+            let me = this;
+            var url= '/cliente/getCreditsPay?id=' + id + '&page=' + page;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.arrayCreditos = respuesta.creditos.data;
+                me.paginationcred = respuesta.pagination;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        cambiarPaginaCre(id,page){
+            let me = this;
+            me.pagination.current_page = page;
+            me.getCredits(id,page);
+        },
+        cerrarModal8(id){
+            this.modal8 = 0;
+            this.forma_pagoab = '';
+            this.verVenta(id);
+            this.otroFormPayab =  false;
+            this.arrayCreditos = [];
+            this.selectedCredits = [];
+            this.totalab = 0;
+        },
+        addDetalleCredito(data =[]){
+            let me=this;
+            if(me.encuentraCredit(data['id'])){
+                Swal.fire({
+                    type: 'error',
+                    title: 'Lo siento...',
+                    text: 'Esta Nota de crédito ya esta seleccionada!!',
+                })
+            }
+            else{
+                me.selectedCredits.push({
+                    idcredit         : data['id'],
+                    num_documento    : data['num_documento'],
+                    total            : data['total'],
+                });
+            }
+        },
+        encuentraCredit(id){
+            var sw=0;
+            for(var i=0;i<this.selectedCredits.length;i++){
+                if(this.selectedCredits[i].idcredit==id){
+                    sw=true;
+                }
+            }
+            return sw;
+        },
+        eliminarDetalleCredito(index){
+            let me = this;
+            me.selectedCredits.splice(index,1);
+        },
+        guardarAbonoCredit(id,adeudo,total){
+            let abono = parseFloat(total);
+            if(abono > adeudo){
+                swal.fire(
+                'Error!',
+                'El abono no puede ser mayor que el adeudo.',
+                'error');
+                this.totalab = 0;
+            }else{
+                let me = this;
+
+                var ArrCredits = [];
+                for(let i = 0; i < this.selectedCredits.length; i++){
+                    ArrCredits.push(this.selectedCredits[i]['idcredit']);
+                }
+                //console.log(ArrCredits);
+
+                axios.post('/venta/crearDepositCredit',{
+                    'id'         : id,
+                    'total'      : abono,
+                    'forma_pago' : this.forma_pagoab,
+                    'creditos'   : ArrCredits
+                }).then(function(response) {
+                    me.cerrarModal8();
+                    me.verVenta(id);
+                    swal.fire(
+                    'Completado!',
+                    'El abono ha sido registrado con éxito.',
+                    'success');
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+            }
         }
     },
     mounted() {
-        this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta,this.estadoEntrega);
+        this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta,this.estadoEntrega,this.estadoPago);
         this.getLastNum();
     }
 };
@@ -2897,18 +3209,18 @@ export default {
       position: absolute !important;
     }
     .mostrar {
-      display: list-item !important;
-      opacity: 1 !important;
-      position: absolute !important;
-      background-color: #3c29297a !important;
+        display: list-item !important;
+        opacity: 1 !important;
+        position: absolute !important;
+        background-color: #3c29297a !important;
     }
     .div-error {
-      display: flex;
-      justify-content: center;
+        display: flex;
+        justify-content: center;
     }
     .text-error {
-      color: red !important;
-      font-weight: bold;
+        color: red !important;
+        font-weight: bold;
     }
     @media (min-width: 600px){
         .btnagregar{
@@ -2919,21 +3231,25 @@ export default {
         background: white;
         border: none;
         text-align: center;
-
     }
     input[type="number"]{
         -webkit-appearance: textfield !important;
         margin: 0;
-       /*  -moz-appearance:textfield !important; */
     }
     .sinpadding [class*="col-"] {
         padding: 0;
     }
     .content-export{
-        /* width: auto !important; */
         height: 380px !important;
     }
     .content-deposit {
         height: 340px !important;
+    }
+    .content-askdep{
+        height: 240px !important;
+    }
+    .content-creditPay{
+        height: 570px !important;
+        width: 100% !important;
     }
 </style>

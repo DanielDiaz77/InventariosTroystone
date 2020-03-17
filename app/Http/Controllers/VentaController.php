@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Articulo;
 use App\Venta;
+use App\Credit;
 use App\DetalleVenta;
 use App\User;
 use App\Deposit;
@@ -28,6 +29,7 @@ class VentaController extends Controller
         $criterio = $request->criterio;
         $estadoV = $request->estado;
         $entregaEs = $request->estadoEntrega;
+        $pagadoEs = $request->estadoPagado;
         $usrol = \Auth::user()->idrol;
         $usid = \Auth::user()->id;
         $usarea = \Auth::user()->area;
@@ -96,259 +98,875 @@ class VentaController extends Controller
             }else{
                 if($buscar==''){
                     if($entregaEs == 'entregado'){
-                        $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                        ->join('users','ventas.idusuario','=','users.id')
-                        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                        ->where([
-                            ['ventas.estado','Registrado'],
-                            ['ventas.entregado',1]
-                        ])
-                        ->orderBy('ventas.id', 'desc')->paginate(12);
+                        if($pagadoEs == 'pagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',1],
+                                ['ventas.pagado',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'parcial'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',1],
+                                ['ventas.pagado',0],['ventas.pago_parcial',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'nopagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',1],
+                                ['ventas.pagado',0],['ventas.pago_parcial',0]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }else{
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }
                     }elseif($entregaEs == 'entrega_parcial'){
-                        $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                        ->join('users','ventas.idusuario','=','users.id')
-                        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                        ->where([
-                            ['ventas.estado','Registrado'],
-                            ['ventas.entrega_parcial',1]
-                        ])
-                        ->orderBy('ventas.id', 'desc')->paginate(12);
+                        if($pagadoEs == 'pagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entrega_parcial',1],['ventas.pagado',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+
+                        }elseif($pagadoEs == 'parcial'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entrega_parcial',1],
+                                ['ventas.pagado',0],['ventas.pago_parcial',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+
+                        }elseif($pagadoEs == 'nopagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entrega_parcial',1],
+                                ['ventas.pagado',0],['ventas.pago_parcial',0]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }else{
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entrega_parcial',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }
                     }elseif($entregaEs == 'no_entregado'){
-                        $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                        ->join('users','ventas.idusuario','=','users.id')
-                        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                        ->where([
-                            ['ventas.estado','Registrado'],
-                            ['ventas.entregado',0],
-                            ['ventas.entrega_parcial',0]
-                        ])
-                        ->orderBy('ventas.id', 'desc')->paginate(12);
+                        if($pagadoEs == 'pagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',0],
+                                ['ventas.entrega_parcial',0],['ventas.pagado',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'parcial'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',0],
+                                ['ventas.entrega_parcial',0],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'nopagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',0],
+                                ['ventas.entrega_parcial',0],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }else{
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',0],['ventas.entrega_parcial',0]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }
                     }else{
-                        $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                        ->join('users','ventas.idusuario','=','users.id')
-                        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                        ->where([['ventas.estado','Registrado']])
-                        ->orderBy('ventas.id', 'desc')->paginate(12);
+                        if($pagadoEs == 'pagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.pagado',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'parcial'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'nopagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }else{
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado']])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }
                     }
                 }
                 else{
                     if($criterio == "cliente"){
                         if($entregaEs == 'entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['personas.nombre', 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entregado',1]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.entregado',1],
+                                    ['ventas.estado','Registrado'],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.entregado',1],
+                                    ['ventas.estado','Registrado'],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.entregado',1],
+                                    ['ventas.estado','Registrado'],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.entregado',1],
+                                    ['ventas.estado','Registrado']])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'entrega_parcial'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['personas.nombre', 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entrega_parcial',1]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
 
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'no_entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['personas.nombre', 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entregado',0],
-                                ['ventas.entrega_parcial',0]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.pagado',0],
+                                        ['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.pagado',0],
+                                        ['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }else{
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['personas.nombre', 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado']
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado']])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }
                     }elseif($criterio == "user"){
                         if($entregaEs == 'entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
-                                ['ventas.entregado',1]])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'entrega_parcial'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
-                                ['ventas.entrega_parcial',1]])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'no_entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
-                                ['ventas.entregado',0],['ventas.entrega_parcial',0]])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }else{
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado']])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado']])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }
                     }else{
                         if($entregaEs == 'entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entregado',1]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([ ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([ ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([ ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([ ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'entrega_parcial'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entrega_parcial',1]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'no_entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entregado',0],
-                                ['ventas.entrega_parcial',0]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }else{
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado']
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado']])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }
                     }
                 }
@@ -417,271 +1035,896 @@ class VentaController extends Controller
             }else{
                 if($buscar==''){
                     if($entregaEs == 'entregado'){
-                        $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                        ->join('users','ventas.idusuario','=','users.id')
-                        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                        ->where([
-                            ['ventas.estado','Registrado'],
-                            ['ventas.entregado',1],
-                            ['ventas.idusuario',$usid]
-                        ])
-                        ->orderBy('ventas.id', 'desc')->paginate(12);
+                        if($pagadoEs == 'pagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',1],['ventas.idusuario',$usid],
+                                ['ventas.pagado',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'parcial'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',1],['ventas.idusuario',$usid],
+                                ['ventas.pagado',0],['ventas.pago_parcial',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'nopagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',1],['ventas.idusuario',$usid],
+                                ['ventas.pagado',0],['ventas.pago_parcial',0]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }else{
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.entregado',1],['ventas.idusuario',$usid]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }
                     }elseif($entregaEs == 'entrega_parcial'){
-                        $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                        ->join('users','ventas.idusuario','=','users.id')
-                        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                        ->where([
-                            ['ventas.estado','Registrado'],
-                            ['ventas.entrega_parcial',1],
-                            ['ventas.idusuario',$usid]
-                        ])
-                        ->orderBy('ventas.id', 'desc')->paginate(12);
+                        if($pagadoEs == 'pagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([ ['ventas.estado','Registrado'],['ventas.entrega_parcial',1],
+                                ['ventas.idusuario',$usid],['ventas.pagado',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'parcial'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([ ['ventas.estado','Registrado'],['ventas.entrega_parcial',1],
+                                ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'nopagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([ ['ventas.estado','Registrado'],['ventas.entrega_parcial',1],
+                                ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }else{
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([ ['ventas.estado','Registrado'],['ventas.entrega_parcial',1],
+                                ['ventas.idusuario',$usid]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }
                     }elseif($entregaEs == 'no_entregado'){
-                        $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                        ->join('users','ventas.idusuario','=','users.id')
-                        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                        ->where([
-                            ['ventas.estado','Registrado'],
-                            ['ventas.entregado',0],
-                            ['ventas.entrega_parcial',0],
-                            ['ventas.idusuario',$usid]
-                        ])
-                        ->orderBy('ventas.id', 'desc')->paginate(12);
+                        if($pagadoEs == 'pagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'], ['ventas.entregado',0],['ventas.entrega_parcial',0],
+                                ['ventas.idusuario',$usid],['ventas.pagado',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'parcial'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'], ['ventas.entregado',0],['ventas.entrega_parcial',0],
+                                ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'nopagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'], ['ventas.entregado',0],['ventas.entrega_parcial',0],
+                                ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }else{
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'], ['ventas.entregado',0],['ventas.entrega_parcial',0],
+                                ['ventas.idusuario',$usid]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }
                     }else{
-                        $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                        ->join('users','ventas.idusuario','=','users.id')
-                        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                        ->where([['ventas.estado','Registrado'],['ventas.idusuario',$usid]])
-                        ->orderBy('ventas.id', 'desc')->paginate(12);
+                        if($pagadoEs == 'pagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.idusuario',$usid],['ventas.pagado',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'parcial'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.idusuario',$usid],
+                                ['ventas.pagado',0],['ventas.pago_parcial',1]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }elseif($pagadoEs == 'nopagado'){
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.idusuario',$usid],
+                                ['ventas.pagado',0],['ventas.pago_parcial',0]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }else{
+                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                            ->join('users','ventas.idusuario','=','users.id')
+                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                            ->where([['ventas.estado','Registrado'],['ventas.idusuario',$usid]])
+                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                        }
                     }
                 }
                 else{
                     if($criterio == "cliente"){
                         if($entregaEs == 'entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['personas.nombre', 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entregado',1],
-                                ['ventas.idusuario',$usid]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'], ['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.idusuario',$usid],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'], ['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.idusuario',$usid],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'], ['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.idusuario',$usid],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'], ['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.idusuario',$usid]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'entrega_parcial'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['personas.nombre', 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entrega_parcial',1],
-                                ['ventas.idusuario',$usid]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([ ['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.idusuario',$usid],
+                                    ['ventas.estado','Registrado'],['ventas.entrega_parcial',1],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([ ['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.idusuario',$usid],
+                                    ['ventas.estado','Registrado'],['ventas.entrega_parcial',1],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([ ['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.idusuario',$usid],
+                                    ['ventas.estado','Registrado'],['ventas.entrega_parcial',1],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([ ['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.idusuario',$usid],
+                                    ['ventas.estado','Registrado'],['ventas.entrega_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'no_entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['personas.nombre', 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entregado',0],
-                                ['ventas.entrega_parcial',0],
-                                ['ventas.idusuario',$usid]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.entregado',0],
+                                    ['ventas.estado','Registrado'],['ventas.entrega_parcial',0],
+                                    ['ventas.idusuario',$usid], ['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.entregado',0],
+                                    ['ventas.estado','Registrado'],['ventas.entrega_parcial',0],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.entregado',0],
+                                    ['ventas.estado','Registrado'],['ventas.entrega_parcial',0],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.entregado',0],
+                                    ['ventas.estado','Registrado'],['ventas.entrega_parcial',0],
+                                    ['ventas.idusuario',$usid]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }else{
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['personas.nombre', 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.idusuario',$usid]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['personas.nombre', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }
                     }elseif($criterio == "user"){
                         if($entregaEs == 'entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
-                                ['ventas.entregado',1],['ventas.idusuario',$usid]])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.idusuario',$usid],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.idusuario',$usid],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.idusuario',$usid],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',1],['ventas.idusuario',$usid]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'entrega_parcial'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
-                                ['ventas.entrega_parcial',1],['ventas.idusuario',$usid]])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.idusuario',$usid],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.idusuario',$usid],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.idusuario',$usid],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entrega_parcial',1],['ventas.idusuario',$usid]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'no_entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
-                                ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.idusuario',$usid]])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.idusuario',$usid],
+                                    ['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.idusuario',$usid],
+                                    ['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.idusuario',$usid],
+                                    ['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.entregado',0],['ventas.entrega_parcial',0],['ventas.idusuario',$usid]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }else{
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
-                                ['ventas.idusuario',$usid]])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['users.usuario', 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }
                     }else{
                         if($entregaEs == 'entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                                'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                                'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                                'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                                'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                                'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                                'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entregado',1],
-                                ['ventas.idusuario',$usid]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.entregado',1],
+                                    ['ventas.estado','Registrado'],['ventas.idusuario',$usid],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.entregado',1],
+                                    ['ventas.estado','Registrado'],['ventas.idusuario',$usid],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.entregado',1],
+                                    ['ventas.estado','Registrado'],['ventas.idusuario',$usid],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.entregado',1],
+                                    ['ventas.estado','Registrado'],['ventas.idusuario',$usid]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'entrega_parcial'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entrega_parcial',1],
-                                ['ventas.idusuario',$usid]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.entrega_parcial',1],
+                                    ['ventas.estado','Registrado'],['ventas.idusuario',$usid],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.entrega_parcial',1],
+                                    ['ventas.estado','Registrado'],['ventas.idusuario',$usid],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.entrega_parcial',1],
+                                    ['ventas.estado','Registrado'],['ventas.idusuario',$usid],['ventas.pagado',0],
+                                    ['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.entrega_parcial',1],
+                                    ['ventas.estado','Registrado'],['ventas.idusuario',$usid]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }elseif($entregaEs == 'no_entregado'){
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.entregado',0],
-                                ['ventas.entrega_parcial',0],
-                                ['ventas.idusuario',$usid]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
-
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.idusuario',$usid],
+                                    ['ventas.entregado',0],['ventas.estado','Registrado'],['ventas.entrega_parcial',0],
+                                    ['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.idusuario',$usid],
+                                    ['ventas.entregado',0],['ventas.estado','Registrado'],['ventas.entrega_parcial',0],
+                                    ['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.idusuario',$usid],
+                                    ['ventas.entregado',0],['ventas.estado','Registrado'],['ventas.entrega_parcial',0],
+                                    ['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.idusuario',$usid],
+                                    ['ventas.entregado',0],['ventas.estado','Registrado'],['ventas.entrega_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }else{
-                            $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
-                            ->join('users','ventas.idusuario','=','users.id')
-                            ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
-                            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
-                            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
-                            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
-                            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
-                            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
-                            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
-                            ->where([
-                                ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
-                                ['ventas.estado','Registrado'],
-                                ['ventas.idusuario',$usid]
-                            ])
-                            ->orderBy('ventas.id', 'desc')->paginate(12);
+                            if($pagadoEs == 'pagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'parcial'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',1]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }elseif($pagadoEs == 'nopagado'){
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid],['ventas.pagado',0],['ventas.pago_parcial',0]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }else{
+                                $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+                                ->join('users','ventas.idusuario','=','users.id')
+                                ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+                                    'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+                                    'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+                                    'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+                                    'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+                                    'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+                                    'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+                                ->where([['ventas.'.$criterio, 'like', '%'. $buscar . '%'],['ventas.estado','Registrado'],
+                                    ['ventas.idusuario',$usid]])
+                                ->orderBy('ventas.id', 'desc')->paginate(12);
+                            }
                         }
                     }
                 }
@@ -944,7 +2187,8 @@ class VentaController extends Controller
             'ventas.num_cheque','ventas.file','ventas.observacionpriv','ventas.facturado',
             'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','personas.nombre as cliente',
             'personas.tipo','personas.rfc','personas.cfdi','personas.telefono','ventas.auto_entrega',
-            'personas.company as contacto','personas.tel_company as tel_contacto')
+            'personas.company as contacto','personas.tel_company as tel_contacto',
+            'personas.id as idcliente')
         ->where('ventas.id','=',$id)
         ->orderBy('ventas.id', 'desc')->take(1)->get();
 
@@ -1733,14 +2977,22 @@ class VentaController extends Controller
     }
     public function deleteDeposit(Request $request){
         if (!$request->ajax()) return redirect('/');
-
         try{
             DB::beginTransaction();
 
             $deposit = Deposit::findOrFail($request->id);
-            $deposit->delete();
 
-            /*  $venta = Venta::findOrFail($request->idventa); */
+            if($deposit->forma_pago == 'Nota de crédito'){
+                $creditos = $deposit->credits()->select('credits.id')->get();
+                foreach($creditos as $det){
+                    $credit = Credit::findOrFail($det['id']);
+                    $credit->estado = 'Vigente';
+                    $credit->save();
+                }
+                $deposit->delete();
+            }else{
+                $deposit->delete();
+            }
             $venta = Venta::findOrFail($request->idventa);
             $numDeposits = $venta->deposits()->count();
 
@@ -1753,7 +3005,6 @@ class VentaController extends Controller
                 $venta->adeudo = $venta->adeudo + $request->total;
                 $venta->save();
             }
-
             DB::commit();
         }catch(Exception $e){
             DB::rollBack();
@@ -2774,5 +4025,66 @@ class VentaController extends Controller
         }catch(Exception $e){
             DB::rollBack();
         }
+    }
+    public function crearDepositCredit(Request $request){
+
+        if (!$request->ajax()) return redirect('/');
+
+        $mytime = Carbon::now('America/Mexico_City');
+
+        $venta = Venta::findOrFail($request->id); //Venta a depositar
+        $adeudoAct = $venta->adeudo;
+
+        $creditos = $request->creditos;
+
+        if($request->total < $adeudoAct){
+            try{
+                DB::beginTransaction();
+                $venta->adeudo = $venta->adeudo - $request->total;
+                $venta->pago_parcial = 1;
+                $venta->pagado = 0;
+                $venta->save();
+                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime,
+                    'forma_pago' => $request->forma_pago]);
+                $venta->deposits()->save($deposit);
+
+                $deposit->credits()->attach($creditos);
+
+                foreach($creditos as $det){
+                    $credit = Credit::findOrFail($det);
+                    $credit->estado = 'Abonada';
+                    $credit->save();
+                }
+
+                DB::commit();
+
+            }catch(Exception $e){
+                DB::rollBack();
+            }
+        }elseif($request->total == $adeudoAct){
+            try{
+                DB::beginTransaction();
+                $venta->adeudo = 0;
+                $venta->pago_parcial = 1;
+                $venta->pagado = 1;
+                $venta->auto_entrega = 1;
+                $venta->save();
+                $deposit = new Deposit(['total' => $request->total,'fecha_hora' => $mytime,
+                    'forma_pago' => $request->forma_pago]);
+                $venta->deposits()->save($deposit);
+                $deposit->credits()->attach($creditos);
+
+                foreach($creditos as $det){
+                    $credit = Credit::findOrFail($det);
+                    $credit->estado = 'Abonada';
+                    $credit->save();
+                }
+
+                DB::commit();
+            }catch(Exception $e){
+                DB::rollBack();
+            }
+        }
+
     }
 }

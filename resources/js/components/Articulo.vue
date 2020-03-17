@@ -1,21 +1,39 @@
 <template>
   <main class="main">
     <!-- Breadcrumb -->
-    <ol class="breadcrumb">
+    <ol class="breadcrumb  mb-0">
       <li class="breadcrumb-item"><a href="/">Escritorio</a> </li>
     </ol>
-    <div class="container-fluid">
+    <div class="container-fluid p-1">
       <!-- Ejemplo de tabla Listado -->
         <div class="card">
-            <div class="card-header">
-                <i class="fa fa-align-justify"></i> Artículos
+            <div class="card-header p-2">
+                  <i class="fa fa-align-justify"></i> Artículos
                <!--  <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary" v-if="showNew">
                     <i class="icon-plus"></i>&nbsp;Nuevo
                 </button> -->
-                <button type="button" @click="AskcortarPlaca()" class="btn btn-warning float-right" v-if="listado == 2 && stock >= 1">
-                    <i class="icon-crop"></i>&nbsp;Cortar
-                </button>
+                <template v-if="listado == 2">
+                    <button type="button" @click="AskcortarPlaca()" class="btn btn-warning btn-sm float-right" v-if="stock >= 1">
+                        <i class="icon-crop"></i>&nbsp;Cortar
+                    </button>
+                </template>
+                <template v-else-if="listado == 1">
+                    <div class="form-inline ml-5 float-right">
 
+                        <div class="form-group">
+                            <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5">
+                                <button @click="abrirModal3()" class="btn btn-outline-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
+                            </div>
+
+                            <div class="input-group input-group-sm">
+                                <label class="mb-1 ml-sm-5" for=""><strong>Total: </strong>&nbsp; {{ totres }} </label>
+                            </div>
+                            <div class="input-group input-group-sm mr-2">
+                                <label class="mb-1 ml-sm-5" for=""><strong>Metros <sup>2</sup>: </strong>&nbsp; {{ sumaMts }} </label>
+                            </div>
+                        </div>
+                    </div>
+                </template>
             </div>
             <!-- Listado -->
             <template v-if="listado==1">
@@ -45,6 +63,7 @@
                                         <option value="Mecanicos">Mecánicos</option>
                                         <option value="Tractorista">Tractorista</option>
                                         <option value="Bodega L">Bodega L</option>
+                                        <option value="nol">S/N Bodega L</option>
                                     </template>
                                     <template v-else>
                                         <option value="San Luis">San Luis</option>
@@ -68,11 +87,11 @@
                                 </select>
                             </div>
                             <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5" v-if="estadoArt==1">
-                                <button @click="listarExcelFiltros(criterio,buscar,acabado,bodega,zona)" class="btn btn-success btn-sm">Exportar <i class="fa fa-file-excel-o"></i></button>
+                                <button @click="listarExcelFiltros(criterio,buscar,acabado,bodega,zona)" class="btn btn-success btn-sm">Exportar Consulta <i class="fa fa-file-excel-o"></i></button>
                             </div>
                         </div>
 
-                        <div class="form-group mb-2 col-sm-3 float-right">
+                        <!-- <div class="form-group mb-2 col-sm-3 float-right">
                             <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5">
                                 <button @click="abrirModal3()" class="btn btn-outline-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
                             </div>
@@ -83,7 +102,7 @@
                             <div class="input-group input-group-sm">
                                 <label class="mb-1 ml-sm-5" for=""><strong>Metros <sup>2</sup>: </strong>&nbsp; {{ sumaMts }} </label>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="table-responsive col-md-12">
                         <table class="table table-bordered table-striped table-sm text-center table-hover">

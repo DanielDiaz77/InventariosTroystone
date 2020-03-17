@@ -20,4 +20,8 @@ class Deposit extends Model
         return $this->belongsTo(Project::class);
     }
 
+    public function credits(){
+        return $this->belongsToMany(Credit::class)->withTimestamps();
+    }
+
 }

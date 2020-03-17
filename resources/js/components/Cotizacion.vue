@@ -300,7 +300,7 @@
                     </div>
                     <div class="col-sm-2 text-center">
                         <div class="form-group">
-                            <label for=""><strong>Descuento (%)</strong></label>
+                            <label for=""><strong>Descuento ($)</strong></label>
                             <input type="number" min="0" value="0" class="form-control" v-model="descuento">
                         </div>
                     </div>
@@ -334,7 +334,7 @@
                                     <th v-else>
                                         Precio m<sup>2</sup>
                                     </th>
-                                    <th>Descuento </th>
+                                    <th>Descuento ($)</th>
                                     <th>Ubicacion</th>
                                     <th>SubTotal</th>
                                 </tr>

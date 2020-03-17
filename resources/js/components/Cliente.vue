@@ -1,10 +1,10 @@
 <template>
   <main class="main">
     <!-- Breadcrumb -->
-    <ol class="breadcrumb">
+    <ol class="breadcrumb mb-0">
       <li class="breadcrumb-item"><a href="/">Escritorio</a> </li>
     </ol>
-    <div class="container-fluid">
+    <div class="container-fluid p-1">
       <!-- Ejemplo de tabla Listado -->
       <div class="card">
         <div class="card-header">
@@ -30,7 +30,7 @@
                         </div>
                         <div class="input-group">
                             <input type="text" v-model="buscar" @keyup.enter="listarPersona(1,buscar,criterio,status,zona,actives)" class="form-control mb-1" placeholder="Texto a buscar">
-                            <button type="submit" @click="listarPersona(1,buscar,criterio,status,zona)" class="btn btn-primary mb-1"><i class="fa fa-search mb-1"></i></button>
+                            <button type="submit" @click="listarPersona(1,buscar,criterio,status,zona,actives)" class="btn btn-primary mb-1"><i class="fa fa-search mb-1"></i></button>
                         </div>
                         <div class="input-group" v-if="userrol == 1">
                             <select class="form-control mb-1" v-model="status" @change="listarPersona(1,buscar,criterio,status,zona,actives)">
@@ -39,7 +39,7 @@
                                 <option value="0">Eliminados</option>
                             </select>
                         </div>
-                        <div class="input-group ml-5" v-if="userrol == 1">
+                        <div class="input-group ml-0 ml-md-5" v-if="userrol == 1">
                             <button class="btn btn-light mb-1"><i style="color:red;" class="fa fa-map-marker"></i> Area</button>
                             <select class="form-control mb-1" v-model="zona" @change="listarPersona(1,buscar,criterio,status,zona,actives)">
                                 <option value="">Todo</option>
@@ -47,7 +47,7 @@
                                 <option value="SLP">San Luis</option>
                             </select>
                         </div>
-                        <div class="input-group ml-5">
+                        <div class="input-group ml-0 ml-md-5">
                             <button class="btn btn-light mb-1"><i style="color:blue;" class="fa fa-info"></i> Estado Ventas</button>
                             <select class="form-control mb-1" v-model="actives" @change="listarPersona(1,buscar,criterio,status,zona,actives)">
                                 <option value="">Todo</option>
@@ -188,7 +188,7 @@
                     <!-- Siguiente tarea -->
                     <div class="col-12 col-md-8 col-lg-8 col-xl-6 offset-md-2 offset-xl-0">
                          <div class="d-flex flex-column">
-                            <div><h4>Siguiente Tarea</h4>&nbsp;</div>
+                            <div class="border-bottom"><h4>Siguiente Tarea</h4>&nbsp;</div>
                             <div>
                                 <div v-if="nextTask.length">
                                     <div v-for="nexttask in nextTask" :key="nexttask.id">
@@ -257,6 +257,66 @@
                                             <tr>
                                                 <td colspan="7" class="text-center">
                                                     <strong>Aún no tienes ventas con este cliente...</strong>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Notas de credito ventas -->
+                    <div class="col-12 col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-xl-0 mt-3 mt-sm-3 mt-lg-3 mt-xl-0">
+                        <div class="d-flex flex-column">
+                            <div class="border-bottom d-flex justify-content-between">
+                                <div><h4>Notas de crédito: </h4>&nbsp;</div>
+                                <div v-if="active != 0">
+                                    <button class="btn btn-primary btn-sm" type="button" @click="abrirModalCredit()">
+                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Añadir
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-sm table-hover table-responsive-xl">
+                                        <thead>
+                                            <tr>
+                                                <th>Opciones</th>
+                                                <th>No° de Nota</th>
+                                                <th>Monto</th>
+                                                <th>Forma de pago</th>
+                                                <th>Fecha</th>
+                                                <th>Observaciones</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody v-if="arrayCreditos.length">
+                                            <tr v-for="credito in arrayCreditos" :key="credito.id">
+                                                <td>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                                        @click="eliminarCredito(credito.id,persona_id)" v-if="credito.estado == 'Vigente'">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>&nbsp;
+                                                </td>
+                                                <td v-text="credito.num_documento"></td>
+                                                <td v-text="credito.total"></td>
+                                                <td v-text="credito.forma_pago"></td>
+                                                <td>{{ convertDateVenta(credito.fecha_hora) }}</td>
+                                                <td v-text="credito.observacion"></td>
+                                                <td>
+                                                    <div v-if="credito.estado == 'Vigente'">
+                                                        <span class="badge badge-info">Vigente</span>
+                                                    </div>
+                                                    <div v-else-if="credito.estado == 'Abonada'">
+                                                        <span class="badge badge-success">Abonada</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tbody v-else>
+                                            <tr>
+                                                <td colspan="7" class="text-center">
+                                                    <strong>Aún no tienes notas de credito con este cliente...</strong>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -529,7 +589,7 @@
                         <div class="page-header">
                             <h3 id="timeline">Archivos adjuntos de {{ nombre }} &nbsp;</h3>
                         </div>
-                        <div class="divdocs" v-if="docsArray.length">
+                        <div class="divdocs form-inline" v-if="docsArray.length">
                             <div v-for="file in docsArray" :key="file.id" class="d-flex justify-content-around">
                                 <div>
                                     <template v-if="file.tipo != 'pdf'">
@@ -906,6 +966,53 @@
     </div>
     <!--Fin del modal Visualizar Cliente-->
 
+    <!-- Modal crear abono -->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal3}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-md " role="document">
+            <div class="modal-content content-credit">
+                <div class="modal-body ">
+                    <h3 class="mb-3">Registrar Nota de crédito</h3>
+                    <div class="row d-flex justify-content-around">
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <h5 for=""><strong>Forma de pago </strong><span style="color:red;" v-show="forma_pagonc==''">(*Seleccione)</span></h5>
+                                <select class="form-control" v-model="forma_pagonc" v-if="otroFormPaync == false">
+                                    <option value='' disabled>Seleccione la forma de pago</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta">Tarjeta</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                    <option value="Mixto">Mixto</option>
+                                </select>
+                                <div class="form-check float-left mt-1">
+                                    <input class="form-check-input" type="checkbox" id="chkOtherPayab" v-model="otroFormPaync">
+                                    <label class="form-check-label p-0 m-0" for="chkOtherPayab"><strong>Otro</strong></label>
+                                </div>
+                                <input class="form-control rounded-0"  maxlength="35" placeholder="Ingresa la forma de pago" v-model="forma_pagonc" v-if="otroFormPaync == true">
+                            </div>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <h5 for=""><strong> $ Monto: </strong></h5>
+                            <input type="number" step="any" min="1" class="form-control" v-model="totalnc">
+                        </div>
+                        <div class="col-12 mb-2">
+                            <h5 for=""><strong> Observaciones: </strong></h5>
+                            <textarea class="form-control rounded-1" rows="4" maxlength="400" v-model="descripcionnc"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12 justify-content-center d-flex">
+                            <button type="button" class="btn btn-primary mr-2" @click="saveCredit(persona_id,totalnc)">Guardar</button>
+                            <button type="button" class="btn btn-secondary" @click="cerrarModalCredit()">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <!-- Fin Modal crear abono -->
+
   </main>
 </template>
 
@@ -936,6 +1043,7 @@ export default {
             arrayPersona: [],
             modal: 0,
             modal2 : 0,
+            modal3 : 0,
             tituloModal: "",
             tipoAccion: 0,
             errorPersona: 0,
@@ -982,7 +1090,6 @@ export default {
             status : '',
             arrayFiles : [],
             docsArray : [],
-
             arrayComentarios : [],
             commentBody : "",
             CommentNew : 0,
@@ -990,6 +1097,12 @@ export default {
             itsCommentNew : 0,
             comment_id : 0,
             actives: "",
+            arrayCreditos : [],
+            forma_pagonc : '',
+            otroFormPaync : false,
+            totalnc : 0,
+            descripcionnc : '',
+            active : 0
         };
     },
 
@@ -1323,7 +1436,7 @@ export default {
             this.persona_id =  data["id"];
             this.cfdi =  data["cfdi"];
             this.vendedorD = data["vendedor"];
-
+            this.active = data["active"];
             var idcliente = data["id"];
 
             this.obtenerTareas(idcliente);
@@ -1331,6 +1444,7 @@ export default {
             this.obtenerEventos(idcliente,1);
             this.getDocs(idcliente);
             this.getComments(idcliente);
+            this.getCredits(data["id"]);
 
         },
         ocultarDetalle(){
@@ -1360,7 +1474,13 @@ export default {
             this.arrayVentasT = [];
             this.arrayCommentT = [];
             this.arrayActividadesT = [];
-            this.listarPersona(page,me.buscar,me.criterio,me.status,me.zona,me.actives);
+            this.arrayCreditos = [];
+            this.forma_pagonc = '';
+            this.otroFormPaync = false;
+            this.totalnc = 0;
+            this.active = 0;
+            this.descripcionnc = '';
+            this.listarPersona(page,this.buscar,this.criterio,this.status,this.zona,this.actives);
         },
         obtenerTareas(idcliente){
             let me = this;
@@ -1856,6 +1976,107 @@ export default {
                 }else if (result.dismiss === swal.DismissReason.cancel){
                 }
             })
+        },
+        abrirModalCredit(){
+            this.modal3 = 1;
+            this.forma_pagonc = '';
+            this.otroFormPaync = false;
+            this.totalnc = 0;
+            this.descripcionnc = '';
+        },
+        cerrarModalCredit(){
+            this.modal3 = 0;
+            this.forma_pagonc = '';
+            this.otroFormPaync = false;
+            this.totalnc = 0;
+            this.descripcionnc = '';
+        },
+        saveCredit(id,total){
+            let me = this;
+            var numnota =  Math.floor(Math.random() * 9000000000) + 1000000000;
+            let totalF = parseFloat(total);
+            if(this.forma_pagonc == ''){
+                swal.fire(
+                'Atención!',
+                'Ingrese la forma de pago.',
+                'error');
+            }else{
+                if(totalF <= 0){
+                    swal.fire(
+                    'Error!',
+                    'El monto no puede ser 0 o negativo.',
+                    'error');
+                    this.totalnc = 0;
+                }else{
+                    let me = this;
+                    axios.post('/cliente/crearCredit',{
+                        'id' : id,
+                        'total' : totalF,
+                        'num_notac' : numnota,
+                        'forma_pago' : this.forma_pagonc,
+                        'observacion' : this.descripcionnc
+                    }).then(function(response) {
+                        swal.fire(
+                        'Completado!',
+                        'La nota de credito ha sido registrado con éxito.',
+                        'success');
+                        me.getCredits(id);
+                        me.cerrarModalCredit();
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+                }
+            }
+        },
+        getCredits(id){
+            let me = this;
+            var url= '/cliente/getCredits?id=' + id;
+            axios.get(url).then(function (response){
+                var respuesta= response.data;
+                me.arrayCreditos = respuesta.creditos;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        eliminarCredito(id,idcliente){
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Esta seguro de eliminar esta nota de crédito?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar!",
+                cancelButtonText: "Cancelar!",
+                reverseButtons: true
+            })
+            .then(result => {
+                if (result.value) {
+                    let me = this;
+                    axios.put('/cliente/deleteCredit',{
+                        'id': id
+                    }).then(function (response) {
+                        me.getCredits(idcliente);
+                        swal.fire(
+                            'Eliminado!',
+                            'La nota de credito ha sido eliminada con éxito.',
+                            'success'
+                        );
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }else if (result.dismiss === swal.DismissReason.cancel){
+
+                }
+            })
         }
     },
     mounted() {
@@ -1876,8 +2097,6 @@ export default {
       background-color: #3c29297a !important;
     }
     .content-task{
-        /* height: 700px !important; */
-        /* height : auto  !important; */
         min-height: 652px !important;
     }
     .content-comment{
@@ -1907,6 +2126,9 @@ export default {
     }
     .divdocs::-webkit-scrollbar {
         display: none;
+    }
+    .content-credit{
+        height: 440px !important;
     }
 
 </style>
