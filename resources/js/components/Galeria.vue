@@ -59,7 +59,7 @@
                             </div>
                             <div class="col-12 col-md-12 mt-2">
                                 <div>
-                                    <div class="form-inline justify-content-between">
+                                    <div class="form-inline justify-content-around">
                                         <div v-for="gallery in arrayGalerias" :key="gallery.id">
                                             <div class="card mt-1 mr-3" style="width:400px">
                                                 <div class="card-body p-0">
@@ -374,6 +374,11 @@
                                                     <span style="font-size:12px"> Registrado el {{ convertDate(img.fecha) }}</span>&nbsp;
                                                     <span style="font-size:12px">por {{ img.nombre }} </span>
                                                     <button class="btn btn-danger btn-sm btnElimImg" @click="eliminarImgLink(img.id,galeria_id)">Eliminar</button>
+                                                    <div class="form-group form-check" v-if="img.url">
+                                                        <input type="checkbox" class="form-check-input" :id="'chkPrt'+img.direction" :checked="img.direction==cover"
+                                                            @change="selectCover(img.direction)">
+                                                        <label class="form-check-label" :for="'chkPrt'+img.direction">Portada</label>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

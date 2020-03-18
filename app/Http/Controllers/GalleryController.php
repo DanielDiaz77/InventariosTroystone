@@ -23,7 +23,7 @@ class GalleryController extends Controller
                 ->select('galleries.id','galleries.nombre','galleries.descripcion',
                     'galleries.lote','galleries.cover','galleries.fecha_hora',
                     'galleries.estado','galleries.area','personas.nombre as usuario')
-                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+                ->orderBy('galleries.fecha_hora','desc')->paginate(9);
             }elseif($estado == 'Vigente'){
                 $galerias = Gallery::join('users','users.id','galleries.user_id')
                 ->leftjoin('personas', 'users.id','=','personas.id')
@@ -31,7 +31,7 @@ class GalleryController extends Controller
                     'galleries.lote','galleries.cover','galleries.fecha_hora',
                     'galleries.estado','galleries.area','personas.nombre as usuario')
                 ->where([['galleries.estado','Vigente']])
-                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+                ->orderBy('galleries.fecha_hora','desc')->paginate(9);
             }elseif($estado == 'Desactivada'){
                 $galerias = Gallery::join('users','users.id','galleries.user_id')
                 ->leftjoin('personas', 'users.id','=','personas.id')
@@ -39,7 +39,7 @@ class GalleryController extends Controller
                     'galleries.lote','galleries.cover','galleries.fecha_hora',
                     'galleries.estado','galleries.area','personas.nombre as usuario')
                 ->where([['galleries.estado','Desactivada']])
-                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+                ->orderBy('galleries.fecha_hora','desc')->paginate(9);
             }
         }else{
             if($estado == ''){
@@ -49,7 +49,7 @@ class GalleryController extends Controller
                     'galleries.lote','galleries.cover','galleries.fecha_hora',
                     'galleries.estado','galleries.area','personas.nombre as usuario')
                 ->where([['galleries.'.$criterio, 'like', '%'. $buscar . '%']])
-                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+                ->orderBy('galleries.fecha_hora','desc')->paginate(9);
             }elseif($estado == 'Vigente'){
                 $galerias = Gallery::join('users','users.id','galleries.user_id')
                 ->leftjoin('personas', 'users.id','=','personas.id')
@@ -57,7 +57,7 @@ class GalleryController extends Controller
                     'galleries.lote','galleries.cover','galleries.fecha_hora',
                     'galleries.estado','galleries.area','personas.nombre as usuario')
                 ->where([['galleries.estado','Vigente'],['galleries.'.$criterio, 'like', '%'. $buscar . '%']])
-                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+                ->orderBy('galleries.fecha_hora','desc')->paginate(9);
             }elseif($estado == 'Desactivada'){
                 $galerias = Gallery::join('users','users.id','galleries.user_id')
                 ->leftjoin('personas', 'users.id','=','personas.id')
@@ -65,7 +65,7 @@ class GalleryController extends Controller
                     'galleries.lote','galleries.cover','galleries.fecha_hora',
                     'galleries.estado','galleries.area','personas.nombre as usuario')
                 ->where([['galleries.estado','Desactivada'],['galleries.'.$criterio, 'like', '%'. $buscar . '%']])
-                ->orderBy('galleries.fecha_hora','desc')->paginate(8);
+                ->orderBy('galleries.fecha_hora','desc')->paginate(9);
             }
         }
 
@@ -78,8 +78,7 @@ class GalleryController extends Controller
                 'from'          => $galerias->firstItem(),
                 'to'            => $galerias->lastItem(),
             ],
-            'galerias' => $galerias,
-            'request' => $request->all()
+            'galerias' => $galerias
         ];
     }
 
