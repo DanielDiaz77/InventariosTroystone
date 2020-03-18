@@ -278,6 +278,9 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/gallery/desactivar', 'GalleryController@desactivar');
         Route::put('/gallery/activar', 'GalleryController@activar');
         Route::get('/gallery/refreshGallery', 'GalleryController@refreshGallery');
+
+        Route::get('/credito', 'CreditController@index');
+        Route::put('/credito/cambiarEstado','CreditController@cambiarEstado');
     });
 });
 

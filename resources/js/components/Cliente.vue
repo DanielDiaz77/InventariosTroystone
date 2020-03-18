@@ -294,7 +294,7 @@
                                             <tr v-for="credito in arrayCreditos" :key="credito.id">
                                                 <td>
                                                     <button type="button" class="btn btn-outline-danger btn-sm"
-                                                        @click="eliminarCredito(credito.id,persona_id)" v-if="credito.estado == 'Vigente'">
+                                                        @click="eliminarCredito(credito.id,persona_id)" v-if="credito.estado != 'Abonada'">
                                                         <i class="fa fa-trash"></i>
                                                     </button>&nbsp;
                                                 </td>
@@ -309,6 +309,9 @@
                                                     </div>
                                                     <div v-else-if="credito.estado == 'Abonada'">
                                                         <span class="badge badge-success">Abonada</span>
+                                                    </div>
+                                                    <div v-else-if="credito.estado == 'Por Validar'">
+                                                        <span class="badge badge-warning">Por Validar</span>
                                                     </div>
                                                 </td>
                                             </tr>

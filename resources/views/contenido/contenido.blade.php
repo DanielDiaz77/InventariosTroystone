@@ -99,6 +99,10 @@
                 <galeria></galeria>
             </template>
 
+            <template v-if="menu==24">
+                <credito></credito>
+            </template>
+
         @elseif(Auth::user()->idrol == 2)
 
             <template v-if="menu==0">

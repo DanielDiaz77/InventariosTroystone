@@ -72,7 +72,9 @@
                     <li @click="menu=21" class="nav-item">
                         <a class="nav-link" href="#"><i class="fa fa-sticky-note"></i> Recadero</a>
                     </li>
-
+                    <li @click="menu=24" class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa fa-money" aria-hidden="true"></i> Notas de crédito</a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item nav-dropdown">
