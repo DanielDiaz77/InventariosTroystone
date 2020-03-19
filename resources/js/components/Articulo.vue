@@ -39,22 +39,38 @@
             <template v-if="listado==1">
                 <div class="card-body">
                     <div class="form-inline">
-                        <div class="form-group mb-2 col-sm-9">
-                            <div class="input-group">
-                                <select class="form-control mb-1" v-model="criterio">
-                                    <option value="descripcion">Descripción</option>
+                        <div class="form-group col-12">
+                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-6 mb-3">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Criterios</span>
+                                </div>
+                                <select class="form-control" v-model="criterio">
                                     <option value="sku">Código de material</option>
                                     <option value="codigo">No° de placa</option>
-                                    <option value="idcategoria">Material</option>
+                                    <option value="descripcion">Descripción</option>
+                                </select>
+                                <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt,categoriaFilt)" class="form-control" placeholder="Texto a buscar">
+                            </div>
+                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3 mb-3">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Material</span>
+                                </div>
+                                <select class="form-control" v-model="categoriaFilt" @change="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt,categoriaFilt)">
+                                    <option value="0">Seleccione un material</option>
+                                    <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
                                 </select>
                             </div>
-                            <div class="input-group">
-                                <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)" class="form-control mb-1" placeholder="Texto a buscar">
-                                <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)" class="form-control mb-1" placeholder="Terminado">
+                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3 mb-3">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Terminado</span>
+                                </div>
+                                <input type="text" v-model="acabado" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt,categoriaFilt)" class="form-control" placeholder="Terminado">
                             </div>
-                            <div class="input-group">
-
-                                <select class="form-control mb-1" v-model="bodega" @change="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)">
+                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3 mb-3">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Ubicación</span>
+                                </div>
+                                <select class="form-control" v-model="bodega" @change="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt,categoriaFilt)">
                                     <template v-if="zona=='GDL'">
                                         <option value="">Todas</option>
                                         <option value="Del Musico">Del Músico</option>
@@ -69,40 +85,36 @@
                                         <option value="San Luis">San Luis</option>
                                     </template>
                                 </select>
-                                <button type="submit" @click="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)" class="btn btn-sm btn-primary mb-1"><i class="fa fa-search"></i>Buscar</button>
+                                <!-- <button type="submit" @click="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt,categoriaFilt)" class="btn btn-sm btn-primary"><i class="fa fa-search"></i>Buscar</button> -->
                             </div>
-                            <div class="input-group input-group-sm ml-xl-5">
-                                <select class="form-control" id="tipofact" name="tipofact" v-model="estadoArt" @change="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)">
+                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3 mb-3">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Estados</span>
+                                </div>
+                                <select class="form-control" id="tipofact" name="tipofact" v-model="estadoArt" @change="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt,categoriaFilt)">
                                     <option value="1">Disponible</option>
                                     <option value="2">Vendido</option>
                                     <option value="3">Cortado</option>
                                 </select>
-                                <button class="btn btn-sm btn-info" type="button"><i class="fa fa-search" aria-hidden="true"></i>&nbsp; Filtros</button>
+                                <!-- <button class="btn btn-sm btn-info" type="button"><i class="fa fa-search" aria-hidden="true"></i>&nbsp; Filtros</button> -->
                             </div>
-                            <div class="input-group input-group-sm ml-xl-5 mt-1 mt-md-0">
-                                <button class="btn btn-sm btn-danger" type="button"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp; Area</button>
-                                <select class="form-control" v-model="zona" @change="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt)">
+                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3">
+                               <!--  <button class="btn btn-sm btn-danger" type="button"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp; Area</button> -->
+                               <div class="input-group-append">
+                                    <span class="input-group-text" style="background-color:red;color:white;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp; Area</span>
+                                </div>
+                                <select class="form-control" v-model="zona" @change="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt,categoriaFilt)">
                                     <option value="GDL">Guadalajara</option>
                                     <option value="SLP">San Luis</option>
                                 </select>
                             </div>
-                            <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5" v-if="estadoArt==1">
-                                <button @click="listarExcelFiltros(criterio,buscar,acabado,bodega,zona)" class="btn btn-success btn-sm">Exportar Consulta <i class="fa fa-file-excel-o"></i></button>
+                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3" v-if="estadoArt==1">
+                                <div class="mb-2 mb-md-2 mb-lg-1 mb-xl-0 mt-1 mb-md-1 mb-lg-0 mb-xl-0">
+                                    <button type="submit" @click="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt,categoriaFilt)" class="btn btn-sm btn-primary mr-2"><i class="fa fa-search"></i>Buscar</button>
+                                    <button @click="listarExcelFiltros(criterio,buscar,acabado,bodega,zona)" class="btn btn-success btn-sm">Exportar Consulta <i class="fa fa-file-excel-o"></i></button>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- <div class="form-group mb-2 col-sm-3 float-right">
-                            <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5">
-                                <button @click="abrirModal3()" class="btn btn-outline-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
-                            </div>
-
-                            <div class="input-group input-group-sm">
-                                <label class="mb-1 ml-sm-5" for=""><strong>Total: </strong>&nbsp; {{ totres }} </label>
-                            </div>
-                            <div class="input-group input-group-sm">
-                                <label class="mb-1 ml-sm-5" for=""><strong>Metros <sup>2</sup>: </strong>&nbsp; {{ sumaMts }} </label>
-                            </div>
-                        </div> -->
                     </div>
                     <div class="table-responsive col-md-12">
                         <table class="table table-bordered table-striped table-sm text-center table-hover">
@@ -208,13 +220,13 @@
                     <nav>
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,bodega,acabado,estadoArt)">Ant</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,bodega,acabado,estadoArt,categoriaFilt)">Ant</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,bodega,acabado,estadoArt)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,bodega,acabado,estadoArt,categoriaFilt)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,bodega,acabado,estadoArt)">Sig</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,bodega,acabado,estadoArt,categoriaFilt)">Sig</a>
                             </li>
                         </ul>
                     </nav>
@@ -1010,6 +1022,7 @@ export default {
             criterio : 'sku',
             bodega : '',
             acabado : '',
+            categoriaFilt : 0,
             totres : 0,
             sumaMts : 0,
             buscar : '',
@@ -1078,7 +1091,6 @@ export default {
                 resultado = resultado + (me.alto * me.largo);
                 me.metros_cuadrados = resultado;
                 return resultado;
-
             },
             imagen(){
                 return this.imagenMinatura;
@@ -1105,9 +1117,9 @@ export default {
             }
         },
     methods: {
-        listarArticulo (page,buscar,criterio,bodega,acabado,estado){
+        listarArticulo (page,buscar,criterio,bodega,acabado,estado,idcategoria){
             let me=this;
-
+            me.selectCategoria();
             if(me.zona == 'SLP'){
                 bodega = 'San Luis';
                 me.bodega = 'San Luis';
@@ -1119,7 +1131,7 @@ export default {
             }
 
             var url= '/articulo?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega='
-            + bodega + '&acabado=' + acabado + '&estado=' + estado;
+            + bodega + '&acabado=' + acabado + '&estado=' + estado + '&idcategoria=' + idcategoria;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arrayArticulo = respuesta.articulos.data;
@@ -1146,12 +1158,12 @@ export default {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio,bodega,acabado,estado){
+        cambiarPagina(page,buscar,criterio,bodega,acabado,estado,idcategoria){
             let me = this;
             //Actualiza la página actual
             me.pagination.current_page = page;
             //Envia la petición para visualizar la data de esa página
-            me.listarArticulo(page,buscar,criterio,bodega,acabado,estado);
+            me.listarArticulo(page,buscar,criterio,bodega,acabado,estado,idcategoria);
         },
         obtenerImagen(e){
             let img = e.target.files[0];
@@ -1199,7 +1211,7 @@ export default {
                     'fecha_llegada' : this.fecha_llegada,
                     'file' : this.file
                 }).then(function (response) {
-                    me.listarArticulo(1,'','sku','','',1);
+                    me.listarArticulo(1,'','sku','','',1,0);
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -1245,7 +1257,7 @@ export default {
                     "success"
                 )
                 me.closeEdit();
-                me.listarArticulo(page,busc,crit,bod,aca,1);
+                me.listarArticulo(page,busc,crit,bod,aca,1,0);
             })
             .catch(function(error) {
                 console.log(error);
@@ -1274,7 +1286,7 @@ export default {
                     axios.put('/articulo/desactivar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarArticulo(1,'','sku','','',1);
+                        me.listarArticulo(1,'','sku','','',1,0);
                         swalWithBootstrapButtons.fire(
                             "Desactivado!",
                             "La categoría ha sido desactivada con éxito.",
@@ -1310,7 +1322,7 @@ export default {
                     axios.put('/articulo/activar', {
                         'id' : id
                     }).then(function(response) {
-                        me.listarArticulo(1,'','sku','','',1);
+                        me.listarArticulo(1,'','sku','','',1,0);
                         swalWithBootstrapButtons.fire(
                             "Activado!",
                             "Artículo activado con éxito.",
@@ -1351,7 +1363,7 @@ export default {
                 'id': id,
                 'comprometido' : this.comprometido
             }).then(function (response) {
-                me.listarArticulo(1,'','sku','','',1);
+                me.listarArticulo(1,'','sku','','',1,0);
             }).catch(function (error) {
                 console.log(error);
             });
@@ -1513,7 +1525,7 @@ export default {
             this.file = "";
             this.showElim = false;
             this.tituloModal = "";
-            this.listarArticulo(pagec,this.buscar,this.criterio,this.bodega,this.acabado,this.estadoArt);
+            this.listarArticulo(pagec,this.buscar,this.criterio,this.bodega,this.acabado,this.estadoArt,this.categoriaFilt);
             this.arrayLinks = [];
         },
         verArticulo(data = []){
@@ -1613,7 +1625,7 @@ export default {
             this.metros_cuadradosB = 0;
             this.savedA = 0;
             this.savedB = 0;
-            this.listarArticulo(pagec,this.buscar,this.criterio,this.bodega,this.acabado,this.estadoArt);
+            this.listarArticulo(pagec,this.buscar,this.criterio,this.bodega,this.acabado,this.estadoArt,this.categoriaFilt);
         },
         AskcortarPlaca(){
             const swalWithBootstrapButtons = Swal.mixin({
@@ -1816,7 +1828,7 @@ export default {
         }
     },
     mounted() {
-        this.listarArticulo(1,this.buscar, this.criterio,this.bodega,this.acabado,this.estadoArt);
+        this.listarArticulo(1,this.buscar, this.criterio,this.bodega,this.acabado,this.estadoArt,this.categoriaFilt);
     }
 };
 </script>

@@ -30,856 +30,220 @@ class ArticuloController extends Controller
         $bodega = $request->bodega;
         $acabado = $request->acabado;
         $estado = $request->estado;
-
-
-        if($criterio == 'idcategoria'){
-            if($buscar != ''){
-                $name = $request->buscar;
-                $category = Categoria::where('nombre','like','%'.$name.'%')->select('id')->first();
-                $buscar = $category->id;
-            }
-        }
+        $idcategoria = $request->idcategoria;
 
         if($estado == 1){
             if($bodega == ''){
-                if($buscar==''){
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                ->leftjoin('users','articulos.idusuario','=','users.id')
+                ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                    'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                    'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                    'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                    'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                    'articulos.comprometido','users.usuario')
+                ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])
+                ->orderBy('articulos.id', 'desc')
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->paginate(12);
 
-                        $total = Articulo::where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])->count();
+                $total = Articulo::where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])
+                ->orderBy('articulos.id', 'desc')
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->count();
 
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])->get();
+                $sumaMts =  Articulo::select(DB::raw('SUM(metros_cuadrados) as metros'))
+                ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->get();
 
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+            }elseif($bodega == 'nol'){
+                $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                ->leftjoin('users','articulos.idusuario','=','users.id')
+                ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                    'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                    'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                    'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                    'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                    'articulos.comprometido','users.usuario')
+                ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
+                ->orderBy('articulos.id', 'desc')->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->paginate(12);
 
-                        $total = Articulo::where([['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])->count();
+                $total = Articulo::where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
+                ->orderBy('articulos.id', 'desc')
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->count();
 
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis']])->get();
-                    }
-                }else{
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.ubicacion','!=','San Luis']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                $sumaMts = Articulo::select(DB::raw('SUM(metros_cuadrados) as metros'))
+                ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->get();
 
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.ubicacion','!=','San Luis']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.ubicacion','!=','San Luis']])->get();
-
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis']])->get();
-                    }
-                }
-            }elseif($bodega =='nol'){
-                if($buscar==''){
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])->get();
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.stock','>',0],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])->get();
-                    }
-                }else{
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.ubicacion','!=','San Luis']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])->get();
-
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])->get();
-                    }
-                }
             }else{
-                if($buscar==''){
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','>',0]])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                ->leftjoin('users','articulos.idusuario','=','users.id')
+                ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                    'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                    'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                    'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                    'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                    'articulos.comprometido','users.usuario')
+                ->where([['articulos.stock','>',0]])
+                ->orderBy('articulos.id', 'desc')->Criterio($criterio,$buscar)->Ubicacion($bodega)->Terminado($acabado)
+                ->Categoria($idcategoria)->paginate(12);
 
-                        $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.stock','>',0]])->count();
+                $total = Articulo::where([['articulos.stock','>',0]])
+                ->orderBy('articulos.id', 'desc')->Criterio($criterio,$buscar)->Terminado($acabado)->Ubicacion($bodega)
+                ->Categoria($idcategoria)->count();
 
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','>',0]])->get();
-
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','>',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%']])->get();
-                    }
-                }else{
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','>',0]])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','>',0]])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','>',0]])->get();
-
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','>',0],['articulos.terminado','like', '%'. $acabado . '%']])->get();
-                    }
-                }
+                $sumaMts = Articulo::select(DB::raw('SUM(metros_cuadrados) as metros'))
+                ->where([['articulos.stock','>',0]])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Ubicacion($bodega)->Categoria($idcategoria)->get();
             }
         }elseif($estado == 2){
             if($bodega == ''){
-                if($buscar==''){
-                    if($acabado == ''){
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                ->leftjoin('users','articulos.idusuario','=','users.id')
+                ->rightJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                ->leftjoin('ventas','detalle_ventas.idventa','ventas.id')
+                ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                    'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                    'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                    'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                    'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                    'ventas.num_comprobante as venta','users.usuario')
+                ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->orderBy('articulos.id', 'desc')
+                ->paginate(12);
 
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']])->count();
+                $total = Articulo::join('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                ->leftjoin('ventas','detalle_ventas.idventa','ventas.id')
+                ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])
+                ->orderBy('articulos.id', 'desc')
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->count();
 
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']])->get();
+                $sumaMts =  Articulo::join('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                ->leftjoin('ventas','detalle_ventas.idventa','ventas.id')
+                ->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->get();
+            }elseif($bodega == 'nol'){
+                $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                ->leftjoin('users','articulos.idusuario','=','users.id')
+                ->rightJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                ->leftjoin('ventas','detalle_ventas.idventa','ventas.id')
+                ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                    'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                    'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                    'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                    'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                    'ventas.num_comprobante as venta','users.usuario')
+                ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
+                    ['articulos.ubicacion','!=','Bodega L'],['ventas.estado','Registrado']])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->orderBy('articulos.id', 'desc')
+                ->paginate(12);
 
-                    }else{
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                $total = Articulo::join('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                ->leftjoin('ventas','detalle_ventas.idventa','ventas.id')
+                ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
+                    ['articulos.ubicacion','!=','Bodega L'],['ventas.estado','Registrado']])
+                ->orderBy('articulos.id', 'desc')
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->count();
 
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])->get();
-                    }
-                }else{
-                    if($acabado == ''){
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado']])->get();
-
-
-                    }else{
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado']])->get();
-
-                    }
-                }
-            }elseif($bodega =='nol'){
-                if($buscar==''){
-                    if($acabado == ''){
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado'],['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado'],['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado'],['articulos.ubicacion','!=','Bodega L']])->get();
-
-                    }else{
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado'],
-                            ['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado'],
-                            ['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado'],
-                            ['articulos.ubicacion','!=','Bodega L']])->get();
-                    }
-                }else{
-                    if($acabado == ''){
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado'],
-                            ['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado'],
-                            ['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.ubicacion','!=','San Luis'],['ventas.estado','Registrado'],
-                            ['articulos.ubicacion','!=','Bodega L']])->get();
-
-                    }else{
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado'],['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado'],['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.stock','<=',0],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['ventas.estado','Registrado'],['articulos.ubicacion','!=','Bodega L']])->get();
-
-                    }
-                }
+                $sumaMts =  Articulo::join('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                ->leftjoin('ventas','detalle_ventas.idventa','ventas.id')
+                ->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                ->where([['articulos.stock','<=',0],['articulos.ubicacion','!=','San Luis'],
+                    ['articulos.ubicacion','!=','Bodega L'],['ventas.estado','Registrado']])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->get();
             }else{
-                if($buscar==''){
-                    if($acabado == ''){
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                ->leftjoin('users','articulos.idusuario','=','users.id')
+                ->rightJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                ->leftjoin('ventas','detalle_ventas.idventa','ventas.id')
+                ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                    'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                    'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                    'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                    'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                    'ventas.num_comprobante as venta','users.usuario')
+                ->where([['articulos.stock','<=',0],['ventas.estado','Registrado']])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Ubicacion($bodega)->Categoria($idcategoria)
+                ->orderBy('articulos.id', 'desc')
+                ->paginate(12);
 
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado']])->count();
+                $total = Articulo::join('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                ->leftjoin('ventas','detalle_ventas.idventa','ventas.id')
+                ->where([['articulos.stock','<=',0],['ventas.estado','Registrado']])
+                ->orderBy('articulos.id', 'desc')
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Ubicacion($bodega)->Ubicacion($bodega)->Categoria($idcategoria)
+                ->count();
 
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado']])->get();
-
-                    }else{
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado'],
-                            ['articulos.terminado','like', '%'. $acabado . '%']])->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado'],
-                            ['articulos.terminado','like', '%'. $acabado . '%']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.ubicacion',$bodega],['articulos.stock','<=',0],['ventas.estado','Registrado'],
-                            ['articulos.terminado','like', '%'. $acabado . '%']])->get();
-                    }
-                }else{
-                    if($acabado == ''){
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','<=',0],['ventas.estado','Registrado']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','<=',0],['ventas.estado','Registrado']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','<=',0],['ventas.estado','Registrado']])->get();
-
-                    }else{
-                        $articulos = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->leftjoin('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'ventas.num_comprobante as venta','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['ventas.estado','Registrado']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
-                        ->join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['ventas.estado','Registrado']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
-                        ->leftJoin('ventas','ventas.id','detalle_ventas.idventa')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.stock','<=',0],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['ventas.estado','Registrado']])->get();
-                    }
-                }
+                $sumaMts =  Articulo::join('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+                ->leftjoin('ventas','detalle_ventas.idventa','ventas.id')
+                ->select(DB::raw('SUM(metros_cuadrados) as metros'))
+                ->where([['articulos.stock','<=',0],['ventas.estado','Registrado']])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Ubicacion($bodega)->Ubicacion($bodega)->Categoria($idcategoria)
+                ->get();
             }
         }elseif($estado == 3){
             if($bodega == ''){
-                if($buscar==''){
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                ->leftjoin('users','articulos.idusuario','=','users.id')
+                ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                    'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                    'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                    'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                    'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                    'articulos.comprometido','users.usuario')
+                ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])
+                ->orderBy('articulos.id', 'desc')
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->paginate(12);
 
-                        $total = Articulo::where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])->count();
+                $total = Articulo::where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])
+                ->orderBy('articulos.id', 'desc')
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->count();
 
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])->get();
+                $sumaMts =  Articulo::select(DB::raw('SUM(metros_cuadrados) as metros'))
+                ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis']])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)
+                ->Categoria($idcategoria)->get();
 
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']])->orderBy('articulos.id', 'desc')->paginate(12);
+            }elseif($bodega == 'nol'){
+                $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                ->leftjoin('users','articulos.idusuario','=','users.id')
+                ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                    'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                    'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                    'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                    'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                    'articulos.comprometido','users.usuario')
+                ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
+                ->orderBy('articulos.id', 'desc')->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->paginate(12);
 
-                        $total = Articulo::where([['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']])->count();
+                $total = Articulo::where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
+                ->orderBy('articulos.id', 'desc')
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->count();
 
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis']])->get();
-                    }
-                }else{
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.ubicacion','!=','San Luis']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                $sumaMts = Articulo::select(DB::raw('SUM(metros_cuadrados) as metros'))
+                ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Categoria($idcategoria)->get();
 
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.ubicacion','!=','San Luis']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.ubicacion','!=','San Luis']])->get();
-
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis']])->get();
-                    }
-                }
-            }elseif($bodega =='nol'){
-                if($buscar==''){
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.condicion',3],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])->get();
-
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])->get();
-                    }
-                }else{
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.ubicacion','!=','San Luis'],['articulos.ubicacion','!=','Bodega L']])->get();
-
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion','!=','Bodega L']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%'],['articulos.ubicacion','!=','San Luis'],
-                            ['articulos.ubicacion','!=','Bodega L']])->get();
-                    }
-                }
             }else{
-                if($buscar==''){
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.ubicacion',$bodega],['articulos.condicion',3]])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
+                $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
+                ->leftjoin('users','articulos.idusuario','=','users.id')
+                ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
+                    'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
+                    'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
+                    'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
+                    'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
+                    'articulos.comprometido','users.usuario')
+                ->where([['articulos.condicion',3]])
+                ->orderBy('articulos.id', 'desc')->Criterio($criterio,$buscar)->Ubicacion($bodega)->Terminado($acabado)
+                ->Categoria($idcategoria)->paginate(12);
 
-                        $total = Articulo::where([['articulos.ubicacion',$bodega],['articulos.condicion',3]])->count();
+                $total = Articulo::where([['articulos.condicion',3]])
+                ->orderBy('articulos.id', 'desc')->Criterio($criterio,$buscar)->Terminado($acabado)->Ubicacion($bodega)
+                ->Categoria($idcategoria)->count();
 
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.ubicacion',$bodega],['articulos.condicion',3]])->get();
-
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.ubicacion',$bodega],['articulos.condicion',3],
-                            ['articulos.terminado','like', '%'. $acabado . '%']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion',$bodega],['articulos.condicion',3]])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.terminado','like', '%'. $acabado . '%'],
-                            ['articulos.ubicacion',$bodega],['articulos.condicion',3]])->get();
-                    }
-                }else{
-                    if($acabado == ''){
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.condicion',3]])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.ubicacion', $bodega],['articulos.condicion',3],
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.ubicacion', $bodega],['articulos.condicion',3],
-                            ['articulos.'.$criterio, 'like', '%'. $buscar . '%']])->get();
-
-                    }else{
-                        $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-                        ->leftjoin('users','articulos.idusuario','=','users.id')
-                        ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.sku','articulos.nombre',
-                            'categorias.nombre as nombre_categoria','articulos.terminado','articulos.largo','articulos.alto',
-                            'articulos.metros_cuadrados','articulos.espesor','articulos.precio_venta','articulos.ubicacion',
-                            'articulos.contenedor','articulos.stock','articulos.descripcion','articulos.observacion',
-                            'articulos.origen','articulos.fecha_llegada','articulos.file','articulos.condicion',
-                            'articulos.comprometido','users.usuario')
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.ubicacion', $bodega],
-                            ['articulos.condicion',3],['articulos.terminado','like', '%'. $acabado . '%']])
-                        ->orderBy('articulos.id', 'desc')->paginate(12);
-
-                        $total = Articulo::where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.ubicacion', $bodega],['articulos.terminado','like', '%'. $acabado . '%']])->count();
-
-                        $sumaMts = DB::table('articulos')->select(DB::raw('SUM(metros_cuadrados) as metros'))
-                        ->where([['articulos.'.$criterio, 'like', '%'. $buscar . '%'],['articulos.condicion',3],
-                            ['articulos.ubicacion', $bodega],['articulos.terminado','like', '%'. $acabado . '%']])->get();
-                    }
-                }
+                $sumaMts = Articulo::select(DB::raw('SUM(metros_cuadrados) as metros'))
+                ->where([['articulos.condicion',3]])
+                ->Criterio($criterio,$buscar)->Terminado($acabado)->Ubicacion($bodega)->Categoria($idcategoria)->get();
             }
         }
 
