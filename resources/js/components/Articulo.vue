@@ -161,13 +161,13 @@
                                             <button type="button" @click="verArticulo(articulo)" class="btn btn-success btn-sm">
                                                 <i class="icon-eye"></i>
                                             </button> &nbsp;
-                                           <!--  <template v-if="articulo.file">
+                                            <template v-if="articulo.file">
                                                 <lightbox class="m-0" album="" :src="'https://drive.google.com/uc?id='+articulo.file">
                                                     <button type="button" class="btn btn-outline-success btn-sm">
                                                         <i class="fa fa-picture-o"></i>
                                                     </button>&nbsp;
                                                 </lightbox>
-                                            </template> -->
+                                            </template>
                                         </div>
                                     </td>
                                     <td v-text="articulo.codigo"></td>
@@ -454,6 +454,11 @@
                                                     <span style="font-size:12px"> Registrado el {{ convertDate(img.fecha) }}</span>&nbsp;
                                                     <span style="font-size:12px">por {{ img.nombre }} </span>
                                                     <button class="btn btn-danger btn-sm btnElimImg" type="button" @click="eliminarImgLink(img.id,articulo_id)">Eliminar</button>
+                                                    <div class="form-group form-check" v-if="img.url">
+                                                        <input type="checkbox" class="form-check-input" :id="'chkPrt'+img.id" :checked="img.direction==file"
+                                                            @change="selectCover(img.direction)">
+                                                        <label class="form-check-label" :for="'chkPrt'+img.direction">Portada</label>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1225,9 +1230,15 @@ export default {
             var aca = this.acabado;
             let art = this.sku;
             let cdn = this.codigo;
+
             if (this.validarArticulo()) {
                 return;
             }
+
+            if(this.arrayLinks.length)
+                if(!this.file)
+                   this.file = this.arrayLinks[0]['direction'];
+
             let me = this;
             axios.put("/articulo/actualizar", {
                 'idcategoria': this.idcategoria,
@@ -1825,7 +1836,10 @@ export default {
                 }else if (result.dismiss === swal.DismissReason.cancel){
                 }
             });
-        }
+        },
+        selectCover(link){
+            this.file = link;
+        },
     },
     mounted() {
         this.listarArticulo(1,this.buscar, this.criterio,this.bodega,this.acabado,this.estadoArt,this.categoriaFilt);
