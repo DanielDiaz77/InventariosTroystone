@@ -326,19 +326,23 @@
                                     <td v-text="detalle.precio"></td>
                                     <td v-text="detalle.descuento"></td>
                                     <td v-text="detalle.ubicacion"></td>
-                                    <td>{{ (( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento) }}</td>
+                                    <td>{{ ((( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento)).toFixed(6) }}</td>
                                 </tr>
                                  <tr style="background-color: #CEECF5;">
                                     <td colspan="12" align="right"><strong>Total Parcial:</strong></td>
-                                    <td>$ {{total_parcial = (total / divImp).toFixed(2) }}</td>
+                                    <td>$ {{total_parcial = (total / divImp).toFixed(6) }}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="12" align="right"><strong>Total Impuesto:</strong></td>
-                                    <td>$ {{total_impuesto=((total * impuesto)/(divImp)).toFixed(2)}}</td>
+                                    <td>$ {{total_impuesto=((total * impuesto)/(divImp)).toFixed(6)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="12" align="right"><strong>Total Neto:</strong></td>
-                                    <td>$ {{ total}} </td>
+                                    <td>$ {{ total }} </td>
+                                </tr>
+                                 <tr style="background-color: #CEECF5;">
+                                    <td colspan="12" align="right"><strong>Total M<sup>2</sup></strong></td>
+                                    <td> {{ metrosTotales.toFixed(4) }} </td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
@@ -814,6 +818,14 @@ export default {
             let resultado = 0;
             resultado = resultado + (me.alto * me.largo);
             me.metros_cuadrados = resultado;
+            return resultado;
+        },
+        metrosTotales : function(){
+            let me=this;
+            let resultado = 0;
+            for(var i=0;i<me.arrayDetalle.length;i++){
+                resultado += parseFloat(me.arrayDetalle[i].metros_cuadrados);
+            }
             return resultado;
         }
     },

@@ -430,16 +430,16 @@
                                     </td>
                                     <td v-text="detalle.ubicacion"></td>
                                     <td>
-                                       {{ (( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento) }}
+                                       {{ ((( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento)).toFixed(6) }}
                                     </td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="14" align="right"><strong>Total Parcial:</strong></td>
-                                    <td>$ {{total_parcial=(total-total_impuesto).toFixed(4)}}</td>
+                                    <td>$ {{total_parcial=(total-total_impuesto).toFixed(6)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="14" align="right"><strong>Total IVA:</strong></td>
-                                    <td>$ {{total_impuesto=((total * parseFloat(impuesto))/(1+parseFloat(impuesto))).toFixed(4)}}</td>
+                                    <td>$ {{total_impuesto=((total * parseFloat(impuesto))/(1+parseFloat(impuesto))).toFixed(6)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="14" align="right"><strong>Total Neto:</strong></td>
@@ -799,15 +799,15 @@
                                     <td v-text="detalle.precio"></td>
                                     <td v-text="detalle.descuento"></td>
                                     <td v-text="detalle.ubicacion"></td>
-                                    <td>{{ (( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento) }}</td>
+                                    <td>{{ ((( (detalle.precio * detalle.cantidad) * detalle.metros_cuadrados) - detalle.descuento)).toFixed(6) }}</td>
                                 </tr>
                                  <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Parcial:</strong></td>
-                                    <td>$ {{total_parcial = (total / divImp).toFixed(4) }}</td>
+                                    <td>$ {{total_parcial = (total / divImp).toFixed(6) }}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Impuesto:</strong></td>
-                                    <td>$ {{total_impuesto=((total * impuesto)/(divImp)).toFixed(4)}}</td>
+                                    <td>$ {{total_impuesto=((total * impuesto)/(divImp)).toFixed(6)}}</td>
                                 </tr>
                                 <tr style="background-color: #CEECF5;">
                                     <td colspan="13" align="right"><strong>Total Neto:</strong></td>
@@ -1940,7 +1940,7 @@ export default {
             let subtotal = 0;
             let iva = parseFloat(me.impuesto) + 1;
             for(var i=0;i<me.arrayDetalle.length;i++){
-                subtotal += (((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados) * me.arrayDetalle[i].cantidad)-me.arrayDetalle[i].descuento);
+                subtotal += (((me.arrayDetalle[i].precio * me.arrayDetalle[i].metros_cuadrados)* me.arrayDetalle[i].cantidad)-me.arrayDetalle[i].descuento);
                 resultado = subtotal * iva;
             }
             return resultado;
@@ -2212,6 +2212,8 @@ export default {
             var numcomp = "V-".concat(me.CodeDate,"-",me.num_comprobante);
             var totalDem = parseFloat(this.total).toFixed(4);
 
+            console.log(`Total : ${totalDem}`);
+
             axios.post('/venta/registrar',{
                 'idcliente': this.idcliente,
                 'tipo_comprobante': this.tipo_comprobante,
@@ -2237,9 +2239,10 @@ export default {
                     title: 'Registrado...',
                     text: 'La venta ha sido registrada con éxito!!',
                 });
+                console.log(`Resp : ${ response }`);
             })
             .catch(function(error) {
-                console.log(error);
+                csonsole.log(error);
             });
         },
         desactivarVenta(id) {

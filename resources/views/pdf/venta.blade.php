@@ -270,7 +270,7 @@
                             <td class="td-b">{{ $det->precio }}</td>
                             <td class="td-b">{{ $det->cantidad }}</td>
                             <td class="td-b">{{ $det->descuento }}</td>
-                            <td class="td-b">{{ number_format(((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento),2) }}</td>
+                            <td class="td-b">{{ number_format(((($det->precio * $det->cantidad) * $det->metros_cuadrados) - $det->descuento),6) }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -286,7 +286,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">SUBTOTAL</th>
-                            <td class="th-b">{{ number_format($v->total/($v->impuesto + 1),4)}}</td>
+                            <td class="th-b">{{ number_format($v->total/($v->impuesto + 1),6)}}</td>
                         </tr>
                         <tr>
                             <th></th>
@@ -298,7 +298,7 @@
                             <th></th>
                             <th></th>
                             <th class="th-b">IVA</th>
-                            <td class="th-b">{{ number_format(($v->total/($v->impuesto + 1)*$v->impuesto),4) }}</td>
+                            <td class="th-b">{{ number_format(($v->total/($v->impuesto + 1)*$v->impuesto),6) }}</td>
                         </tr>
                         <tr>
                             <th></th>

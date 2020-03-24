@@ -167,10 +167,12 @@ class IngresoController extends Controller
         $id =  $request->id;
 
         $detalles = DetalleIngreso::join('articulos','detalle_ingresos.idarticulo','=','articulos.id')
+        ->leftJoin('categorias','categorias.id','articulos.idcategoria')
         ->select('detalle_ingresos.cantidad','detalle_ingresos.precio_compra','articulos.sku','articulos.codigo',
             'articulos.espesor','articulos.largo','articulos.alto','articulos.metros_cuadrados','articulos.descripcion',
             'articulos.idcategoria','articulos.terminado','articulos.ubicacion','articulos.file','articulos.origen',
-            'articulos.contenedor','articulos.fecha_llegada','articulos.observacion','articulos.condicion')
+            'articulos.contenedor','articulos.fecha_llegada','articulos.observacion','articulos.condicion',
+            'categorias.nombre as material')
         ->where('detalle_ingresos.idingreso',$id)->get();
         return ['detalles' => $detalles];
     }

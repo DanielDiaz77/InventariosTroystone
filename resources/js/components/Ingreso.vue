@@ -308,6 +308,7 @@
                                 <tr>
                                     <th width="10px">No°</th>
                                     <th>Opciones</th>
+                                    <th>Material</th>
                                     <th>Código de material</th>
                                     <th>No° Placa</th>
                                     <th>Terminado</th>
@@ -332,6 +333,12 @@
                                                 <i class="icon-pencil"></i>
                                             </button> &nbsp;
                                         </div>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" v-model="detalle.idcategoria">
+                                        <option value="0" disabled>Seleccione un material</option>
+                                        <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
+                                    </select>
                                     </td>
                                     <!-- <td v-text="detalle.sku"></td> -->
                                     <td>
@@ -425,6 +432,7 @@
                                 <tr>
                                     <th width="10px">No°</th>
                                     <th>Detalles</th>
+                                    <th>Material</th>
                                     <th>Código de material</th>
                                     <th>No° Placa</th>
                                     <th>Espesor</th>
@@ -446,6 +454,7 @@
                                             <i class="icon-eye"></i>
                                         </button> &nbsp;
                                     </td>
+                                    <td v-text="detalle.material"></td>
                                     <td v-text="detalle.sku"></td>
                                     <td v-text="detalle.codigo"></td>
                                     <td v-text="detalle.espesor"></td>

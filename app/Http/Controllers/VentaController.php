@@ -2139,6 +2139,8 @@ class VentaController extends Controller
         }catch(Exception $e){
             DB::rollBack();
         }
+
+        return $request->total;
     }
     public function desactivar(Request $request){
 
