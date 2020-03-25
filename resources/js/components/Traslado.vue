@@ -437,35 +437,64 @@
                     </div>
                     <div class="modal-body">
                         <!-- Filtros Modal Articulos -->
-                        <div class="form-group row">
-                            <div class="col-md">
-                                <div class="input-group">
-                                    <select class="form-control col-md-3" v-model="criterioArt">
+                        <div class="form-inline">
+                            <div class="form-group col-12">
+                                <div class="input-group input-group-sm col-12 col-lg-8 col-xl-8 mb-3 p-1">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">Criterios</span>
+                                    </div>
+                                    <select class="form-control" v-model="criterioArt">
                                         <option value="sku">Código de material</option>
                                         <option value="codigo">No° de placa</option>
                                         <option value="descripcion">Descripción</option>
                                     </select>
-                                    <input type="text" v-model="buscarArt" @keyup.enter="listarArticulo(1,buscarArt,criterioArt,bodegaArt,acabadoArt)" class="form-control" placeholder="Texto a buscar">
-                                    <input type="text" v-model="acabadoArt" @keyup.enter="listarArticulo(1,buscarArt,criterioArt,bodegaArt,acabadoArt)" class="form-control" placeholder="Terminado">
+                                    <input type="text" v-model="buscarArt" @keyup.enter="listarArticulo(1,buscarArt,criterioArt,bodegaArt,acabadoArt,categoriaFilt)" class="form-control" placeholder="Texto a buscar">
                                 </div>
-                            </div>
-                            <div class="col-md">
-                                <div class="input-group">
-                                    <template v-if="areaUs == 'GDL'">
-                                        <select class="form-control" v-model="bodegaArt">
-                                            <option value="" disabled>Ubicacion</option>
+                                <div class="input-group input-group-sm col-12 col-lg-4 col-xl-4 mb-3 p-1">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">Material</span>
+                                    </div>
+                                    <select class="form-control" v-model="categoriaFilt" @change="listarArticulo(1,buscarArt,criterioArt,bodegaArt,acabadoArt,categoriaFilt)">
+                                        <option value="0">Seleccione un material</option>
+                                        <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
+                                    </select>
+                                </div>
+                                <div class="input-group input-group-sm col-12 col-lg-6 col-xl-4 mb-3 p-1">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">Terminado</span>
+                                    </div>
+                                    <input type="text" v-model="acabadoArt" @keyup.enter="listarArticulo(1,buscarArt,criterioArt,bodegaArt,acabadoArt,categoriaFilt)" class="form-control" placeholder="Terminado">
+                                </div>
+                                <div class="input-group input-group-sm col-12 col-lg-6 col-xl-4 mb-3 p-1">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">Ubicación</span>
+                                    </div>
+                                    <select class="form-control" v-model="bodegaArt" @change="listarArticulo(1,buscarArt,criterioArt,bodegaArt,acabadoArt,categoriaFilt)">
+                                        <template v-if="zona=='GDL'">
                                             <option value="">Todas</option>
                                             <option value="Del Musico">Del Músico</option>
                                             <option value="Escultores">Escultores</option>
                                             <option value="Sastres">Sastres</option>
                                             <option value="Mecanicos">Mecánicos</option>
                                             <option value="Tractorista">Tractorista</option>
-                                            <option value="San Luis">San Luis</option>
                                             <option value="Bodega L">Bodega L</option>
-                                        </select>
-                                    </template>
-                                    <button type="submit" @click="listarArticulo(1,buscarArt,criterioArt,bodegaArt,acabadoArt)" class="btn btn-primary"><i class="fa fa-search"></i>Buscar</button>&nbsp;
+                                            <option value="nol">S/N Bodega L</option>
+                                        </template>
+                                        <template v-else>
+                                            <option value="San Luis">San Luis</option>
+                                        </template>
+                                    </select>
                                 </div>
+                                <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3 mb-3 p-1">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="background-color:red;color:white;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp; Area</span>
+                                    </div>
+                                    <select class="form-control" v-model="zona" @change="listarArticulo(1,buscarArt,criterioArt,bodegaArt,acabadoArt,categoriaFilt)">
+                                        <option value="GDL">Guadalajara</option>
+                                        <option value="SLP">San Luis</option>
+                                    </select>
+                                </div>
+                                 <button type="submit" @click="listarArticulo(1,buscarArt,criterioArt,bodegaArt,acabadoArt,categoriaFilt)" class="btn btn-sm btn-primary col-1 mb-3 p-1"><i class="fa fa-search"></i></button>
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -527,13 +556,13 @@
                         <nav>
                             <ul class="pagination">
                                 <li class="page-item" v-if="paginationart.current_page > 1">
-                                    <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarArt,criterioArt,bodegaArt,acabadoArt)">Ant</a>
+                                    <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarArt,criterioArt,bodegaArt,acabadoArt,categoriaFilt)">Ant</a>
                                 </li>
                                 <li class="page-item" v-for="page in pagesNumberArt" :key="page" :class="[page == isActivedArt ? 'active' : '']">
-                                    <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarArt,criterioArt,bodegaArt,acabadoArt)" v-text="page"></a>
+                                    <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarArt,criterioArt,bodegaArt,acabadoArt,categoriaFilt)" v-text="page"></a>
                                 </li>
                                 <li class="page-item" v-if="paginationart.current_page < paginationart.last_page">
-                                    <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarArt,criterioArt,bodegaArt,acabadoArt)">Sig</a>
+                                    <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarArt,criterioArt,bodegaArt,acabadoArt,categoriaFilt)">Sig</a>
                                 </li>
                             </ul>
                         </nav>
@@ -636,6 +665,8 @@ Vue.use(ToggleButton);
                 criterioArt : 'sku',
                 bodegaArt : "",
                 acabadoArt : "",
+                categoriaFilt : 0,
+                zona : "GDL",
                 areaUs : "",
                 showElim : false,
                 btnNewTask : 1,
@@ -843,10 +874,22 @@ Vue.use(ToggleButton);
                 this.modal = 1;
                 this.tituloModal = "Seleccionar Artículos";
                 this.listarArticulo(1,'','sku','','');
+                this.selectCategoria();
+                this.listarArticulo(1,this.buscarArt,this.criterioArt,this.bodegaArt,this.acabadoArt,this.categoriaFilt);
             },
-            listarArticulo(page,buscar,criterio,bodega,acabado){
+            listarArticulo(page,buscar,criterio,bodega,acabado,idcategoria){
                 let me=this;
-                var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio + '&bodega=' + bodega + '&acabado=' + acabado;
+                if(me.zona == 'SLP'){
+                    bodega = 'San Luis';
+                    me.bodegaArt = 'San Luis';
+                }else{
+                    if(bodega == 'San Luis'){
+                        bodega = "";
+                        me.bodegaArt = "";
+                    }
+                }
+                var url= '/articulo/listarArticuloVenta?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio
+                + '&bodega=' + bodega + '&acabado=' + acabado + '&idcategoria=' + idcategoria;
                 axios.get(url).then(function (response) {
                     var respuesta= response.data;
                     me.arrayArticulo = respuesta.articulos.data;
@@ -857,12 +900,12 @@ Vue.use(ToggleButton);
                     console.log(error);
                 });
             },
-            cambiarPaginaArt(page,buscar,criterio,bodega,acabado){
+            cambiarPaginaArt(page,buscar,criterio,bodega,acabado,idcategoria){
                 let me = this;
                 //Actualiza la página actual
                 me.paginationart.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.listarArticulo(page,buscar,criterio,bodega,acabado);
+                me.listarArticulo(page,buscar,criterio,bodega,acabado,idcategoria);
             },
             encuentra(id){
                 var sw=0;
@@ -925,6 +968,13 @@ Vue.use(ToggleButton);
                         cantidad: 1,
                         descuento : 0
 
+                    });
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'success',
+                        title: `${data['codigo']}`,
+                        showConfirmButton: false,
+                        timer: 1000
                     });
                 }
             },
