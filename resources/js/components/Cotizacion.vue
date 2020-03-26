@@ -1080,13 +1080,13 @@
                     <nav>
                         <ul class="pagination">
                             <li class="page-item" v-if="paginationart.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA,bodega,acabado)">Ant</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page - 1,buscarA,criterioA,bodega,acabado,categoriaFilt)">Ant</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumberArt" :key="page" :class="[page == isActivedArt ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA,bodega,acabado)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(page,buscarA,criterioA,bodega,acabado,categoriaFilt)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="paginationart.current_page < paginationart.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA,bodega,acabado)">Sig</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPaginaArt(paginationart.current_page + 1,buscarA,criterioA,bodega,acabado,categoriaFilt)">Sig</a>
                             </li>
                         </ul>
                     </nav>
