@@ -9,6 +9,7 @@ use App\DetalleVenta;
 use App\User;
 use App\Deposit;
 use App\Document;
+use App\Exports\VentasClienteExport;
 use App\Notifications\NotifyAdmin;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -17,8 +18,7 @@ use Barryvdh\DomPDF\PDF;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\VentasExport;
 use App\Exports\VentasExportDet;
-
-
+use App\Persona;
 
 class VentaController extends Controller
 {
@@ -2233,11 +2233,11 @@ class VentaController extends Controller
         ->where('ventas.id',$id)->take(1)->get();
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
-            ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
-                'articulos.sku as articulo','articulos.largo','articulos.alto','articulos.terminado',
-                'articulos.metros_cuadrados','articulos.codigo','articulos.ubicacion')
-            ->where('detalle_ventas.idventa',$id)
-            ->orderBy('detalle_ventas.id','desc')->get();
+        ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
+            'articulos.sku as articulo','articulos.largo','articulos.alto','articulos.terminado',
+            'articulos.metros_cuadrados','articulos.codigo','articulos.ubicacion')
+        ->where('detalle_ventas.idventa',$id)
+        ->orderBy('detalle_ventas.id','desc')->get();
 
         $numventa = Venta::select('num_comprobante')->where('id',$id)->get();
 
@@ -2857,7 +2857,7 @@ class VentaController extends Controller
             'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv',
             'ventas.facturado','ventas.factura_env','ventas.pago_parcial','ventas.adeudo',
             'ventas.auto_entrega')
-        ->where('ventas.idcliente','=',$idcliente)
+        ->where([['ventas.idcliente',$idcliente],['ventas.estado','Registrado']])
         ->orderBy('ventas.fecha_hora','desc')->paginate(5);
 
         return ['ventas' => $ventas];
@@ -4089,4 +4089,48 @@ class VentaController extends Controller
         }
 
     }
+    public function ventasClientePDF($id){
+
+        $cliente = Persona::select('nombre','num_documento')->where('personas.id',$id)->first();
+
+        $ventas =  Venta::join('personas','ventas.idcliente','=','personas.id')
+        ->join('users','ventas.idusuario','=','users.id')
+        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+            'ventas.forma_pago','ventas.tiempo_entrega','ventas.lugar_entrega',
+            'ventas.entregado','ventas.moneda','ventas.tipo_cambio', 'ventas.observacion',
+            'ventas.num_cheque','ventas.banco','ventas.tipo_facturacion','ventas.pagado',
+            'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
+            'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial',
+            'personas.company as contacto','personas.tel_company',
+            'ventas.observacionpriv','ventas.facturado','ventas.factura_env',
+            'ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+        ->where([['ventas.idcliente',$id],['ventas.estado','Registrado']])
+        ->orderBy('ventas.pagado','asc')->orderBy('ventas.entregado','asc')->get();
+
+        $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
+        ->Leftjoin('ventas','ventas.id','detalle_ventas.idventa')
+        ->select('detalle_ventas.idventa','detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
+            'articulos.sku as articulo','articulos.largo','articulos.alto','articulos.terminado',
+            'articulos.metros_cuadrados','articulos.codigo','articulos.ubicacion')
+        ->where([['ventas.idcliente',$id],['ventas.estado','Registrado']])
+        ->orderBy('ventas.pagado','asc')->orderBy('ventas.entregado','asc')->get();
+
+        $sumaVentas =  Venta::select(DB::raw('SUM(total) as total'))
+        ->where([['ventas.idcliente',$id],['ventas.estado','Registrado']])->get();
+
+        $pdf = \PDF::loadView('pdf.ventasCliente',['ventas' => $ventas,'cliente' => $cliente,'detalles' => $detalles,
+            'sumaVentas' => $sumaVentas]);
+
+        return $pdf->stream('ventas-'.$cliente->nombre.'-'.$cliente->num_documento.'.pdf');
+    }
+
+    public function ventasClienteExcel($id){
+        $idcliente = $id;
+        $cliente = Persona::select('nombre','num_documento')->where('personas.id',$id)->first();
+        return Excel::download(new VentasClienteExport($idcliente),
+            'presupuestos-'.$cliente->nombre.'-'.$cliente->num_documento.'.xlsx');
+    }
 }
+
+

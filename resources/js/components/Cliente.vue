@@ -13,7 +13,7 @@
             <i class="icon-plus"></i>&nbsp;Nuevo
           </button>
           <button v-if="btnNewCliente==0" type="button" @click="ocultarDetalle()"  class="btn btn-sm btn-primary float-right">Volver</button>
-
+          <button v-if="btnNewCliente==0 && userrol==1" type="button" @click="ocultarDetalle()"  class="btn btn-sm btn-info float-right mr-2">Estado de cuenta</button>
         </div>
         <!-- Listado de clientes -->
         <template v-if="listado==1">

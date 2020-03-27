@@ -184,6 +184,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/venta/getDocs', 'VentaController@getDocs');
         Route::put('/venta/eliminarDoc', 'VentaController@eliminarDoc');
         Route::post('/venta/crearDepositCredit', 'VentaController@crearDepositCredit');
+        Route::get('/venta/ventasClienteExcel/{id}','VentaController@ventasClienteExcel');
+        Route::get('/venta/ventasClientePDF/{id}','VentaController@ventasClientePDF');
 
         Route::get('/cotizacion', 'CotizacionController@index');
         Route::post('/cotizacion/registrar', 'CotizacionController@store');
