@@ -246,7 +246,6 @@
                 <table id="facarticulo" class="table-b">
                     <thead>
                         <tr id="fa">
-                            <th>No°</th>
                             <th>MATERIAL</th>
                             <th>No° PLACA</th>
                             <th>MEDIDAS</th>
@@ -262,7 +261,6 @@
                         @foreach ($detalles as $index => $det)
                         @if($det->idventa == $v->id)
                         <tr>
-                            <td class="td-b">{{ ($index + 1)}}</td>
                             <td class="td-b">{{ $det->articulo }} - {{ $det->terminado }}</td>
                             <td class="td-b">{{ $det->codigo }}</td>
                             <td class="td-b">{{ $det->largo }} : {{ $det->alto }}</td>
@@ -285,12 +283,10 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
                             <th class="th-b">SUBTOTAL</th>
                             <td class="th-b">{{ number_format($v->total/($v->impuesto + 1),6)}}</td>
                         </tr>
                         <tr>
-                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -309,12 +305,10 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
                             <th class="th-b">TOTAL</th>
                             <td class="th-b">{{ number_format($v->total,4) }}</td>
                         </tr>
                         <tr>
-                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -328,6 +322,94 @@
                     </tfoot>
                 </table>
                 @endforeach
+        </section>
+        <section>
+            <h2>Ventas con adeudos del 100%</h2>
+            <table id="facarticulo" class="table-b">
+                <thead>
+                    <tr id="fa">
+                        <th>No° de Presupuesto</th>
+                        <th>Atendió</th>
+                        <th>Cliente</th>
+                        <th>Fecha Hora</th>
+                        <th>Impuesto</th>
+                        <th>Total</th>
+                        <th>Forma de pago</th>
+                        <th>Facturación</th>
+                        <th>Adeudo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($adedudadas as $v)
+                    <tr>
+                        <td class="td-b">{{ $v->num_comprobante }}</td>
+                        <td class="td-b">{{ $v->usuario }}</td>
+                        <td class="td-b">{{ $v->cliente }}</td>
+                        <td class="td-b">
+                            <?php
+                                date_default_timezone_set('America/Mexico_City');
+                                setlocale(LC_TIME, 'es_MX.UTF-8');
+                                $hora_actual=strftime("%A, %d de %B de %Y",strtotime($v->fecha_hora));
+                                echo $hora_actual;
+                            ?>
+                        </td>
+                        <td class="td-b">{{ $v->impuesto }}</td>
+                        <td class="td-b">{{ $v->total }}</td>
+                        <td class="td-b">{{ $v->forma_pago }}</td>
+                        <td class="td-b">{{ $v->tipo_facturacion }}</td>
+                        <td class="td-b">{{ $v->adeudo }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <h3 style="float:right;">Total Adeudo: {{ $sumaAdedudadas[0]->total }}</h3>
+        </section>
+        <section>
+            <h2>Ventas con pagos parciales</h2>
+            <table id="facarticulo" class="table-b">
+                <thead>
+                    <tr id="fa">
+                        <th>No° de Presupuesto</th>
+                        <th>Atendió</th>
+                        <th>Cliente</th>
+                        <th>Fecha Hora</th>
+                        <th>Impuesto</th>
+                        <th>Total</th>
+                        <th>Forma de pago</th>
+                        <th>Facturación</th>
+                        <th>Adeudo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($parciales as $v)
+                    <tr>
+                        <td class="td-b">{{ $v->num_comprobante }}</td>
+                        <td class="td-b">{{ $v->usuario }}</td>
+                        <td class="td-b">{{ $v->cliente }}</td>
+                        <td class="td-b">
+                            <?php
+                                date_default_timezone_set('America/Mexico_City');
+                                setlocale(LC_TIME, 'es_MX.UTF-8');
+                                $hora_actual=strftime("%A, %d de %B de %Y",strtotime($v->fecha_hora));
+                                echo $hora_actual;
+                            ?>
+                        </td>
+                        <td class="td-b">{{ $v->impuesto }}</td>
+                        <td class="td-b">{{ $v->total }}</td>
+                        <td class="td-b">{{ $v->forma_pago }}</td>
+                        <td class="td-b">{{ $v->tipo_facturacion }}</td>
+                        <td class="td-b">{{ $v->adeudo }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <h3 style="float:right;">Total Adeudo: {{ $sumaParciales[0]->adeudo }}</h3>
+        </section>
+        <section>
+            <h2>Cliente : {{ $cliente->nombre }} - {{$cliente->num_documento}} - {{ $cliente->tipo }}</h2>
+            <h2>Total de ventas : {{ number_format( $sumaVentas[0]->total,4)}}</h2>
+            <h2>Adeudo general : {{ number_format( $sumaAdedudadas[0]->total + $sumaParciales[0]->adeudo,4)}}</h2>
+
         </section>
     </body>
 </html>

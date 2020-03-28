@@ -13,7 +13,7 @@
             <i class="icon-plus"></i>&nbsp;Nuevo
           </button>
           <button v-if="btnNewCliente==0" type="button" @click="ocultarDetalle()"  class="btn btn-sm btn-primary float-right">Volver</button>
-          <button v-if="btnNewCliente==0 && userrol==1" type="button" @click="ocultarDetalle()"  class="btn btn-sm btn-info float-right mr-2">Estado de cuenta</button>
+          <button v-if="btnNewCliente==0 && userrol==1" type="button" @click="abrirModalEstadoCR()"  class="btn btn-sm btn-info float-right mr-2">Estado de cuenta</button>
         </div>
         <!-- Listado de clientes -->
         <template v-if="listado==1">
@@ -1016,6 +1016,33 @@
     </div>
     <!-- Fin Modal crear abono -->
 
+    <!-- Modal Estado de cuenta -->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal4}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-md " role="document">
+            <div class="modal-content content-cuenta">
+                <div class="modal-body ">
+                     <div class="row d-flex justify-content-around">
+                        <div class="col-12 mb-3">
+                             <h4 class="mb-1">Exportar Estado de cuenta del cliente : {{ nombre }}</h4>
+                            <div class="justify-content-center d-flex mt-5">
+                                <button type="button" class="btn btn-success mr-2" @click="ventasClienteExcel(persona_id)"><i class="fa fa-file-excel-o"></i> Excel</button>
+                                <button type="button" class="btn btn-danger" @click="ventasClientePDF(persona_id)"><i class="fa fa-file-pdf-o"></i> PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4 mb-0">
+                        <div class="col-12 justify-content-center d-flex">
+                            <button type="button" class="btn btn-secondary" @click="cerrarModalEstadoCR()">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <!-- Fin Modal Estado de cuenta -->
+
   </main>
 </template>
 
@@ -1047,6 +1074,7 @@ export default {
             modal: 0,
             modal2 : 0,
             modal3 : 0,
+            modal4 : 0,
             tituloModal: "",
             tipoAccion: 0,
             errorPersona: 0,
@@ -2080,7 +2108,21 @@ export default {
 
                 }
             })
-        }
+        },
+        abrirModalEstadoCR(){
+            this.modal4 = 1;
+        },
+        cerrarModalEstadoCR(){
+            this.modal4 = 0;
+        },
+        ventasClienteExcel(id){
+            window.open('/venta/ventasClienteExcel/' + id);
+            this.cerrarModalEstadoCR();
+        },
+        ventasClientePDF(id){
+            window.open('/venta/ventasClientePDF/'+id);
+        },
+
     },
     mounted() {
         this.listarPersona(1,this.buscar, this.criterio,this.status,this.zona,this.actives);
@@ -2132,6 +2174,9 @@ export default {
     }
     .content-credit{
         height: 440px !important;
+    }
+    .content-cuenta {
+        height: 280px !important;
     }
 
 </style>

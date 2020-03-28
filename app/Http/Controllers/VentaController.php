@@ -4089,9 +4089,17 @@ class VentaController extends Controller
         }
 
     }
+
+    public function ventasClienteExcel($id){
+        $idcliente = $id;
+        $cliente = Persona::select('nombre','num_documento')->where('personas.id',$id)->first();
+        return Excel::download(new VentasClienteExport($idcliente),
+            'presupuestos-'.$cliente->nombre.'-'.$cliente->num_documento.'.xlsx');
+    }
+
     public function ventasClientePDF($id){
 
-        $cliente = Persona::select('nombre','num_documento')->where('personas.id',$id)->first();
+        $cliente = Persona::select('nombre','num_documento','tipo')->where('personas.id',$id)->first();
 
         $ventas =  Venta::join('personas','ventas.idcliente','=','personas.id')
         ->join('users','ventas.idusuario','=','users.id')
@@ -4119,17 +4127,43 @@ class VentaController extends Controller
         $sumaVentas =  Venta::select(DB::raw('SUM(total) as total'))
         ->where([['ventas.idcliente',$id],['ventas.estado','Registrado']])->get();
 
+        $adedudadas =  Venta::join('personas','ventas.idcliente','=','personas.id')
+        ->join('users','ventas.idusuario','=','users.id')
+        ->select('ventas.id','ventas.pagado','ventas.tipo_comprobante','ventas.num_comprobante',
+            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+            'ventas.forma_pago','ventas.tiempo_entrega','ventas.lugar_entrega',
+            'personas.nombre as cliente','ventas.entregado','ventas.tipo_facturacion',
+            'ventas.pago_parcial','ventas.adeudo','users.usuario')
+        ->where([['ventas.idcliente',$id],['ventas.estado','Registrado'],
+            ['ventas.pagado',0],['ventas.pago_parcial',0]])
+        ->orderBy('ventas.pagado','asc')->orderBy('ventas.entregado','asc')->get();
+
+        $sumaAdedudadas =  Venta::select(DB::raw('SUM(total) as total'))
+        ->where([['ventas.idcliente',$id],['ventas.estado','Registrado'],
+            ['ventas.pagado',0],['ventas.pago_parcial',0]])->get();
+
+        $parciales =  Venta::join('personas','ventas.idcliente','=','personas.id')
+        ->join('users','ventas.idusuario','=','users.id')
+        ->select('ventas.id','ventas.pagado','ventas.tipo_comprobante','ventas.num_comprobante',
+            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+            'ventas.forma_pago','ventas.tiempo_entrega','ventas.lugar_entrega',
+            'ventas.entregado','ventas.tipo_facturacion','ventas.pago_parcial',
+            'ventas.adeudo','users.usuario','personas.nombre as cliente')
+        ->where([['ventas.idcliente',$id],['ventas.estado','Registrado'],
+            ['ventas.pagado',0],['ventas.pago_parcial',1]])
+        ->orderBy('ventas.pagado','asc')->orderBy('ventas.entregado','asc')->get();
+
+        $sumaParciales =  Venta::select(DB::raw('SUM(adeudo) as adeudo'))
+        ->where([['ventas.idcliente',$id],['ventas.estado','Registrado'],
+            ['ventas.pagado',0],['ventas.pago_parcial',1]])->get();
+
         $pdf = \PDF::loadView('pdf.ventasCliente',['ventas' => $ventas,'cliente' => $cliente,'detalles' => $detalles,
-            'sumaVentas' => $sumaVentas]);
+            'sumaVentas' => $sumaVentas,'adedudadas' => $adedudadas,'sumaAdedudadas' => $sumaAdedudadas,
+            'parciales' => $parciales,'sumaParciales' => $sumaParciales]);
 
         return $pdf->stream('ventas-'.$cliente->nombre.'-'.$cliente->num_documento.'.pdf');
-    }
 
-    public function ventasClienteExcel($id){
-        $idcliente = $id;
-        $cliente = Persona::select('nombre','num_documento')->where('personas.id',$id)->first();
-        return Excel::download(new VentasClienteExport($idcliente),
-            'presupuestos-'.$cliente->nombre.'-'.$cliente->num_documento.'.xlsx');
+        //return ['parciales' => $parciales,'sumaParciales' => $sumaParciales];
     }
 }
 
