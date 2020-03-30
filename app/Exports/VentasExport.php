@@ -11,11 +11,13 @@ class VentasExport implements FromCollection,WithHeadings
 {
     protected $inicio;
     protected $fin;
+    protected $ArrUsuarios;
 
-    public function __construct($inicio, $fin)
+    public function __construct($inicio, $fin,$ArrUsuarios)
     {
         $this->inicio = $inicio;
         $this->fin = $fin;
+        $this->ArrUsuarios = $ArrUsuarios;
     }
 
     /**
@@ -40,7 +42,7 @@ class VentasExport implements FromCollection,WithHeadings
             'ventas.tipo_facturacion',
             'users.usuario',
             'personas.nombre')
-        ->where('ventas.estado','Registrado')
+        ->Users($this->ArrUsuarios)
         ->whereBetween('ventas.fecha_hora', [$this->inicio, $this->fin])
         ->orderBy('ventas.forma_pago', 'desc')->get();
     }

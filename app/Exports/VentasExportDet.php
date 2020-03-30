@@ -11,11 +11,13 @@ class VentasExportDet implements FromCollection,WithHeadings
 {
     protected $inicio;
     protected $fin;
+    protected $ArrUsuarios;
 
-    public function __construct($inicio, $fin)
+    public function __construct($inicio, $fin,$ArrUsuarios)
     {
         $this->inicio = $inicio;
         $this->fin = $fin;
+        $this->ArrUsuarios = $ArrUsuarios;
     }
 
     /**
@@ -24,7 +26,7 @@ class VentasExportDet implements FromCollection,WithHeadings
     public function collection()
     {
         /* return DetalleVenta::all(); */
-        return DetalleVenta::join('ventas','detalle_ventas.idventa','ventas.id')
+        return Venta::join('detalle_ventas','detalle_ventas.idventa','ventas.id')
         ->join('articulos','detalle_ventas.idarticulo','articulos.id')
         ->leftJoin('categorias','articulos.idcategoria','=','categorias.id')
         ->leftJoin('personas','ventas.idcliente','personas.id')
@@ -46,7 +48,7 @@ class VentasExportDet implements FromCollection,WithHeadings
             'detalle_ventas.descuento',
             'personas.nombre'
             )
-        ->where('ventas.estado','Registrado')
+        ->Users($this->ArrUsuarios)
         ->whereBetween('ventas.fecha_hora', [$this->inicio, $this->fin])
         ->orderBy('ventas.forma_pago', 'desc')->get();
     }

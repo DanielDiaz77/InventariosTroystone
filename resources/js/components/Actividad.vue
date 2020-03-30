@@ -159,9 +159,11 @@
                             </div>
                         </div>
                         <div class="row d-flex justify-content-center">
-                            <template class="justify-content-center">
-                                <editor :options="editorOptions" visible="true" mode="wysiwyg" v-model="content" Width="100%"/>
-                            </template>
+                            <div class="col-10">
+                                <template class="justify-content-center">
+                                    <editor :options="editorOptions" mode="wysiwyg" v-model="content" Width="100%"/>
+                                </template>
+                            </div>
                         </div>
                         <div v-show="errorActividad" class="form-group row div-error d-flex justify-content-center">
                             <div class="text-center text-error">
@@ -403,7 +405,8 @@ export default {
                     'divider',
                     'code',
                     'codeblock'
-                ]
+                ],
+                visible : true
             }
         };
     },

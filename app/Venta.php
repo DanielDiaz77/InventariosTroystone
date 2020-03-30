@@ -34,4 +34,12 @@ class Venta extends Model
     public function documents(){
         return $this->morphMany(Document::class,'documentable');
     }
+
+    public function ScopeUsers($query,$arrUsers){
+        if($arrUsers)
+            foreach($arrUsers as $user){
+                $query->Orwhere([['ventas.estado','Registrado'],['ventas.idusuario',$user]]);
+            }
+            return $query;
+    }
 }

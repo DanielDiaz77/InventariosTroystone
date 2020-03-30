@@ -2890,13 +2890,17 @@ class VentaController extends Controller
     public function ListarExcel(Request $request){
         $inicio = $request->inicio;
         $fin = $request->fin;
+        $usuarios = $request->usuarios;
+        $ArrUsuarios = explode(",",$usuarios);
 
-        return Excel::download(new VentasExport($inicio,$fin), 'presupuestos-'.$inicio.'-'.$fin.'.xlsx');
+        return Excel::download(new VentasExport($inicio,$fin,$ArrUsuarios), 'presupuestos-'.$inicio.'-'.$fin.'.xlsx');
     }
     public function ListarExcelDet(Request $request){
         $inicio = $request->inicio;
         $fin = $request->fin;
-        return Excel::download(new VentasExportDet($inicio,$fin), 'DetallePresupuestos-'.$inicio.'-'.$fin.'.xlsx');
+        $usuarios = $request->usuarios;
+        $ArrUsuarios = explode(",",$usuarios);
+        return Excel::download(new VentasExportDet($inicio,$fin,$ArrUsuarios), 'DetallePresupuestos-'.$inicio.'-'.$fin.'.xlsx');
     }
     public function cambiarFacturacion(Request $request){
         if (!$request->ajax()) return redirect('/');
@@ -4089,14 +4093,12 @@ class VentaController extends Controller
         }
 
     }
-
     public function ventasClienteExcel($id){
         $idcliente = $id;
         $cliente = Persona::select('nombre','num_documento')->where('personas.id',$id)->first();
         return Excel::download(new VentasClienteExport($idcliente),
             'presupuestos-'.$cliente->nombre.'-'.$cliente->num_documento.'.xlsx');
     }
-
     public function ventasClientePDF($id){
 
         $cliente = Persona::select('nombre','num_documento','tipo')->where('personas.id',$id)->first();
@@ -4164,6 +4166,25 @@ class VentaController extends Controller
         return $pdf->stream('ventas-'.$cliente->nombre.'-'.$cliente->num_documento.'.pdf');
 
         //return ['parciales' => $parciales,'sumaParciales' => $sumaParciales];
+    }
+
+    public function ventasUsuariosExcel(Request $request){
+
+        $ArrUsuarios = [1,9];
+
+        $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
+        ->join('users','ventas.idusuario','=','users.id')
+        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+            'ventas.fecha_hora','ventas.impuesto','ventas.total','ventas.estado',
+            'ventas.moneda','ventas.tipo_cambio','ventas.observacion','ventas.forma_pago',
+            'ventas.tiempo_entrega','ventas.lugar_entrega','ventas.entregado','ventas.banco',
+            'ventas.entrega_parcial','ventas.num_cheque','ventas.pagado','personas.nombre',
+            'ventas.tipo_facturacion','users.usuario','observacionpriv','ventas.facturado',
+            'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+        ->Users($ArrUsuarios)
+        ->orderBy('ventas.idusuario', 'asc')->paginate(10);
+
+        return ['ventas' => $ventas];
     }
 }
 

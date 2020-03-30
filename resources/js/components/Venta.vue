@@ -1469,7 +1469,7 @@
     <!-- Modal exportar excel -->
     <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal5}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-success modal-md " role="document">
-            <div class="modal-content content-export">
+            <div class="modal-content content-exportUs">
                 <div class="modal-header">
                     <h4 class="modal-title" v-text="tituloModal"></h4>
                     <button type="button" class="close" @click="cerrarModal5()" aria-label="Close">
@@ -1477,7 +1477,16 @@
                 </button>
                 </div>
                 <div class="modal-body ">
-                    <!-- <h3 class="mb-3">Generar reporte de ventas</h3> -->
+                    <h3 class="mb-3">Generar reporte de ventas</h3>
+                    <div class="row d-flex justify-content-center">
+                        <div class="input-group input-group-sm col-12 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Usuarios</span>
+                            </div>
+                            <v-select multiple v-model="selectedUsers" :on-search="selectReceptor" label="nombre" :options="arrayReceptores" placeholder="Buscar usuarios...">
+                            </v-select>
+                        </div>
+                    </div>
                     <div class="row d-flex justify-content-around">
                         <div class="col-12 col-md-6 mb-2">
                             <label for=""><strong>Inicio: </strong></label>
@@ -1493,10 +1502,10 @@
 
                     <div class="d-flex justify-content-center mt-5">
                         <div>
-                            <button type="button" class="btn btn-primary mr-5" @click="listarExcel(fecha1,fecha2)">Resumido</button>
+                            <button type="button" class="btn btn-primary mr-5" @click="listarExcel(fecha1,fecha2,selectedUsers)">Resumido</button>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-primary ml-5" @click="listarExcelDet(fecha1,fecha2)">Detallado</button>
+                            <button type="button" class="btn btn-primary ml-5" @click="listarExcelDet(fecha1,fecha2,selectedUsers)">Detallado</button>
                         </div>
                     </div>
 
@@ -1882,7 +1891,9 @@ export default {
                 'from'         : 0,
                 'to'           : 0,
             },
-            selectedCredits : []
+            selectedCredits : [],
+            selectedUsers : [],
+            arrayReceptores : []
         };
     },
     components: {
@@ -3001,12 +3012,36 @@ export default {
             this.tituloModal = "";
             this.fecha1 = "";
             this.fecha2 = "";
+            this.arrayReceptores = [];
+            this.selectedUsers = [];
         },
-        listarExcel(inicio, fin){
-            window.open('/venta/ExportExcel?inicio=' + inicio + '&fin=' + fin);
+        listarExcel(inicio, fin,selectedUsers){
+            if(!selectedUsers.length){
+                swal.fire(
+                'Atencion!',
+                `Seleccione los usuarios para el reporte`,
+                'error');
+            }else{
+                var ArrUsuarios = [];
+                for(let i = 0; i < selectedUsers.length; i++){
+                    ArrUsuarios.push(selectedUsers[i]['id']);
+                }
+                window.open('/venta/ExportExcel?inicio=' + inicio + '&fin=' + fin + '&usuarios=' + ArrUsuarios);
+            }
         },
-        listarExcelDet(inicio, fin){
-            window.open('/venta/ExportExcelDet?inicio=' + inicio + '&fin=' + fin);
+        listarExcelDet(inicio, fin,selectedUsers){
+            if(!selectedUsers.length){
+                swal.fire(
+                'Atencion!',
+                `Seleccione los usuarios para el reporte`,
+                'error');
+            }else{
+                var ArrUsuarios = [];
+                for(let i = 0; i < selectedUsers.length; i++){
+                    ArrUsuarios.push(selectedUsers[i]['id']);
+                }
+                window.open('/venta/ExportExcelDet?inicio=' + inicio + '&fin=' + fin + '&usuarios=' + ArrUsuarios);
+            }
         },
         getDeposits(id){
             let me = this;
@@ -3248,6 +3283,18 @@ export default {
                     console.log(error);
                 });
             }
+        },
+        selectReceptor(){
+            let me=this;
+            var url= '/user/selectUsuario';
+
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.arrayReceptores = respuesta.usuarios;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         }
     },
     mounted() {
@@ -3292,8 +3339,8 @@ export default {
     .sinpadding [class*="col-"] {
         padding: 0;
     }
-    .content-export{
-        height: 380px !important;
+    .content-exportUs{
+        height: 500px !important;
     }
     .content-deposit {
         height: 340px !important;
