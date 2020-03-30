@@ -13,10 +13,10 @@
             <i class="icon-plus"></i>&nbsp;Nuevo
           </button>
           <template v-if="listado==2">
-                <!-- <button type="button" class="btn btn-info float-right ml-2"
+                <button type="button" class="btn btn-info float-right ml-2"
                     @click="sendMailCot(cotizacion_id,email_cliente,cliente)" v-if="email_cliente">
                     <i class="fa fa-share"></i> Enviar
-                </button>&nbsp; -->
+                </button>&nbsp;
                 <button type="button" @click="desactivarCotizacionEditar(cotizacion_id)" class="btn btn-warning float-right">
                     <i class="icon-pencil"></i>&nbsp;<strong>Editar</strong>
                 </button>

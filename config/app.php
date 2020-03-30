@@ -164,6 +164,8 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
+        Sichikawa\LaravelSendgridDriver\SendgridTransportServiceProvider::class
+
 
         /*
          * Package Service Providers...
