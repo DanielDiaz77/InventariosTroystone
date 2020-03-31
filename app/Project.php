@@ -34,4 +34,12 @@ class Project extends Model
         return $this->morphMany(Document::class,'documentable');
     }
 
+    public function ScopeUsers($query,$arrUsers){
+        if($arrUsers)
+            foreach($arrUsers as $user){
+                $query->Orwhere([['projects.estado','Registrado'],['projects.idusuario',$user]]);
+            }
+            return $query;
+    }
+
 }

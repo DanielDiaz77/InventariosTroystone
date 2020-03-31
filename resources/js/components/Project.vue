@@ -46,6 +46,9 @@
                             <button class="btn btn-sm btn-warning" type="button"><i class="fa fa-truck" aria-hidden="true"></i>&nbsp; Entregas </button>
                         </div>
                     </div>
+                     <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5" v-if="estadoProj!='Anuladas'">
+                            <button @click="abrirModal5()" class="btn btn-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-sm table-hover table-responsive-xl">
@@ -63,7 +66,7 @@
                                 <th>Entregado</th>
                                 <th>100% Pagado</th>
                                 <th>Estado</th>
-
+                                <th>Fecha de Registro</th>
                             </tr>
                         </thead>
                         <tbody v-if="arrayProject.length">
@@ -120,6 +123,7 @@
                                 <td v-else>
                                     <span class="badge badge-danger">Cancelada</span>
                                 </td>
+                                <td>{{ convertDateVenta(project.registro) }}</td>
                             </tr>
                         </tbody>
                         <tbody v-else>
@@ -1214,6 +1218,55 @@
     </div>
     <!-- Fin Modal crear abono con nota credito -->
 
+     <!-- Modal exportar excel -->
+    <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal5}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-success modal-md " role="document">
+            <div class="modal-content content-exportUs">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa fa-file-excel-o" aria-hidden="true"></i> {{ tituloModal }}</h5>
+                    <button type="button" class="close" @click="cerrarModal5()" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                </div>
+                <div class="modal-body ">
+                   <!--  <h4 class="mb-3"> Generar reporte de presupuestos especiales</h4> -->
+                    <div class="row d-flex justify-content-center">
+                        <div class="input-group input-group-sm col-12 mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Usuarios</span>
+                            </div>
+                            <v-select multiple v-model="selectedUsers" :on-search="selectReceptor" label="nombre" :options="arrayReceptores" placeholder="Buscar usuarios...">
+                            </v-select>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-around">
+                        <div class="col-12 col-md-6 mb-2">
+                            <label for=""><strong>Inicio: </strong></label>
+                            <input type="date" class="form-control" v-model="fecha1">
+                        </div>
+                        <div class="col-12 col-md-6 mb-2">
+                            <label for=""><strong>Fin: </strong></label>
+                           <input type="date" class="form-control" v-model="fecha2">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-5">
+                        <div>
+                            <button type="button" class="btn btn-primary mr-5" @click="listarExcel(fecha1,fecha2,selectedUsers)">Generar</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal5()">Cerrar</button>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <!-- Fin exportar excel -->
+
 
   </main>
 </template>
@@ -1317,6 +1370,7 @@ export default {
             modal2 : 0,
             modal3: 0,
             modal4: 0,
+            modal5: 0,
             tituloModal: "",
             arrayPresupuestosT : [],
             pagination : {
@@ -1366,7 +1420,11 @@ export default {
                 'from'         : 0,
                 'to'           : 0,
             },
-            selectedCredits : []
+            selectedCredits : [],
+            fecha1 : "",
+            fecha2 : "",
+            arrayReceptores : [],
+            selectedUsers : []
         };
     },
     components: {
@@ -1606,7 +1664,7 @@ export default {
             this.num_comprobanteocultarDetalle = 0;
             this.arrayPresupuestosT = [];
             this.detallePresupuestos = [];
-            this.listarProject(this.pagination.current_page,this.buscar,this.criterio,'','');
+            this.listarProject(this.pagination.current_page,this.buscar,this.criterio,this.estadoProj,this.entregaProj);
 
         },
         seleccionarPresupuestos(id){
@@ -2361,7 +2419,45 @@ export default {
             this.arrayCreditos = [];
             this.selectedCredits = [];
             this.totalab = 0;
-        }
+        },
+        abrirModal5(){
+            this.modal5 = 1;
+            this.tituloModal = "Generar Reporte de proyectos especiales";
+        },
+        cerrarModal5(){
+            this.modal5 = 0;
+            this.tituloModal = "";
+            this.fecha1 = "";
+            this.fecha2 = "";
+            this.arrayReceptores = [];
+            this.selectedUsers = [];
+        },
+        selectReceptor(){
+            let me=this;
+            var url= '/user/selectUsuario';
+
+            axios.get(url).then(function (response) {
+                var respuesta= response.data;
+                me.arrayReceptores = respuesta.usuarios;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        listarExcel(inicio, fin,selectedUsers){
+            if(!selectedUsers.length){
+                swal.fire(
+                'Atencion!',
+                `Seleccione los usuarios para el reporte`,
+                'error');
+            }else{
+                var ArrUsuarios = [];
+                for(let i = 0; i < selectedUsers.length; i++){
+                    ArrUsuarios.push(selectedUsers[i]['id']);
+                }
+                window.open('/project/ExportExcel?inicio=' + inicio + '&fin=' + fin + '&usuarios=' + ArrUsuarios);
+            }
+        },
     },
     mounted() {
         this.listarProject(1,this.buscar,this.criterio,this.estadoProj,this.entregaProj);

@@ -272,6 +272,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/project/getDocs', 'ProjectController@getDocs');
         Route::put('/project/eliminarDoc', 'ProjectController@eliminarDoc');
         Route::post('/project/crearDepositCredit', 'ProjectController@crearDepositCredit');
+        Route::get('/project/ExportExcel','ProjectController@listarExcel');
 
         Route::get('/gallery', 'GalleryController@index');
         Route::post('/gallery/registrar', 'GalleryController@store');

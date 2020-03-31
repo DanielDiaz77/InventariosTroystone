@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ProjectsExport;
 use App\Document;
 use App\Project;
 use App\Deposit;
@@ -35,7 +37,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }elseif($criterio == 'cliente'){
                     $projects = Project::leftjoin('personas AS creador','creador.id','=','projects.idusuario')
@@ -47,7 +50,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['clientes.nombre', 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }else{
@@ -60,7 +64,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.'.$criterio, 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }
@@ -75,7 +80,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.entregado_parcial',1]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }elseif($criterio == 'cliente'){
@@ -88,7 +94,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.entregado_parcial',1],['clientes.nombre', 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }else{
@@ -101,7 +108,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.entregado_parcial',1],['projects.'.$criterio, 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }
@@ -116,7 +124,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.entregado',1]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }elseif($criterio == 'cliente'){
@@ -129,7 +138,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.entregado',1],['clientes.nombre', 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }else{
@@ -142,7 +152,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.entregado',1],['projects.'.$criterio, 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }
@@ -157,7 +168,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.entregado',0],['projects.entregado_parcial',0]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }elseif($criterio == 'cliente'){
@@ -170,7 +182,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['clientes.nombre', 'like', '%'. $buscar . '%'],['projects.entregado',0],
                         ['projects.entregado_parcial',0]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -184,7 +197,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.'.$criterio, 'like', '%'. $buscar . '%'],['projects.entregado',0],
                         ['projects.entregado_parcial',0]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -202,7 +216,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }elseif($criterio == 'cliente'){
@@ -215,7 +230,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['clientes.nombre', 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }else{
@@ -228,7 +244,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['projects.'.$criterio, 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }
@@ -243,7 +260,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['projects.entregado_parcial',1]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }elseif($criterio == 'cliente'){
@@ -256,7 +274,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['projects.entregado_parcial',1],
                         ['clientes.nombre', 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -270,7 +289,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['projects.entregado_parcial',1],
                         ['projects.'.$criterio, 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -286,7 +306,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['projects.entregado',1]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }elseif($criterio == 'cliente'){
@@ -299,7 +320,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['projects.entregado',1],
                         ['clientes.nombre', 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -313,7 +335,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['projects.entregado',1],
                         ['projects.'.$criterio, 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -329,7 +352,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['projects.entregado',0],
                         ['projects.entregado_parcial',0]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -343,7 +367,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['clientes.nombre', 'like', '%'. $buscar . '%'],
                         ['projects.entregado',0],['projects.entregado_parcial',0]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -357,7 +382,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Registrado'],['projects.'.$criterio, 'like', '%'. $buscar . '%'],
                         ['projects.entregado',0],['projects.entregado_parcial',0]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -375,7 +401,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }elseif($criterio == 'cliente'){
@@ -388,7 +415,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['clientes.nombre', 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }else{
@@ -401,7 +429,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['projects.'.$criterio, 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }
@@ -416,7 +445,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['projects.entregado_parcial',1]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }elseif($criterio == 'cliente'){
@@ -429,7 +459,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['projects.entregado_parcial',1],
                         ['clientes.nombre', 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -443,7 +474,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['projects.entregado_parcial',1],
                         ['projects.'.$criterio, 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -459,7 +491,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['projects.entregado',1]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
                 }elseif($criterio == 'cliente'){
@@ -472,7 +505,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['projects.entregado',1],
                         ['clientes.nombre', 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -486,7 +520,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['projects.entregado',1],
                         ['projects.'.$criterio, 'like', '%'. $buscar . '%']])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -502,7 +537,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['projects.entregado',0],
                         ['projects.entregado_parcial',0]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -516,7 +552,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['clientes.nombre', 'like', '%'. $buscar . '%'],
                         ['projects.entregado',0],['projects.entregado_parcial',0]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -530,7 +567,8 @@ class ProjectController extends Controller
                         'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
                         'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
                         'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+                        'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+                        'projects.created_at as registro')
                     ->where([['projects.estado','Anulado'],['projects.'.$criterio, 'like', '%'. $buscar . '%'],
                         ['projects.entregado',0],['projects.entregado_parcial',0]])
                     ->orderBy('projects.id', 'desc')->paginate(12);
@@ -819,7 +857,8 @@ class ProjectController extends Controller
             'projects.flete','projects.instalacion','projects.area','projects.tipo_facturacion',
             'projects.observacion','projects.observacionpriv','creador.nombre as usuario',
             'clientes.nombre as cliente','clientes.tipo','clientes.telefono','clientes.rfc',
-            'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente')
+            'clientes.cfdi', 'clientes.company','clientes.tel_company','clientes.id as idcliente',
+            'projects.created_at as registro')
         ->where('projects.id',$request->id)
         ->first();
         return [ 'project' => $project , 'userrol' => $usrol ];
@@ -953,5 +992,14 @@ class ProjectController extends Controller
                 DB::rollBack();
             }
         }
+    }
+
+    public function ListarExcel(Request $request){
+        $inicio = $request->inicio;
+        $fin = $request->fin;
+        $usuarios = $request->usuarios;
+        $ArrUsuarios = explode(",",$usuarios);
+
+        return Excel::download(new ProjectsExport($inicio,$fin,$ArrUsuarios), 'presupuestosEspeciales-'.$inicio.'-'.$fin.'.xlsx');
     }
 }
