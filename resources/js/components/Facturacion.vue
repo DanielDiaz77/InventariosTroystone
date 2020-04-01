@@ -398,7 +398,6 @@
                                                 <button @click="eliminarFile(file.id,venta_id)" class="btn btn-transparent text-danger rounded-circle"><i class="fa fa-times fa-2x"></i></button>
                                             </div>
                                         </div>
-
                                     </template>
                                     <template v-else>
                                         <div class="d-flex justify-content-center">
@@ -410,6 +409,10 @@
                                             </div>
                                             <div>
                                                 <button @click="eliminarFile(file.id,venta_id)" class="btn btn-transparent text-danger rounded-circle"><i class="fa fa-times fa-2x"></i></button>
+                                                <button @click="sendMailFactura(venta_id,email_cliente,cliente,file.url)"
+                                                    class="btn btn-transparent text-primary rounded-circle" v-if="email_cliente">
+                                                    <i class="fa fa-share fa-2x"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </template>
@@ -778,6 +781,7 @@ export default {
             usrol : 0,
             arrayFiles : [],
             docsArray : [],
+            email_cliente : ""
         };
     },
     components: {
@@ -923,6 +927,8 @@ export default {
             this.cfdi_cliente = '';
             this.contacto_cliente = '';
             this.telcontacto_cliente = '';
+            this.email_cliente = "";
+
         },
         verVenta(id){
             let me = this;
@@ -968,7 +974,7 @@ export default {
                 me.banco = arrayVentaT[0]['banco'];
                 me.pagado = arrayVentaT[0]['pagado'];
                 me.facturado = arrayVentaT[0]['facturado'];
-
+                me.email_cliente =  arrayVentaT[0]['EmailC'];
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
 
@@ -1314,6 +1320,23 @@ export default {
                 console.log(error);
             });
         },
+        sendMailFactura(venta_id,email,cliente,url){
+            let me = this;
+            axios.post('/venta/enviarFacturaMail',{
+                'id'      : venta_id,
+                'mail'    : email,
+                'name'    : cliente,
+                'fileUrl' : url
+            }).then(function (response) {
+                Swal.fire({
+                    type: 'success',
+                    title: 'Enviado...',
+                    text: `La factura de ${ cliente } se envio correctamente al correo ${ email }`,
+                })
+            }).catch(function (error) {
+                console.log(error);
+            });
+        }
     },
     mounted() {
         this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta,this.tipo_fact);

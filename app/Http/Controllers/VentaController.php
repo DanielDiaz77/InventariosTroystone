@@ -18,6 +18,9 @@ use Barryvdh\DomPDF\PDF;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\VentasExport;
 use App\Exports\VentasExportDet;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MailPresupuesto;
+use App\Mail\MailFactura;
 use App\Persona;
 
 class VentaController extends Controller
@@ -2190,7 +2193,7 @@ class VentaController extends Controller
             'ventas.factura_env','ventas.pago_parcial','ventas.adeudo','personas.nombre as cliente',
             'personas.tipo','personas.rfc','personas.cfdi','personas.telefono','ventas.auto_entrega',
             'personas.company as contacto','personas.tel_company as tel_contacto',
-            'personas.id as idcliente')
+            'personas.id as idcliente','personas.email as EmailC')
         ->where('ventas.id','=',$id)
         ->orderBy('ventas.id', 'desc')->take(1)->get();
 
@@ -4167,7 +4170,6 @@ class VentaController extends Controller
 
         //return ['parciales' => $parciales,'sumaParciales' => $sumaParciales];
     }
-
     public function ventasUsuariosExcel(Request $request){
 
         $ArrUsuarios = [1,9];
@@ -4185,6 +4187,79 @@ class VentaController extends Controller
         ->orderBy('ventas.idusuario', 'asc')->paginate(10);
 
         return ['ventas' => $ventas];
+    }
+    public function enviarPresupuestoMail(Request $request){
+
+        $venta =  Venta::join('personas','ventas.idcliente','=','personas.id')
+        ->join('users','ventas.idusuario','=','users.id')
+        ->select('ventas.id','ventas.tipo_comprobante','ventas.num_comprobante',
+            'ventas.created_at','ventas.impuesto','ventas.total','ventas.estado',
+            'ventas.forma_pago','ventas.tiempo_entrega','ventas.lugar_entrega',
+            'ventas.entregado','ventas.moneda','ventas.tipo_cambio', 'ventas.observacion',
+            'ventas.num_cheque','ventas.banco','ventas.tipo_facturacion','ventas.pagado',
+            'personas.nombre','personas.rfc','personas.domicilio','personas.ciudad',
+            'personas.telefono','personas.email','users.usuario','ventas.entrega_parcial',
+            'personas.company as contacto','personas.tel_company',
+            'ventas.observacionpriv','ventas.facturado','ventas.factura_env',
+            'ventas.pago_parcial','ventas.adeudo','ventas.auto_entrega')
+        ->where('ventas.id',$request->id)->take(1)->get();
+
+        $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
+        ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
+            'articulos.sku as articulo','articulos.largo','articulos.alto','articulos.terminado',
+            'articulos.metros_cuadrados','articulos.codigo','articulos.ubicacion')
+        ->where('detalle_ventas.idventa',$request->id)
+        ->orderBy('detalle_ventas.id','desc')->get();
+
+        $numventa = Venta::select('num_comprobante')->where('id',$request->id)->get();
+
+        $ivaagregado = Venta::select('impuesto')->where('id',$request->id)->get();
+
+        $sumaMts = DB::table('articulos')
+        ->select(DB::raw('SUM(metros_cuadrados) as metros'))
+        ->leftJoin('detalle_ventas','detalle_ventas.idarticulo','articulos.id')
+        ->where('detalle_ventas.idventa',$request->id)
+        ->get();
+
+        $ventaD = Venta::findOrFail($request->id); //ID venta y sus depositos
+        $deposits = $ventaD->deposits()
+        ->select(DB::raw('SUM(deposits.total) as abonos'))
+        ->get();
+
+        $pdf = \PDF::loadView('pdf.venta',
+            ['venta' => $venta,'detalles'=>$detalles,
+            'ivaVenta' =>$ivaagregado[0]->impuesto,
+            'sumaMts' => $sumaMts[0]->metros,
+            'abonos' => $deposits[0]->abonos]);
+
+        $data = array(
+            'name'      =>  $request->name
+        );
+
+        $email = $request->mail;
+
+        $numPre = $numventa[0]->num_comprobante;
+
+        $usid = \Auth::user()->id;
+
+        $mailUs = Persona::select('email')->where('id',$usid)->get();
+
+        $emit = $mailUs[0]->email;
+
+        Mail::to($email)->send(new MailPresupuesto($pdf->output(),$data,$numPre,$emit));
+    }
+    public function enviarFacturaMail(Request $request){
+        $email = $request->mail;
+        $data = array(
+            'name'      =>  $request->name
+        );
+        $numventa = Venta::select('num_comprobante')->where('id',$request->id)->get();
+        $numPre = $numventa[0]->num_comprobante;
+        $usid = \Auth::user()->id;
+        $mailUs = Persona::select('email')->where('id',$usid)->get();
+        $emit = $mailUs[0]->email;
+        $path = 'facturasfiles/' . $request->fileUrl;
+        Mail::to($email)->send(new MailFactura($path,$data,$numPre,$emit));
     }
 }
 

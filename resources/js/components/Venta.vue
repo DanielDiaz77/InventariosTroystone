@@ -12,6 +12,13 @@
           <button type="button" @click="mostrarDetalle()" class="btn btn-secondary" v-if="listado==1">
             <i class="icon-plus"></i>&nbsp;Nuevo
           </button>
+           <template v-if="listado==2">
+                <button type="button" class="btn btn-info float-right ml-2"
+                    @click="sendMailPresupuesto(venta_id,email_cliente,cliente)" v-if="email_cliente && estadoVn == 'Registrado' ">
+                    <i class="fa fa-share"></i> Enviar
+                </button>&nbsp;
+                <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary float-right">Volver</button>
+          </template>
         </div>
         <!-- Listado -->
         <template v-if="listado==1">
@@ -1893,7 +1900,8 @@ export default {
             },
             selectedCredits : [],
             selectedUsers : [],
-            arrayReceptores : []
+            arrayReceptores : [],
+            email_cliente : ""
         };
     },
     components: {
@@ -2429,6 +2437,7 @@ export default {
             this.num_cheque = 0;
             this.tipo_facturacion = "";
             this.otroFormPay = false;
+            this.email_cliente = "";
             this.listarVenta(this.pagination.current_page,
                 this.buscar, this.criterio,this.estadoVenta,this.estadoEntrega,this.estadoPago);
         },
@@ -2481,7 +2490,7 @@ export default {
                 me.factura_env = arrayVentaT[0]['factura_env'];
                 me.auto_entrega = arrayVentaT[0]['auto_entrega'];
                 me.idcliente = arrayVentaT[0]['idcliente'];
-
+                me.email_cliente =  arrayVentaT[0]['EmailC'];
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('dddd DD MMM YYYY hh:mm:ss a');
 
@@ -3293,6 +3302,22 @@ export default {
                 me.arrayReceptores = respuesta.usuarios;
             })
             .catch(function (error) {
+                console.log(error);
+            });
+        },
+        sendMailPresupuesto(id,mail,cliente){
+            let me = this;
+            axios.post('/venta/enviarPresupuestoMail',{
+                'id': id,
+                'mail' : mail,
+                'name' : cliente
+            }).then(function (response) {
+                Swal.fire({
+                    type: 'success',
+                    title: 'Enviado...',
+                    text: `El presupuesto de ${ cliente } se envio correctamente al correo ${ mail }`,
+                })
+            }).catch(function (error) {
                 console.log(error);
             });
         }
