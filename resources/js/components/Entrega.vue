@@ -885,7 +885,7 @@ export default {
                 var total_parcial = 0;
 
                 me.venta_id = arrayVentaT[0]['id'];
-                me.cliente = arrayVentaT[0]['nombre'];
+                me.cliente = arrayVentaT[0]['cliente'];
                 me.tipo_comprobante=arrayVentaT[0]['tipo_comprobante'];
                 me.num_comprobante=arrayVentaT[0]['num_comprobante'];
                 me.user=arrayVentaT[0]['usuario'];

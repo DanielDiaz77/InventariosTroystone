@@ -2255,7 +2255,7 @@ export default {
             var numcomp = "V-".concat(me.CodeDate,"-",me.num_comprobante);
             var totalDem = parseFloat(this.total).toFixed(4);
 
-            console.log(`Total : ${totalDem}`);
+            //console.log(`Total : ${totalDem}`);
 
             axios.post('/venta/registrar',{
                 'idcliente': this.idcliente,
@@ -2282,10 +2282,10 @@ export default {
                     title: 'Registrado...',
                     text: 'La venta ha sido registrada con éxito!!',
                 });
-                console.log(`Resp : ${ response }`);
+                //console.log(`Resp : ${ response }`);
             })
             .catch(function(error) {
-                csonsole.log(error);
+                console.log(error);
             });
         },
         desactivarVenta(id) {

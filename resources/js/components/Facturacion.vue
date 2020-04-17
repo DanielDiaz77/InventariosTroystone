@@ -80,13 +80,22 @@
                                 <td v-text="venta.fecha_hora"></td>
                                 <!-- <td v-text="venta.impuesto"></td> -->
                                 <td v-text="venta.total"></td>
-                                <template>
+                                <!-- <template>
                                     <td v-if="venta.adeudo == 0">
                                         <span class="badge badge-success">PAGADO</span>
                                     </td>
                                     <td v-else>
                                         <span class="badge badge-danger">NO PAGADO</span>
                                     </td>
+                                </template> -->
+                                <template v-if="venta.adeudo == 0">
+                                    <td><span class="badge badge-success">100% Pagado</span></td>
+                                </template>
+                                <template v-else-if="venta.total == venta.adeudo">
+                                    <td><span class="badge badge-danger">No Pagado</span></td>
+                                </template>
+                                <template v-else-if="(venta.total - venta.adeudo) < venta.total">
+                                    <td><span class="badge badge-warning">Pagado Parcialmente</span></td>
                                 </template>
                                 <td v-text="venta.forma_pago"></td>
                                 <td v-text="venta.tipo_facturacion"></td>
