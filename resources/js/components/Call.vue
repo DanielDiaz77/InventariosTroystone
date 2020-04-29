@@ -917,7 +917,7 @@ export default {
                 me.cerrarDetalle();
                 swal.fire(
                 'Compleado!',
-                'La llamda ha sido actualizada con éxito.',
+                'La llamada ha sido actualizada con éxito.',
                 'success')
                 me.listarLlamadas(1,'','nombre','Pendiente',me.zona);
             })
