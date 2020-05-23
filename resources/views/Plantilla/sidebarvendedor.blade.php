@@ -21,7 +21,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item nav-dropdown" v-if="userId == 7">
+            <li class="nav-item nav-dropdown" v-if="autoIngresos == 1">
                 <a class="nav-link nav-dropdown-toggle" href="#"><i class="icon-wallet"></i> Ingresos</a>
                 <ul class="nav-dropdown-items">
                     <li @click="menu=3" class="nav-item">

@@ -43,6 +43,8 @@
                             <th>Usuario</th>
                             <th>Rol</th>
                             <th>Area</th>
+                            <th>Auto. Ingresos</th>
+                            <th>Ultima Conexion</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,20 +56,20 @@
                                 <template v-if="persona.condicion">
                                     <button type="button" class="btn btn-danger btn-sm" @click="desactivarUsuario(persona.id)">
                                         <i class="icon-trash"></i>
-                                    </button>
+                                    </button>&nbsp;
                                 </template>
                                 <template v-else>
                                     <button type="button" class="btn btn-info btn-sm" @click="activarUsuario(persona.id)">
                                         <i class="icon-check"></i>
-                                    </button>
+                                    </button>&nbsp;
                                 </template>
+                                <button type="button" class="btn btn-secondary btn-sm" @click="cambiarPassword(persona.id)">
+                                    <i class="icon-lock"></i>
+                                </button>&nbsp;
                             </td>
                             <td v-text="persona.nombre"></td>
-                            <!-- <td v-text="persona.ciudad"></td>
-                            <td v-text="persona.domicilio"></td> -->
                             <td v-text="persona.telefono"></td>
                             <td v-text="persona.email"></td>
-                           <!--  <td v-text="persona.rfc"></td> -->
                             <td v-text="persona.usuario"></td>
                             <td v-text="persona.rol"></td>
                             <td v-if="persona.area == 'GDL'">
@@ -77,6 +79,18 @@
                                 San Luis
                             </td>
                             <td v-else>N/A</td>
+                            <!-- <td v-text="persona.autoing"></td> -->
+                            <td class="text-center">
+                                <input type="checkbox" :id="'chkEn'+persona.id" v-model="persona.autoing"
+                                    @change="cambiarEstadoAutoIngreso(persona.id,persona.autoing,persona.nombre)" :disabled="persona.idrol === 1">
+                                <template v-if="persona.autoing">
+                                        <label :for="'chkEn'+persona.id">Ingresos Habilidatos</label>
+                                </template>
+                                <template v-else>
+                                    <label :for="'chkEn'+persona.id">Ingresos Deshabilidatos</label>
+                                </template>
+                            </td>
+                            <td>{{formatDate(persona.last_act)}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -164,12 +178,6 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 form-control-label" for="text-input">Contraseña (*)</label>
-                            <div class="col-md-9">
-                                <input type="password" v-model="password" class="form-control" placeholder="Contraseña de acceso al sistema"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
                             <label for="text-input" class="col-md-3 form-control-label">Area</label>
                             <div class="col-md-9">
                                 <select class="form-control" v-model="area">
@@ -208,6 +216,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 export default {
     data() {
         return {
@@ -224,6 +233,7 @@ export default {
             password: "",
             idrol: 0,
             area : "",
+            autoing : 0,
             arrayPersona: [],
             arrayRol: [],
             modal: 0,
@@ -246,34 +256,34 @@ export default {
     },
 
     computed:{
-            isActived: function(){
-                return this.pagination.current_page;
-            },
-            //Calcula los elementos de la paginación
-            pagesNumber: function() {
-                if(!this.pagination.to) {
-                    return [];
-                }
-
-                var from = this.pagination.current_page - this.offset;
-                if(from < 1) {
-                    from = 1;
-                }
-
-                var to = from + (this.offset * 2);
-                if(to >= this.pagination.last_page){
-                    to = this.pagination.last_page;
-                }
-
-                var pagesArray = [];
-                while(from <= to) {
-                    pagesArray.push(from);
-                    from++;
-                }
-                return pagesArray;
-
-            }
+        isActived: function(){
+            return this.pagination.current_page;
         },
+        //Calcula los elementos de la paginación
+        pagesNumber: function() {
+            if(!this.pagination.to) {
+                return [];
+            }
+
+            var from = this.pagination.current_page - this.offset;
+            if(from < 1) {
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.pagination.last_page){
+                to = this.pagination.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+
+        }
+    },
     methods: {
 
         listarPersona (page,buscar,criterio){
@@ -313,20 +323,25 @@ export default {
             }
 
             let me = this;
+            let autoing = 0;
+            if (this.idrol === 1) {
+                autoing = 1;
+            }
 
             axios.post("/user/registrar", {
-                'nombre': this.nombre,
-                'tipo_documento': this.tipo_documento,
-                'num_documento': this.num_documento,
-                'ciudad': this.ciudad,
-                'domicilio': this.domicilio,
-                'telefono': this.telefono,
-                'email': this.email,
-                'rfc': this.rfc,
-                'usuario' : this.usuario,
-                'password' : this.password,
-                'idrol' : this.idrol,
-                'area' : this.area
+                'nombre'         : this.nombre,
+                'tipo_documento' : this.tipo_documento,
+                'num_documento'  : this.num_documento,
+                'ciudad'         : this.ciudad,
+                'domicilio'      : this.domicilio,
+                'telefono'       : this.telefono,
+                'email'          : this.email,
+                'rfc'            : this.rfc,
+                'usuario'        : this.usuario,
+                'password'       : this.password,
+                'idrol'          : this.idrol,
+                'area'           : this.area,
+                'autoing'        : autoing
             })
             .then(function(response) {
                 me.cerrarModal();
@@ -341,20 +356,24 @@ export default {
                 return;
             }
             let me = this;
+            let autoing = 0;
+            if (this.idrol === 1) {
+                autoing = 1;
+            }
             axios.put("/user/actualizar", {
-                'nombre': this.nombre,
-                'tipo_documento': this.tipo_documento,
-                'num_documento': this.num_documento,
-                'ciudad': this.ciudad,
-                'domicilio': this.domicilio,
-                'telefono': this.telefono,
-                'email': this.email,
-                'rfc': this.rfc,
-                'usuario' : this.usuario,
-                'password' : this.password,
-                'idrol' : this.idrol,
-                'id': this.persona_id,
-                'area' : this.area
+                'nombre'         : this.nombre,
+                'tipo_documento' : this.tipo_documento,
+                'num_documento'  : this.num_documento,
+                'ciudad'         : this.ciudad,
+                'domicilio'      : this.domicilio,
+                'telefono'       : this.telefono,
+                'email'          : this.email,
+                'rfc'            : this.rfc,
+                'usuario'        : this.usuario,
+                'idrol'          : this.idrol,
+                'id'             : this.persona_id,
+                'area'           : this.area,
+                'autoing'        : autoing
             })
             .then(function(response) {
                 me.cerrarModal();
@@ -510,6 +529,85 @@ export default {
                     }
                 }
             }
+        },
+        cambiarEstadoAutoIngreso(id,estado,user){
+            let me = this;
+            var factip = me.tipo_fact;
+            var pageac = me.pagination.current_page;
+
+            if(estado == true){
+                me.autoing = 1;
+            }else{
+                me.autoing = 0;
+            }
+
+            axios.put('/user/autoIngreso',{
+                'id'          : id,
+                'autoingreso' : this.autoing
+            }).then(function (response) {
+                if(estado == 1){
+                    swal.fire(
+                    'Completado!',
+                    'Se habilitaron los ingresos al usuario '+ user + ' con éxito.',
+                    'success')
+                }else{
+                    swal.fire(
+                    'Atención!',
+                    'Se deshabilitaron los ingresos al usuario '+ user,
+                    'warning')
+                }
+                me.listarPersona(pageac,this.buscar,this.criterio);
+            }).catch(function (error) {
+                console.log(error);
+            });
+
+        },
+        formatDate(date){
+            if(date != null){
+                moment.locale('es');
+                let me=this;
+                var datec = moment(date).format('DD MMM YYYY hh:mm:ss a');
+                return datec;
+            }else{
+                return 'Sin registro';
+            }
+        },
+        cambiarPassword(id){
+            Swal.fire({
+            title: 'Cambiar contraseña!',
+            input: 'password',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Cambiar',
+            showLoaderOnConfirm: true,
+            preConfirm: (password) => {
+                if(!password || password.length < 5){
+                    Swal.showValidationMessage(
+                    `Ingrese la contraseña minimo 5 caracteres`,
+                    );
+                }else{
+                    axios.put('/user/cambiarPassword',{
+                        'id': id,
+                        'password' : password
+                    })
+                    .then(response => {
+                        console.log(response);
+                    })
+                    .catch(error => {
+                    })
+                }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+            if (result.value) {
+                Swal.fire({
+                title: `Contraseña cambiada`,
+                type : 'success'
+                })
+            }
+            });
         }
     },
     mounted() {

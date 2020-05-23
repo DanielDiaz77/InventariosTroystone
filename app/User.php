@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id', 'usuario', 'password', 'condicion', 'idrol','area'
+        'id', 'usuario', 'password', 'condicion', 'idrol','area', 'autoing','last_act'
     ];
 
     protected $hidden = array('pivot');

@@ -139,6 +139,10 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/user/activar', 'UserController@activar');
         Route::get('/user/selectUsuario', 'UserController@selectUsuario');
         Route::get('/user/selectUsuarioAct', 'UserController@selectUsuarioAct');
+        Route::put('/user/autoIngreso','UserController@autoIngreso');
+        Route::put('/user/setLastConnection','UserController@setLastConnection');
+        Route::get('/user/getUserPerms/{id}', 'UserController@getUserPerms');
+        Route::put('/user/cambiarPassword','UserController@cambiarPassword');
 
         Route::get('/ingreso', 'IngresoController@index');
         Route::post('/ingreso/registrar', 'IngresoController@store');

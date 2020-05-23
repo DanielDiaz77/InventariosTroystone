@@ -59,7 +59,8 @@ const app = new Vue({
         menu: 0,
         notifications: [],
         numActivities: 0,
-        userId: 0
+        userId: 0,
+        autoIngresos: 0,
     },
     created() {
         let me = this;
@@ -77,29 +78,40 @@ const app = new Vue({
             me.notifications.unshift(notification);
         });
 
-        axios.get('/actividad/getActivitiesUser')
-            .then(function(response) {
-                var respuesta = response.data;
-                let numAct = respuesta.total;
-                me.numActivities = respuesta.total;
-                if (numAct != 0) {
-                    if (numAct == 1) {
-                        swal.fire(
-                            'Atención',
-                            `Tienes ${numAct} tarea pendiente por realizar!`,
-                            'warning'
-                        )
-                    } else {
-                        swal.fire(
-                            'Atención',
-                            `Tienes ${numAct} tareas pendientes por realizar!`,
-                            'warning'
-                        )
-                    }
+        axios.get('/actividad/getActivitiesUser').then(function(response) {
+            var respuesta = response.data;
+            let numAct = respuesta.total;
+            me.numActivities = respuesta.total;
+            if (numAct != 0) {
+                if (numAct == 1) {
+                    swal.fire(
+                        'Atención',
+                        `Tienes ${numAct} tarea pendiente por realizar!`,
+                        'warning'
+                    )
+                } else {
+                    swal.fire(
+                        'Atención',
+                        `Tienes ${numAct} tareas pendientes por realizar!`,
+                        'warning'
+                    )
                 }
+            }
 
-            }).catch(function(error) {
-                console.log(error);
-            });
+        }).catch(function(error) {
+            console.log(error);
+        });
+
+        axios.put('/user/setLastConnection', {
+            'id': this.userId
+        }).then(function(response) {}).catch(function(error) {
+            console.log(error);
+        });
+
+        axios.get('/user/getUserPerms/' + this.userId).then(function(resp) {
+            me.autoIngresos = resp.data.Permiso;
+        }).catch(function(error) {
+            console.log(error);
+        });
     }
 });
