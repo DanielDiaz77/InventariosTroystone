@@ -177,6 +177,12 @@
                                 <input type="text" v-model="usuario" class="form-control" placeholder="Nombre de usuarío"/>
                             </div>
                         </div>
+                        <div class="form-group row" v-if="showPass">
+                            <label class="col-md-3 form-control-label" for="text-input">Contraseña (*)</label>
+                            <div class="col-md-9">
+                                <input type="password" v-model="password" class="form-control" placeholder="Contraseña de acceso al sistema"/>
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label for="text-input" class="col-md-3 form-control-label">Area</label>
                             <div class="col-md-9">
@@ -251,7 +257,8 @@ export default {
             },
             offset : 3,
             criterio : 'nombre',
-            buscar : ''
+            buscar : '',
+            showPass : false
         };
     },
 
@@ -483,6 +490,7 @@ export default {
             this.idrol =0;
             this.errorPersona = 0;
             this.area = 0;
+            this.showPass = false;
         },
         abrirModal(modelo, accion, data = []) {
             this.selectRol();
@@ -505,6 +513,7 @@ export default {
                             this.idrol =0;
                             this.tipoAccion = 1;
                             this.area = "";
+                            this.showPass = true;
                             break;
                         }
                         case "actualizar": {
@@ -524,6 +533,7 @@ export default {
                             this.password = data["password"];
                             this.idrol = data["idrol"];
                             this.area = data["area"];
+                            this.showPass = false;
                             break;
                         }
                     }

@@ -237,6 +237,29 @@
             <template v-if="menu==23">
                 <galeria></galeria>
             </template>
+            @elseif(Auth::user()->idrol == 4)
+
+            <template v-if="menu==0">
+                <dashboard></dashboard>
+            </template>
+
+            <template v-if="menu==2">
+                <articulo></articulo>
+            </template>
+
+            <template v-if="menu==5">
+                <venta></venta>
+            </template>
+
+            <template v-if="menu==13">
+                <cotizacion></cotizacion>
+            </template>
+
+            <template v-if="menu==6">
+                <cliente></cliente>
+            </template>
+
+
 
         @else
 

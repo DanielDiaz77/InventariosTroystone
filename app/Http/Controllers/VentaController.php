@@ -37,7 +37,7 @@ class VentaController extends Controller
         $usid = \Auth::user()->id;
         $usarea = \Auth::user()->area;
 
-        if($usarea != 'SLP'){
+        if($usarea != 'SLP' && $usrol != 4){
             if($estadoV == "Anulada"){
                 if($criterio == "cliente"){
                     $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')

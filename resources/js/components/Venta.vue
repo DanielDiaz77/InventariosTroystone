@@ -60,7 +60,7 @@
                             </select>
                             <button class="btn btn-sm btn-success" type="button"><i class="fa fa-money" aria-hidden="true"></i>&nbsp; Pagos </button>
                         </div>
-                        <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5" v-if="estadoVenta!='Anulada'">
+                        <div class="input-group input-group-sm mt-1 mt-sm-0 ml-md-2 ml-lg-5" v-if="estadoVenta!='Anulada' && usrol != 4">
                              <button @click="abrirModal5()" class="btn btn-success btn-sm">Reporte <i class="fa fa-file-excel-o"></i></button>
                         </div>
                     </div>

@@ -13,7 +13,7 @@
                     <i class="icon-plus"></i>&nbsp;Nuevo
                 </button> -->
                 <template v-if="listado == 2">
-                    <button type="button" @click="AskcortarPlaca()" class="btn btn-warning btn-sm float-right" v-if="stock >= 1">
+                    <button type="button" @click="AskcortarPlaca()" class="btn btn-warning btn-sm float-right" v-if="stock >= 1 && usrol != 4">
                         <i class="icon-crop"></i>&nbsp;Cortar
                     </button>
                 </template>
@@ -98,7 +98,7 @@
                                 </select>
                                 <!-- <button class="btn btn-sm btn-info" type="button"><i class="fa fa-search" aria-hidden="true"></i>&nbsp; Filtros</button> -->
                             </div>
-                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3">
+                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3 mb-3">
                                <!--  <button class="btn btn-sm btn-danger" type="button"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp; Area</button> -->
                                <div class="input-group-append">
                                     <span class="input-group-text" style="background-color:red;color:white;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp; Area</span>
@@ -108,7 +108,7 @@
                                     <option value="SLP">San Luis</option>
                                 </select>
                             </div>
-                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3" v-if="estadoArt==1">
+                            <div class="input-group input-group-sm col-12 col-lg-6 col-xl-3 mb-3" v-if="estadoArt==1">
                                 <div class="mb-2 mb-md-2 mb-lg-1 mb-xl-0 mt-1 mb-md-1 mb-lg-0 mb-xl-0">
                                     <button type="submit" @click="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt,categoriaFilt)" class="btn btn-sm btn-primary mr-2"><i class="fa fa-search"></i>Buscar</button>
                                     <button @click="listarExcelFiltros(criterio,buscar,acabado,bodega,zona)" class="btn btn-success btn-sm">Exportar Consulta <i class="fa fa-file-excel-o"></i></button>
@@ -141,23 +141,25 @@
                                 <tr v-for="articulo in arrayArticulo" :key="articulo.id">
                                     <td>
                                         <div class="form-inline">
-                                            <template v-if="articulo.condicion == 1 && articulo.stock > 0">
-                                                <button type="button" @click="editArticulo(articulo)" class="btn btn-warning btn-sm">
-                                                    <i class="icon-pencil"></i>
-                                                </button> &nbsp;
+                                            <template v-if="usrol != 4">
+                                                <template v-if="articulo.condicion == 1 && articulo.stock > 0">
+                                                    <button type="button" @click="editArticulo(articulo)" class="btn btn-warning btn-sm">
+                                                        <i class="icon-pencil"></i>
+                                                    </button> &nbsp;
+                                                </template>
+                                                <template v-else></template>
+                                                <template v-if="articulo.condicion == 1">
+                                                    <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
+                                                        <i class="icon-trash"></i>
+                                                    </button>
+                                                </template>
+                                                <template v-else-if="articulo.condicion == 0">
+                                                    <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
+                                                        <i class="icon-check"></i>
+                                                    </button>
+                                                </template>
+                                                <template v-else></template>&nbsp;
                                             </template>
-                                            <template v-else></template>
-                                            <template v-if="articulo.condicion == 1">
-                                                <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
-                                                    <i class="icon-trash"></i>
-                                                </button>
-                                            </template>
-                                            <template v-else-if="articulo.condicion == 0">
-                                                <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
-                                                    <i class="icon-check"></i>
-                                                </button>
-                                            </template>
-                                            <template v-else></template>&nbsp;
                                             <button type="button" @click="verArticulo(articulo)" class="btn btn-success btn-sm">
                                                 <i class="icon-eye"></i>
                                             </button> &nbsp;
@@ -1056,7 +1058,8 @@ export default {
             precioA : 0,
             precioB : 0,
             arrayLinks : [],
-            arrayImagenes : []
+            arrayImagenes : [],
+            usrol : 0
         };
     },
     components: {
@@ -1142,6 +1145,7 @@ export default {
                 me.arrayArticulo = respuesta.articulos.data;
                 me.pagination= respuesta.pagination;
                 me.totres = respuesta.total;
+                me.usrol = respuesta.usrol;
                 var mts = respuesta.sumaMts[0]['metros'];
                 //console.log(mts);
                 me.sumaMts = mts;

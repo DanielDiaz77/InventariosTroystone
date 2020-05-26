@@ -31,6 +31,7 @@ class ArticuloController extends Controller
         $acabado = $request->acabado;
         $estado = $request->estado;
         $idcategoria = $request->idcategoria;
+        $usrol = \Auth::user()->idrol;
 
         if($estado == 1){
             if($bodega == ''){
@@ -260,7 +261,8 @@ class ArticuloController extends Controller
             'articulos' => $articulos,
             'total' => $total,
             'userarea' => $usarea,
-            'sumaMts' => $sumaMts
+            'sumaMts' => $sumaMts,
+            'usrol' => $usrol
         ];
     }
     public function buscarArticulo(Request $request){
