@@ -10,9 +10,13 @@ use App\Venta;
 class VentasClienteExport implements FromCollection,WithHeadings
 {
     protected $idcliente;
+    protected $date1;
+    protected $date2;
 
-    public function __construct($idcliente){
+    public function __construct($idcliente,$date1,$date2){
         $this->idcliente = $idcliente;
+        $this->date1 = $date1.' 00:00:00';
+        $this->date2 = $date2.' 23:59:59';
     }
 
     /**
@@ -53,6 +57,7 @@ class VentasClienteExport implements FromCollection,WithHeadings
             'detalle_ventas.descuento'
         )
         ->where([['ventas.idcliente',$this->idcliente],['ventas.estado','Registrado']])
+        ->whereBetween('ventas.fecha_hora', [$this->date1, $this->date2])
         ->orderBy('ventas.fecha_hora', 'desc')->get();
     }
     public function headings(): array{

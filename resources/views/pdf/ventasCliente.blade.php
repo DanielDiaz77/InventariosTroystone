@@ -176,6 +176,21 @@
                         ?>
                     </b><br>
                    <h3 class="EstTitle"> Estado de cuenta : {{ $cliente->nombre }} - {{$cliente->num_documento}}</h3><br>
+                   <h4 class="EstTitle"> Periodo:
+                    <?php
+                        date_default_timezone_set('America/Mexico_City');
+                        setlocale(LC_TIME, 'es_MX.UTF-8');
+                        $fechaInicio=strftime("%d de %B de %Y",strtotime($inicio));
+                        echo $fechaInicio;
+                    ?>
+                    al
+                    <?php
+                        date_default_timezone_set('America/Mexico_City');
+                        setlocale(LC_TIME, 'es_MX.UTF-8');
+                        $fechaFin=strftime("%d de %B de %Y",strtotime($fin));
+                        echo $fechaFin;
+                    ?>
+                    </h4><br>
                 </p>
             </div>
         </header>

@@ -15,9 +15,10 @@ class VentasExport implements FromCollection,WithHeadings
 
     public function __construct($inicio, $fin,$ArrUsuarios)
     {
-        $this->inicio = $inicio;
-        $this->fin = $fin;
+        $this->inicio = $inicio.' 00:00:00';
+        $this->fin = $fin.' 23:59:59';
         $this->ArrUsuarios = $ArrUsuarios;
+
     }
 
     /**

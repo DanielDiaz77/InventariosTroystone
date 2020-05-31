@@ -1485,7 +1485,7 @@
                 </div>
                 <div class="modal-body ">
                     <h3 class="mb-3">Generar reporte de ventas</h3>
-                    <div class="row d-flex justify-content-center">
+                    <div class="row d-flex justify-content-center"  v-if="usrol == 1">
                         <div class="input-group input-group-sm col-12 mb-3">
                             <div class="input-group-append">
                                 <span class="input-group-text">Usuarios</span>
@@ -1901,7 +1901,8 @@ export default {
             selectedCredits : [],
             selectedUsers : [],
             arrayReceptores : [],
-            email_cliente : ""
+            email_cliente : "",
+            usid : 0
         };
     },
     components: {
@@ -2069,6 +2070,7 @@ export default {
                 me.arrayVenta = respuesta.ventas.data;
                 me.pagination= respuesta.pagination;
                 me.usrol = respuesta.userrol;
+                me.usid = respuesta.usid;
             })
             .catch(function (error) {
                 console.log(error);
@@ -2316,6 +2318,7 @@ export default {
                             type: 'success',
                             title: 'Anulado...',
                             text: 'La venta ha sido anulado con éxito!!',
+                            footer: response.data
                         });
                     }).catch(function (error) {
                         console.log(error);
@@ -3025,7 +3028,12 @@ export default {
             this.selectedUsers = [];
         },
         listarExcel(inicio, fin,selectedUsers){
-            if(!selectedUsers.length){
+            if (this.usrol != 1){
+                var ArrUsuarios = [];
+                ArrUsuarios.push(this.usid);
+                window.open('/venta/ExportExcel?inicio=' + inicio + '&fin=' + fin + '&usuarios=' + ArrUsuarios);
+            }else{
+                if(!selectedUsers.length){
                 swal.fire(
                 'Atencion!',
                 `Seleccione los usuarios para el reporte`,
@@ -3037,20 +3045,28 @@ export default {
                 }
                 window.open('/venta/ExportExcel?inicio=' + inicio + '&fin=' + fin + '&usuarios=' + ArrUsuarios);
             }
+            }
         },
         listarExcelDet(inicio, fin,selectedUsers){
-            if(!selectedUsers.length){
-                swal.fire(
-                'Atencion!',
-                `Seleccione los usuarios para el reporte`,
-                'error');
-            }else{
+            if (this.usrol != 1){
                 var ArrUsuarios = [];
-                for(let i = 0; i < selectedUsers.length; i++){
-                    ArrUsuarios.push(selectedUsers[i]['id']);
-                }
+                ArrUsuarios.push(this.usid);
                 window.open('/venta/ExportExcelDet?inicio=' + inicio + '&fin=' + fin + '&usuarios=' + ArrUsuarios);
+            }else{
+                if(!selectedUsers.length){
+                    swal.fire(
+                    'Atencion!',
+                    `Seleccione los usuarios para el reporte`,
+                    'error');
+                }else{
+                    var ArrUsuarios = [];
+                    for(let i = 0; i < selectedUsers.length; i++){
+                        ArrUsuarios.push(selectedUsers[i]['id']);
+                    }
+                    window.open('/venta/ExportExcelDet?inicio=' + inicio + '&fin=' + fin + '&usuarios=' + ArrUsuarios);
+                }
             }
+
         },
         getDeposits(id){
             let me = this;

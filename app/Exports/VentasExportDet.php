@@ -15,21 +15,21 @@ class VentasExportDet implements FromCollection,WithHeadings
 
     public function __construct($inicio, $fin,$ArrUsuarios)
     {
-        $this->inicio = $inicio;
-        $this->fin = $fin;
+        $this->inicio = $inicio.' 00:00:00';
+        $this->fin = $fin.' 23:59:59';
         $this->ArrUsuarios = $ArrUsuarios;
     }
 
     /**
     * @return \Illuminate\Support\Collection
     */
-    public function collection()
-    {
+    public function collection() {
         /* return DetalleVenta::all(); */
         return Venta::join('detalle_ventas','detalle_ventas.idventa','ventas.id')
         ->join('articulos','detalle_ventas.idarticulo','articulos.id')
         ->leftJoin('categorias','articulos.idcategoria','=','categorias.id')
         ->leftJoin('personas','ventas.idcliente','personas.id')
+        ->leftJoin('users','ventas.idusuario','=','users.id')
         ->select(
             'ventas.num_comprobante',
             'ventas.fecha_hora',
@@ -47,6 +47,7 @@ class VentasExportDet implements FromCollection,WithHeadings
             'detalle_ventas.cantidad',
             'detalle_ventas.precio',
             'detalle_ventas.descuento',
+            'users.usuario',
             'personas.nombre'
             )
         ->Users($this->ArrUsuarios)
@@ -72,6 +73,7 @@ class VentasExportDet implements FromCollection,WithHeadings
             'Cantidad',
             'Precio',
             'Descuento',
+            'Vendedor',
             'Cliente'
         ];
     }

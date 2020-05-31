@@ -188,8 +188,8 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/venta/getDocs', 'VentaController@getDocs');
         Route::put('/venta/eliminarDoc', 'VentaController@eliminarDoc');
         Route::post('/venta/crearDepositCredit', 'VentaController@crearDepositCredit');
-        Route::get('/venta/ventasClienteExcel/{id}','VentaController@ventasClienteExcel');
-        Route::get('/venta/ventasClientePDF/{id}','VentaController@ventasClientePDF');
+        Route::get('/venta/ventasClienteExcel/{id}/{date1}/{date2}','VentaController@ventasClienteExcel');
+        Route::get('/venta/ventasClientePDF/{id}/{date1}/{date2}','VentaController@ventasClientePDF');
         Route::get('/venta/ventasUsuariosExcel','VentaController@ventasUsuariosExcel');
         Route::post('/venta/enviarPresupuestoMail', 'VentaController@enviarPresupuestoMail');
         Route::post('/venta/enviarFacturaMail', 'VentaController@enviarFacturaMail');

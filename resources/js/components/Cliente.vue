@@ -340,7 +340,7 @@
                                         <h3>Comentarios </h3>
                                     </div>
                                     <div>
-                                        <button class="btn btn-primary rounded-circle" @click="newComment()"><i class="fa fa-plus-circle"></i></button>
+                                        <button class="btn btn-primary btn-sm rounded-circle" @click="newComment()"><i class="fa fa-plus-circle"></i></button>
                                     </div>
                                 </div>
                                 <!-- New Comment Box -->
@@ -1024,9 +1024,19 @@
                      <div class="row d-flex justify-content-around">
                         <div class="col-12 mb-3">
                              <h4 class="mb-1">Exportar Estado de cuenta del cliente : {{ nombre }}</h4>
-                            <div class="justify-content-center d-flex mt-5">
-                                <button type="button" class="btn btn-success mr-2" @click="ventasClienteExcel(persona_id)"><i class="fa fa-file-excel-o"></i> Excel</button>
-                                <button type="button" class="btn btn-danger" @click="ventasClientePDF(persona_id)"><i class="fa fa-file-pdf-o"></i> PDF</button>
+                             <div class="justify-content-center d-flex mt-5">
+                                  <div>
+                                    <label for=""><strong>Inicio: </strong></label>
+                                    <input type="date" class="form-control" v-model="date1">
+                                </div>
+                                <div>
+                                    <label for=""><strong>Fin: </strong></label>
+                                    <input type="date" class="form-control" v-model="date2">
+                                </div>
+                             </div>
+                            <div class="justify-content-center d-flex mt-2">
+                                <button type="button" class="btn btn-success mr-2" @click="ventasClienteExcel(persona_id,date1,date2)"><i class="fa fa-file-excel-o"></i> Excel</button>
+                                <button type="button" class="btn btn-danger" @click="ventasClientePDF(persona_id,date1,date2)"><i class="fa fa-file-pdf-o"></i> PDF</button>
                             </div>
                         </div>
                     </div>
@@ -1133,7 +1143,9 @@ export default {
             otroFormPaync : false,
             totalnc : 0,
             descripcionnc : '',
-            active : 0
+            active : 0,
+            date1: '',
+            date2: ''
         };
     },
 
@@ -1897,7 +1909,6 @@ export default {
                 }
             })
         },
-
         newComment(){
             this.CommentNew = 1;
             this.commentBody = "";
@@ -2114,13 +2125,15 @@ export default {
         },
         cerrarModalEstadoCR(){
             this.modal4 = 0;
+            this.date1 = '';
+            this.date2 = '';
         },
-        ventasClienteExcel(id){
-            window.open('/venta/ventasClienteExcel/' + id);
+        ventasClienteExcel(id, date1, date2){
+            window.open('/venta/ventasClienteExcel/' + id + '/'+ date1 + '/' + date2);
             this.cerrarModalEstadoCR();
         },
-        ventasClientePDF(id){
-            window.open('/venta/ventasClientePDF/'+id);
+        ventasClientePDF(id, date1, date2){
+            window.open('/venta/ventasClientePDF/'+id + '/'+ date1 + '/' + date2);
         },
 
     },
@@ -2176,7 +2189,7 @@ export default {
         height: 440px !important;
     }
     .content-cuenta {
-        height: 280px !important;
+        height: 340px !important;
     }
 
 </style>
