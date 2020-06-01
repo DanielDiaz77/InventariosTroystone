@@ -37,7 +37,7 @@ class VentaController extends Controller
         $usid = \Auth::user()->id;
         $usarea = \Auth::user()->area;
 
-        if($usarea != 'SLP'){
+        if($usarea != 'SLP' && $usrol != 4){
             if($estadoV == "Anulada"){
                 if($criterio == "cliente"){
                     $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
@@ -2117,7 +2117,7 @@ class VentaController extends Controller
                 $detalle->save();
             }
 
-            $fechaActual= date('Y-m-d');
+            /* $fechaActual= date('Y-m-d');
             $numVentas = DB::table('ventas')->whereDate('created_at', $fechaActual)->count();
             $numIngresos = DB::table('ingresos')->whereDate('created_at',$fechaActual)->count();
 
@@ -2135,7 +2135,7 @@ class VentaController extends Controller
 
             foreach ($allUsers as $notificar) {
                 User::findOrFail($notificar->id)->notify(new NotifyAdmin($arregloDatos));
-            }
+            } */
 
             DB::commit();
 
