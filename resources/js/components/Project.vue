@@ -77,8 +77,8 @@
                                         <i class="icon-eye"></i>
                                         </button>&nbsp;
                                         <template v-if="usrol != 1">
-                                           <template v-if="project.estado == 'Registrado'">
-                                                <button type="button" v-if="!project.entregado" class="btn btn-danger btn-sm" @click="desactivarProject(project.id)">
+                                           <template v-if="project.total == project.adeudo">
+                                                <button type="button" v-if="project.estado == 'Registrado'" class="btn btn-danger btn-sm" @click="desactivarProject(project.id)">
                                                     <i class="icon-trash"></i>
                                                 </button>
                                            </template>
@@ -138,13 +138,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoVenta,estadoEntrega)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio,estadoProj,entregaProj)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoVenta,estadoEntrega)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio,estadoProj,entregaProj)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoVenta,estadoEntrega)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar, criterio,estadoProj,entregaProj)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -1551,7 +1551,7 @@ export default {
         cambiarPagina(page,buscar,criterio,estadoVenta,entregaProj){
             let me = this;
             me.pagination.current_page = page;
-            me.listarProject(page,buscar,criterio,estadoVenta,estadoEntrega);
+            me.listarProject(page,buscar,criterio,estadoVenta,entregaProj);
         },
         mostrarDetalle(){
             this.listado = 0;

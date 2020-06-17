@@ -12,7 +12,8 @@
                     <button v-if="btnNewTask" type="button" @click="mostrarDetalle()" class="btn btn-secondary">
                         <i class="icon-plus"></i>&nbsp;Nuevo
                     </button>
-                    <button v-if="btnNewTask==0" type="button" @click="ocultarDetalle()"  class="btn btn-sm btn-primary float-right">Volver</button>
+                    <template v-if="listado == 2"><button v-if="entregado == 0" type="button" @click="editarTraslado(traslado_id)"  class="btn btn-sm btn-warning float-right">Editar</button></template>
+                    <button v-if="btnNewTask==0" type="button" @click="ocultarDetalle()"  class="btn btn-sm btn-primary float-right mr-3">Volver</button>
                 </div>
                 <!-- Listado principal -->
                 <template v-if="listado==1">
@@ -234,14 +235,14 @@
                                 <label for="exampleFormControlTextarea2"><strong>Observaciones</strong></label>
                                 <textarea class="form-control rounded-0" rows="3" maxlength="256" v-model="observacion_traslado"></textarea>
                             </div>&nbsp;
-                            <div class="col-md-4 text-center d-flex justify-content-center">
+                            <div class="col-md-4 text-center d-flex justify-content-center" v-if="showElim">
                                 <template v-if="imagenMinatura !='images/traslados/null'">
                                     <lightbox class="m-0" album="" :src="imagen">
                                         <figure>
-                                            <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
+                                            <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Comprobante del traslado">
                                         </figure>
                                     </lightbox>&nbsp;
-                                    <div class="col-1" v-if="showElim">
+                                    <div class="col-1">
                                         <button type="button" class="btn btn-danger btn-circle float-left" aria-label="Eliminar imagen" @click="eliminarImagen(traslado_id,imagen)">
                                             <i class="fa fa-times"></i>
                                         </button>&nbsp;
@@ -253,7 +254,8 @@
                         <div class="form-group row">
                             <div class="col-md-12">
                                 <button type="button" @click="ocultarDetalle()"  class="btn btn-secondary">Cerrar</button>
-                                <button type="button" class="btn btn-primary" @click="registrarTraslado()">Registrar Traslado</button>
+                                <button v-if="editTraslado == 0" type="button" class="btn btn-primary" @click="registrarTraslado()">Registrar Traslado</button>
+                                <button v-if="editTraslado == 1" type="button" class="btn btn-primary" @click="actualizarTraslado()">Editar Traslado</button>
                             </div>
                         </div>
                     </div>
@@ -339,7 +341,7 @@
                                         <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
                                             <td width="10px">{{ (index + 1) }}</td>
                                             <td v-text="detalle.categoria"></td>
-                                            <td v-text="detalle.sku"></td>
+                                            <td v-text="detalle.articulo"></td>
                                             <td v-text="detalle.codigo"></td>
                                             <td v-text="detalle.terminado"></td>
                                             <td v-text="detalle.espesor"></td>
@@ -386,16 +388,16 @@
                                 </div>
                             </div>
                             <div>
-                                <div class="text-center d-flex justify-content-center">
+                                <div class="text-center d-flex justify-content-center" v-if="showElim">
                                     <template v-if="imagenMinatura !='/images/traslados/null'">
                                         <div>
                                             <lightbox class="m-0" album="" :src="imagen">
                                                 <figure class="mr-2">
-                                                    <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Foto del artículo">
+                                                    <img width="300" height="200" class="img-responsive img-fluid imgcenter" :src="imagen" alt="Comprobante del traslado">
                                                 </figure>
                                             </lightbox>&nbsp;
                                         </div>
-                                        <div v-if="showElim">
+                                        <div>
                                             <button type="button" class="btn btn-danger btn-circle float-left" aria-label="Eliminar imagen" @click="eliminarImagen(traslado_id,imagen)">
                                                 <i class="fa fa-trash"></i>
                                             </button>&nbsp;
@@ -670,8 +672,8 @@ Vue.use(ToggleButton);
                 areaUs : "",
                 showElim : false,
                 btnNewTask : 1,
-                usrol : 0
-
+                usrol : 0,
+                editTraslado : 0
             };
         },
         components: {
@@ -813,7 +815,7 @@ Vue.use(ToggleButton);
                 /* console.log("Next Num Detalle = " + parseInt(this.sigNum)); */
                 this.num_comprobante = (parseInt(this.sigNum)+1);
                 this.selectCategoria();
-
+                this.editTraslado = 0;
             },
             ocultarDetalle(){
                 this.listado = 1;
@@ -1035,7 +1037,7 @@ Vue.use(ToggleButton);
                     me.file_traslado = "";
                     me.nueva_ubicacion = "";
                     me.arrayDetalle = [];
-
+                    me.editTraslado = 0;
                 })
                 .catch(function(error) {
                     console.log(error);
@@ -1252,6 +1254,113 @@ Vue.use(ToggleButton);
             },
             excelTraslado(id,num_comp){
                  window.open('/traslado/excel/'+ id+'?num_traslado=' + num_comp);
+            },
+            editarTraslado(id){
+                let me = this;
+                me.listado = 0;
+                me.editTraslado = 1;
+                var arrayTrasladoT=[];
+                var url= '/traslado/obtenerCabecera?id=' + id;
+
+                axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    arrayTrasladoT = respuesta.traslado;
+
+                    /* console.log("Obs Traslado" + arrayTrasladoT[0]['id'] +  " : " + arrayTrasladoT[0]['obstraslado']); */
+
+                    var fechaform  = arrayTrasladoT[0]['fecha_hora'];
+
+                    var total_parcial = 0;
+
+                    me.traslado_id = arrayTrasladoT[0]['id'];
+                    me.tipo_comprobante=arrayTrasladoT[0]['tipo_comprobante'];
+                    me.num_comprobante=arrayTrasladoT[0]['num_comprobante'];
+                    me.user=arrayTrasladoT[0]['usuario'];
+                    me.nueva_ubicacion = arrayTrasladoT[0]['nueva_ubicacion'];
+                    me.observacion_traslado = arrayTrasladoT[0]['obstraslado'];
+                    me.estadoVn = arrayTrasladoT[0]['estado'];
+                    me.fecha_hora = arrayTrasladoT[0]['fecha_hora'];
+                    me.entregado = arrayTrasladoT[0]['entregado'];
+
+                    if(arrayTrasladoT[0]['entregado'] == 1){
+                        me.btnEntrega = true;
+                    }
+
+                    /* console.log(arrayTrasladoT[0]['file']); */
+
+                    if (arrayTrasladoT[0]['file'] !== null) {
+                        me.imagenMinatura = '/images/traslados/'+ arrayTrasladoT[0]['file'];
+                        me.showElim = true;
+                    }
+
+                    /* let hasImg = '/images/traslados/' + arrayTrasladoT[0]['file'];
+
+                    if(hasImg != '/images/traslados/null'){
+                        me.imagenMinatura = '/images/traslados/'+ arrayTrasladoT[0]['file'];
+                        me.showElim = true;
+                    }else{
+                        me.imagenMinatura = '/images/traslados/null';
+                        me.showElim = false;
+                    } */
+
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+                //Obtener los detalles del ingreso
+                var url= '/traslado/obtenerDetalles?id=' + id;
+                axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    me.arrayDetalle = respuesta.detalles;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            },
+            actualizarTraslado(){
+                if (this.validarTraslado()) {
+                    return;
+                }
+
+                let me = this;
+
+                let compro = this.num_comprobante;
+
+                axios.post('/traslado/actualizar',{
+                    'id'              : this.traslado_id,
+                    'tipo_comprobante': this.tipo_comprobante,
+                    'num_comprobante' : this.num_comprobante,
+                    'nueva_ubicacion' : this.nueva_ubicacion,
+                    'observacion'     : this.observacion_traslado,
+                    'file'            : this.file_traslado,
+                    'data': this.arrayDetalle
+                }).then(function(response) {
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Completado...',
+                        text: `El traslado ${compro} ha sido actualizado con éxito!!`,
+                    });
+                    me.ocultarDetalle();
+                    me.listarTraslado(1,'','num_comprobante','');
+                    me.tipo_comprobante = "TRASLADO";
+                    me.num_comprobante = 0;
+                    me.idarticulo = 0;
+                    me.articulo = "";
+                    me.cantidad = 0;
+                    me.precio = 0;
+                    me.stock = 0;
+                    me.observacion = "";
+                    me.file_traslado = "";
+                    me.nueva_ubicacion = "";
+                    me.arrayDetalle = [];
+                    me.editTraslado = 0;
+
+
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
             }
 
         },

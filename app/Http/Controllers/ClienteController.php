@@ -863,7 +863,8 @@ class ClienteController extends Controller
             DB::beginTransaction();
             $credit = new Credit(['num_documento' => $request->num_notac,'total' => $request->total,
             'forma_pago' => $request->forma_pago,'fecha_hora' => $mytime,
-            'observacion' => $request->observacion,'estado' => 'Por Validar']);
+            'observacion' => $request->observacion,'estado' => 'Por Validar',
+            'idusuario' => \Auth::user()->id]);
             $cliente->credits()->save($credit);
             DB::commit();
         }catch(Exception $e){

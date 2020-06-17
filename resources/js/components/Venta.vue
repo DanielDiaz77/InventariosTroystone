@@ -99,8 +99,8 @@
                                             <i class="fa fa-file-pdf-o"></i>
                                         </button>&nbsp;
                                         <template v-if="usrol != 1">
-                                           <template v-if="venta.estado == 'Registrado'">
-                                                <button type="button" v-if="!venta.entregado" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)">
+                                           <template v-if="venta.total == venta.adeudo">
+                                                <button type="button" v-if="venta.estado == 'Registrado'" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)">
                                                     <i class="icon-trash"></i>
                                                 </button>
                                            </template>

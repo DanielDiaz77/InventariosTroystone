@@ -234,6 +234,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::put('/traslado/updImagen','TrasladoController@updImage');
         Route::put('/traslado/eliminarImg', 'TrasladoController@eliminarImagen');
         Route::get('/traslado/excel/{id}','TrasladoController@excelTraslado');
+        Route::post('/traslado/actualizar','TrasladoController@update');
 
 
         Route::get('/actividad', 'ActivityController@index');

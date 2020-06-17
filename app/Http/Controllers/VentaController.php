@@ -2171,7 +2171,7 @@ class VentaController extends Controller
                 $cliente = Persona::findOrFail($venta->idcliente);
                 $credit = new Credit(['num_documento' => $randomNum,'total' => $venta->total,
                 'forma_pago' => $venta->forma_pago,'fecha_hora' => $mytime,
-                'observacion' => $obsNota,'estado' => 'Vigente']);
+                'observacion' => $obsNota,'estado' => 'Vigente', 'idusuario' => \Auth::user()->id]);
                 $cliente->credits()->save($credit);
 
                 $resp = 'Se ha generado una nota de credito para el cliente '. $cliente->nombre;

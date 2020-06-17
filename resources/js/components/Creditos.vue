@@ -53,6 +53,7 @@
                                 <th>Tipo de cliente</th>
                                 <th>Estado</th>
                                 <th>Validación</th>
+                                <th>Vendedor</th>
                             </tr>
                             </thead>
                             <tbody v-if="arrayCreditos.length">
@@ -69,7 +70,7 @@
                                     <td v-text="credito.num_documento"></td>
                                     <td v-text="credito.total"></td>
                                     <td v-text="credito.forma_pago"></td>
-                                    <td v-text="credito.fecha_hora"></td>
+                                    <td> {{ convertDate(credito.fecha_hora) }} </td>
                                     <td v-text="credito.nota"></td>
                                     <td v-text="credito.nombre"></td>
                                     <td v-text="credito.tipo"></td>
@@ -100,11 +101,12 @@
                                             </template>
                                         </template>
                                     </td>
+                                    <td v-text="credito.vendedor"></td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="10" class="text-center">
+                                    <td colspan="11" class="text-center">
                                         <strong>NO hay creditos registrados o con ese criterio...</strong>
                                     </td>
                                 </tr>
@@ -133,6 +135,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 export default {
     data() {
         return {
@@ -268,7 +271,14 @@ export default {
                 }
             })
 
-        }
+        },
+        convertDate(date){
+            moment.locale('es');
+            let me=this;
+            var datec = moment(date).format('DD MMM YYYY hh:mm:ss a');
+            /* console.log(datec); */
+            return datec;
+        },
     },
     mounted() {
         this.listarCreditos(1,this.buscar, this.criterio,this.estado);
