@@ -22,6 +22,7 @@ class DashboardController extends Controller
         ->select(DB::raw('MONTH(v.fecha_hora) as mes'),
         DB::raw('YEAR(v.fecha_hora) as anio'),
         DB::raw('SUM(v.total) as total'))
+        ->where('v.pagado',1)
         ->whereYear('v.fecha_hora',$anio)
         ->groupBy(DB::raw('MONTH(v.fecha_hora)'),DB::raw('YEAR(v.fecha_hora)'))
         ->get();

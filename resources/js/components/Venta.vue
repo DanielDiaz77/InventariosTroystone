@@ -100,13 +100,13 @@
                                         </button>&nbsp;
                                         <template v-if="usrol != 1">
                                            <template v-if="venta.total == venta.adeudo">
-                                                <button type="button" v-if="venta.estado == 'Registrado'" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)">
+                                                <button type="button" v-if="venta.estado == 'Registrado'" class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id, venta.adeudo)">
                                                     <i class="icon-trash"></i>
                                                 </button>
                                            </template>
                                         </template>
                                         <template v-else>
-                                            <button type="button"  class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id)" v-if="venta.estado == 'Registrado'">
+                                            <button type="button"  class="btn btn-danger btn-sm" @click="desactivarVenta(venta.id,venta.adeudo)" v-if="venta.estado == 'Registrado'">
                                                 <i class="icon-trash"></i>
                                             </button>
                                         </template>
@@ -2290,42 +2290,88 @@ export default {
                 console.log(error);
             });
         },
-        desactivarVenta(id) {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
+        desactivarVenta(id,adeudo) {
 
-            swalWithBootstrapButtons.fire({
-                title: "¿Esta seguro de anular esta venta?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Aceptar!",
-                cancelButtonText: "Cancelar!",
-                reverseButtons: true
-            })
-            .then(result => {
-                if (result.value) {
-                    let me = this;
-                    axios.put('/venta/desactivar',{
-                        'id': id
-                    }).then(function (response) {
-                        me.listarVenta(1,'','num_comprobante','','','');
-                        Swal.fire({
-                            type: 'success',
-                            title: 'Anulado...',
-                            text: 'La venta ha sido anulado con éxito!!',
-                            footer: response.data
+            if ( adeudo > 0 ){
+                    const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                    confirmButton: "btn btn-success ml-3",
+                    cancelButton: "btn btn-danger"
+                    },
+                    buttonsStyling: false
+                });
+                swalWithBootstrapButtons.fire({
+                    title: "¿Esta seguro de anular esta venta?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Aceptar!",
+                    cancelButtonText: "Cancelar!",
+                    reverseButtons: true
+                })
+                .then(result => {
+                    if (result.value) {
+                        let me = this;
+                        let genNc = false;
+                        axios.put('/venta/desactivar',{
+                            'id': id,
+                            'genNc' : genNc
+                        }).then(function (response) {
+                            me.listarVenta(1,'','num_comprobante','','','');
+                            Swal.fire({
+                                type: 'success',
+                                title: 'Anulado...',
+                                text: 'La venta ha sido anulado con éxito!!',
+                                footer: response.data
+                            });
+                        }).catch(function (error) {
+                            console.log(error);
                         });
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                }else if (result.dismiss === swal.DismissReason.cancel){
-                }
-            })
+                    }else if (result.dismiss === swal.DismissReason.cancel){
+                    }
+                });
+            } else {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success ml-3",
+                        cancelButton: "btn btn-danger"
+                    },
+                    buttonsStyling: false
+                });
+                swalWithBootstrapButtons.fire({
+                    title: "¿Esta seguro de anular esta venta?",
+                    type: "warning",
+                    html:
+                    '<div class="form-check" style="font-size: 20px;">' +
+                        '<input class="form-check-input mt-2" type="checkbox" value="" id="chkGnc"><label for="chkGnc">Generar nota de crédito</label>'+
+                    '</div>',
+                    showCancelButton: true,
+                    confirmButtonText: "Aceptar!",
+                    cancelButtonText: "Cancelar!",
+                    reverseButtons: true
+                })
+                .then(result => {
+                    if (result.value) {
+                        let genNc = document.getElementById('chkGnc').checked;
+                        /* console.log(genNc); */
+                        let me = this;
+                        axios.put('/venta/desactivar',{
+                            'id': id,
+                            'genNc' : genNc
+                        }).then(function (response) {
+                            me.listarVenta(1,'','num_comprobante','','','');
+                            Swal.fire({
+                                type: 'success',
+                                title: 'Anulado...',
+                                text: 'La venta ha sido anulado con éxito!!',
+                                footer: response.data
+                            });
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                    }else if (result.dismiss === swal.DismissReason.cancel){
+                    }
+                });
+            }
         },
         validarVenta() {
             let me = this;

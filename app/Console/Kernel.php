@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        'App\Console\Commands\UsersControl',
+        'App\Console\Commands\UsersControlFin',
     ];
 
     /**
@@ -22,10 +23,9 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
-    protected function schedule(Schedule $schedule)
-    {
-        // $schedule->command('inspire')
-        //          ->hourly();
+    protected function schedule(Schedule $schedule) {
+        $schedule->command('users:control')->timezone('America/Mexico_City')->weekdays()->twiceDaily(8,19);
+        $schedule->command('users:controlFin')->timezone('America/Mexico_City')->saturdays()->twiceDaily(8,15);
     }
 
     /**
@@ -36,7 +36,6 @@ class Kernel extends ConsoleKernel
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
-
         require base_path('routes/console.php');
     }
 }

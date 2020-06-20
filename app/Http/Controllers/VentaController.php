@@ -23,8 +23,7 @@ use App\Mail\MailPresupuesto;
 use App\Mail\MailFactura;
 use App\Persona;
 
-class VentaController extends Controller
-{
+class VentaController extends Controller {
     public function index(Request $request){
         if (!$request->ajax()) return redirect('/');
 
@@ -2165,16 +2164,20 @@ class VentaController extends Controller
                 $venta->auto_entrega = 0;
                 $venta->save();
 
-                $randomNum = substr(str_shuffle("0123456789"), 0, 10);
-                $obsNota = 'Generado apartir de la nota '. $venta->num_comprobante;
+                if ($request->genNc) {
+                    $randomNum = substr(str_shuffle("0123456789"), 0, 10);
+                    $obsNota = 'Generado apartir de la nota '. $venta->num_comprobante;
 
-                $cliente = Persona::findOrFail($venta->idcliente);
-                $credit = new Credit(['num_documento' => $randomNum,'total' => $venta->total,
-                'forma_pago' => $venta->forma_pago,'fecha_hora' => $mytime,
-                'observacion' => $obsNota,'estado' => 'Vigente', 'idusuario' => \Auth::user()->id]);
-                $cliente->credits()->save($credit);
+                    $cliente = Persona::findOrFail($venta->idcliente);
+                    $credit = new Credit(['num_documento' => $randomNum,'total' => $venta->total,
+                    'forma_pago' => $venta->forma_pago,'fecha_hora' => $mytime,
+                    'observacion' => $obsNota,'estado' => 'Vigente', 'idusuario' => \Auth::user()->id]);
+                    $cliente->credits()->save($credit);
 
-                $resp = 'Se ha generado una nota de credito para el cliente '. $cliente->nombre;
+                    $resp = 'Se ha generado una nota de credito para el cliente '. $cliente->nombre;
+                } else {
+                    $resp = 'Se ha eliminado una nota pagada y no ha sido acreditada';
+                }
 
             }else {
                 $venta->estado = 'Anulada';
@@ -2201,7 +2204,7 @@ class VentaController extends Controller
             DB::commit();
             return $resp;
 
-        }catch(Exception $e){
+        } catch(Exception $e){
             DB::rollBack();
         }
     }
