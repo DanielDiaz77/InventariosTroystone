@@ -39,6 +39,7 @@ class CallController extends Controller
                         ['clientes.'.$criterio, 'like', '%'. $buscar . '%'],
                         ['calls.status',$estado]
                     ])
+                ->orderBy('calls.updated_at', 'desc')
                 ->paginate(12);
             }else{
                 $llamadas = Call::leftjoin('personas AS empleados', 'empleados.id','calls.idusuario')
@@ -49,6 +50,7 @@ class CallController extends Controller
                     'clientes.idusuario as idvendedor','clientes.ciudad','calls.id','calls.body','calls.status','calls.area'
                     ,'calls.created_at as fecha','clientes.active','calls.idusuario as usercall','vendedores.nombre as agente')
                 ->where([['clientes.'.$criterio, 'like', '%'. $buscar . '%']])
+                ->orderBy('calls.updated_at', 'desc')
                 ->paginate(12);
             }
         }else{
@@ -65,6 +67,7 @@ class CallController extends Controller
                         ['calls.status',$estado],
                         ['calls.area',$zona]
                     ])
+                ->orderBy('calls.updated_at', 'desc')
                 ->paginate(12);
             }else{
                 $llamadas = Call::leftjoin('personas AS empleados', 'empleados.id','calls.idusuario')
@@ -76,6 +79,7 @@ class CallController extends Controller
                     ,'calls.created_at as fecha','clientes.active','calls.idusuario as usercall','vendedores.nombre as agente')
                 ->where([
                         ['clientes.'.$criterio, 'like', '%'. $buscar . '%'],['calls.area',$zona]])
+                ->orderBy('calls.updated_at', 'desc')
                 ->paginate(12);
             }
         }

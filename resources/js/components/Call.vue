@@ -50,7 +50,7 @@
                         <table class="table table-bordered table-striped table-sm table-hover">
                             <thead>
                             <tr>
-                                <th>Opciones</th>
+                                <th class="opc-btns">Opciones</th>
                                 <th>Cliente</th>
                                 <th>Teléfono</th>
                                 <th>Area</th>
@@ -1390,5 +1390,8 @@ export default {
     }
     ul#involvedUsers li{
         display:inline !important;
+    }
+    .opc-btns {
+        min-width: 130px !important;
     }
 </style>
