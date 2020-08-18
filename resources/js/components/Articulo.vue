@@ -48,6 +48,7 @@
                                     <option value="sku">Código de material</option>
                                     <option value="codigo">No° de placa</option>
                                     <option value="descripcion">Descripción</option>
+                                    <option value="contenedor">No° de contenedor</option>
                                 </select>
                                 <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio,bodega,acabado,estadoArt,categoriaFilt)" class="form-control" placeholder="Texto a buscar">
                             </div>
@@ -95,6 +96,7 @@
                                     <option value="1">Disponible</option>
                                     <option value="2">Vendido</option>
                                     <option value="3">Cortado</option>
+                                    <option value="4">En Traslado</option>
                                 </select>
                                 <!-- <button class="btn btn-sm btn-info" type="button"><i class="fa fa-search" aria-hidden="true"></i>&nbsp; Filtros</button> -->
                             </div>
@@ -191,6 +193,9 @@
                                         </div>
                                         <div v-else-if="articulo.condicion == 4">
                                             <span style="color:#fff" class="badge badge-info">En traslado</span>
+                                        </div>
+                                        <div v-else-if="articulo.condicion == 5">
+                                            <span style="color:#fff" class="badge badge-secondary">Por ingresar</span>
                                         </div>
                                         <div v-else>
                                             <span class="badge badge-danger">Desactivado</span>

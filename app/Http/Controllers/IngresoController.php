@@ -26,7 +26,7 @@ class IngresoController extends Controller
                 ->join('users','ingresos.idusuario','=','users.id')
                 ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
                 'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
-                'personas.nombre','users.usuario')
+                'personas.nombre','users.usuario', 'ingresos.active' )
                 ->orderBy('ingresos.id', 'desc')->paginate(12);
             }
             else{
@@ -34,7 +34,7 @@ class IngresoController extends Controller
                 ->join('users','ingresos.idusuario','=','users.id')
                 ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
                 'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
-                'personas.nombre','users.usuario')
+                'personas.nombre','users.usuario', 'ingresos.active')
                 ->where('ingresos.'.$criterio, 'like', '%'. $buscar . '%')
                 ->orderBy('ingresos.id', 'desc')->paginate(12);
             }
@@ -44,7 +44,7 @@ class IngresoController extends Controller
                 ->join('users','ingresos.idusuario','=','users.id')
                 ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
                 'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
-                'personas.nombre','users.usuario')
+                'personas.nombre','users.usuario', 'ingresos.active')
                 ->where('ingresos.estado',$estado)
                 ->orderBy('ingresos.id', 'desc')->paginate(12);
             }
@@ -53,7 +53,7 @@ class IngresoController extends Controller
                 ->join('users','ingresos.idusuario','=','users.id')
                 ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
                 'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
-                'personas.nombre','users.usuario')
+                'personas.nombre','users.usuario', 'ingresos.active')
                 ->where([['ingresos.'.$criterio, 'like', '%'. $buscar . '%'],['ingresos.estado',$estado]])
                 ->orderBy('ingresos.id', 'desc')->paginate(12);
             }
@@ -88,46 +88,22 @@ class IngresoController extends Controller
             $ingreso->impuesto = $request->impuesto;
             $ingreso->total = $request->total;
             $ingreso->estado = 'Registrado';
-
+            $ingreso->active = $request->active;
             $ingreso->save();
 
             $detalles = $request->data;//Array de detalles
 
             //Recorro todos los elementos
-            foreach($detalles as $ep=>$det)
-            {
+            foreach($detalles as $ep=>$det) {
                 $articulos = Articulo::where('codigo','=',$det['codigo'])->select('id')->first();
-
                 $detalle = new DetalleIngreso();
                 $detalle->idingreso = $ingreso->id;
                 $detalle->idarticulo = $articulos->id;
                 $detalle->cantidad = $det['stock'];
                 $detalle->precio_compra = $det['precio_venta'];
                 $detalle->save();
-
             }
 
-            /* $fechaActual = date('Y-m-d');
-                $numVentas = DB::table('ventas')->whereDate('created_at',$fechaActual)->count();
-                $numIngresos = DB::table('ingresos')->whereDate('created_at',$fechaActual)->count();
-
-                $arregloDatos = [
-                    'ventas' => [
-                                'numero' => $numVentas,
-                                'msj' => 'Ventas'
-                            ],
-                    'ingresos' => [
-                                'numero' => $numIngresos,
-                                'msj'    => 'Ingresos'
-                            ]
-                ];
-
-                $allUsers = User::all();
-
-                foreach($allUsers as $notificar){
-                    User::findOrFail($notificar->id)->notify(new NotifyAdmin($arregloDatos));
-                }
-            */
             DB::commit();
 
 
@@ -153,7 +129,7 @@ class IngresoController extends Controller
         ->join('users','ingresos.idusuario','=','users.id')
         ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.num_comprobante',
         'ingresos.fecha_hora','ingresos.impuesto','ingresos.total','ingresos.estado',
-        'personas.nombre','users.usuario')
+        'personas.nombre','users.usuario', 'ingresos.active')
         ->where('ingresos.id','=',$id)
         ->orderBy('ingresos.id', 'desc')->take(1)->get();
 
@@ -221,5 +197,22 @@ class IngresoController extends Controller
 
         return $pdf->stream('Ingreso-'.$numIngreso[0]->num_comprobante.'.pdf');
 
+    }
+
+    public function cambiarEstadoIngreso(Request $request) {
+        if (!$request->ajax()) return redirect('/');
+
+        try{
+            DB::beginTransaction();
+
+            $ingreso = Ingreso::findOrFail($request->id);
+            $ingreso->active = 1;
+            $ingreso->save();
+
+            DB::commit();
+
+        } catch(Exception $e){
+            DB::rollBack();
+        }
     }
 }

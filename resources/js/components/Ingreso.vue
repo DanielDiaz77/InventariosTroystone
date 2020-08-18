@@ -47,8 +47,8 @@
                                 <th>Tipo Comprobante</th>
                                 <th>No° Comprobante</th>
                                 <th>Fecha Hora</th>
-                                <!-- <th>Impuesto</th> -->
                                 <th>Estado</th>
+                                <th>Activo</th>
                             </tr>
                         </thead>
                         <tbody v-if="arrayIngreso.length">
@@ -73,10 +73,15 @@
                                 <td v-text="ingreso.tipo_comprobante"></td>
                                 <td v-text="ingreso.num_comprobante"></td>
                                 <td v-text="ingreso.fecha_hora"></td>
-                                <!-- convertirFecha -->
-                                <!-- <td v-text="ingreso.total"></td>
-                                <td v-text="ingreso.impuesto"></td> -->
                                 <td v-text="ingreso.estado "></td>
+                                <td>
+                                    <div v-if="ingreso.active == 1">
+                                        <span class="badge badge-success">Ingresado</span>
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-danger">No Ingresado</span>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                         <tbody v-else>
@@ -287,8 +292,16 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-2 text-center mt-4 ">
-                        <p class="mt-2 mb-1" style="font-size: 15px;"> Placas añadidas : <strong> {{ arrayDetalle.length }} </strong>  </p>
+                    <div class="col-sm-1 text-center mt-4 ">
+                        <p class="mt-2 mb-1" style="font-size: 15px;"> Placas añadidas  <strong> {{ arrayDetalle.length }} </strong>  </p>
+                    </div>
+                    <div class="col-sm-2 text-center mt-4">
+                        <div class="form-group">
+                            <label for=""><strong>Activar Ingreso:</strong> </label>
+                            <div>
+                                <toggle-button v-model="active" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-md-12">
@@ -373,7 +386,7 @@
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="12" class="text-center">
+                                    <td colspan="13" class="text-center">
                                         <strong>NO hay artículos agregados...</strong>
                                     </td>
                                 </tr>
@@ -406,13 +419,13 @@
                             <p v-text="tipo_comprobante"></p>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for=""><strong>Número de Comprobante</strong></label>
                             <p v-text="num_comprobante"></p>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <div class="form-group">
                             <label for=""><strong>Registrado por:</strong></label>
                             <p v-text="user"></p>
@@ -422,6 +435,17 @@
                         <div class="form-group">
                             <label for=""><strong>Fecha:</strong></label>
                             <p v-text="fecha_llegada"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for=""><strong>Activar Ingreso:</strong> </label>
+                            <div v-if="!active">
+                                <toggle-button @change="cambiarEstadoIngreso(idingreso, arrayDetalle)" v-model="btnActive" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                            <div v-else>
+                                <span class="badge badge-success">Activado</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -471,7 +495,7 @@
                             </tbody>
                             <tbody v-else>
                                 <tr>
-                                    <td colspan="13" class="text-center">
+                                    <td colspan="14" class="text-center">
                                         <strong>NO hay artículos en este detalle...</strong>
                                     </td>
                                 </tr>
@@ -1009,7 +1033,10 @@ export default {
             arrayCategoria : [],
             CodeDate : "",
             sigNum : 0,
-            arrayCodigos : []
+            arrayCodigos : [],
+            active : false,
+            btnActive : false,
+            idingreso : 0,
         };
     },
     components: {
@@ -1272,9 +1299,12 @@ export default {
                 return;
             }
             let me = this;
-
+            let active = 5;
+            if (this.active == true)
+                active = 1;
             axios.post("/articulo/registrarDetalle", {
-                'data' : this.arrayDetalle
+                'data' : this.arrayDetalle,
+                'active' : active
             })
             .then(function(response) {
                 me.registrarIngreso();
@@ -1286,14 +1316,17 @@ export default {
         registrarIngreso(){
             let me = this;
             var numcomp = "I-".concat(me.CodeDate,"-",me.num_comprobante);
-
+            let active = 0;
+            if (this.active == true)
+                active = 1;
             axios.post('/ingreso/registrar',{
                 'idproveedor': this.idproveedor,
                 'tipo_comprobante': this.tipo_comprobante,
                 'num_comprobante' : numcomp,
                 'impuesto' : this.impuesto,
                 'total' : this.total,
-                'data': this.arrayDetalle
+                'data': this.arrayDetalle,
+                'active' : active
             }).then(function(response) {
                 me.ocultarDetalle();
                 Swal.fire({
@@ -1436,13 +1469,19 @@ export default {
                 arrayIngresoT = respuesta.ingreso;
 
                 var fechaform  = arrayIngresoT[0]['fecha_hora'];
-
+                console.log(arrayIngresoT);
                 me.proveedor = arrayIngresoT[0]['nombre'];
                 me.tipo_comprobante=arrayIngresoT[0]['tipo_comprobante'];
                 me.num_comprobante=arrayIngresoT[0]['num_comprobante'];
                 me.user=arrayIngresoT[0]['usuario'];
                 moment.locale('es');
                 me.fecha_llegada=moment(fechaform).format('llll');
+                me.idingreso = arrayIngresoT[0]['id'];
+                if (arrayIngresoT[0]['active'] != 0) {
+                    me.active = true
+                } else {
+                    me.active = false;
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -1600,6 +1639,42 @@ export default {
         pdfIngreso(id){
             window.open('/ingreso/pdf/'+id);
         },
+
+        cambiarEstadoIngreso(id, detalles) {
+            let data = [];
+            detalles.forEach(element => {
+                data.push(element['codigo']);
+            });
+            if (this.btnActive) {
+                let me = this;
+                axios.post('/ingreso/cambiarEstadoIngreso',{
+                'id': id,
+                }).then(function(response) {
+                   me.cambiarEstadoArticulos(data);
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+            }
+        },
+        cambiarEstadoArticulos(data) {
+            let me = this;
+            console.log(data);
+            axios.post('/articulo/cambiarEstadoIngreso',{
+                'data': data,
+            }).then(function(response) {
+                me.ocultarDetalle();
+                Swal.fire({
+                    type: 'success',
+                    title: 'Completado...',
+                    text: 'Se ha activado el ingreso con éxito!',
+                });
+                me.listarIngreso(1,'','num_comprobante','Registrado');
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        }
     },
     mounted() {
         this.listarIngreso(1,this.buscar, this.criterio,this.estadoIn);

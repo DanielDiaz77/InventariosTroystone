@@ -103,6 +103,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/articulo/listarExcelFiltros','ArticuloController@listarExcelFiltros');
         Route::get('/articulo/getLinks','ArticuloController@getLinks');
         Route::put('/articulo/deleteLink','ArticuloController@deleteLink');
+        Route::post('/articulo/cambiarEstadoIngreso', 'ArticuloController@cambiarEstadoIngreso');
 
         Route::get('/proveedor', 'ProveedorController@index');
         Route::post('/proveedor/registrar', 'ProveedorController@store');
@@ -151,6 +152,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/ingreso/obtenerDetalles', 'IngresoController@obtenerDetalles');
         Route::get('/ingreso/nextNum','IngresoController@getLastNum');
         Route::get('/ingreso/pdf/{id}','IngresoController@pdf');
+        Route::post('/ingreso/cambiarEstadoIngreso', 'IngresoController@cambiarEstadoIngreso');
 
         Route::get('/venta','VentaController@index');
         Route::get('/ventaInv','VentaController@indexInvo');

@@ -14,7 +14,8 @@ class Ingreso extends Model
         'fecha_hora',
         'impuesto',
         'total',
-        'estado'
+        'estado',
+        'active'
     ];
 
     public function usuario(){
