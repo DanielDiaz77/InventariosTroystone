@@ -14,7 +14,7 @@ class AddActiveToIngresosTable extends Migration
     public function up()
     {
         Schema::table('ingresos', function (Blueprint $table) {
-            $table->boolean('active')->default(0)->after('estado');
+            $table->boolean('active')->default(1)->after('estado');
         });
     }
 
