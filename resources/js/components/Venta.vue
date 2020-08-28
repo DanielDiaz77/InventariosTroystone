@@ -78,14 +78,13 @@
                                 <th>Tipo Comprobante</th>
                                 <th>No° Comprobante</th>
                                 <th>Fecha Hora</th>
-                                <th>Impuesto</th>
                                 <th>Total</th>
                                 <th>Forma de pago</th>
                                 <th>Facturación</th>
                                 <th>Entregado</th>
                                 <th>100% Pagado</th>
                                 <th>Estado</th>
-
+                                <th>P. Especial</th>
                             </tr>
                         </thead>
                         <tbody v-if="arrayVenta.length">
@@ -118,7 +117,6 @@
                                 <td v-text="venta.tipo_comprobante"></td>
                                 <td v-text="venta.num_comprobante"></td>
                                 <td>{{ convertDateVenta(venta.fecha_hora) }}</td>
-                                <td v-text="venta.impuesto"></td>
                                 <td v-text="venta.total"></td>
                                 <td v-text="venta.forma_pago"></td>
                                 <td v-text="venta.tipo_facturacion"></td>
@@ -145,6 +143,10 @@
                                 </td>
                                 <td v-else>
                                     <span class="badge badge-danger">Cancelada</span>
+                                </td>
+                                <td class="text-center">
+                                    <span v-if="venta.special" class="badge badge-success">Si</span>
+                                    <span v-else class="badge badge-danger">No</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -327,6 +329,14 @@
                             <p> {{ metrosTotales.toFixed(4) }} </p>
                         </div>
                     </div>
+                    <div class="col-sm-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Presupuesto especial:</strong> </label>
+                            <div>
+                                <toggle-button v-model="ispecial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-12 text-center">
                         <div v-show="errorVenta" class="form-group row div-error">
                             <div class="text-center text-error">
@@ -369,7 +379,6 @@
                             <button @click="agregarDetalle()" class="btn btn-success form-control btnagregar"><i class="icon-plus"></i></button>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="form-group row border">
@@ -644,7 +653,14 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for=""><strong>Presupuesto Especial:</strong> </label>
+                                <div>
+                                    <toggle-button @change="cambiarEstadoSpecial(venta_id)" v-model="btnSpecial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                                </div>
+                            </div>
+                        </div>
                     </template>
                     <!-- Status Pagos -->
                     <template v-if="usrol != 1">
@@ -1902,7 +1918,9 @@ export default {
             selectedUsers : [],
             arrayReceptores : [],
             email_cliente : "",
-            usid : 0
+            usid : 0,
+            ispecial : false,
+            btnSpecial : false,
         };
     },
     components: {
@@ -2256,7 +2274,10 @@ export default {
             let me = this;
             var numcomp = "V-".concat(me.CodeDate,"-",me.num_comprobante);
             var totalDem = parseFloat(this.total).toFixed(4);
-
+            var is_special = 0;
+            if (me.ispecial) {
+                is_special = 1;
+            }
             //console.log(`Total : ${totalDem}`);
 
             axios.post('/venta/registrar',{
@@ -2275,7 +2296,8 @@ export default {
                 'num_cheque'  : this.num_cheque,
                 'banco'       : this.banco,
                 'tipo_facturacion' : this.tipo_facturacion,
-                'data': this.arrayDetalle
+                'special'   : is_special,
+                'data': this.arrayDetalle,
             }).then(function(response) {
                 me.ocultarDetalle();
                 me.listarVenta(1,'','num_comprobante','','','');
@@ -2459,6 +2481,8 @@ export default {
             this.entregado_parcial = 0;
             this.btnEntrega =  false;
             this.btnEntregaParcial = false;
+            this.btnSpecial = false;
+            this.ispecial = false;
             this.btnPagado = false;
             this.btnPagadoParcial = false;
             this.obsEditable = 0;
@@ -2576,6 +2600,12 @@ export default {
                     me.btnAutoEntrega = true;
                 }else{
                     me.btnAutoEntrega = false;
+                }
+
+                if(arrayVentaT[0]['special'] == 1){
+                    me.btnSpecial = true;
+                }else{
+                    me.btnSpecial = false;
                 }
             })
             .catch(function (error) {
@@ -3382,7 +3412,33 @@ export default {
             }).catch(function (error) {
                 console.log(error);
             });
-        }
+        },
+        cambiarEstadoSpecial(id){
+            let me = this;
+            var is_special = 0;
+            if(me.btnSpecial == true){
+                is_special = 1;
+            }
+            axios.post('/venta/cambiarSpecial',{
+                'id': id,
+                'especial' : is_special
+            }).then(function (response) {
+                me.verVenta(id);
+                if(is_special == 1){
+                    swal.fire(
+                    'Completado!',
+                    'El presupuesto ha sido marcado como especial con éxito.',
+                    'success')
+                }else{
+                    swal.fire(
+                    'Atención!',
+                    'El presupuesto fue desmarcado como especial',
+                    'warning')
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
     },
     mounted() {
         this.listarVenta(1,this.buscar, this.criterio,this.estadoVenta,this.estadoEntrega,this.estadoPago);

@@ -13,6 +13,7 @@ class Venta extends Model
         'observacion','num_cheque','banco','tipo_facturacion','pagado',
         'entrega_parcial','file', 'observacionpriv','facturado',
         'factura_env','pago_parcial','adeudo','num_factura','auto_entrega'
+        ,'special'
     ];
 
     public function usuario(){
@@ -41,5 +42,35 @@ class Venta extends Model
                 $query->Orwhere([['ventas.estado','Registrado'],['ventas.idusuario',$user]]);
             }
             return $query;
+    }
+
+    public function scopeCriterio($query, $criterio,$buscar){
+        if($buscar)
+            return $query->where("ventas.$criterio",'LIKE',"%$buscar%");
+    }
+
+    public function scopeEstado($query, $estado){
+        if($estado)
+            return $query->where('estado',$estado);
+    }
+
+    public function scopeEntrega($query, $entrega) {
+        if ($entrega == 'entregado') {
+            return $query->where('entregado', 1);
+        } elseif ($entrega == 'entrega_parcial') {
+            return $query->where('entrega_parcial', 1);
+        } else {
+            return $query->where([['entregado',0],['entrega_parcial',0]]);
+        }
+    }
+
+    public function scopePagado($query, $pagado) {
+        if ($pagado == 'pagado') {
+            return $query->where('pagado', 1);
+        } elseif ($pagado == 'parcial') {
+            return $query->where('pago_parcial', 1);
+        } else {
+            return $query->where([['pagado',0],['pago_parcial',0]]);
+        }
     }
 }

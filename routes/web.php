@@ -195,6 +195,7 @@ Route::group(['middleware'=>['auth']],function(){
         Route::get('/venta/ventasUsuariosExcel','VentaController@ventasUsuariosExcel');
         Route::post('/venta/enviarPresupuestoMail', 'VentaController@enviarPresupuestoMail');
         Route::post('/venta/enviarFacturaMail', 'VentaController@enviarFacturaMail');
+        Route::post('/venta/cambiarSpecial', 'VentaController@cambiarSpecial');
 
         Route::get('/cotizacion', 'CotizacionController@index');
         Route::post('/cotizacion/registrar', 'CotizacionController@store');

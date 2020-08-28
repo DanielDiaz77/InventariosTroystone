@@ -172,6 +172,9 @@
                                                     </button>&nbsp;
                                                 </lightbox>
                                             </template>
+                                            <button type="button" @click="doCopy(articulo)" class="btn btn-primary btn-sm">
+                                                <i class="fa fa-clipboard" aria-hidden="true"></i>
+                                            </button> &nbsp;
                                         </div>
                                     </td>
                                     <td v-text="articulo.codigo"></td>
@@ -985,9 +988,11 @@ import VueBarcode from 'vue-barcode';
 import VueLightbox from 'vue-lightbox';
 import ToggleButton from 'vue-js-toggle-button';
 import moment from 'moment';
+import VueClipboard from 'vue-clipboard2';
 import $ from 'jquery';
 Vue.component("Lightbox",VueLightbox);
 Vue.use(ToggleButton);
+Vue.use(VueClipboard);
 export default {
     data() {
         return {
@@ -1849,6 +1854,27 @@ export default {
         selectCover(link){
             this.file = link;
         },
+        doCopy(articulo) {
+        var desc = articulo.descripcion ? articulo.descripcion : '';
+        var formatArticulo = `No° de placa :  ${ articulo.codigo },\nCódigo de Material : ${ articulo.sku },\nTipo de Material : ${ articulo.nombre_categoria } ${ articulo.terminado },\nMedidas : ${ articulo.largo } * ${ articulo.alto } = ${ articulo.metros_cuadrados } m2,\nEspesor : ${ articulo.espesor },\nUbicación : ${ articulo.ubicacion }\nDescripción : ${ desc }`;
+        this.$copyText(formatArticulo).then(function (e) {
+            Swal.fire({
+                position: 'top-end',
+                type: "success",
+                text: 'Información de la tabla copiada con éxito',
+                showConfirmButton: false,
+                timer: 1000
+            });
+        }, function (e) {
+            Swal.fire({
+                position: 'top-end',
+                type: "danger",
+                text: 'No se pudo copiar la información de la placa',
+                showConfirmButton: false,
+                timer: 1000
+            });
+        })
+      }
     },
     mounted() {
         this.listarArticulo(1,this.buscar, this.criterio,this.bodega,this.acabado,this.estadoArt,this.categoriaFilt);
