@@ -968,6 +968,7 @@
                                     <th>Fecha Hora</th>
                                     <th>Total</th>
                                     <th>100% Pagado</th>
+                                    <th>P. Especial</th>
                                 </tr>
                             </thead>
                             <tbody v-if="arrayPresupuestosT.length">
@@ -990,6 +991,10 @@
                                     </td>
                                     <td v-else>
                                         <toggle-button :value="false" :labels="{checked: 'Si', unchecked: 'No'}" disabled />
+                                    </td>
+                                    <td class="text-center">
+                                        <span v-if="venta.special" class="badge badge-success">Si</span>
+                                        <span v-else class="badge badge-danger">No</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -2465,3 +2470,52 @@ export default {
 };
 </script>
 
+<style>
+@media only screen and (max-width: 440px) {}
+
+
+/* Extra small devices (phones, 600px and down) */
+
+@media only screen and (min-width: 440px) {
+    .modal-lg {
+        max-width: 95% !important;
+    }
+}
+
+
+/* Extra small devices (phones, 600px and down) */
+
+@media only screen and (max-width: 576px) {
+    .modal-lg {
+        max-width: 95% !important;
+    }
+}
+
+
+/* Medium devices (landscape tablets, 768px and up) */
+
+@media only screen and (min-width: 768px) {
+    .modal-lg {
+        max-width: 90% !important;
+    }
+}
+
+
+/* Large devices (laptops/desktops, 992px and up) */
+
+@media only screen and (min-width: 992px) {
+    .modal-lg {
+        max-width: 90% !important;
+    }
+}
+
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+
+@media only screen and (min-width: 1200px) {
+    .modal-lg {
+        max-width: 80% !important;
+    }
+}
+
+</style>

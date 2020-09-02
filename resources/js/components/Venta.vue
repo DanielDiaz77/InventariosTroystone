@@ -653,15 +653,23 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for=""><strong>Presupuesto Especial:</strong> </label>
-                                <div>
-                                    <toggle-button @change="cambiarEstadoSpecial(venta_id)" v-model="btnSpecial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
-                                </div>
+                    </template>
+                    <div class="col-md-2" v-if="!btnSpecial && usrol != 1">
+                        <div class="form-group">
+                            <label for=""><strong>Presupuesto Especial:</strong> </label>
+                            <div>
+                                <toggle-button @change="cambiarEstadoSpecial(venta_id)" v-model="btnSpecial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
                             </div>
                         </div>
-                    </template>
+                    </div>
+                    <div class="col-md-2" v-else-if="usrol == 1">
+                        <div class="form-group">
+                            <label for=""><strong>Presupuesto Especial:</strong> </label>
+                            <div>
+                                <toggle-button @change="cambiarEstadoSpecial(venta_id)" v-model="btnSpecial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                        </div>
+                    </div>
                     <!-- Status Pagos -->
                     <template v-if="usrol != 1">
                         <div class="col-md-2">
@@ -3448,8 +3456,10 @@ export default {
 </script>
 <style>
     .modal-content {
-      width: 100% !important;
-      position: absolute !important;
+        width: 100% !important;
+        position: absolute !important;
+        border: none !important;
+        height: 860px !important;
     }
     .mostrar {
         display: list-item !important;
@@ -3464,11 +3474,6 @@ export default {
     .text-error {
         color: red !important;
         font-weight: bold;
-    }
-    @media (min-width: 600px){
-        .btnagregar{
-            margin-top: 2rem;
-        }
     }
     .selectDetalle {
         background: white;
@@ -3495,4 +3500,55 @@ export default {
         height: 570px !important;
         width: 100% !important;
     }
+
+    @media only screen and (max-width: 440px) {}
+
+
+/* Extra small devices (phones, 600px and down) */
+
+@media only screen and (min-width: 440px) {
+    .modal-lg {
+        max-width: 95% !important;
+    }
+}
+
+
+/* Extra small devices (phones, 600px and down) */
+
+@media only screen and (max-width: 576px) {
+    .modal-lg {
+        max-width: 95% !important;
+    }
+
+    .btnagregar{
+            margin-top: 2rem;
+        }
+}
+
+
+/* Medium devices (landscape tablets, 768px and up) */
+
+@media only screen and (min-width: 768px) {
+    .modal-lg {
+        max-width: 90% !important;
+    }
+}
+
+
+/* Large devices (laptops/desktops, 992px and up) */
+
+@media only screen and (min-width: 992px) {
+    .modal-lg {
+        max-width: 90% !important;
+    }
+}
+
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+
+@media only screen and (min-width: 1200px) {
+    .modal-lg {
+        max-width: 80% !important;
+    }
+}
 </style>

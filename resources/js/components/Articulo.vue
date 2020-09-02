@@ -143,19 +143,19 @@
                                 <tr v-for="articulo in arrayArticulo" :key="articulo.id">
                                     <td>
                                         <div class="form-inline">
-                                            <template v-if="usrol != 4">
+                                            <template v-if="usrol == 1">
                                                 <template v-if="articulo.condicion == 1 && articulo.stock > 0">
                                                     <button type="button" @click="editArticulo(articulo)" class="btn btn-warning btn-sm">
                                                         <i class="icon-pencil"></i>
                                                     </button> &nbsp;
                                                 </template>
                                                 <template v-else></template>
-                                                <template v-if="articulo.condicion == 1">
+                                                <template v-if="articulo.condicion == 1 && estadoArt == 1">
                                                     <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
                                                         <i class="icon-trash"></i>
                                                     </button>
                                                 </template>
-                                                <template v-else-if="articulo.condicion == 0">
+                                                <template v-else-if="articulo.condicion == 0 && estadoArt == 1">
                                                     <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
                                                         <i class="icon-check"></i>
                                                     </button>
@@ -1156,10 +1156,7 @@ export default {
                 me.pagination= respuesta.pagination;
                 me.totres = respuesta.total;
                 me.usrol = respuesta.usrol;
-                var mts = respuesta.sumaMts[0]['metros'];
-                //console.log(mts);
-                me.sumaMts = mts;
-                /* me.zona = respuesta.userarea; */
+                me.sumaMts = respuesta.sumaMts[0]['metros'];
             })
             .catch(function (error) {
                 console.log(error);

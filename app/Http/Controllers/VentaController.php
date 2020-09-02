@@ -3800,10 +3800,11 @@ class VentaController extends Controller {
                 'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
                 'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv',
                 'ventas.facturado','ventas.factura_env','ventas.pago_parcial','ventas.adeudo',
-                'ventas.auto_entrega')
+                'ventas.auto_entrega','ventas.special')
             ->where([
                 ['ventas.estado','Registrado'],
-                ['ventas.'.$criterio, 'like', '%'. $buscar . '%']
+                ['ventas.'.$criterio, 'like', '%'. $buscar . '%'],
+                ['ventas.special', 1]
             ])
             ->orderBy('ventas.fecha_hora','desc')->paginate(10);
         }else{
@@ -3816,10 +3817,11 @@ class VentaController extends Controller {
                 'ventas.entrega_parcial','ventas.tipo_facturacion', 'ventas.pagado','users.usuario',
                 'ventas.num_cheque','personas.nombre','ventas.file','ventas.observacionpriv',
                 'ventas.facturado','ventas.factura_env','ventas.pago_parcial','ventas.adeudo',
-                'ventas.auto_entrega')
+                'ventas.auto_entrega','ventas.special')
             ->where([
                     ['ventas.idcliente','=',$idcliente],
-                    ['ventas.estado','Registrado']
+                    ['ventas.estado','Registrado'],
+                    ['ventas.special', 1]
                 ])
             ->orderBy('ventas.fecha_hora','desc')->paginate(10);
         }
