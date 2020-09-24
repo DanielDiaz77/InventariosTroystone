@@ -759,6 +759,14 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-sm-2 text-center">
+                        <div class="form-group">
+                            <label for=""><strong>Presupuesto especial:</strong> </label>
+                            <div>
+                                <toggle-button v-model="ispecial" :sync="true" :labels="{checked: 'Si', unchecked: 'No'}" />
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-12 text-center">
                         <div v-show="errorVenta" class="form-group row div-error">
                             <div class="text-center text-error">
@@ -1750,7 +1758,8 @@ export default {
             sigNum : 0,
             sigNumV : 0,
             estadoCotizacion : "",
-            email_cliente : ""
+            email_cliente : "",
+            ispecial : false,
         };
     },
     components: {
@@ -2895,6 +2904,10 @@ export default {
             }
 
             let me = this;
+            var is_special = 0;
+            if (me.ispecial) {
+                is_special = 1;
+            }
 
             var numcomp = "V-".concat(me.CodeDate,"-",me.num_comprobante);
             console.log(numcomp);
@@ -2914,6 +2927,7 @@ export default {
                 'observacionpriv' : this.observacionpriv,
                 'num_cheque'  : this.num_cheque,
                 'banco'       : this.banco,
+                'special'   : is_special,
                 'tipo_facturacion' : this.tipo_facturacion,
                 'data': this.arrayDetalle
             }).then(function(response) {
